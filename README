@@ -1,0 +1,306 @@
+NAME
+    PApp - multi-page-state-preserving web applications
+
+SYNOPSIS
+     * this module is at a very early stage of development and *
+     * requires quite an elaborate setup (see the INSTALL file) *
+     * documentation will certainly be improved *
+
+DESCRIPTION
+    PApp is a complete solution for developing multi-page web applications
+    that preserve state *across* page views. It also tracks user id's,
+    supports a user access system and provides many utility functions (html,
+    sql...). You do not need (and should not use) the CGI module.
+
+    Advantages:
+
+    * Speed. PApp isn't much slower than a hand-coded mod_perl handler, and
+    this is only due to the extra database request to fetch and restore
+    state, which typically you would do anyway. To the contrary: a
+    non-trivial Apache::Registry page is much slower than the equivalent
+    PApp application.
+    * Embedded Perl. You can freely embed perl into your documents. In fact,
+    You can do things like these:
+           <h1>Names and amounts</h1>
+           <:
+              my $st = sql_exec "select name, amount from ...",
+                       [\my($name, $amount];
+
+              while ($st->fetch) {?>
+                 Name: $name, Amount: $amount<p>
+              <:}
+           :>
+           <hr>
+
+        That is, mixing html and perl at statement boundaries.
+
+    * State-preserving: The global hash `%state' is automaticaly preserved
+    during the session. Everything you save there will be available in any
+    subsequent pages that the user accesses.
+    * XML. PApp-paplications are written in XML. While this is no advantage
+    in itself, it means that it uses a standardized file format that can
+    easily be extended. PApp comes with a DTD and a vim syntax file, even ;)
+    * Easy internationalization. I18n has never been that easy: just mark
+    you strings with __"string", either in html or in the perl source. The
+    "poedit"-demo-application enables editing of the strings on-line, so
+    translaters need not touch any text files and can work diretcly via the
+    web.
+    Feature-Rich. PApp comes with a *lot* of small-but-nice-to-have
+    functionality.
+    Disadvantages:
+
+    * Unfinished Interface: To admit it, this module is a hack. HMTL::Mason
+    (for example) not only is older and probably larger and more powerful,
+    it has also a more standardized API. PApp will certainly be changed and
+    improved to accomodate new features (like CGI-only operation).
+    * No documentation. Especially tutorials are missing, so you are most
+    probably on your own.
+    Be advised that, IF YOU WANT TO USE THIS MODULE, PELASE DROP THE AUTHOR
+    (Marc Lehmann <pcg@goof.com>) A MAIL. HE WILL HELP YOU GETTING STARTED.
+
+    To get a quick start, read the bench.papp module, the dbedit.papp
+    module, the cluster.papp module and the papp.dtd description of the papp
+    file format.
+
+GLOBAL VARIABLES
+    Some global variables are free to use and even free to change (yes, we
+    still are about speed, not abstraction).
+
+    $request [read-only]
+        The Apache request object (the Apache manpage), the same as returned
+        by `Apache-'request>.
+
+    %state [read-write, persistent]
+        A global hash that can be used for almost any purpose, such as
+        saving state values. All keys with prefix `papp' are reserved for
+        use by this module. Everything else is yours.
+
+    %arg
+        A global hash that contains the arguments to the current module.
+        Arguments to the module can be given to surl or any other function
+        that calls it, by prefixing parameter names with a minus sign (i.e.
+        "-switch").
+
+    %param
+        Similar to `%arg', but it instead contains the parameters from forms
+        submitted via GET or POST (`see parse_multipart_form', however).
+        Everything in this hash is insecure by nature and must should be
+        used carefully.
+
+    $userid [read-only]
+        The current userid. User-Id's are automatically assigned to every
+        incoming connection, you are encouraged to use them for your own
+        user-databases, but you mustn't trust them.
+
+    $pmod (a hash-ref) [read-only]
+        The current module (don't ask). The only user-accessible keys are:
+
+         lang     a hash-ref enumerating the available languages, values are
+                  either language I<Names> or references to another language-id.
+         config   the argument to the C<config>option given to  C<mount>.
+
+    $location [read-only]
+        The location value from `mount'.
+
+    $module [read-only]
+        The current module *within* the application.
+
+FUNCTIONS/METHODS
+    PApp->search_path(path...);
+        Add a directory in where to search for included/imported/"module'd"
+        files.
+
+    PApp->configure(name => value...);
+         pappdb        The (mysql) database to use as papp-database
+                       (default "DBI:mysql:papp")
+         cipherkey*    The Twofish-Key to use (16 binary bytes,)
+                       BIG SECURITY PROBLEM if not set!
+         cookie_reset  delay in seconds after which papp tries to
+                       re-set the cookie (default: one day)
+         cookie_expires time in seconds after which a cookie shall expire
+                       (default: one year)
+         checkdeps     when set, papp will check the .papp file dates for
+                       every request (slow!!) and will reload the app when necessary.
+
+         [*] required attributes
+
+    PApp->mount(location => 'uri', src => 'file.app', ... );
+         location[*]   The URI the application is moutned under, must start with "/"
+         src[*]        The .papp-file to mount there
+         config        Will be available to the module as $pmod->{config]
+
+         [*] required attributes
+
+    dprintf "format", value... dprint value...
+        Work just like print/printf, except that the output is queued for
+        later use by the `debugbox' function.
+
+    echo value[, value...]
+        Works just like the `print' function, except that it is faster for
+        generating output.
+
+    capture { code/macros/html }
+        Captures the output of "code/macros/perl" and returns it, instead of
+        sending it to the browser. This is more powerful that it sounds, for
+        example, this works:
+
+         <:
+            my $output = capture {
+
+               print "of course, this is easy\n";
+               echo "this as well";
+               :>
+          
+               Yes, this is captured as well!
+               <:&this_works:>
+               <?$captureme:>
+
+               <:
+
+            }; # close the capture
+         :>
+
+    reference_url $fullurl
+        Return a url suitable for external referencing of the current page.
+        If `$fullurl' is given, a full url (including a protocol specifier)
+        is generated. Otherwise a partial uri is returned (without
+        http://host:port/).
+
+        This is only a bona-fide attempt: The current module must support
+        starting a new session and only "import"-variables and input
+        parameters are preserved.
+
+    $url = surl ["module"], arg => value, ...
+        `surl' is one of the most often used functions to create urls. The
+        first argument is the name of a module that the url should refer to.
+        If it is missing the url will refer to the current module.
+
+        The remaining arguments are parameters that are passed to the new
+        module. Unlike GET or POST-requests, these parameters are directly
+        passed into the `%state'-hash (unless prefixed with an underscore),
+        i.e. you can use this to alter state values when the url is
+        activated. This data is transfered in a secure way and can be quite
+        large (it will not go over the wire).
+
+        When a parameter name is prefixed with a minus-sign, the value will
+        end up in the (non-persistent) `%arg'-hash instead (for "one-shot"
+        arguments).
+
+    $ahref = slink contents,[ module,] arg => value, ...
+        This is just "alink shift, &url", that is, it returns a link with
+        the given contants, and a url created by `surl' (see above). For
+        example, to create a link to the view_game module for a given game,
+        do this:
+
+         <? slink "Click me to view game #$gamenr", "view_game", gamenr => $gamenr :>
+
+        The view_game module can access the game number as $state{gamenr}.
+
+    $ahref = sublink [sublink-def], content,[ module,] arg => value, ...
+    retlink_p
+    returl
+    retlink
+        *FIXME*
+
+    %locals = current_locals
+        Return the current locals (defined as "local" in a state element) as
+        key => value pairs. Useful for sublinks:
+
+         <? sublink [current_locals], "Log me in!", "login" :>
+
+        This will create a link to the login-module. In that module, you
+        should provide a link back to the current page with:
+
+         <? retlink "Return to the caller" :>
+
+    sform [module, ]arg => value, ...
+    cform [module, ]arg => value, ...
+    multipart_form [module, ]arg => value, ...
+    endform
+        Forms Support
+
+        These functions return a <form> or </form>-Tag. `sform' ("simple
+        form") takes the same arguments as `surl' and return a <form>-Tag
+        with a GET-Method. `cform' ("complex form") does the same, but sets
+        method to POST. Finally, `multipart_form' is the same as `cform',
+        but sets the encoding-type to "multipart/form-data". The latter data
+        is *not* parsed by PApp, you will have to call parse_multipart_form
+        (see below) when evaluating the form data.
+
+        Endform returns a closing </form>-Tag, and *must* be used to close
+        forms created via `sform'/`cform'/`multipart_form'. It can take
+        additional key => value argument-pairs (just like the
+        *form-functions) and must be called in a paired way.
+
+    parse_multipart_form \&callback;
+        Parses the form data that was encoded using the
+        "multipart/form-data" format. For every parameter, the callback will
+        be called with four arguments: Handle, Name, Content-Type,
+        Content-Disposition (the latter is a hash-ref, with all keys
+        lowercased).
+
+        If the callback returns true, the remaining parameter-data (if any)
+        is skipped, and the next parameter is read. If the callback returns
+        false, the current parameter will be read and put into the `%param'
+        hash.
+
+        The Handle-object given to the callback function is actually an
+        object of type PApp::FormBuffer (see the PApp::FormBuffer manpage).
+        It will not allow you to read more data than you are supposed to.
+        Also, remember that the `READ'-Method will return a trailing CRLF
+        even for data-files.
+
+    redirect url
+    internal_redirect url
+        Immediately redirect to the given url. *These functions do not
+        return!*. `redirect_url' creates a http-302 (Page Moved) response,
+        changign the url the browser sees (and displays).
+        `internal_redirect' redirects the request internally (in the
+        web-server), which is faster, but the browser will not see the url
+        change.
+
+    abort_to surl-args
+        Similar to `internal_redirect', but works the arguments through
+        `surl'. This is an easy way to switch to another module/webpage as a
+        kind of exception mechanism. For example, I often use constructs
+        like these:
+
+         my ($name, ...) = sql_fetch "select ... from game where id = ", $state{gameid};
+         abort_to "games_overview" unless defined $name;
+ 
+    debugbox
+        Create a small table with a single link "[switch debug mode ON]".
+        Following that link will enable debugigng mode, reload the current
+        page and display much more information (%state, %param, %$pmod and
+        the request parameters). Useful for development. Combined with the
+        admin package (the admin entry in the macro manpage), you can do
+        nice things like in your page:
+
+         #if admin_p
+           <: debugbox :>
+         #endif
+
+    insert_module "module"
+        Switch permanently module "module". It's output is inserted at the
+        point of the call to switch_module.
+
+    reload_p
+        Return the count of reloads, i.e. the number of times this page was
+        reloaded (which means the session was forked).
+
+        This is a relatively costly operation (a database access), so do not
+        do it by default, but only when you need it.
+
+    switch_userid $newuserid
+        Switch the current session to a new userid. This is useful, for
+        example, when you do your own user accounting and want a user to
+        log-in. The new userid must exist, or bad things will happen.
+
+SEE ALSO
+    The `macro/admin'-package on the distribution, the demo-applications
+    (.papp-files).
+
+AUTHOR
+     Marc Lehmann <pcg@goof.com>
+     http://www.goof.com/pcg/marc/
+

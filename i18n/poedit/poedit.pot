@@ -1,0 +1,142 @@
+#/root/src/Fluffball/apps/poedit.papp:94    <li><?slink [TEXT], -scan_apps => 1?> __"(can take a long time!)"
+#,lang=en
+msgid "Scan all loaded applications"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:121    [TEXT]: <?$unt?>
+#/root/src/Fluffball/apps/poedit.papp:135    [TEXT]: <?$unt:>
+#,lang=en
+msgid "Untranslated or fuzzy messages"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:110             echo "<b>$link</b> ".[TEXT];
+#,lang=en
+msgid "[selected]"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:94    <li><?slink [TEXT], -scan_apps => 1?> [TEXT]
+#,lang=en
+msgid "(can take a long time!)"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:92    <h2>[TEXT]</h2>
+#,lang=en
+msgid "Application Control"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:95    <li><?slink [TEXT], -export_po => 1?>
+#,lang=en
+msgid "Export PO"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:127    <li><?slink [TEXT], "view", where => "~flags&1":>
+#,lang=en
+msgid "View/Edit non-valid translations"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:126    <li><?slink [TEXT], "view", where => "1=1":>
+#,lang=en
+msgid "View/Edit all translations"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:263           <?checkbox "ok", checked => undef?> [TEXT]
+#,lang=en
+msgid "Valid?"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:261           <?submit "save", [TEXT]:> <?submit "savenext", __"Save & Next":> <?submit "next", __"Next":>
+#/root/src/Fluffball/apps/poedit.papp:272           <?submit "save", [TEXT]:> <?submit "savenext", __"Save & Next":> <?submit "next", __"Next":>
+#,lang=en
+msgid "Save"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:96    <li><?slink [TEXT], -export_dbm => 1?>
+#,lang=en
+msgid "Write translation tables and restart"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:134    [TEXT] '$state{lang}': <?$cnt:><br>
+#,lang=en
+msgid "Message count for"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:124    <h2>[TEXT] '$state{lang}'</h2>
+#,lang=en
+msgid "Menu for language"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:117    <h3>[TEXT]</h3>
+#,lang=en
+msgid "Summary"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:146    <?slink [TEXT], "":><p>
+#,lang=en
+msgid "Back to the toplevel menu"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:100    [TEXT]<p>
+#,lang=en
+msgid "Select the language to edit:"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:261           <?submit "save", [TEXT]:> <?submit "savenext", [TEXT]:> <?submit "next", __"Next":>
+#/root/src/Fluffball/apps/poedit.papp:272           <?submit "save", [TEXT]:> <?submit "savenext", [TEXT]:> <?submit "next", __"Next":>
+#,lang=en
+msgid "Save & Next"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:131    <h3>[TEXT] '$state{lang}'</h3>
+#,lang=en
+msgid "Summary for language"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:260           <?submit "refresh", [TEXT]:> <?submit "reset", [TEXT]:>
+#/root/src/Fluffball/apps/poedit.papp:271           <?submit "refresh", [TEXT]:> <?submit "reset", [TEXT]:>
+#,lang=en
+msgid "Reset"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:260           <?submit "refresh", [TEXT]:> <?submit "reset", __"Reset":>
+#/root/src/Fluffball/apps/poedit.papp:271           <?submit "refresh", [TEXT]:> <?submit "reset", __"Reset":>
+#,lang=en
+msgid "Refresh"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:190    <?slink [TEXT], "view":><p>
+#,lang=en
+msgid "Return to the directory view"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:16    <?retlink [TEXT]:><p>
+#,lang=en
+msgid "Go Back"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:128    <li>[TEXT]: <?cform("view").textfield("search").endform?>
+#,lang=en
+msgid "Quicksearch"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:120    [TEXT]: <?$cnt:><br>
+#,lang=en
+msgid "Message count"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:99    <h2>[TEXT]</h2>
+#,lang=en
+msgid "Languages"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:11    <title>[TEXT]</title>
+#/root/src/Fluffball/apps/poedit.papp:14    <h1>[TEXT]</h1>
+#,lang=en
+msgid "PO-Editor"
+msgstr ""
+
+#/root/src/Fluffball/apps/poedit.papp:261           <?submit "save", [TEXT]:> <?submit "savenext", [TEXT]:> <?submit "next", [TEXT]:>
+#/root/src/Fluffball/apps/poedit.papp:272           <?submit "save", [TEXT]:> <?submit "savenext", [TEXT]:> <?submit "next", [TEXT]:>
+#,lang=en
+msgid "Next"
+msgstr ""
+

@@ -1,0 +1,210 @@
+<!--
+
+   macros used for creating sql editing forms
+
+   - nesting is not allowed
+
+-->
+
+<papp name="papp">
+
+<xperl><![CDATA[
+
+sub ef_edit*() {
+   $state{ef_edit};
+}
+]]></xperl>
+
+<macro name="ef_parse*"><phtml><![CDATA[
+<:
+   my $ef = delete $arg{ef};
+   return unless $ef;
+   local *FILE;
+
+   if (reload_p) {
+      echo __"[not updating anything due to page reload]", "<br>";
+   } else {
+      my %set;
+      echo "<tt>";
+      if (!defined $ef->{where}[1]) {
+         # no id, lets try to create one (lets hope the where clause is an auto_increment)
+         my $st = sql_exec "insert into $ef->{table} ($ef->{where}[0]) values (NULL)";
+         $ef->{where}[1] = sql_insertid;
+         echo "creating new row ($ef->{where}[1])<br>";#d#
+      }
+      while (my ($field, $data) = each %{$ef->{constant}}) {
+         sql_exec "update $ef->{table} set $field = ? where $ef->{where}[0] = ?",
+                  $data, $ef->{where}[1];
+         echo "updating $field: ", ($DBI::errstr||"ok"), "<br>";
+      }
+      parse_multipart_form {
+         my ($fh, $name, $ct, $cd) = @_;
+         my $data;
+         if ($name =~ /^file_(.*)$/) {
+            my $path = $ef->{file}{$1};
+            my $prev;
+            echo "file upload to '$path'<br>";
+            if (open FILE, ">", "$path~") {
+               my $size = 0;
+               while ($fh->read($data, 1024*16) > 0) {
+                  $size += length $data;
+                  print FILE $prev, substr($data, 0, length($data) - 2);
+                  $prev = substr $data, -2;
+               }
+               if ($prev ne "\015\012") {
+                  echo "=&gt;&nbsp;WARNING: no trailing CRLF found<br>";
+                  print FILE $prev;
+               } else {
+                  $size -= 2;
+               }
+               close FILE;
+               if ($size > 0) {
+                  echo "=&gt;&nbsp;read $size bytes<br>";
+                  rename "$path~", $path;
+                  echo "=&gt;&nbsp;renaming to final destination ($!)<br>";
+               } else {
+                  unlink "$path~";
+                  echo "=&gt;&nbsp;empty file upload ignored<br>";
+               }
+            } else {
+               echo "=&gt;&nbsp;$path~: $!<br>";
+            }
+         } else {
+            $fh->read($data, 1024*128);
+            $data =~ s/\r\n$//;
+            if ($name =~ /^field_(.*)$/) {
+               my $field = $1;
+               sql_exec "update $ef->{table} set $field = ? where $ef->{where}[0] = ?",
+                        $data, $ef->{where}[1];
+               echo "updating $field: ", ($DBI::errstr||"ok"), "<br>";
+            } elsif ($name =~ /^set_(.*)$/) {
+               push @{$set{$1}}, $data;
+            } else {
+               return 0;
+            }
+         }
+         return 1;
+      };
+      while (my ($field, $vals) = each %set) {
+         sql_exec "update $ef->{table} set $field = ? where $ef->{where}[0] = ?",
+                  join (",", @$vals), $ef->{where}[1];
+         echo "updating $field: ", ($DBI::errstr||"ok"), "<br>";
+      }
+   }
+   echo "</tt>";
+   return 1;
+:>
+]]></phtml></macro>
+
+<macro name="ef_may_edit*"><phtml><![CDATA[
+   <?slink __"[Edit this page]", ef_edit => 1:><p>
+]]></phtml></macro>
+
+<macro name="ef_submit*"><phtml><![CDATA[
+   <?submit "submit_editform", __"Save Changes":>
+]]></phtml></macro>
+
+<macro name="ef_reset*"><phtml><![CDATA[
+   <?submit "reset", __"Restore Values":>
+]]></phtml></macro>
+
+<macro name="ef_begin*" args="$table $where"><phtml><![CDATA[
+   <table cellpadding=8 border=1>
+   <:ef_parse:>
+   <?
+      multipart_form;
+   :>
+   <:$ef_table = $table:>
+   <:$ef_where = $where:>
+   <:$ef_args = {
+         table => $table,
+         where => $where,
+      };
+   :>
+
+   <tr><td>
+#if $state{ef_edit}
+   <?slink __"[Edit mode OFF]", ef_edit => 0?>
+#endif
+   [$table.$where->[0] == $where->[1]]
+   <tr><td>
+   <:ef_submit:>
+   <:ef_reset:>
+   <tr><td>
+]]></phtml></macro>
+
+<macro name="ef_end*"><phtml><![CDATA[
+   <tr><td>
+   <:ef_submit:>
+   <:ef_reset:>
+   </table>
+   <?endform -ef => $ef_args:>
+]]></phtml></macro>
+
+<macro name="ef_string*" args="$content $field $len"><phtml><![CDATA[
+   <?textfield "field_$field", value => $content, size => $len||20:>
+]]></phtml></macro>
+
+<macro name="ef_text*" args="$content $field $w $h"><phtml><![CDATA[
+   <:$h ||= int (length ($content) / ($w-5.0001)) + 30:>
+   <?textarea "field_$field", cols => $w, rows => $h, wrap => undef?>$content</textarea>
+]]></phtml></macro>
+
+<macro name="ef_optionbox*" args="$content $field $values"><phtml><![CDATA[
+<:
+   my %content;
+   if (ref $content) {
+      @content{@$content} = ();
+      echo "<select name=set_$field multiple>";
+   } else {
+      $content{$content} = ();
+      echo "<select name=set_$field>";
+   }
+
+   for (my $i = 0; $i < $#$values; $i += 2) {
+      echo "<option";
+      echo " selected" if exists $content{$$values[$i]};
+      echo " value='$$values[$i]'>".__($$values[$i+1])."</option>";
+   }
+   echo "</select>";
+:>
+]]></phtml></macro>
+
+<macro name="ef_relation*" args="$content $field $relation"><phtml><![CDATA[
+<:
+   my ($sel, @arg) = @$relation;
+   echo "<select name=field_$field>";
+   my $st = sql_exec \my($id,$val), "select $sel order by 2";
+   # FIXME #d# use ef_optionbox?
+   while ($st->fetch) {
+      echo "<option";
+      echo " selected" if $id eq $content;
+      echo " value=$id>$val</option>";
+   }
+   echo "</select>";
+:>
+]]></phtml></macro>
+
+<macro name="ef_set*" args="$content $field"><phtml><![CDATA[
+<:
+   my $st = sql_exec "show columns from $ef_table like ?", $field;
+   my $type = $st->fetchrow_arrayref->[1];
+   $type =~ s/^set\('(.*)'\)$/$1/ or die "ef_set: field '$field' is not of set type\n";
+
+   ef_optionbox [split /,/, $content], $field, [ map {$_, $_} split /','/, $type ];
+:>
+]]></phtml></macro>
+
+<macro name="ef_file*" args="$path $name"><phtml><![CDATA[<?
+     filefield "file_$name":>
+   <:$ef_args->{file}{$name} = $path:>
+]]></phtml></macro>
+
+<macro name="ef_constant*" args="$content $name"><phtml><![CDATA[
+<:
+   $ef_args->{constant}{$name} = $content;
+?><tt>$content</tt>
+]]></phtml></macro>
+
+</papp>
+

@@ -1,0 +1,12 @@
+Revision history for Perl extension PApp
+
+0.02
+	- added multipart-parsing functions.
+        - added %arg hash, and "one-shot arguments" (see surl).
+        - modularization: many modules were split off into their
+          own packages, this package was divided into many modules.
+          The goal is still far away.
+
+0.01  Thu Jan 13 06:02:04 CET 2000
+	- original version; created by cp -rp
+

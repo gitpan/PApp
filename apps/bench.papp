@@ -1,0 +1,13 @@
+<papp name="bench" lang="en">
+
+<database dsn="DBI:mysql:"/>
+<language lang="en" desc="English"/>
+
+<phtml><![CDATA[
+   <html><body>
+   <?slink __"This is a test":>
+   </body></html>
+]]></phtml>
+
+</papp>
+

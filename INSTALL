@@ -1,0 +1,38 @@
+INSTALLATION INSTRUCTIONS
+
+Installation is difficult, and this document is badly written, so keep
+confident ;)
+
+REQUIRENMENTS
+
+- mysql (version 3.24 recommended), other databases might work, but
+  probably require small changes (I'd be interested to hear about
+  problems, though!).
+
+- mod_perl -OR- speedycgi
+  mod_perl is the recommended and fastest way. if you can't get mod_perl, try
+  the CGI::SpeedyCGI module. If even that fails, you could still use PApp,
+  but it will not be funny for you (read: dog-slow).
+
+
+INSTALLATION STEP-BY-STEP
+
+1. compile and install this module, as usual:
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+2. create the papp database on your mysql server
+   read gen-db.sql first, and checker wether it is ok for your database!
+
+   $ mysql <gen-db.sql
+
+   should create a new database "papp"
+
+3a. mod_perl:
+   configure apache, see the included httpd.conf
+
+3b. speedycgi:
+   not working yet ;)
+

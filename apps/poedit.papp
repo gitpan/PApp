@@ -1,0 +1,279 @@
+<papp name="poedit" lang="en">
+
+<database dsn="DBI:mysql:papp"/>
+
+<language lang="en" desc="English"/>
+<language lang="de" desc="Deutsch"/>
+
+<macro name="header"><phtml><![CDATA[
+   <html>
+   <head>
+   <title>__"PO-Editor"</title>
+   </head>
+   <body text=black link="#1010C0" vlink="#101080" alink=red bgcolor=white>
+   <h1>__"PO-Editor"</h1>
+#if retlink_p
+   <?retlink __"Go Back":><p>
+#endif
+]]></phtml></macro>
+
+<macro name="footer"><phtml><![CDATA[
+#if 1
+   <:$state{papp_debug}=1;debugbox:>
+#endif
+   </body>
+   </html>
+]]></phtml></macro>
+
+<phtml><![CDATA[
+   <:header:>
+   <:my $selected = 0:>
+
+#if $arg{scan_apps} && !reload_p
+   <hr>
+   <pre>
+<:
+   use PApp::I18n qw(scan_file scan_init scan_end scan_field);
+   for my $pmod ($papp_pmod, values %PApp::papp) {
+      scan_init $pmod->{name}, [
+         grep !ref$pmod->{lang}{$_}, keys %{$pmod->{lang}}
+      ];
+      while (my($path, $v) = each %{$pmod->{file}}) {
+         scan_file $path, $v->{lang};
+      }
+      while (my($field, $lang) = each %{$pmod->{translate}}) {
+         scan_field $pmod->{database}, $field, $lang;
+      }
+      scan_end;
+   }
+
+   my $st = sql_exec "select msgid.nr, msgstr.lang from msgid, msgstr
+                      where msgid.nr = msgstr.nr and msgid.lang = msgstr.lang";
+   while (my($nr, $lang) = $st->fetchrow_array) {
+      echo "deleting ($nr|$lang)\n";
+      sql_exec "delete from msgstr where nr = ? and lang = ?", $nr, $lang;
+   }
+   sql_exec "delete from msgid where context = ''";
+   print "delete noncontext: $sql_exec\n";
+   my $st = sql_exec "select msgstr.nr from msgstr left join msgid using (nr) where msgid.nr is null";
+   while (my($nr) = $st->fetchrow_array) {
+      echo "deleting ($nr)\n";
+      sql_exec "delete from msgstr where nr = ?", $nr;
+   }
+:>
+   </pre>
+   <hr>
+#elsif $arg{export_po} && !reload_p
+   <hr>
+   <pre>
+<:
+   use PApp::I18n qw(export_po);
+   for my $pmod ($papp_pmod, values %PApp::papp) {
+      export_po $pmod;
+   }
+:>
+   </pre>
+   <hr>
+#elsif $arg{export_dbm} && !reload_p
+   <hr>
+   <pre>
+<:
+   use PApp::I18n qw(export_dbm);
+   for my $pmod ($papp_pmod, values %PApp::papp) {
+      export_dbm $pmod;
+   }
+   # hack: assume that getppid = our apache httpd (!)
+   kill 'USR1', getppid;
+:>
+   </pre>
+   <hr>
+#endif
+
+   <h2>__"Application Control"</h2>
+   <ul>
+   <li><?slink __"Scan all loaded applications", -scan_apps => 1?> __"(can take a long time!)"
+   <li><?slink __"Export PO", -export_po => 1?>
+   <li><?slink __"Write translation tables and restart", -export_dbm => 1?>
+   </ul>
+
+   <h2>__"Languages"</h2>
+   __"Select the language to edit:"<p>
+   <ul>
+   <:
+      for (sql_fetchall "select distinct lang from msgstr order by lang") {
+         echo "<li>";
+         my ($cnt, $unt) = sql_fetch "select count(*), sum(~flags & 1) from msgstr where lang = ?", $_;
+         $link = "$_ C/U = $cnt/$unt";
+         if ($state{lang} ne $_) {
+            echo slink $link, lang => $_;
+         } else {
+            echo "<b>$link</b> ".__"[selected]";
+            $selected = 1;
+         }
+      }
+   :>
+   </ul>
+
+   <h3>__"Summary"</h3>
+   <: my ($cnt, $unt) = sql_fetch "select count(*), sum(~flags & 1) from msgstr" :>
+
+   __"Message count": <?$cnt:><br>
+   __"Untranslated or fuzzy messages": <?$unt?>
+   
+#if $selected
+   <h2>__"Menu for language" '$state{lang}'</h2>
+   <ul>
+   <li><?slink __"View/Edit all translations", "view", where => "1=1":>
+   <li><?slink __"View/Edit non-valid translations", "view", where => "~flags&1":>
+   <li>__"Quicksearch": <?cform("view").textfield("search").endform?>
+   </ul>
+
+   <h3>__"Summary for language" '$state{lang}'</h3>
+   <: my ($cnt, $unt) = sql_fetch "select count(*), sum(~flags & 1) from msgstr where lang = ?", $state{lang}; ?>
+
+   __"Message count for" '$state{lang}': <?$cnt:><br>
+   __"Untranslated or fuzzy messages": <?$unt:>
+#endif
+
+   <:footer:>
+]]></phtml>
+
+<module name="view" nosession="">
+<state keys="where begin" local="yes"/>
+<state keys="window" preferences="yes"/>
+<phtml><![CDATA[
+   <:header:>
+   <?slink __"Back to the toplevel menu", "":><p>
+
+   <: $state{begin}  ||=  0 :>
+   <: $state{window} ||= 20 :>
+
+   <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $state{begin} > $state{window} ? $state{begin} - $state{window} : 0:> ===
+   <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $state{begin} + $state{window}:>
+   <table cellspacing=1 cellpadding=1 border=1>
+   <table>
+   <tr><th>msgid</th><th>msgstr</th><th>flags</th>
+   <:
+      if ($param{search}) {
+         $state{where} = "id like '%$param{search}%' or msg like '%$param{search}%'";
+      }
+      my $st = sql_exec \my($nr,$msgid,$idlang,$msgstr,$ok),
+                        "select msgid.nr, id, msgid.lang, msg, flags
+                                from msgid, msgstr
+                                where msgid.nr = msgstr.nr and msgstr.lang = ? and ($state{where})
+                                order by msgid.nr limit ?,?",
+                        $state{lang},
+                        $state{begin}||0, $state{window}||20;
+
+      while($st->fetch) {
+         echo "<tr>";
+         for ($msgid, $msgstr) {
+            $_ = substr $_, 0, 40; 
+            s/([\x00-\x1f])/"\\c{".ord($1)."}"/ge;
+         }
+         echo "<td>", (slink $_ || "&nbsp;", "edit", nr => $nr), "</td>" for ("$msgid/$lang", $msgstr, $ok);
+      }
+   :>
+   </table>
+   <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $state{begin} > $state{window} ? $state{begin} - $state{window} : 0:> ===
+   <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $state{begin} + $state{window}:>
+
+   <:footer:>
+]]></phtml></module>
+
+<module name="edit" nosession="">
+<state keys="where begin nr" local="yes"/>
+<state keys="msgstr msgid" local="yes"/>
+<state keys="width" preferences="yes"/>
+<phtml><![CDATA[
+   <:header:>
+   <?slink __"Return to the directory view", "view":><p>
+   <?$state{lang}:>
+
+   <:
+      #$param{msgstr} =~ s/\s*\n\s*/ /g if defined $param{msgstr};
+      #$param{msgstr} = $state{msgid} if $param{msgstr} eq "";
+
+      if ($param{save} || $param{savenext}) {
+         if ($state{msgid} =~ /\\n$/) {
+            $param{msgstr} =~ s/\n*$/\n/;
+         } else {
+            $param{msgstr} =~ s/\n+$//;
+         }
+         sql_exec "update msgstr set msg = ?, flags = ? where nr = ? and lang = ?",
+                  $param{msgstr}, defined $param{ok} ? "valid" : "",
+                  $state{nr}, $state{lang};
+         echo "<b>entry $state{nr} updated ($DBI::errstr)</b><p>";
+      }
+
+      if ($param{savenext} || $param{next}) {
+         delete $param{msgstr};
+
+         $state{nr} = sql_fetch "select nr from msgstr where ~flags&1 and nr > ? and lang = ? order by nr limit 1",
+                                $state{nr}, $state{lang};
+         if (!$state{nr}) {
+            $state{nr} = sql_fetch "select nr from msgstr where ~flags&1 and lang = ? order by nr limit 1",
+                                   $state{lang};
+         }
+         if (!$state{nr}) {
+            $state{nr} = 1;
+            echo errbox "Congrats", "no more untranslated entries";
+         }
+      }
+
+      my ($msgid, $msgstr, $context, $idlang)
+         = sql_fetch "select id, msg, context, msgid.lang
+                             from msgid, msgstr
+                             where msgid.nr = ? and msgid.nr = msgstr.nr and msgstr.lang = ?",
+                             $state{nr}, $state{lang};
+
+      if (!$param{reset} && defined $param{msgstr}) {
+         $msgstr = $param{msgstr};
+      }
+
+      $state{msgid} = $msgid;
+
+      for ($msgid, $msgstr, $context) {
+         $_ = PApp::escape_html $_;
+      }
+      $context =~ s/\n/<br>/g;
+
+      $state{width} ||= 40;
+
+      $state{width}++ if $param{incwidth};
+      $state{width}-- if $param{decwidth};
+
+      save_prefs;
+
+      my $lines = int (length($msgstr) / $state{width}) + 15;
+   :>
+
+   <?cform:>
+   <table cellspacing=1 cellpadding=8 border=1 align=center width="96%">
+   <tr><th width="48%">msgid</th><th width="48%">
+          <?submit "decwidth", "&lt;&lt;&lt;&lt;":> msgstr <?submit "incwidth", "&gt;&gt;&gt;&gt;":>
+       </th>
+   <tr><td>&nbsp;</td><td>
+          <?submit "refresh", __"Refresh":> <?submit "reset", __"Reset":>
+          <?submit "save", __"Save":> <?submit "savenext", __"Save & Next":> <?submit "next", __"Next":>
+          <br>
+          <?checkbox "ok", checked => undef?> __"Valid?"
+       <td>
+   <tr><td valign=top>
+          <tt>[$idlang]<br>$msgid</tt>
+       </td><td valign=top>
+          <textarea name=msgstr rows=<?$lines:> cols=<?$state{width}:> wrap><?$msgstr:></textarea>
+       </td>
+   <tr><td>&nbsp;<td>
+          <?submit "refresh", __"Refresh":> <?submit "reset", __"Reset":>
+          <?submit "save", __"Save":> <?submit "savenext", __"Save & Next":> <?submit "next", __"Next":>
+   <tr><td valign=top colspan=2>
+          <tt><?$context:></tt>
+       </td>
+   </table>
+   <?endform:>
+   <:footer:>
+]]></phtml></module>
+
+</papp>
+

@@ -1,0 +1,95 @@
+#/usr/app/lib/perl5/PApp.pm:786 <head><title>".[TEXT]."</title></head>
+#,lang=en
+msgid "page redirection"
+msgstr ""
+
+#/fluffball/macro/util.papp:31      <p>[referer] <?alink [TEXT], $request->header_in('Referer'):>
+#,lang=en
+msgid "Send me back to wherever I came from"
+msgstr ""
+
+#/usr/app/lib/perl5/PApp.pm:791 ".[TEXT]."
+#,lang=en
+msgid "The automatic redirection  has failed. Please try a <i>slightly</i> newer browser next time, and in the meantime <i>please</i> follow this link ;)"
+msgstr ""
+
+#/fluffball/macro/admin.papp:217             echo errbox [TEXT], __"no such user or wrong password";
+#,lang=en
+msgid "Login failed"
+msgstr ""
+
+#/fluffball/macro/admin.papp:217             echo errbox [TEXT], [TEXT];
+#,lang=en
+msgid "no such user or wrong password"
+msgstr ""
+
+#/fluffball/macro/editform.papp:100    <?slink [TEXT], ef_edit => 1:><p>
+#,lang=en
+msgid "[Edit this page]"
+msgstr ""
+
+#/fluffball/macro/admin.papp:269          [TEXT] <?alink ((reference_url 1)x2):><br>
+#,lang=en
+msgid "<i>Possible(!)</i> URI (for referencing) of this page:"
+msgstr ""
+
+#/fluffball/macro/editform.papp:25       echo [TEXT], "<br>";
+#,lang=en
+msgid "[not updating anything due to page reload]"
+msgstr ""
+
+#/fluffball/macro/admin.papp:264          [TEXT]<br>
+#,lang=en
+msgid "(You are not currently logged in)"
+msgstr ""
+
+#/fluffball/macro/editform.papp:108    <?submit "reset", [TEXT]:>
+#,lang=en
+msgid "Restore Values"
+msgstr ""
+
+#/fluffball/macro/editform.papp:127    <?slink [TEXT], ef_edit => 0?>
+#,lang=en
+msgid "[Edit mode OFF]"
+msgstr ""
+
+#/fluffball/macro/admin.papp:260          [TEXT]<b>$PApp::userid</b><br>
+#,lang=en
+msgid "You are currently known to me as user #"
+msgstr ""
+
+#/fluffball/macro/admin.papp:267          <?sprintf [TEXT], PApp::reload_p:><br>
+#,lang=en
+msgid "This page has been reloaded <b>%d</b> times."
+msgstr ""
+
+#/fluffball/macro/util.papp:28      <p>[returl] <?retlink [TEXT]:>
+#,lang=en
+msgid "Go Back"
+msgstr ""
+
+#/fluffball/macro/admin.papp:262          [TEXT] "<b><?join ", ", keys %{$state{papp}{access}}:></b>"<br>
+#,lang=en
+msgid "Current access rights include"
+msgstr ""
+
+#/fluffball/macro/util.papp:26    [TEXT]
+#,lang=en
+msgid "I fear you do not have the necessary... well... access rights to do anything on this page..."
+msgstr ""
+
+#/fluffball/macro/editform.papp:104    <?submit "submit_editform", [TEXT]:>
+#,lang=en
+msgid "Save Changes"
+msgstr ""
+
+#/fluffball/macro/admin.papp:270          [TEXT]<p>
+#,lang=en
+msgid "Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"
+msgstr ""
+
+#/fluffball/macro/admin.papp:271          <?slink [TEXT], papp_logout => 1:>
+#,lang=en
+msgid "Reload page and drop all priviledges"
+msgstr ""
+

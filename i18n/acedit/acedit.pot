@@ -1,0 +1,37 @@
+#/root/src/Fluffball/apps/acedit.papp:66    <?slink [TEXT], "":><p>
+#,lang=en
+msgid "Go Back"
+msgstr ""
+
+#/root/src/Fluffball/apps/acedit.papp:53           <td><?slink [TEXT], "edit", userid => $id:>
+#,lang=en
+msgid "[EDIT]"
+msgstr ""
+
+#/root/src/Fluffball/apps/acedit.papp:35    <li><?sform:>[TEXT] <?textfield "search":><?endform:>
+#,lang=en
+msgid "Search username/comment:"
+msgstr ""
+
+#/root/src/Fluffball/apps/acedit.papp:38    [TEXT]<br>
+#,lang=en
+msgid "To see all users, enter  nothing in the 'Search' entry"
+msgstr ""
+
+#/root/src/Fluffball/apps/acedit.papp:33    [TEXT]
+#,lang=en
+msgid "There are currently $cnt users in the database."
+msgstr ""
+
+#/root/src/Fluffball/apps/acedit.papp:20    access_page "admin", [TEXT], sub {
+#/root/src/Fluffball/apps/acedit.papp:22          <h1>[TEXT]</h1>
+#/root/src/Fluffball/apps/acedit.papp:64    <h1>[TEXT]</h1>
+#,lang=en
+msgid "Access-Editor"
+msgstr ""
+
+#/root/src/Fluffball/apps/acedit.papp:39    [TEXT]<p>
+#,lang=en
+msgid "To see only registered users, enter a single underscore in the 'Search' entry"
+msgstr ""
+

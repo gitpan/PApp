@@ -1,0 +1,293 @@
+<papp name="papp">
+
+<xperl><![CDATA[
+
+require 5.006; # older versions create BIG security holes!!
+
+=head2 authen_p
+
+Return true when the user has logged on using this module
+
+=head2 access_P
+
+Return true when the user has the specified access right (and has logged in!).
+
+=head2 admin_p
+
+Return true when user has the "admin" access right.
+
+=head2 known_user_p [access]
+
+Check wether the current user is already known in the access
+database. Returns his username (login) if yes, and nothing otherwise.
+
+If the optional argument C<access> is given, it additionally checks wether
+the user has the given access right (even if not logged in).
+
+=head2 username [$userid]
+
+Return the username of the given userid.
+
+=cut
+
+# do _NEVER_ drop the exists, or nasty things will happen (security hole!)
+sub authen_p*() {
+   $state{papp}{access_valid};
+}
+
+sub access_p*($) {
+   exists $state{papp}{access}{$_[0]};
+}
+
+sub admin_p*() {
+   exists $state{papp}{access}{"admin"};
+}
+
+sub known_user_p*(;$) {
+   my $access_p = shift;
+   my $st = $PApp::statedbh->prepare("select access, user from user where id = ?");
+   $st->execute($userid);
+   if (my ($access, $username) = $st->fetchrow_array) {
+      if ($access_p ne "") {
+         for (split /[, \t\r\n]+/, $access) {
+            return $username if $_ eq $access_p;
+         }
+         return ();
+      }
+      return $username;
+   } else {
+      return ();
+   }
+}
+
+sub _nuke_access() {
+   delete $state{papp}{access_valid};
+   delete $state{papp}{access};
+}
+
+# get access info from database
+sub _fetch_access() {
+   my $st = $PApp::statedbh->prepare("select access from user where id = ?");
+   $st->execute($userid);
+
+   _nuke_access;
+   $state{papp}{access}{$_} = 1 for split /[, \t\r\n]+/, $st->fetchrow_arrayref->[0];
+   $state{papp}{access_valid} = 1;
+}
+
+# store access info into the database
+sub _store_access() {
+   my $st = $PApp::statedbh->prepare("update user set access = ? where id = ?");
+   $st->execute((join ",", keys %{$state{papp}{access}}), $userid);
+}
+
+=head2 update_login $user, $pass
+
+=cut
+
+sub choose_username*($) {
+   my ($stem) = @_;
+   my $id;
+   my $st = $PApp::statedbh->prepare("select count(id) from user where user = ?");
+   for(;;) {
+      my $user = $stem.$id;
+      $st->execute($user);
+      return $user unless $st->fetchrow_arrayref->[0];
+      $id += 1 + int rand 20;
+   }
+}
+
+sub update_username*($;$) {
+   my $userid = @_ > 1 ? shift : $userid;
+   my $user = shift;
+   $PApp::statedbh->do("lock tables user write");
+   if (sql_fetch $PApp::statedbh, "select count(*) from user where user = ? and id != ?", $user, $userid) {
+      undef $userid;
+   } else {
+      warn "update user set user = ? where id = ?, $user, $userid\n";#d#
+      sql_exec $PApp::statedbh, "update user set user = ? where id = ?", $user, $userid;
+   }
+   $PApp::statedbh->do("unlock tables");
+   $userid;
+}
+
+sub update_password*($) {
+   my ($pass) = @_;
+   $pass = crypt $pass, join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64];
+   my $st = $PApp::statedbh->prepare("update user set pass = ? where id = ?");
+   $st->execute($pass, $userid);
+}
+
+sub update_comment*($) {
+   my ($comment) = @_;
+   my $st = $PApp::statedbh->prepare("update user set comment = ? where id = ?");
+   $st->execute($comment, $userid);
+}
+
+sub username*(;$) {
+   my $uid = @_ ? shift : $userid;
+   my $st = $PApp::statedbh->prepare("select user from user where id = ?");
+   $st->execute($uid);
+   ($st->fetchrow_array)[0];
+}
+
+]]></xperl>
+
+<macro name="user_logout*">
+=head2 user_logout
+
+Log the current user out (remove any access rights).
+
+=cut
+<perl><![CDATA[
+   _nuke_access;
+]]></perl></macro>
+
+<macro name="grant_access*" args="$right">
+=head2 grant_access accessright
+
+Grant the specified access right to the logged-in user.
+
+=cut
+<perl><![CDATA[
+   if (authen_p) {
+      _fetch_access;
+      $state{papp}{access}{$right} = 1;
+      _store_access;
+   } else {
+      fancydie "Internal error", "grant_access was called but no user was logged in";
+   }
+]]></perl></macro>
+
+<macro name="revoke_access*" args="$right">
+=head2 revoke_access accessright
+
+Revoke the specified access right to the logged-in user.
+
+=cut
+<perl><![CDATA[
+   if (authen_p) {
+      _fetch_access;
+      delete $state{papp}{access}{$right};
+      _store_access;
+   } else {
+      fancydie "Internal error", "revoke_access was called but no user was logged in";
+   }
+]]></perl></macro>
+
+<macro name="verify_login*" args="$user $pass">
+=head2 verify_login $user, $pass
+
+Try to login as user $user, with pass $pass. If the password verifies
+correctly, switch the userid (if necessary), add any access rights and
+return true. Otherwise, return false and do nothing else.
+
+=cut
+<perl><![CDATA[
+   my $st = sql_exec $PApp::statedbh,
+                     \my($userid, $xpass),
+                     "select id, pass from user where user = ?",
+                     $user;
+   if (!$st->fetch || $userid == 0 || $xpass ne crypt $pass, substr($xpass,0,2)) {
+      sleep 3;
+      return 0;
+   } else {
+      logout_user;
+      PApp::switch_userid $userid;
+      _fetch_access;
+      return 1;
+   }
+]]></perl></macro>
+
+<macro name="loginbox*">
+=head2 loginbox
+
+Display a login box.
+
+=cut
+<phtml><![CDATA[
+   <:
+      my ($user, $pass) = ($param{papp_user}, $param{papp_pass});
+   :>
+# if $user
+      <:
+         if (verify_login $user, $pass) {
+            return;
+         } else {
+            echo errbox __"Login failed", __"no such user or wrong password";
+         }
+      :>
+# endif
+   <p>&nbsp;<p>&nbsp;<p>
+   <?cform:>
+      <?hidden name => "login", value => 1:>
+      <table width="100%" bgcolor="#ffff00" cellpadding=0 cellspacing=0 border=0>
+         <tr><td>&nbsp;</td><td><font color="#000000">
+            &nbsp;<p>
+            You may log-in now!
+         </font></td></tr><tr><td><font color="#000000">
+            Username:</td><td><?textfield "papp_user", value => $user,  size => 12, maxlength => 32:></td>
+         </font></td></tr><tr><td><font color="#000000">
+            Password:</td><td><?password_field "papp_pass", size => 12, maxlength => 32:></td>
+         </font></td></tr><tr><td>&nbsp;</td><td><font color="#000000">
+            <?submit "login" => "Log In":>
+            <p>&nbsp;
+         </font></td></tr>
+      </table>
+      </font>
+   <?endform:>
+   <p>&nbsp;<p>&nbsp;<p>
+]]></phtml></macro>
+
+<macro name="adminbox*(;&amp;)">
+=pod adminbox(;&amp;)
+
+Display a very visible box with some information interesting for admins,
+developers, translators, editors, authors... The optional block will
+be executed so you can add page-specific  info.
+
+=cut
+<callback type="request"><perl><![CDATA[
+   if (delete $state{papp_logout}) {
+      logout_user;
+   }
+]]></perl></callback>
+<phtml><![CDATA[
+   <table width="100%" bgcolor="#ffffa0" cellpadding=20 cellspacing=0 border=0>
+      <tr><td><font color="#000000">
+         <h1>Admin-Info</h1>
+
+         __"You are currently known to me as user #"<b>$PApp::userid</b><br>
+#if authen_p
+         __"Current access rights include" "<b><?join ", ", keys %{$state{papp}{access}}:></b>"<br>
+#else
+         __"(You are not currently logged in)"<br>
+#endif
+
+         <?sprintf __"This page has been reloaded <b>%d</b> times.", PApp::reload_p:><br>
+
+         __"<i>Possible(!)</i> URI (for referencing) of this page:" <?alink ((reference_url 1)x2):><br>
+         __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p>
+         <?slink __"Reload page and drop all priviledges", papp_logout => 1:>
+
+         <:@_ and &{$_[0]}:>
+      </font></td></tr>
+   </table>
+]]></phtml></macro>
+
+<macro name="check_login*">
+=head2 check_login
+
+- if the user is not logged in, show a loginbox
+- if the user has logged in, display some info about him
+
+=cut
+<phtml><![CDATA[
+#if authen_p
+   <:adminbox:>
+#else
+   <:loginbox:>
+#endif
+]]></phtml></macro>
+
+</papp>

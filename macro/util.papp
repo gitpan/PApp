@@ -1,0 +1,40 @@
+<papp name="papp">
+
+<import src="macro/admin"/>
+
+<macro name="plain_header*(;$)" args="$title"><phtml><![CDATA[
+<html>
+ <head>
+  <title><?$title?></title>
+ </head>
+ <body link="#a000000" alink="#a00000" vlink="#a00000" text="#000000" bgcolor="#ffffb4">
+]]></phtml></macro>
+
+<macro name="plain_footer*"><phtml><![CDATA[
+ </body>
+</html>
+]]></phtml></macro>
+
+<macro name="access_page*($$$)" args="$access $title $body"><phtml><![CDATA[
+<:plain_header $title:>
+#if !access_p $access
+     <:loginbox:>
+#endif
+#if access_p $access
+     <: &$body :>
+#else
+   __"I fear you do not have the necessary... well... access rights to do anything on this page..."
+# if retlink_p
+     <p>[returl] <?retlink __"Go Back":>
+# endif
+# if $request->header_in('Referer')
+     <p>[referer] <?alink __"Send me back to wherever I came from", $request->header_in('Referer'):>
+# endif
+#endif
+<:plain_footer:>
+]]></phtml></macro>
+
+</papp>
+
+
+

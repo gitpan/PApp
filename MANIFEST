@@ -1,0 +1,50 @@
+README
+Changes
+MANIFEST
+INSTALL
+Makefile.PL
+PApp.pm
+PApp.xs
+t/load.t
+PApp/FormBuffer.pm
+PApp/I18n.pm
+PApp/Exception.pm
+PApp/Makefile.PL
+PApp/SQL.pm
+PApp/SQL.xs
+PApp/Parser.pm
+PApp/Config.pm
+PApp/HTML.pm
+PApp/CGI.pm
+PApp/Apache.pm
+macro/admin.papp	user administration package
+macro/util.papp		some utility functions
+macro/editform.papp	very easy edit-forms for sql tables
+papp.dtd		xml-DTD for papp-files
+papp.vim		vim syntax file
+
+i18n/papp/papp.pot
+i18n/papp/default.dpo
+i18n/papp/de.po
+i18n/papp/de.dpo
+
+apps/poedit.papp	simple translation editor
+i18n/poedit/poedit.pot
+i18n/poedit/default.dpo
+i18n/poedit/de.po
+i18n/poedit/de.dpo
+
+apps/dbedit.papp	simple mysql database editor
+i18n/dbedit/dbedit.pot
+i18n/dbedit/default.dpo
+
+apps/acedit.papp	simple user & access rights editor
+i18n/acedit/acedit.pot
+i18n/acedit/default.dpo
+i18n/acedit/de.po
+i18n/acedit/de.dpo
+
+apps/bench.papp		benchmark
+
+gen-db.sql
+httpd.conf

@@ -1,0 +1,86 @@
+<!--
+   access rights editor
+   requires "admin" priviledges
+-->
+
+<papp name="acedit" lang="en">
+
+<language lang="en" desc="English"/>
+<language lang="de" desc="Deutsch"/>
+
+<import src="macro/util"/>
+<import src="macro/editform"/>
+
+<callback type="request"><perl><![CDATA[
+   $DBH = $PApp::statedbh;
+]]></perl></callback>
+
+<macro name="page(&amp;)" args="$body"><phtml><![CDATA[
+<:
+   access_page "admin", __"Access-Editor", sub {
+      :>
+         <h1>__"Access-Editor"</h1>
+      <:
+      &$body;
+   }
+:>
+]]></phtml></macro>
+
+<state keys="search" import="yes"/>
+<phtml><![CDATA[
+<:page {:>
+   <:my ($cnt) = sql_fetch "select count(*) from user":>
+   __"There are currently $cnt users in the database."
+   <ul>
+   <li><?sform:>__"Search username/comment:" <?textfield "search":><?endform:>
+   </ul>
+
+   __"To see all users, enter  nothing in the 'Search' entry"<br>
+   __"To see only registered users, enter a single underscore in the 'Search' entry"<p>
+
+#if exists $state{search}
+   <:
+      my $st = sql_exec \my($id, $user, $pass, $access, $comment),
+                        "select id, user, pass, access, comment
+                         from user
+                         where user like ? or comment like ?",
+                         ("%$state{search}%")x2;
+   :>
+   <table rules=all frame=box border=1>
+   <tr><th>ID<th>login<th>password<th>access<th>comment
+   <: while ($st->fetch) {?>
+      <tr><td>$id<td>$user<td>$pass<td>$access<td><?substr $comment, 0, 20?>
+          <td><?slink __"[EDIT]", "edit", userid => $id:>
+   <:}:>
+   </table>
+#endif
+<:}:>
+]]></phtml>
+
+<module name="edit">
+<state keys="userid" local="yes"/>
+<phtml><![CDATA[
+<:page {:>
+   <h1>__"Access-Editor"</h1>
+
+   <?slink __"Go Back", "":><p>
+
+   <:ef_begin "user", ["id", $state{userid}]:>
+   <:
+     sql_fetch \my($user, $pass, $access, $comment),
+               "select user, pass, access, comment from user where id = ?",
+               $state{userid};
+   :>
+   <table>
+   <tr><td>User<td><:ef_string $user, "user", 20:>
+   <tr><td>Pass<td><:ef_string $pass, "pass", 14:>
+   <tr><td>Access<td><:ef_text $access, "access", 60, 5:>
+   <tr><td>Comment<td><:ef_text $comment, "comment", 60, 8:>
+   </table>
+
+   <:ef_end:>
+<:}:>
+]]></phtml></module>
+
+</papp>
+

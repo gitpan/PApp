@@ -1,0 +1,125 @@
+<!--
+   DTD for PApp-files
+   has never been tested!
+   (c)2000 Marc Lehmann <pcg@goof.com>
+-->
+
+<!ENTITY % version    "1.1">
+
+<!ENTITY % control    "(translate|state)">
+<!ENTITY % perlcode   "(perl|xperl|phtml|%control;)*">
+<!ENTITY % sourceref  "src CDATA">
+<!ENTITY % yesno      "(yes|no)">
+
+<!ENTITY % modulebody "(module|import|callback|macro|%perlcode;)*">
+
+<!ELEMENT papp     (%modulebody;|database|language)+>
+<!ATTLIST papp
+    name CDATA #IMPLIED
+    lang CDATA #IMPLIED
+>
+
+<!--
+   each web-page is a seperate "module"
+   name		the published page name (in the url)
+   defer	defer loading of the source (NYI)
+   nosession	in case no valid session existed, redirect to this module instead
+-->
+<!ELEMENT module   (%modulebody;)>
+<!ATTLIST module
+    %sourceref;     #IMPLIED
+    name ID         #REQUIRED
+    defer %yesno;   "no"
+    nosession IDREF #IMPLIED
+>
+
+<!-- import is similar to perl's use, but works on .papp-files -->
+<!ELEMENT import   EMPTY>
+<!ATTLIST import
+    %sourceref;    #REQUIRED
+    export %yesno; "no"
+>
+
+<!--
+   callbacks
+   init		post-config, pre-forking
+   childinit	at server-start (per-process) NYI!
+   childexit	at server-end (per-process) NYI!
+   request	just before each request
+   cleanup	end of request (probably to be removed in the future)
+   newuser	initialize a new user (%state is almost empty)
+   newsession	initialize a new session (%state is %user, augment it!)
+-->
+<!ELEMENT callback %perlcode;>
+<!ATTLIST callback
+    type     (init|childinit|childexit|request|cleanup|newsession|newuser) #REQUIRED
+>
+
+<!--
+   the different ways to embed perl
+   perl		plain perl code (better use <![CDATA[ code... ]]>
+   xperl	extended perl (with autoexport!)
+   phtml	html (or anything else) with embedded perl code
+-->
+<!ELEMENT perl     (#PCDATA)>
+<!ELEMENT xperl    (#PCDATA)>
+<!ELEMENT phtml    (#PCDATA)>
+
+<!-- embed a perl macro -->
+<!-- args is a whitespace seperated list of parameter names -->
+<!ELEMENT macro    %perlcode;>
+<!ATTLIST macro
+    name CDATA #REQUIRED
+    args CDATA #IMPLIED
+>
+
+<!-- set default database for the sql_* family of commands -->
+<!-- the body can consist of the  sql-commands needed to re-create
+     the database if neccessary -->
+<!ELEMENT database  EMPTY>
+<!ATTLIST database
+    dsn      CDATA #REQUIRED
+    username CDATA #IMPLIED
+    password CDATA #IMPLIED
+>
+
+<!--
+    translate a single field (columns) of a database. lang is the (optional)
+    language tag.
+-->
+<!ELEMENT translate  EMPTY>
+<!ATTLIST translate
+    fields   CDATA #REQUIRED
+    lang     CDATA #IMPLIED
+>
+
+<!-- define a supported language, together with aliases -->
+<!ELEMENT language EMPTY>
+<!ATTLIST language
+    lang    CDATA #REQUIRED
+    desc    CDATA #REQUIRED
+    aliases CDATA #IMPLIED   <!-- deprecated: should no longer be used -->
+>
+
+<!--
+   type'ify state keys
+   preference	this is a preference item ("durable")
+   syspref	this is a systemwide preference item ("durable")
+   import	import from insecure places
+   local	mark this var as local to this module
+-->
+<!ENTITY % statetypes "(preference|session)">
+<!ELEMENT state EMPTY>
+<!ATTLIST state
+    keys    CDATA       #REQUIRED
+    preference %yesno;  "no"
+    syspref %yesno;     "no"
+    import  %yesno;     "no"
+    local   %yesno;     "no"
+>
+
+<!--
+<database dsn="DBI:mysql:papp">
+</database>
+-->
+
