@@ -162,7 +162,7 @@ FUNCTIONS/METHODS
 
     capture { code/macros/html }
         Captures the output of "code/macros/perl" and returns it, instead of
-        sending it to the browser. This is more powerful that it sounds, for
+        sending it to the browser. This is more powerful than it sounds, for
         example, this works:
 
          <:
@@ -221,11 +221,11 @@ FUNCTIONS/METHODS
     retlink_p
     returl
     retlink
-        *FIXME*
+        *FIXME* (see also `current_locals')
 
     %locals = current_locals
         Return the current locals (defined as "local" in a state element) as
-        key => value pairs. Useful for sublinks:
+        key => value pairs. Useful for `sublink's:
 
          <? sublink [current_locals], "Log me in!", "login" :>
 
@@ -275,7 +275,7 @@ FUNCTIONS/METHODS
     internal_redirect url
         Immediately redirect to the given url. *These functions do not
         return!*. `redirect_url' creates a http-302 (Page Moved) response,
-        changign the url the browser sees (and displays).
+        changing the url the browser sees (and displays).
         `internal_redirect' redirects the request internally (in the
         web-server), which is faster, but the browser will not see the url
         change.
@@ -288,14 +288,17 @@ FUNCTIONS/METHODS
 
          my ($name, ...) = sql_fetch "select ... from game where id = ", $S{gameid};
          abort_to "games_overview" unless defined $name;
- 
+
+        This is used in the module showing game details. If it doesn't find
+        the game it just aborts to the overview page with the list of games.
+
     debugbox
         Create a small table with a single link "[switch debug mode ON]".
         Following that link will enable debugigng mode, reload the current
         page and display much more information (%state, %P, %$pmod and the
         request parameters). Useful for development. Combined with the admin
         package (the admin entry in the macro manpage), you can do nice
-        things like in your page:
+        things like this in your page:
 
          #if admin_p
            <: debugbox :>

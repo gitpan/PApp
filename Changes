@@ -1,5 +1,14 @@
 Revision history for Perl extension PApp
 
+0.06  Wed Jun  7 21:52:15 CEST 2000
+	- poedit now uses the statedb.
+        - admin now included poedit access right by default.
+        - document PApp::Config rudimentarily.
+        - PApp.pm makes use of PApp::Config now.
+        - PApp::Config now by default uses a 256 bit key.
+        - new env table for future "papp global environment".
+        - added a LONG WIZARD EXAMPLE to PApp::XML's manpage.
+
 0.05  Sat May 27 22:25:51 CEST 2000
 	- added PApp::XML. Boring, but together with XML::XSLT it rocks!
 	- implemented N_($).

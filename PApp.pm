@@ -115,7 +115,7 @@ use PApp::I18n;
 use PApp::HTML;
 
 BEGIN {
-   $VERSION = 0.05;
+   $VERSION = 0.06;
 
    @ISA = qw/Exporter/;
 
@@ -150,7 +150,6 @@ BEGIN {
 
    $configured;
 
-   @incpath;     # global search path
    $key;
    $cipher_e;
    $cipher_d;
@@ -310,7 +309,8 @@ sub event {
 }
 
 sub search_path {
-   push @incpath, @_;
+   shift;
+   goto &PApp::Config::search_path;
 }
 
 sub configure {
@@ -318,14 +318,17 @@ sub configure {
    my %a = @_;
    my $caller = caller;
 
-   $statedb ||= "DBI:mysql:papp";
-   $libdir  ||= "/fluffball"; #d# ERROR
-   $i18ndir ||= "$libdir/i18n";
+   $statedb      ||= $PApp::Config{STATEDB};
+   $statedb_user ||= $PApp::Config{STATEDB_USER};
+   $statedb_pass ||= $PApp::Config{STATEDB_PASS};
+   $libdir       ||= $PApp::Config{LIBDIR};
+   $i18ndir      ||= $PApp::Config{I18NDIR};
+   $key          ||= $PApp::Config{CIPHERKEY};
 
    exists $a{libdir} and $libdir = $a{libdir};
    exists $a{pappdb} and $statedb = $a{pappdb};
    exists $a{pappdb_user} and $statedb_user = $a{pappdb_user};
-   exists $a{pappdb_pass} and $statedb_user = $a{pappdb_pass};
+   exists $a{pappdb_pass} and $statedb_pass = $a{pappdb_pass};
    exists $a{cookie_reset} and $cookie_reset = $a{cookie_reset};
    exists $a{cookie_expires} and $cookie_expires = $a{cookie_expires};
    exists $a{checkdeps} and $checkdeps = $a{checkdeps};
@@ -377,7 +380,7 @@ sub configured_p {
 
 sub expand_path {
    my $module = shift;
-   for (@incpath) {
+   for (PApp::Config::search_path) {
       return "$_/$module"      if -f "$_/$module";
       return "$_/$module.papp" if -f "$_/$module.papp";
    }
@@ -398,7 +401,7 @@ Works just like the C<print> function, except that it is faster for generating o
 =item capture { code/macros/html }
 
 Captures the output of "code/macros/perl" and returns it, instead of
-sending it to the browser. This is more powerful that it sounds, for
+sending it to the browser. This is more powerful than it sounds, for
 example, this works:
 
  <:
@@ -528,7 +531,7 @@ sub slink {
 
 =item retlink
 
-*FIXME*
+*FIXME* (see also C<current_locals>)
 
 =cut
 
@@ -562,7 +565,7 @@ sub retlink {
 
 =item %locals = current_locals
 
-Return the current locals (defined as "local" in a state element) as key => value pairs. Useful for sublinks:
+Return the current locals (defined as "local" in a state element) as key => value pairs. Useful for C<sublink>s:
 
  <? sublink [current_locals], "Log me in!", "login" :>
 
@@ -693,7 +696,7 @@ sub parse_multipart_form(&) {
 
 Immediately redirect to the given url. I<These functions do not
 return!>. C<redirect_url> creates a http-302 (Page Moved) response,
-changign the url the browser sees (and displays). C<internal_redirect>
+changing the url the browser sees (and displays). C<internal_redirect>
 redirects the request internally (in the web-server), which is faster, but
 the browser will not see the url change.
 
@@ -724,12 +727,16 @@ sub redirect {
 
 =item abort_to surl-args
 
-Similar to C<internal_redirect>, but works the arguments through C<surl>. This is an easy way
-to switch to another module/webpage as a kind of exception mechanism. For example, I often use constructs like these:
+Similar to C<internal_redirect>, but works the arguments through
+C<surl>. This is an easy way to switch to another module/webpage as a kind
+of exception mechanism. For example, I often use constructs like these:
 
  my ($name, ...) = sql_fetch "select ... from game where id = ", $S{gameid};
  abort_to "games_overview" unless defined $name;
- 
+
+This is used in the module showing game details. If it doesn't find the
+game it just aborts to the overview page with the list of games.
+
 =cut
 
 sub abort_to {
@@ -798,9 +805,9 @@ EOF
 
 Create a small table with a single link "[switch debug mode
 ON]". Following that link will enable debugigng mode, reload the current
-page and display much more information (%state, %P, %$pmod and the
-request parameters). Useful for development. Combined with the admin
-package (L<macro/admin>), you can do nice things like in your page:
+page and display much more information (%state, %P, %$pmod and the request
+parameters). Useful for development. Combined with the admin package
+(L<macro/admin>), you can do nice things like this in your page:
 
  #if admin_p
    <: debugbox :>
@@ -809,7 +816,7 @@ package (L<macro/admin>), you can do nice things like in your page:
 =cut
 
 sub debugbox {
-   echo "<br><table bgcolor=\"#e0e0e0\" width=\"95%\" align=center><tr><td><font size=7 face=Helvetica color=black><td id=debugbox>";
+   echo "<br><table bgcolor=\"#e0e0e0\" width=\"100%\" align=center><tr><td><font size=7 face=Helvetica color=black><td id=debugbox>";
    if ($state{papp_debug}) {
       echo "<hr>" . slink("<h1>[switch debug mode OFF]</h1>", "/papp_debug" => 0) . "\n";
       echo _debugbox;

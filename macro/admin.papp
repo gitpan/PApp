@@ -4,6 +4,18 @@
 
 require 5.006; # older versions create BIG security holes!!
 
+=head1 NAME
+
+macro/admin - user access utilities for PApp
+
+=head1 SYNOPSIS
+
+ <import src="macro/admin"/>
+
+=head1 DESCRIPTION
+
+*sigh* :(
+
 =head2 authen_p
 
 Return true when the user has logged on using this module
@@ -286,5 +298,18 @@ be executed so you can add page-specific  info.
    <:loginbox:>
 #endif
 ]]></phtml></macro>
+
+<perl><![CDATA[
+=head1 SEE ALSO
+
+L<PApp>
+
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
+
+=cut
+]]></perl>
 
 </papp>

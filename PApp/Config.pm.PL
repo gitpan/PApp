@@ -7,12 +7,12 @@ $|=1;
 eval {
    require "PApp/Config.pm";
    require "./config";
-   $CFG{$k} = $v while ($k, $v) = each %PApp::Config::Config;
+   $CFG{$k} = $v while ($k, $v) = each %PApp::Config;
 };
 if ($@) {
    eval {
       require PApp::Config;
-      $CFG{$k} = $v while my ($k, $v) = each %PApp::Config::Config;
+      $CFG{$k} = $v while my ($k, $v) = each %PApp::Config;
    };
 }
 
@@ -61,7 +61,7 @@ EOF
 
 get_value 1, "STATEDB_PASS", "papp database password", "";
 srand;
-get_value 1, "CIPHERKEY", "the serverwide cipherkey", join "", map sprintf("%02x", rand 256), 0..16;
+get_value 1, "CIPHERKEY", "the serverwide cipherkey", join "", map sprintf("%02x", rand 256), 0..31;
 
 $cfg2 = "config";
 
@@ -84,7 +84,7 @@ PApp::Config - hold common configuration settings
 
 =cut
 
-$VERSION = 0.05;
+$VERSION = 0.06;
 
 require Exporter;
 
@@ -97,20 +97,59 @@ require Exporter;
 
 =item @paths = search_path [path...]
 
-Return the standard search path and optionally add additional paths.
+Return the standard search path and optionally add additional paths. (The
+returned path entries might or might not include the arguments).
+
+=back
+
+=head2 DEFINED KEYS IN THE C<%PApp::Config> HASH
+
+The following configuration items are available in the C<%PApp::Config>
+hash. Keys marked with a star (*) are access-restricted and can only be
+accessed from processes having read-access to the config file in libdir.
+
+=over 4
+
+=item SECURE
+
+A boolean indicating wether secure configuration values (marked with an
+"*") are available (or not).
+
+=item LIBDIR
+
+The standard papp library directory.
+
+=item I18NDIR
+
+The directory where translation files are being storerd (usually
+"LIBDIR/i18n").
+
+=item STATEDB
+
+The DSN specification for papp's statedb (also used by poedit and
+acedit). Usually something like 'DBI:mysql:papp'.
+
+=item STATEDB_USER, STATEDB_PASS*
+
+The username and password to access the state database.
+
+=item CIPHERKEY*
+
+The cipherkey to use to encrypt cookies.
+
+=back
 
 =cut
 
-%Config = (
+%PApp::Config = (
 EOF
 
 print "Writing $cfg2\n";
 open CFG2, ">", $cfg2 or die "$cfg2: $!\n";
-print CFG2 "package PApp::Config;\n\n";
 
 while (my ($k, $v) = each %CFG) {
    if ($secure{$k}) {
-      printf CFG2 "\$Config%-20s = %s;\n", "{\"\Q$k\E\"}", "\"\Q$v\E\"";
+      printf CFG2 "\$PApp::Config%-20s = %s;\n", "{\"\Q$k\E\"}", "\"\Q$v\E\"";
    } else {
       printf PM "%-20s => %s,\n", "\"\Q$k\E\"", "\"\Q$v\E\"";
    }
@@ -121,9 +160,9 @@ print CFG2 "\n1;\n";
 print PM <<'EOF';
 );
 
-our $secureconfig = do "$Config{LIBDIR}/config";
+$PApp::Config{SECURE} = do "$PApp::Config{LIBDIR}/config";
 
-my @incpath;
+our @incpath = $PApp::Config{LIBDIR};
 
 sub search_path {
    push @incpath, @_;
@@ -131,8 +170,6 @@ sub search_path {
 }
 
 1;
-
-=back
 
 =head1 SEE ALSO
 

@@ -1,11 +1,13 @@
 <papp name="poedit" lang="en">
 
-<database dsn="DBI:mysql:papp"/>
-
 <language lang="en" desc="English"/>
 <language lang="de" desc="Deutsch"/>
 
 <import src="macro/util"/>
+
+<callback type="request"><perl><![CDATA[
+   $PApp::SQL::DBH = $PApp::statedbh;
+]]></perl></callback>
 
 <macro name="page(&amp;)" args="$body"><phtml><![CDATA[
 <: access_page "poedit", __"PO-Editor", sub {
@@ -17,7 +19,7 @@
    <body text=black link="#1010C0" vlink="#101080" alink=red bgcolor=white>
    <h1>__"PO-Editor"</h1>
 #if retlink_p
-   <?retlink __"Go Back":><p>
+   <?retlink __"[BACK]":><p>
 #endif
 
    <: &$body :>

@@ -1,5 +1,54 @@
 <papp name="papp">
 
+<perl><![CDATA[
+=head1 NAME
+
+macro/util - some utility functions
+
+=head1 SYNOPSIS
+
+ <import src="macro/util"/>
+
+=head1 DESCRIPTION
+
+*sigh* :(
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item plain_header [title]
+
+Create a plain and ugly html header (with an optional title).
+
+=item plain_footer
+
+Create a plain and ugly html footer.
+
+=item access_page $access, $title, \&body
+
+Create a simple access-protected page. C<$access> is the required access
+level (L<macro/editform>), C<$title> is the page title. The C<body>
+argument must be a fucntion reference. If the uer has the required access
+right a plain page is created (using the functions above) and the body
+function is called. Otherwise the user is informed of his missing rights
+and gets the opportunity to log-in.
+
+Use it like this:
+
+   <phtml><![CDATA[
+   <:access_page "app_access", "Main Page", sub {:>
+      <h1>Main Page</h1>
+      You are logged in now ;)
+   <:}:>
+   ]]>
+
+=back
+
+=cut
+
+]]></perl>
+
 <import src="macro/admin"/>
 
 <macro name="plain_header*(;$)" args="$head"><phtml><![CDATA[
@@ -37,6 +86,19 @@
 #endif
 <:plain_footer:>
 ]]></phtml></macro>
+
+<perl><![CDATA[
+=head1 SEE ALSO
+
+L<PApp>
+
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
+
+=cut
+]]></perl>
 
 </papp>
 

@@ -15,7 +15,7 @@ use PApp::Exception;
 BEGIN {
    require Exporter;
 
-   $VERSION = 0.05;
+   $VERSION = 0.06;
    @ISA = qw(Exporter);
    @EXPORT = qw(
          open_translator

@@ -1,14 +1,20 @@
-<!--
-
-   macros used for creating sql editing forms
-
-   - nesting is not allowed
-
--->
-
 <papp name="papp">
 
 <xperl><![CDATA[
+
+=head1 NAME
+
+macro/editform - macros used for creating sql editing forms
+
+=head1 SYNOPSIS
+
+ <import src="macro/editform"/>
+
+=head1 DESCRIPTION
+
+*sigh* :(
+
+=cut
 
 sub ef_edit*() {
    $S{ef_edit};
@@ -113,7 +119,6 @@ sub ef_edit*() {
 ]]></phtml></macro>
 
 <macro name="ef_begin*" args="$table $where"><phtml><![CDATA[
-   <table cellpadding=8 border=1>
    <:ef_parse:>
    <?
       multipart_form;
@@ -126,22 +131,15 @@ sub ef_edit*() {
       };
    :>
 
-   <tr><td>
+#if 0
 #if $S{ef_edit}
    <?slink __"[Edit mode OFF]", ef_edit => 0?>
 #endif
    [$table.$where->[0] == $where->[1]]
-   <tr><td>
-   <:ef_submit:>
-   <:ef_reset:>
-   <tr><td>
+#endif
 ]]></phtml></macro>
 
 <macro name="ef_end*"><phtml><![CDATA[
-   <tr><td>
-   <:ef_submit:>
-   <:ef_reset:>
-   </table>
    <?endform -ef => $ef_args:>
 ]]></phtml></macro>
 
@@ -209,6 +207,19 @@ sub ef_edit*() {
    $ef_args->{constant}{$name} = $content;
 ?>
 ]]></phtml></macro>
+
+<perl><![CDATA[
+=head1 SEE ALSO
+
+L<PApp>
+
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
+
+=cut
+]]></perl>
 
 </papp>
 

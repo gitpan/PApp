@@ -24,7 +24,7 @@ special pappxml directives that can be used to create links etc...
 
 package PApp::XML;
 
-$VERSION = 0.05;
+$VERSION = 0.06;
 
 =item new PApp::XML parameter => value...
 
@@ -38,6 +38,34 @@ objects.
                 will be called during parsing and the resulting string will
                 be added to the compiled subroutine
  html           html output mode enable flag (NYI)
+
+At the moment there is one predefined special named C<slink>, that maps
+almost directly into a call to slink (a leading underscore in an attribute
+name gets changed into a minus (C<->) to allow for one-shot arguments),
+e.g:
+
+ <pappxml:special _special="slink" module="kill" name="Bill" _doit="1">
+    Do it to Bill!
+ </pappxml:special>
+
+might get changed to (note that C<module> is treated specially):
+
+ slink "Do it to Bill!", "kill", -doit => 1, name => "Bill";
+
+In a XSLT stylesheet one could define:
+
+  <xsl:template match="link">
+     <pappxml:special _special="slink">
+        <xsl:for-each select="@*">
+           <xsl:copy/>
+        </xsl:for-each>
+        <xsl:apply-templates/>
+     </pappxml:special>
+  </xsl:template>
+
+Which defines a C<link> element that can be used like this:
+
+  <link module="kill" name="bill" _doit="1">Kill Bill!</link>
 
 =cut
 
@@ -90,8 +118,27 @@ function evaluates certain XML Elements (please note that I consider the
    
    Evaluate the special with the name given by the attribute C<_special>
    after evaluating its content. The special will receive two arguments:
-   a hasref with all additional attributes and a string representing an
+   a hashref with all additional attributes and a string representing an
    already evaluated code fragment.
+ 
+ pappxml:unquote
+
+   Expands ("unquotes") some (but not all) entities, namely lt, gt, amp,
+   quot, apos. This can be easily used within a stylesheet to create
+   verbatim html or perl sections, e.g.
+
+   <pappxml:unquote><![CDATA[
+      <: echo "hallo" :>
+   ]]></pappxml:unquote>
+
+   A XSLT stylesheet that converts <phtml> sections just like in papp files
+   might look like this:
+
+   <xsl:template match="phtml">
+      <pappxml:unquote>
+         <xsl:apply-templates/>
+      </pappxml:unquote>
+   </xsl:template>
 
 =begin comment
 
@@ -283,6 +330,197 @@ sub print($) {
 1;
 
 =back
+
+=head1 WIZARD EXAMPLE
+
+In this section I'll try to sketch out a "wizard example" that shows how
+C<PApp::XML> could be used in the real world.
+
+Consider an application that fetches most or all content (even layout)
+from a database and uses a stylesheet to map xml content to html, which
+allows for almost total seperation of layout and content. It would have an
+init section loading a XSLT stylesheet and defining a content factory:
+
+   use XML::XSLT; # ugly module, but it works great!
+   use PApp::XML;
+
+   # create the parser
+   my $xsl = "$PApp::Config{LIBDIR}/stylesheet.xsl";
+   $xslt_parser = XML::XSLT->new($xsl, "FILE");
+
+   # create a content factory
+   $tt_content_factory = new PApp::XML
+      html => 1, # we want html output
+      special => {
+         include => sub {
+            my ($attr, $content) = @_;
+            get_content($attr->{name})->print;
+         },
+      };
+
+   # create a cache (XSLT is quite slow)
+   use Tie::Cache;
+   tie %content_cache, Tie::Cache::, { MaxCount => 30, WriteSync => 0};
+
+Here we define an C<include> special that inserts another document
+inplace. How does C<get_content> (see the definition of C<include>) look
+like?
+
+   <macro name="get_content" args="$name $special"><phtml><![CDATA[<:
+      my $cache = $content_cache{"$lang\0$name"};
+      unless ($cache) {
+         $cache = $content_cache{"$lang\0$name"} = [
+            undef,
+            0,
+         ];
+      }
+      if ($cache->[1] < time) {
+         $cache->[0] = fetch_content $name, $special;
+         $cache->[1] = time + 10;
+      }
+      $cache->[0];
+   :>]]></phtml></macro>
+
+C<get_content> is nothing more but a wrapper around C<fetch_content>. It's
+sole purpose is to cache documents since parsing and transforming a xml
+file is quite slow (please note that I include the current language when
+caching documents since, of course, the documents get translated). In
+non-speed-critical applications you could just substitute C<fetch_content>
+for C<get_content>:
+
+   <macro name="fetch_content" args="$name $special"><phtml><![CDATA[<:
+      sql_fetch \my($id, $_name, $ctime, $body),
+                "select id, name, unix_timestamp(ctime), body from content where name = ?",
+                $name;
+      unless ($id) {
+         ($id, $_name, $ctime, $body) =
+            (undef, undef, undef, "");
+      }
+
+      parse_content (gettext$body, {
+         special => $special,
+         id      => $id,
+         name    => $name,
+         ctime   => $ctime,
+         lang    => $lang,
+      });
+   :>]]></phtml></macro>
+
+C<fetch_content> actually fetches the content string from the database. In
+this example, a content object has a name (which is used to reference it)
+a timestamp and a body, which is the actual document. After fetching the
+content object it uses C<parse_content> to transform the xml snippet into
+a perl sub that can be efficiently executed:
+
+   <macro name="parse_content" args="$body $attr"><phtml><![CDATA[<:
+      my $content = eval {
+         $xslt_parser->transform_document(
+             '<?xml version="1.0" encoding="iso-8859-1" standalone="no"?'.'>'.
+             "<ttt_fragment>".
+             $body.
+             "</ttt_fragment>",
+             "STRING"
+         );
+         my $dom = $xslt_parser->result_tree;
+         $tt_content_factory->dom2template($dom, %$attr);
+      };
+      if ($@) {
+         my $line = $@ =~ /mismatched tag at line (\d+), column \d+, byte \d+/ ? $1 : -1;
+         # create a fancy error message
+      }
+      $content || parse_content("");
+   :>]]></phtml></macro>
+
+As you can see, it uses XSLT's C<transform_document>, which does the
+string -> DOM translation for us, and also transforms the XML code through
+the stylesheet. After that it uses C<dom2template> to compile the document
+into perl code and returns it.
+
+An example stylesheet would look like this:
+
+   <xsl:template match="ttt_fragment">
+      <xsl:apply-templates/>
+   </xsl:template>
+
+   <xsl:template match="p|em|h1|h2|br|tt|hr|small">
+      <xsl:copy>
+         <xsl:apply-templates/>
+      </xsl:copy>
+   </xsl:template>
+
+   <xsl:template match="include">
+      <pappxml:special _special="include" name="{@name}"/>
+   </xsl:template>
+
+   # add the earlier XSLT examples here.
+
+This stylesheet would transform the following XML snippet:
+
+   <p>Look at
+      <link module="product" productid="7">our rubber-wobber-cake</link>
+      before it is <em>sold out</em>!
+      <include name="product_description_7"/>
+   </p>
+
+Which would be turned into something like this:
+
+   <p>Look at
+      <pappxml:special _special="slink" module="product" productid="7">
+         our rubber-wobber-cake
+      </apppxml:special>
+      before it is <em>sold out</em>!
+      <pappxml:special _special="include" name="product_description_7"/>
+   </p>
+
+Now go back and try to understand the above code! But wait! Consider that you
+had a content editor installed as the module C<content_editor>, as I happen to have. Now
+lets introduce the C<editable_content> macro:
+
+   <macro name="editable_content" args="$name %special"><phtml><![CDATA[<:
+
+      my $content;
+
+      :>
+   #if access_p "admin"
+      <table border=1><tr><td>
+      <:
+         sql_fetch \my($id), "select id from content where name = ?", $name;
+         if ($id) {
+            :><?sublink [current_locals], __"[Edit the content object \"$name\"]", "content_editor_edit", contentid => $id:><:
+         } else {
+            :><?sublink [current_locals], __"[Create the content object \"$name\"]", "content_editor_edit", contentname => $name:><:
+         }
+
+         $content = get_content($name,\%special);
+         $content->print;
+      :>
+      </table>
+   #else
+      <:
+         $content = get_content($name,\%special);
+         $content->print;
+      :>
+   #endif
+      <:
+
+      return $content;
+   :>]]></phtml></macro>
+
+What does this do? Easy: If you are logged in as admin (i.e. have the
+"admin" access right), it displays a link that lets you edit the object
+directly. As normal user it just displays the content as-is. It could be
+used like this:
+
+   <perl><![CDATA[
+      header;
+      my $content = editable_content("homepage");
+      footer last_changed => $content->ctime;
+   ]]></perl>
+
+Disregarding C<header> and C<footer>, this would create a page fully
+dynamically out of a database, together with last-modified information,
+which could be edited on the web. Obviously this approach could be
+extended to any complexity.
 
 =head1 SEE ALSO
 

@@ -15,8 +15,8 @@
 
 <!ELEMENT papp     (%modulebody;|database|language)+>
 <!ATTLIST papp
-    name CDATA #IMPLIED
-    lang CDATA #IMPLIED
+    name  CDATA #IMPLIED
+    lang  CDATA #IMPLIED
 >
 
 <!--

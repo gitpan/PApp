@@ -20,6 +20,9 @@
    access_page "admin", __"Access-Editor", sub {
       :>
          <h1>__"Access-Editor"</h1>
+#if retlink_p
+         <?retlink __"[BACK]":><p>
+#endif
       <:
       &$body;
    }
@@ -29,16 +32,17 @@
 <state keys="search" import="yes"/>
 <phtml><![CDATA[
 <:page {:>
+   <:$S{search} = "_" unless defined $S{search}:>
+
    <:my ($cnt) = sql_fetch "select count(*) from user":>
    __"There are currently $cnt users in the database."
    <ul>
-   <li><?sform:>__"Search username/comment:" <?textfield "search":><?endform:>
+   <li><?sform:>__"Search username/comment:" <?textfield "search", value => $S{search}:><?endform:>
    </ul>
 
    __"To see all users, enter nothing in the 'Search' entry"<br>
    __"To see only registered users, enter a single underscore in the 'Search' entry"<p>
 
-#if exists $S{search}
    <:
       my $st = sql_exec \my($id, $user, $pass, $comment),
                         "select id, user, pass, comment
@@ -61,7 +65,6 @@
       }
    :>
    </table>
-#endif
 <:}:>
 ]]></phtml>
 
@@ -97,6 +100,7 @@
          <:
       }
    :>
+   <tr><td><td><:ef_submit:><:ef_reset:>
    </table>
    <:ef_end:>
    __"Add Group:"

@@ -26,7 +26,7 @@ use DBI;
 BEGIN {
    require Exporter;
 
-   $VERSION = 0.05;
+   $VERSION = 0.06;
    @ISA = qw/Exporter/;
    @EXPORT = qw(
          sql_exec sql_fetch sql_fetchall sql_exists sql_insertid $sql_exec

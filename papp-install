@@ -9,7 +9,7 @@ require "./config";
 
 $|=1;
 
-*CFG = \%PApp::Config::Config;
+*CFG = \%PApp::Config;
 
 my $lib = $CFG{LIBDIR};
 
@@ -26,6 +26,8 @@ sub crdir {
 
 crdir $lib;
 crdir $CFG{I18NDIR};
+crdir "$lib/apps";
+crdir "$lib/macro";
 
 for my $app (File::Glob::glob "apps/*.papp", GLOB_ERR|GLOB_NOCHECK|GLOB_NOSORT) {
    $app =~ s/.*?([^\/]+)\.papp$/$1/;
@@ -93,6 +95,14 @@ $dbi->do(<<SQL);
      data blob DEFAULT '' NOT NULL,
      comment text DEFAULT '' NOT NULL,
      PRIMARY KEY (id)
+   )
+SQL
+
+$dbi->do(<<SQL);
+   CREATE TABLE env (
+     name varchar(255) not null,
+     value blob not null,
+     PRIMARY KEY (name)
    )
 SQL
 
@@ -170,8 +180,10 @@ print "creating admin user and admin group... ";
 eval {
    my $pass = crypt "public", "xx";
    $dbi->do("insert into user values (1, NULL, '', 'admin', '$pass', 'Main Administrator')")
-   and $dbi->do("insert into grp  values (1, 'admin', 'hyperuser access rights')")
+   and $dbi->do("insert into grp values (1, 'admin', 'hyperuser access rights')")
+   and $dbi->do("insert into grp values (2, 'poedit', 'translator access')")
    and $dbi->do("insert into usergrp values (1, 1)")
+   and $dbi->do("insert into usergrp values (1, 2)")
    or die;
    print <<EOF;
 ok

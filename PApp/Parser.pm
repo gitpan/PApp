@@ -22,7 +22,7 @@ use Carp;
 use XML::Parser::Expat;
 use PApp::Exception;
 
-$VERSION = 0.05;
+$VERSION = 0.06;
 
 =item phtml2perl "pthml-code";
 
