@@ -15,7 +15,7 @@ use Carp;
 use FileHandle ();
 
 BEGIN {
-   $VERSION = 0.02;
+   $VERSION = 0.03;
    @ISA = qw/Exporter/;
    @EXPORT = qw(
 
@@ -174,7 +174,7 @@ sub unescape {
 # parse application/x-www-form-urlencoded
 sub parse_params {
    for (split /[&;]/, $_[0]) {
-      /([^=]+)=(.*)/ and $param{$1} = unescape $2;
+      /([^=]+)=(.*)/ and $P{$1} = unescape $2;
    }
 }
 

@@ -19,7 +19,7 @@
 
 <macro name="footer"><phtml><![CDATA[
 #if 1
-   <:$state{papp_debug}=1;debugbox:>
+   <:$S{papp_debug}=1;debugbox:>
 #endif
    </body>
    </html>
@@ -29,7 +29,7 @@
    <:header:>
    <:my $selected = 0:>
 
-#if $arg{scan_apps} && !reload_p
+#if $A{scan_apps} && !reload_p
    <hr>
    <pre>
 <:
@@ -63,7 +63,7 @@
 :>
    </pre>
    <hr>
-#elsif $arg{export_po} && !reload_p
+#elsif $A{export_po} && !reload_p
    <hr>
    <pre>
 <:
@@ -74,7 +74,7 @@
 :>
    </pre>
    <hr>
-#elsif $arg{export_dbm} && !reload_p
+#elsif $A{export_dbm} && !reload_p
    <hr>
    <pre>
 <:
@@ -105,7 +105,7 @@
          my ($cnt, $unt) = sql_fetch "select count(*), sum(~flags & 1) from msgstr where lang = ?", $_;
          $link = "$_ C/U = $cnt/$unt";
          if ($state{lang} ne $_) {
-            echo slink $link, lang => $_;
+            echo slink $link, "/lang" => $_;
          } else {
             echo "<b>$link</b> ".__"[selected]";
             $selected = 1;
@@ -145,25 +145,25 @@
    <:header:>
    <?slink __"Back to the toplevel menu", "":><p>
 
-   <: $state{begin}  ||=  0 :>
-   <: $state{window} ||= 20 :>
+   <: $S{begin}  ||=  0 :>
+   <: $S{window} ||= 20 :>
 
-   <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $state{begin} > $state{window} ? $state{begin} - $state{window} : 0:> ===
-   <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $state{begin} + $state{window}:>
+   <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $S{begin} > $S{window} ? $S{begin} - $S{window} : 0:> ===
+   <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $S{begin} + $S{window}:>
    <table cellspacing=1 cellpadding=1 border=1>
    <table>
    <tr><th>msgid</th><th>msgstr</th><th>flags</th>
    <:
-      if ($param{search}) {
-         $state{where} = "id like '%$param{search}%' or msg like '%$param{search}%'";
+      if ($P{search}) {
+         $S{where} = "id like '%$P{search}%' or msg like '%$P{search}%'";
       }
       my $st = sql_exec \my($nr,$msgid,$idlang,$msgstr,$ok),
                         "select msgid.nr, id, msgid.lang, msg, flags
                                 from msgid, msgstr
-                                where msgid.nr = msgstr.nr and msgstr.lang = ? and ($state{where})
+                                where msgid.nr = msgstr.nr and msgstr.lang = ? and ($S{where})
                                 order by msgid.nr limit ?,?",
                         $state{lang},
-                        $state{begin}||0, $state{window}||20;
+                        $S{begin}||0, $S{window}||20;
 
       while($st->fetch) {
          echo "<tr>";
@@ -175,8 +175,8 @@
       }
    :>
    </table>
-   <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $state{begin} > $state{window} ? $state{begin} - $state{window} : 0:> ===
-   <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $state{begin} + $state{window}:>
+   <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $S{begin} > $S{window} ? $S{begin} - $S{window} : 0:> ===
+   <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $S{begin} + $S{window}:>
 
    <:footer:>
 ]]></phtml></module>
@@ -191,32 +191,32 @@
    <?$state{lang}:>
 
    <:
-      #$param{msgstr} =~ s/\s*\n\s*/ /g if defined $param{msgstr};
-      #$param{msgstr} = $state{msgid} if $param{msgstr} eq "";
+      #$P{msgstr} =~ s/\s*\n\s*/ /g if defined $P{msgstr};
+      #$P{msgstr} = $S{msgid} if $P{msgstr} eq "";
 
-      if ($param{save} || $param{savenext}) {
-         if ($state{msgid} =~ /\\n$/) {
-            $param{msgstr} =~ s/\n*$/\n/;
+      if ($P{save} || $P{savenext}) {
+         if ($S{msgid} =~ /\\n$/) {
+            $P{msgstr} =~ s/\n*$/\n/;
          } else {
-            $param{msgstr} =~ s/\n+$//;
+            $P{msgstr} =~ s/\n+$//;
          }
          sql_exec "update msgstr set msg = ?, flags = ? where nr = ? and lang = ?",
-                  $param{msgstr}, defined $param{ok} ? "valid" : "",
-                  $state{nr}, $state{lang};
-         echo "<b>entry $state{nr} updated ($DBI::errstr)</b><p>";
+                  $P{msgstr}, defined $P{ok} ? "valid" : "",
+                  $S{nr}, $state{lang};
+         echo "<b>entry $S{nr} updated ($DBI::errstr)</b><p>";
       }
 
-      if ($param{savenext} || $param{next}) {
-         delete $param{msgstr};
+      if ($P{savenext} || $P{next}) {
+         delete $P{msgstr};
 
-         $state{nr} = sql_fetch "select nr from msgstr where ~flags&1 and nr > ? and lang = ? order by nr limit 1",
-                                $state{nr}, $state{lang};
-         if (!$state{nr}) {
-            $state{nr} = sql_fetch "select nr from msgstr where ~flags&1 and lang = ? order by nr limit 1",
+         $S{nr} = sql_fetch "select nr from msgstr where ~flags&1 and nr > ? and lang = ? order by nr limit 1",
+                                $S{nr}, $state{lang};
+         if (!$S{nr}) {
+            $S{nr} = sql_fetch "select nr from msgstr where ~flags&1 and lang = ? order by nr limit 1",
                                    $state{lang};
          }
-         if (!$state{nr}) {
-            $state{nr} = 1;
+         if (!$S{nr}) {
+            $S{nr} = 1;
             echo errbox "Congrats", "no more untranslated entries";
          }
       }
@@ -225,27 +225,27 @@
          = sql_fetch "select id, msg, context, msgid.lang
                              from msgid, msgstr
                              where msgid.nr = ? and msgid.nr = msgstr.nr and msgstr.lang = ?",
-                             $state{nr}, $state{lang};
+                             $S{nr}, $state{lang};
 
-      if (!$param{reset} && defined $param{msgstr}) {
-         $msgstr = $param{msgstr};
+      if (!$P{reset} && defined $P{msgstr}) {
+         $msgstr = $P{msgstr};
       }
 
-      $state{msgid} = $msgid;
+      $S{msgid} = $msgid;
 
       for ($msgid, $msgstr, $context) {
          $_ = PApp::escape_html $_;
       }
       $context =~ s/\n/<br>/g;
 
-      $state{width} ||= 40;
+      $S{width} ||= 40;
 
-      $state{width}++ if $param{incwidth};
-      $state{width}-- if $param{decwidth};
+      $S{width}++ if $P{incwidth};
+      $S{width}-- if $P{decwidth};
 
       save_prefs;
 
-      my $lines = int (length($msgstr) / $state{width}) + 15;
+      my $lines = int (length($msgstr) / $S{width}) + 15;
    :>
 
    <?cform:>
@@ -262,7 +262,7 @@
    <tr><td valign=top>
           <tt>[$idlang]<br>$msgid</tt>
        </td><td valign=top>
-          <textarea name=msgstr rows=<?$lines:> cols=<?$state{width}:> wrap><?$msgstr:></textarea>
+          <textarea name=msgstr rows=<?$lines:> cols=<?$S{width}:> wrap><?$msgstr:></textarea>
        </td>
    <tr><td>&nbsp;<td>
           <?submit "refresh", __"Refresh":> <?submit "reset", __"Reset":>

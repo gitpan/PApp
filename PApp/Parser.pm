@@ -19,7 +19,7 @@ use Carp;
 use XML::Parser::Expat;
 use PApp::Exception;
 
-$VERSION = 0.02;
+$VERSION = 0.03;
 
 =item phtml2perl "pthml-code";
 
@@ -168,13 +168,15 @@ sub compile {
       $pmod->_eval("BEGIN { import $imp->{package} }");
    }
 
+   $pmod->_eval($pmod->{module}{init}{cb_src});
+
    for my $type (keys %{$pmod->{cb_src}}) {
       $pmod->{cb}{$type} = $pmod->_eval("sub {\n$pmod->{cb_src}{$type}\n}");
    }
 
-   # the sort makes sure that module_ is first => fix (tie::IxHash, argh?)
    for my $module (@{$pmod->{modules}}) {
       next if $pmod->{module}{$module}{cb};
+      next if $module eq "init";
       $pmod->{module}{$module}{cb} = $pmod->_eval("sub {\n$pmod->{module}{$module}{cb_src}\n}");
    }
 }

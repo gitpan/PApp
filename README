@@ -34,7 +34,7 @@ DESCRIPTION
 
         That is, mixing html and perl at statement boundaries.
 
-    * State-preserving: The global hash `%state' is automaticaly preserved
+    * State-preserving: The global hash `%S' is automaticaly preserved
     during the session. Everything you save there will be available in any
     subsequent pages that the user accesses.
     * XML. PApp-paplications are written in XML. While this is no advantage
@@ -64,25 +64,35 @@ DESCRIPTION
 
 GLOBAL VARIABLES
     Some global variables are free to use and even free to change (yes, we
-    still are about speed, not abstraction).
+    still are about speed, not abstraction). In addition to these variables,
+    the globs `*state' and `*S' (and in future versions `*L') are reserved.
+    This means that you cannot define a scalar, sub, hash, filehandle or
+    whatsoever with these names.
 
     $request [read-only]
         The Apache request object (the Apache manpage), the same as returned
         by `Apache-'request>.
 
     %state [read-write, persistent]
-        A global hash that can be used for almost any purpose, such as
-        saving state values. All keys with prefix `papp' are reserved for
-        use by this module. Everything else is yours.
+        A system-global hash that can be used for almost any purpose, such
+        as saving (global) preferences values. All keys with prefix `papp'
+        are reserved for use by this module. Everything else is yours.
 
-    %arg
+    %S [read-write, persistent]
+        Similar to `%state', but is local to the current application. Input
+        arguments prefixed with a dash end up here.
+
+    %L [read-write, persistent]
+        (NYI)
+
+    %A [read-write, input only]
         A global hash that contains the arguments to the current module.
         Arguments to the module can be given to surl or any other function
         that calls it, by prefixing parameter names with a minus sign (i.e.
         "-switch").
 
-    %param
-        Similar to `%arg', but it instead contains the parameters from forms
+    %P [read-write, input only]
+        Similar to `%A', but it instead contains the parameters from forms
         submitted via GET or POST (`see parse_multipart_form', however).
         Everything in this hash is insecure by nature and must should be
         used carefully.
@@ -177,13 +187,13 @@ FUNCTIONS/METHODS
 
         The remaining arguments are parameters that are passed to the new
         module. Unlike GET or POST-requests, these parameters are directly
-        passed into the `%state'-hash (unless prefixed with an underscore),
-        i.e. you can use this to alter state values when the url is
-        activated. This data is transfered in a secure way and can be quite
-        large (it will not go over the wire).
+        passed into the `%S'-hash (unless prefixed with a dash), i.e. you
+        can use this to alter state values when the url is activated. This
+        data is transfered in a secure way and can be quite large (it will
+        not go over the wire).
 
         When a parameter name is prefixed with a minus-sign, the value will
-        end up in the (non-persistent) `%arg'-hash instead (for "one-shot"
+        end up in the (non-persistent) `%A'-hash instead (for "one-shot"
         arguments).
 
     $ahref = slink contents,[ module,] arg => value, ...
@@ -194,7 +204,7 @@ FUNCTIONS/METHODS
 
          <? slink "Click me to view game #$gamenr", "view_game", gamenr => $gamenr :>
 
-        The view_game module can access the game number as $state{gamenr}.
+        The view_game module can access the game number as $S{gamenr}.
 
     $ahref = sublink [sublink-def], content,[ module,] arg => value, ...
     retlink_p
@@ -241,7 +251,7 @@ FUNCTIONS/METHODS
 
         If the callback returns true, the remaining parameter-data (if any)
         is skipped, and the next parameter is read. If the callback returns
-        false, the current parameter will be read and put into the `%param'
+        false, the current parameter will be read and put into the `%P'
         hash.
 
         The Handle-object given to the callback function is actually an
@@ -265,16 +275,16 @@ FUNCTIONS/METHODS
         kind of exception mechanism. For example, I often use constructs
         like these:
 
-         my ($name, ...) = sql_fetch "select ... from game where id = ", $state{gameid};
+         my ($name, ...) = sql_fetch "select ... from game where id = ", $S{gameid};
          abort_to "games_overview" unless defined $name;
  
     debugbox
         Create a small table with a single link "[switch debug mode ON]".
         Following that link will enable debugigng mode, reload the current
-        page and display much more information (%state, %param, %$pmod and
-        the request parameters). Useful for development. Combined with the
-        admin package (the admin entry in the macro manpage), you can do
-        nice things like in your page:
+        page and display much more information (%state, %P, %$pmod and the
+        request parameters). Useful for development. Combined with the admin
+        package (the admin entry in the macro manpage), you can do nice
+        things like in your page:
 
          #if admin_p
            <: debugbox :>

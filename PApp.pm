@@ -41,7 +41,7 @@ fact, You can do things like these:
 
 That is, mixing html and perl at statement boundaries.
 
-=item * State-preserving: The global hash C<%state> is automaticaly
+=item * State-preserving: The global hash C<%S> is automaticaly
 preserved during the session. Everything you save there will be available
 in any subsequent pages that the user accesses.
 
@@ -107,7 +107,7 @@ use PApp::HTML;
 BEGIN {
    require DynaLoader;
 
-   $VERSION = 0.02;
+   $VERSION = 0.03;
    @ISA = qw/Exporter DynaLoader/;
    @EXPORT = qw(
 
@@ -118,7 +118,7 @@ BEGIN {
          endform redirect internal_redirect abort_to
 
          $request $location $module $pmod $NOW
-         %state %param %arg save_prefs $userid
+         *state %P %A *S *L save_prefs $userid
          reload_p switch_userid
 
          dprintf dprint echo capture $request 
@@ -152,8 +152,9 @@ our $userid;      # uncrypted user-id
 our $alternative; # number of alternatives already generated
 
 our %state;
-our %param;
-our %arg;
+our %S;
+our %P;
+our %A;
 
 our %papp;        # all loaded applications, indexed by location
 
@@ -188,8 +189,11 @@ sub __($) {
 
 =head1 GLOBAL VARIABLES
 
-Some global variables are free to use and even free to change (yes, we
-still are about speed, not abstraction).
+Some global variables are free to use and even free to change (yes,
+we still are about speed, not abstraction). In addition to these
+variables, the globs C<*state> and C<*S> (and in future versions C<*L>)
+are reserved. This means that you cannot define a scalar, sub, hash,
+filehandle or whatsoever with these names.
 
 =over 4
 
@@ -199,19 +203,28 @@ The Apache request object (L<Apache>), the  same as returned by C<Apache->reques
 
 =item %state [read-write, persistent]
 
-A global hash that can be used for almost any purpose, such as saving
-state values. All keys with prefix C<papp> are reserved for use by this
-module. Everything else is yours.
+A system-global hash that can be used for almost any purpose, such as
+saving (global) preferences values. All keys with prefix C<papp> are
+reserved for use by this module. Everything else is yours.
 
-=item %arg
+=item %S [read-write, persistent]
+
+Similar to C<%state>, but is local to the current application. Input
+arguments prefixed with a dash end up here.
+
+=item %L [read-write, persistent]
+
+(NYI)
+
+=item %A [read-write, input only]
 
 A global hash that contains the arguments to the current module. Arguments
 to the module can be given to surl or any other function that calls it, by
 prefixing parameter names with a minus sign (i.e. "-switch").
 
-=item %param
+=item %P [read-write, input only]
 
-Similar to C<%arg>, but it instead contains the parameters from
+Similar to C<%A>, but it instead contains the parameters from
 forms submitted via GET or POST (C<see parse_multipart_form>,
 however). Everything in this hash is insecure by nature and must should be
 used carefully.
@@ -426,19 +439,19 @@ sub reference_url {
       $url .= ":" . $request->get_server_port if $request->get_server_port != 80;
    }
    my $get = join "&amp;", (map {
-                escape_uri($_) . (defined $state{$_} ? "=" . escape_uri $state{$_} : "");
+                escape_uri($_) . (defined $S{$_} ? "=" . escape_uri $S{$_} : "");
              } grep {
-                exists $state{$_}
+                exists $S{$_}
                    and exists $pmod->{state}{import}{$_}
                    and not exists $pmod->{state}{preferences}{$_}
                    and not exists $pmod->{state}{sysprefs}{$_}
              } keys %{$pmod->{state}{import}}),
              (map {
-                escape_uri($_) . (defined $param{$_} ? "=" . escape_uri $param{$_} : "");
+                escape_uri($_) . (defined $P{$_} ? "=" . escape_uri $P{$_} : "");
              } grep {
-                exists $state{$_}
+                exists $S{$_}
                    and not exists $pmod->{state}{import}{$_}
-             } keys %param);
+             } keys %P);
    "$url$location/$module" . ($get ? "?$get" : "");
 }
 
@@ -450,13 +463,12 @@ missing the url will refer to the current module.
 
 The remaining arguments are parameters that are passed to the new
 module. Unlike GET or POST-requests, these parameters are directly passed
-into the C<%state>-hash (unless prefixed with an underscore), i.e. you can
-use this to alter state values when the url is activated. This data is
-transfered in a secure way and can be quite large (it will not go over the
-wire).
+into the C<%S>-hash (unless prefixed with a dash), i.e. you can use this
+to alter state values when the url is activated. This data is transfered
+in a secure way and can be quite large (it will not go over the wire).
 
 When a parameter name is prefixed with a minus-sign, the value will end up
-in the (non-persistent) C<%arg>-hash instead (for "one-shot" arguments).
+in the (non-persistent) C<%A>-hash instead (for "one-shot" arguments).
 
 =cut
 
@@ -465,7 +477,7 @@ sub surl(@) {
    my $location = $module =~ s/^(\/.*?)(?:\/([^\/]*))?$/$2/ ? $1 : $location;
 
    $alternative++;
-   $state{papp}{alternative}[$alternative] = {-papp_module => $module, @_};
+   $state{papp}{alternative}[$alternative] = ["/papp_module" => $module, @_];
 
    "$location/"
       . (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, $stateid, $alternative, rand(1<<30)))
@@ -480,7 +492,7 @@ a link to the view_game module for a given game, do this:
 
  <? slink "Click me to view game #$gamenr", "view_game", gamenr => $gamenr :>
 
-The view_game module can access the game number as $state{gamenr}.
+The view_game module can access the game number as $S{gamenr}.
 
 =cut
 
@@ -505,7 +517,7 @@ sub slink {
 sub suburl {
    my $chain = shift;
    unshift @$chain, "$location/$module" unless @$chain & 1;
-   surl @_, papp_return => [@{$state{papp_return}}, $chain];
+   surl @_, \$state{papp}{return} => [@{$state{papp}{return}}, $chain];
 }
 
 # some kind of subroutine call
@@ -517,12 +529,12 @@ sub sublink {
 
 # is there a backreference?
 sub retlink_p() {
-   scalar@{$state{papp_return}};
+   scalar@{$state{papp}{return}};
 }
 
 sub returl(;@) {
-   my @papp_return = @{$state{papp_return}};
-   surl @{pop @papp_return}, @_, papp_return => \@papp_return;
+   my @papp_return = @{$state{papp}{return}};
+   surl @{pop @papp_return}, @_, \$state{papp}{return} => \@papp_return;
 }
 
 sub retlink {
@@ -544,10 +556,10 @@ to the current page with:
 
 # Return current local variables as key => value pairs.
 sub current_locals {
-   map { ($_, $state{$_}) }
+   map { ($_, $S{$_}) }
        grep exists $pmod->{state}{local}{$_}
             && exists $pmod->{state}{local}{$_}{$module},
-               keys %state;
+               keys %S;
 }
 
 =item sform [module, ]arg => value, ...
@@ -594,7 +606,7 @@ sub multipart_form(@) {
 
 sub endform {
    my $alternative = pop @formstack;
-   %{$state{papp}{alternative}[$alternative]} = (%{$state{papp}{alternative}[$alternative]}, @_);
+   push @{$state{papp}{alternative}[$alternative]}, @_;
    "</form>";
 }
 
@@ -607,7 +619,7 @@ a hash-ref, with all keys lowercased).
 
 If the callback returns true, the remaining parameter-data (if any) is
 skipped, and the next parameter is read. If the callback returns false,
-the current parameter will be read and put into the C<%param> hash.
+the current parameter will be read and put into the C<%P> hash.
 
 The Handle-object given to the callback function is actually an object of
 type PApp::FormBuffer (see L<PApp::FormBuffer>). It will
@@ -628,7 +640,6 @@ sub parse_multipart_form(&) {
                 rsize => $request->header_in("Content-Length");
 
    $request->header_in("Content-Type", "");
-   $request->header_in("Content-Length", 0);
 
    while ($fh->skip_boundary) {
       my ($ct, %cd);
@@ -644,7 +655,7 @@ sub parse_multipart_form(&) {
       my $name = delete $cd{name};
       if (defined $name) {
          unless ($cb->($fh, $name, $ct, \%cd)) {
-            my $buf = \$param{$name};
+            my $buf = \$P{$name};
             $$buf = "";
             while ($fh->read($$buf, 4096, length $$buf) > 0)
               {
@@ -653,6 +664,8 @@ sub parse_multipart_form(&) {
          }
       }
    }
+
+   $request->header_in("Content-Length", 0);
 }
 
 =item redirect url
@@ -695,7 +708,7 @@ sub redirect {
 Similar to C<internal_redirect>, but works the arguments through C<surl>. This is an easy way
 to switch to another module/webpage as a kind of exception mechanism. For example, I often use constructs like these:
 
- my ($name, ...) = sql_fetch "select ... from game where id = ", $state{gameid};
+ my ($name, ...) = sql_fetch "select ... from game where id = ", $S{gameid};
  abort_to "games_overview" unless defined $name;
  
 =cut
@@ -712,8 +725,6 @@ sub set_cookie {
       . "; PATH=/; EXPIRES="
       . unixtime2http($NOW + $cookie_expires, "cookie")
    );
-   $state{papp_last_cookie} = $NOW;
-   &save_prefs;
 }
 
 sub dumpval {
@@ -739,13 +750,13 @@ EOF
    $r .= "<h3>Debug Output (dprint &amp; friends):</h3>$pre1\n";
    $r .= escape_html($doutput);
 
-   $r .= "$pre0<h3>Input Parameters (%param):</h3>$pre1\n";
-   $r .= escape_html(dumpval(\%param));
+   $r .= "$pre0<h3>Input Parameters (%P):</h3>$pre1\n";
+   $r .= escape_html(dumpval(\%P));
 
-   $r .= "$pre0<h3>Input Arguments (%arg):</h3>$pre1\n";
-   $r .= escape_html(dumpval(\%arg));
+   $r .= "$pre0<h3>Input Arguments (%A):</h3>$pre1\n";
+   $r .= escape_html(dumpval(\%A));
 
-   $r .= "${pre0}<h3>State (%state):</h3>$pre1\n";
+   $r .= "${pre0}<h3>Global State (%state):</h3>$pre1\n";
    $r .= escape_html(dumpval(\%state));
 
    $r .= "$pre0<h3>Module Definition (%\$pmod):</h3>$pre1\n";
@@ -768,7 +779,7 @@ EOF
 
 Create a small table with a single link "[switch debug mode
 ON]". Following that link will enable debugigng mode, reload the current
-page and display much more information (%state, %param, %$pmod and the
+page and display much more information (%state, %P, %$pmod and the
 request parameters). Useful for development. Combined with the admin
 package (L<macro/admin>), you can do nice things like in your page:
 
@@ -781,10 +792,10 @@ package (L<macro/admin>), you can do nice things like in your page:
 sub debugbox {
    echo "<br><table bgcolor=\"#e0e0e0\" width=\"95%\" align=center><tr><td><font size=7 face=Helvetica color=black><td id=debugbox>";
    if ($state{papp_debug}) {
-      echo "<hr>" . slink("<h1>[switch debug mode OFF]</h1>", papp_debug => 0) . "\n";
+      echo "<hr>" . slink("<h1>[switch debug mode OFF]</h1>", "/papp_debug" => 0) . "\n";
       echo _debugbox;
    } else {
-      echo "<hr>" . slink("<h1>[switch debug mode ON]</h1>", papp_debug => 1) . "\n";
+      echo "<hr>" . slink("<h1>[switch debug mode ON]</h1>", "/papp_debug" => 1) . "\n";
    }
    echo "</font></td></table>";
 }
@@ -796,7 +807,7 @@ sub debugbox {
 sub errorpage {
     my $err = shift;
 
-    $request->content_type('text/html;charset=ISO-8859-1');
+    $request->content_type('text/html; charset=ISO-8859-1');
     $request->send_http_header;
     $request->print($err->as_html(body =>  _debugbox));
     $request->log_reason("PApp: $err", $request->filename);
@@ -814,7 +825,7 @@ sub unescape {
 # parse application/x-www-form-urlencoded
 sub parse_params {
    for (split /[&;]/, $_[0]) {
-      /([^=]+)=(.*)/ and $param{$1} = unescape $2;
+      /([^=]+)=(.*)/ and $P{$1} = unescape $2;
    }
 }
 
@@ -874,7 +885,7 @@ sub get_userprefs {
       $prefs = $prefs ? Storable::thaw decompress $prefs : {};
 
       $state{$k} = $v while ($k,$v) = each %{$prefs->{sys}};
-      $state{$k} = $v while ($k,$v) = each %{$prefs->{loc}{$location}};
+      $S{$k}     = $v while ($k,$v) = each %{$prefs->{loc}{$location}};
 
       1;
    } else {
@@ -903,7 +914,7 @@ sub switch_userid {
    }
    if ($userid != $oldid) {
       $state{papp}{switch_newuserid} = $userid;
-      set_cookie; # unconditionally re-set the cookie
+      $state{papp_last_cookie} = 0; # unconditionally re-set the cookie
    }
 }
 
@@ -912,6 +923,8 @@ sub save_prefs {
 
    while (my ($key,$v) = each %state) {
       $prefs{sys}{$key}            = $v if $pmod->{state}{sysprefs}{$key};
+   }
+   while (my ($key,$v) = each %S) {
       $prefs{loc}{$location}{$key} = $v if $pmod->{state}{preferences}{$key};
    }
 
@@ -919,7 +932,6 @@ sub save_prefs {
 }
 
 sub update_state {
-   $state{save_prefs} = 1 if $newuser;
    $st_updatestate->execute(compress Storable::freeze(\%state), $userid, $stateid);
 }
 
@@ -953,7 +965,7 @@ sub handler {
    *output = $stdout;
    $doutput = "";
 
-   $request->content_type('text/html;charset=ISO-8859-1');
+   $request->content_type('text/html; charset=ISO-8859-1');
 
    eval {
       $newuser = 0;
@@ -1014,7 +1026,7 @@ sub handler {
       }
 
       if ($state) {
-         %state = %{ Storable::thaw decompress $state->[0] };
+         *state = Storable::thaw decompress $state->[0];
 
          $nextid = $state->[2];
 
@@ -1040,7 +1052,7 @@ sub handler {
          $module = $statehash if $module eq "";
          $prevstateid = 0;
 
-         if ($request->header_in('Cookie') =~ /PAPP_1984=([0-9a-fA-Z:-]{22,22})/) {
+         if ($request->header_in('Cookie') =~ /PAPP_1984=([0-9a-zA-Z.-]{22,22})/) {
             ($userid, undef, undef) = unpack "VVVxxxx", $cipher_d->decrypt(PApp::X64::dec $1);
          } else {
             undef $userid;
@@ -1049,11 +1061,9 @@ sub handler {
          if ($userid) {
             if (get_userprefs) {
                $state{papp_visits}++;
-               $arg{save_prefs} = 1;
+               $state{save_prefs} = 1;
             }
-         }
-
-         unless ($userid) {
+         } else {
             switch_userid 0;
          }
 
@@ -1064,42 +1074,51 @@ sub handler {
 
       }
 
-      set_cookie if $state{papp_last_cookie} < $NOW - $cookie_reset;
-
-      # get parameters (GET or POST)
-      %param = ($request->args, $request->content);
-      %arg = ();
+      *S = \%{$state{$location}};
+      %P = ($request->args, $request->content);
+      %A = ();
 
       # enter any parameters deemed safe (import parameters);
-      while (my ($k, $v) = each %param) {
-         $state{$k} = $v if $pmod->{state}{import}{$k};
+      while (my ($k, $v) = each %P) {
+         $S{$k} = $v if $pmod->{state}{import}{$k};
       }
 
       if ($alternative) {
-         while (my($k,$v) = each %{$state{papp}{alternative}[$alternative]}) {
-            if ($k =~ s/^[_-]//) {
-               $arg{$k} = $v;
-            } else {
+         while (my($k,$v) = splice @{$state{papp}{alternative}[$alternative]}, 0, 2) {
+            if (ref $k) {
+               $$k = $v;
+            } elsif ($k =~ s/^-//) {
+               $A{$k} = $v;
+            } elsif ($k =~ s/^\///) {
                $state{$k} = $v;
+            } else {
+               $S{$k} = $v;
             }
          }
          $alternative = 0;
-         $module = $arg{papp_module};
+         $module = delete $state{papp_module};
       }
       delete $state{papp}{alternative};
 
-      # nuke local variables that are  not defined locally..
-      while (my ($k, $v) = each %{$pmod->{state}{local}}) {
-         delete $state{$k} unless exists $v->{$module};
-      }
+      $state{module} = "$location/$module";
 
-      $state{papp}{module} = "$location/$module";
+      # nuke local variables that are not defined locally..
+      while (my ($k, $v) = each %{$pmod->{state}{local}}) {
+         delete $S{$k} unless exists $v->{$module};
+      }
 
       # WE ARE INITIALIZED
          
       $langs = "$state{lang},".$request->header_in("Content-Language").",de,en";
 
-      save_prefs if $arg{save_prefs};
+      unless ($newuser) {
+         save_prefs if delete $state{save_prefs};
+         if ($state{papp_last_cookie} < $NOW - $cookie_reset) {
+            set_cookie;
+            $state{papp_last_cookie} = $NOW;
+            $state{save_prefs} = 1;
+         }
+      }
 
       $pmod->{cb}{request}();
       $pmod->{module}{$module}{cb}();

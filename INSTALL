@@ -24,7 +24,7 @@ INSTALLATION STEP-BY-STEP
    make install
 
 2. create the papp database on your mysql server
-   read gen-db.sql first, and checker wether it is ok for your database!
+   read gen-db.sql first, and check wether it is ok for your database!
 
    $ mysql <gen-db.sql
 

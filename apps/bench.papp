@@ -5,7 +5,7 @@
 
 <phtml><![CDATA[
    <html><body>
-   <?slink __"This is a test":>
+   <?slink __"This is a test"?>
    </body></html>
 ]]></phtml>
 

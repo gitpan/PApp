@@ -8,7 +8,7 @@ PApp::I18n - internationalization support for PApp
 
 =cut
 
-$VERSION = 0.02;
+$VERSION = 0.03;
 
 # GDBM_File is faster then DB_File, and creates smaller files
 # SDBM_File is (much) faster&smaller than GDBM_File, but limits the size of key/value pairs too much
@@ -153,7 +153,9 @@ sub scan_field {
    my $db = DBI->connect(@$dsn);
    my ($table, $field) = split /\./, $field;
    my $st = $db->prepare("show columns from $table like ?"); $st->execute($field);
-   my $type = $st->fetchrow_arrayref->[1];
+   my $type = $st->fetchrow_arrayref;
+   $type or fancydie "no such table", $table;
+   $type = $type->[1];
    $st->finish;
    if ($type =~ /^(set|enum)\('(.*)'\)$/) {
       for (split /','/, $2) {

@@ -207,7 +207,7 @@ Display a login box.
 =cut
 <phtml><![CDATA[
    <:
-      my ($user, $pass) = ($param{papp_user}, $param{papp_pass});
+      my ($user, $pass) = ($P{papp_user}, $P{papp_pass});
    :>
 # if $user
       <:

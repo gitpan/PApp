@@ -25,21 +25,21 @@
 #endif
 
          &gt; <?slink __"Databases", "" :>
-#if $state{db}
-         &gt; <?slink "db=$state{db}", "database" :>
-# if $state{table}
-         &gt; <?slink "table=$state{table}", "table" :>
-#  if $state{id}
-         &gt; <?slink "$state{pri_key}=$state{id}", "row" :>
+#if $S{db}
+         &gt; <?slink "db=$S{db}", "database" :>
+# if $S{table}
+         &gt; <?slink "table=$S{table}", "table" :>
+#  if $S{id}
+         &gt; <?slink "$S{pri_key}=$S{id}", "row" :>
 #  endif
 # endif
 #endif
          <p>
       <:
 
-      if (defined $state{sql}) {
-         my $sql = delete $state{sql};
-         $sql =~ s/%1/$param{text1}/;
+      if (defined $S{sql}) {
+         my $sql = delete $S{sql};
+         $sql =~ s/%1/$P{text1}/;
          if (reload_p) {
             print "<hr><i>NOT</i> executing sql statement, since page was reloaded<hr>\n";
          } else {
@@ -87,19 +87,19 @@
 
    <ul>
    <li>Create Table
-       <?sform sql => "create table $state{db}.%1 (nr MEDIUMINT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY)":>
+       <?sform sql => "create table $S{db}.%1 (nr MEDIUMINT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT PRIMARY KEY)":>
           <?textfield name => "text1":>
        <?endform:>
    </ul>
 
    <table cellspacing=0 cellpadding=2 border=0>
    <:
-      for my $table (sql_fetchall "show tables from $state{db}") {
+      for my $table (sql_fetchall "show tables from $S{db}") {
          echo "<tr>";
-         print "<td>[", slink("D", sql => "drop table $state{db}.$table"), "]ROP";
-         print "<td>", slink "[ALTER]", "table_alter", table => "$state{db}.$table";
-         print "<td align=right><tt>", sql_fetch("select count(*) from $state{db}.$table"),"</tt>";
-         print "<td>", slink $table, "table", table => "$state{db}.$table";
+         print "<td>[", slink("D", sql => "drop table $S{db}.$table"), "]ROP";
+         print "<td>", slink "[ALTER]", "table_alter", table => "$S{db}.$table";
+         print "<td align=right><tt>", sql_fetch("select count(*) from $S{db}.$table"),"</tt>";
+         print "<td>", slink $table, "table", table => "$S{db}.$table";
       }
    :>
    </table>
@@ -112,20 +112,20 @@
 <phtml><![CDATA[
 <:page {:>
 
-   <h2><?$state{table}:></h2>
+   <h2><?$S{table}:></h2>
 
    Please type enter after changing <em>any</em> field.
 
-   <:my $alter = "alter table $state{table}":>
+   <:my $alter = "alter table $S{table}":>
 
-   <?sform(sql => "$alter rename as %1", alter => undef)."Rename: ".textfield(name => "text1", value => $state{table}).endform:>
+   <?sform(sql => "$alter rename as %1", alter => undef)."Rename: ".textfield(name => "text1", value => $S{table}).endform:>
 
    <h3>Columns (editing columns may take a long time)</h3>
 
    <table cellspacing=0 cellpadding=2 border=0>
    <tr><th>Name<th>Create<th>Default?<th>Drop?
    <:
-      my $s = sql_exec "show fields from $state{table}";
+      my $s = sql_exec "show fields from $S{table}";
       $s->bind_columns(\my($name,$type,$null,$key,$default,$extra,$priviledges));
       print "<tr><td>",sform(sql => "$alter add %1 first"),"<td>",textfield(name => "text1", size => 70),"</td>",endform;
       while ($s->fetch) {
@@ -147,7 +147,7 @@
 
    <table cellspacing=0 cellpadding=2 border=0>
    <:
-      my $s = sql_exec "show keys from $state{table}";
+      my $s = sql_exec "show keys from $S{table}";
       my %key;
       $s->bind_columns(\my($table,$non_unique,$name,$seq,$cname,$collation,$cardinality,$sub_part,$packed,$comment));
       while ($s->fetch) {
@@ -177,8 +177,8 @@
 
    <h3>Table Options (may require a full copy</h3>
    <:
-      $state{table} =~ /\.(.*)$/; my $table = $1; #ugly
-      my $st = sql_exec "show table status from $state{db} like ?", $table;
+      $S{table} =~ /\.(.*)$/; my $table = $1; #ugly
+      my $st = sql_exec "show table status from $S{db} like ?", $table;
       my $status = ($st->fetchrow_array)[13];
       echo sform(sql => "$alter %1"),textfield(name => "text1", value => $status, size => 60),endform;
    :>
@@ -188,14 +188,14 @@
 </module>
 
 <macro name="tableinfo"><perl><![CDATA[
-   $state{_table} = $state{table};
-   my $st = sql_exec "show columns from $state{table}";
+   $S{_table} = $S{table};
+   my $st = sql_exec "show columns from $S{table}";
    my $i = 0;
-   delete $state{pri_key};
+   delete $S{pri_key};
    while (my ($field, $type, $null, $key, $default) = $st->fetchrow_array) {
       my ($basetype, $subtype) = ($type =~ /^(\w+)(.*)$/);
       #print "<pre>$i:$field*$basetype*$subtype*$null*$key*$default\n</pre>";
-      $state{field}{$i} = {
+      $S{field}{$i} = {
          name	=> $field,
          type	=> $basetype,
          subtype	=> $subtype,
@@ -203,10 +203,10 @@
          key		=> $key,
          default	=> $default
       };
-      $state{pri_key} = $field if $key eq "PRI";
+      $S{pri_key} = $field if $key eq "PRI";
       $i++;
    }
-   $state{nfields} = $i;
+   $S{nfields} = $i;
 ]]></perl></macro>
 
 <module name="table" nosession="">
@@ -243,14 +243,14 @@
 
       print "<p>", slink "CREATE ROW", "row";
 
-      my $order = $state{pri_key} ? " order by $state{pri_key}" : "";
-      my $st = sql_exec "select * from $state{table}$order limit ?,?", $state{begin}*1, 20;
+      my $order = $S{pri_key} ? " order by $S{pri_key}" : "";
+      my $st = sql_exec "select * from $S{table}$order limit ?,?", $S{begin}*1, 20;
 
-      print "<table width=\"40%\"><tr><td align=left>", slink "&lt;&lt;&lt;", begin => $state{begin}-20;
-      print "<td align=right>", slink "&gt;&gt;&gt;", begin => $state{begin}+20;
+      print "<table width=\"40%\"><tr><td align=left>", slink "&lt;&lt;&lt;", begin => $S{begin}-20;
+      print "<td align=right>", slink "&gt;&gt;&gt;", begin => $S{begin}+20;
       print "</table>\n";
       print "<table border=1>\n";
-      print "<tr><th>", join "<th>", map $state{field}{$_}{name}, 0..($state{nfields}-1);
+      print "<tr><th>", join "<th>", map $S{field}{$_}{name}, 0..($S{nfields}-1);
       print "<th>&nbsp;";
       my $priid;
       while (my $f = $st->fetchrow_arrayref) {
@@ -258,8 +258,8 @@
          for (0..$#$f) {
             my $data = $f->[$_];
             $data =~ s/</&lt;/g; $data =~ s/>/&gt;/g;
-            $data = $view_short{$state{field}{$_}{type}}->($data);
-            if ($state{field}{$_}{name} eq $state{pri_key}) {
+            $data = $view_short{$S{field}{$_}{type}}->($data);
+            if ($S{field}{$_}{name} eq $S{pri_key}) {
                $priid = $f->[$_];
                $data = slink $data, "row", id => $priid;
             }
@@ -267,7 +267,7 @@
             print "<td>$data";
          }
          if ($priid) {
-            print "<td>", slink "[DELETE]", sql => "delete from $state{table} where $state{pri_key} = $priid";
+            print "<td>", slink "[DELETE]", sql => "delete from $S{table} where $S{pri_key} = $priid";
          }
       }
       print "</table>\n";
@@ -284,9 +284,9 @@
    <:tableinfo:>
 
    <:
-      unless ($state{id}) {
-         sql_exec "insert into $state{table} () values ()";
-         $state{id} = sql_insertid;
+      unless ($S{id}) {
+         sql_exec "insert into $S{table} () values ()";
+         $S{id} = sql_insertid;
       }
 
       sub edit_text {
@@ -336,28 +336,28 @@
       }
 
 
-      if (defined $param{"param_$state{pri_key}"}) {
+      if (defined $P{"param_$S{pri_key}"}) {
          eval {
-            sql_exec "replace into $state{table} values ("
-                     .join(",", ("?") x $state{nfields})
-                     .")", map $param{"param_".$state{field}{$_}{name}},
-                               0..$state{nfields}-1;
+            sql_exec "replace into $S{table} values ("
+                     .join(",", ("?") x $S{nfields})
+                     .")", map $P{"param_".$S{field}{$_}{name}},
+                               0..$S{nfields}-1;
          };
          if ($@) {
             print errbox("database update failed", $@);
          }
       }
       
-      my $st = sql_exec "select * from $state{table} where $state{pri_key} = ?", $state{id};
+      my $st = sql_exec "select * from $S{table} where $S{pri_key} = ?", $S{id};
 
       print cform;
       my $f = $st->fetchrow_arrayref;
       print "<table border=0>\n";
       for my $i (0..$#$f) {
-         my $ft = $state{field}{$i};
+         my $ft = $S{field}{$i};
          my $data = $f->[$i];
          my $name = $ft->{name};
-         $name = "<b>$name</b>" if $name eq $state{pri_key};
+         $name = "<b>$name</b>" if $name eq $S{pri_key};
          print "<tr><td>",$ft->{type},"&nbsp;<td>$name&nbsp;", "<td>", $edit_field{$ft->{type}}->($ft, $data);
       }
       print "</table><p>", submit(__"Update");

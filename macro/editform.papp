@@ -11,13 +11,13 @@
 <xperl><![CDATA[
 
 sub ef_edit*() {
-   $state{ef_edit};
+   $S{ef_edit};
 }
 ]]></xperl>
 
 <macro name="ef_parse*"><phtml><![CDATA[
 <:
-   my $ef = delete $arg{ef};
+   my $ef = delete $A{ef};
    return unless $ef;
    local *FILE;
 
@@ -46,7 +46,7 @@ sub ef_edit*() {
             echo "file upload to '$path'<br>";
             if (open FILE, ">", "$path~") {
                my $size = 0;
-               while ($fh->read($data, 1024*16) > 0) {
+               while ($fh->read($data, 16*1024) > 0) {
                   $size += length $data;
                   print FILE $prev, substr($data, 0, length($data) - 2);
                   $prev = substr $data, -2;
@@ -123,7 +123,7 @@ sub ef_edit*() {
    :>
 
    <tr><td>
-#if $state{ef_edit}
+#if $S{ef_edit}
    <?slink __"[Edit mode OFF]", ef_edit => 0?>
 #endif
    [$table.$where->[0] == $where->[1]]
@@ -203,7 +203,7 @@ sub ef_edit*() {
 <macro name="ef_constant*" args="$content $name"><phtml><![CDATA[
 <:
    $ef_args->{constant}{$name} = $content;
-?><tt>$content</tt>
+?>
 ]]></phtml></macro>
 
 </papp>

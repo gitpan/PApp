@@ -23,12 +23,12 @@ use DBI;
 
 #use PApp::Exception; # not yet used
 
-$VERSION = 0.02;
+$VERSION = 0.03;
 
 BEGIN {
    require DynaLoader;
 
-   $VERSION = 0.02;
+   $VERSION = 0.03;
    @ISA = qw/Exporter DynaLoader/;
    @EXPORT = qw(
          sql_exec sql_fetch sql_fetchall sql_exists sql_insertid $sql_exec

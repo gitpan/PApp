@@ -47,7 +47,7 @@ use File::Basename qw(dirname);
 use PApp;
 use PApp::Parser;
 
-$VERSION = 0.02;
+$VERSION = 0.03;
 
 *PApp::apache_request = \&Apache::request;
 

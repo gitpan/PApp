@@ -24,7 +24,9 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.02;
+$VERSION = 0.03;
+
+use PApp::Exception;
 
 sub new {
    my $class = shift;
