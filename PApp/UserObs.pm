@@ -25,7 +25,7 @@ use PApp::Event ();
 
 use base Exporter;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT = qw( 
    authen_p access_p admin_p known_user_p update_username choose_username
    update_password update_comment username user_login user_logout userid
@@ -90,7 +90,7 @@ exists, do nothing and return C<undef>. (See C<choose_username>).
 
 sub update_username($;$) {
    my $uid = @_ > 1 ? shift : getuid;
-   my $user = Convert::Scalar::utf8_upgrade $_[0];
+   my $user = Convert::Scalar::utf8_upgrade "$_[0]";
    lockprefs {
       if ($PApp::prefs->find_value(papp_username => $user)) {
          undef $uid;
@@ -136,7 +136,7 @@ password, which is just that: a valid password with length zero.
 
 sub update_password($) {
    my ($pass) = @_;
-   Convert::Scalar::utf8_off Convert::Scalar::utf8_upgrade $pass;
+   Convert::Scalar::utf8_off Convert::Scalar::utf8_upgrade "$pass";
    $pass = defined $pass
               ? crypt $pass, join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64]
               : "";
@@ -260,7 +260,7 @@ never log-in successfully using this function.
 
 sub verify_login($$) {
    my ($user, $pass) = @_;
-   Convert::Scalar::utf8_off Convert::Scalar::utf8_upgrade $pass;
+   Convert::Scalar::utf8_off Convert::Scalar::utf8_upgrade "$pass";
    my $userid = userid $user;
    if ($userid) {
       my $xpass = $PApp::prefs->user_get($userid, "papp_password");

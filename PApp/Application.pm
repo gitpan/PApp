@@ -30,7 +30,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 
 =item $papp = new PApp::Application args...
 
@@ -482,6 +482,14 @@ use Carp 'croak';
 
 use base PApp::Application;
 
+sub for_all_packages($&;$$) {
+   my $self = shift;
+   my $cb   = shift;
+   my $path = shift || "";
+
+   #$self->{root}->for_all_packages($cb, $path, $self->{root}{name});
+}
+
 sub new {
    my ($class, %arg) = @_;
 
@@ -514,8 +522,6 @@ sub run {
 }
 
 1;
-
-=back
 
 =head1 SEE ALSO
 

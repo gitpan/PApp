@@ -22,7 +22,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 
 use base Exporter;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT = qw( 
    lockprefs
 );
@@ -109,10 +109,10 @@ sub user_get($$$) {
 
 sub user_set($$$;$) {
    if (defined $_[2]) {
-      $PApp::st_replacepref->execute($_[1], ${$_[0]{path}}, Convert::Scalar::utf8_upgrade $_[2],
+      $PApp::st_replacepref->execute($_[1], ${$_[0]{path}}, Convert::Scalar::utf8_upgrade "$_[2]",
                                 sfreeze_cr $_[3]);
    } else {
-      $PApp::st_deletepref->execute($_[1], ${$_[0]{path}}, Convert::Scalar::utf8_upgrade $_[2]);
+      $PApp::st_deletepref->execute($_[1], ${$_[0]{path}}, Convert::Scalar::utf8_upgrade "$_[2]");
    }
 }
 

@@ -14,7 +14,7 @@ PApp::ECMAScript - make javascript horrors less horrible
 
 package PApp::ECMAScript;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT = qw($js escape_string_sq escape_string_dq);
 
 use base Exporter;
@@ -45,6 +45,19 @@ sub init {
    }
 }
 
+=item unique
+
+Return a unique identifier. This is useful when generating function names
+or other identifiers.
+
+=cut
+
+my $unique = "A00";
+
+sub unique {
+   return ++$unique;
+}
+
 =item escape_string_sq $string [EXPORTED]
 
 =item escape_string_dq $string [EXPORTED]
@@ -56,7 +69,7 @@ the right function to minimize impact.
 
 =cut
 
-sub escape_string_sq {
+sub escape_string_sq($) {
    local $_ = shift;
    s{([^\x20-\x26\x28-\x5b\x5d-\x7e])}{
       my $ord = ord $1;
@@ -65,7 +78,7 @@ sub escape_string_sq {
    "'$_'";
 }
 
-sub escape_string_dq {
+sub escape_string_dq($) {
    local $_ = shift;
    s{([^\x20-\x21\x23-\x5b\x5d-\x7e])}{
       my $ord = ord $1;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 use Getopt::Long;
 use PApp::Env;
@@ -29,7 +29,7 @@ if (@ARGV) {
                $eval = 1;
             },
             "<>" => sub {
-               if ($_[0] =~ /^([^=]+)=(.*)$/) {
+               if ($_[0] =~ /^([^=]+)=(.*)$/s) {
                   my ($var, $val) = ($1, $2);
                   if ($eval) {
                      my $_val = $val;

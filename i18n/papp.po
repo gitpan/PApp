@@ -270,6 +270,14 @@ msgstr "Speicherbenutzung"
 msgid "Message (in language '%s')"
 msgstr "Meldung (in Sprache '%s')"
 
+# /root/src/PApp/apps/admin.papp:27 __"Name"</th><th>
+# /root/src/PApp/apps/admin.papp:64 __"Name"</th><th>
+# /root/src/PApp/widget/acedit.papp:201    <tr><td>__"Name"</td><td><?ef_string \$row->{name}, 20:>
+#$lang=eng
+#$flags=2
+msgid "Name"
+msgstr "Name"
+
 # /root/src/PApp/macro/admin.papp:101          __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p />
 #$lang=eng
 msgid "Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"
@@ -671,6 +679,13 @@ msgstr "Gruppe"
 msgid "caught a die"
 msgstr "Programmfehler abgefangen"
 
+# /root/src/PApp/widget/acedit.papp:46        <th>__"comment"</th><th>&nbsp;</th><th>
+# /root/src/PApp/widget/acedit.papp:91 __"comment"</th><th>&nbsp;</th>
+#$lang=eng
+#$flags=2
+msgid "comment"
+msgstr "Kommentar"
+
 # /root/src/PApp/widget/poedit.papp:310       <th align="left" width="10%">__"domain"</th>
 # /root/src/PApp/widget/poedit.papp:496           __"domain" $domain<br />
 #$lang=eng
@@ -988,6 +1003,14 @@ msgstr "Anloggen as fehgeschlohen"
 #$lang=eng
 msgid "Message (in language '%s')"
 msgstr "Noricht (an '%s')"
+
+# /root/src/PApp/apps/admin.papp:27 __"Name"</th><th>
+# /root/src/PApp/apps/admin.papp:64 __"Name"</th><th>
+# /root/src/PApp/widget/acedit.papp:201    <tr><td>__"Name"</td><td><?ef_string \$row->{name}, 20:>
+#$lang=eng
+#$flags=2
+msgid "Name"
+msgstr "Benotzer"
 
 # /root/src/PApp/macro/admin.papp:101          __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p />
 #$lang=eng
@@ -1365,6 +1388,13 @@ msgstr "Applikatiounssatz"
 #$lang=eng
 msgid "caught a die"
 msgstr "Do hued een sech den Doud angefangen"
+
+# /root/src/PApp/widget/acedit.papp:46        <th>__"comment"</th><th>&nbsp;</th><th>
+# /root/src/PApp/widget/acedit.papp:91 __"comment"</th><th>&nbsp;</th>
+#$lang=eng
+#$flags=2
+msgid "comment"
+msgstr "Kommentar"
 
 # /root/src/PApp/widget/poedit.papp:310       <th align="left" width="10%">__"domain"</th>
 # /root/src/PApp/widget/poedit.papp:496           __"domain" $domain<br />

@@ -30,7 +30,7 @@ use PApp::Exception qw(fancydie);
 
 use base 'Exporter';
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT_OK = qw(
       xml_quote xml_attr xml_unquote xml_tag xml_cdata
       xml_check xml_encoding xml2utf8

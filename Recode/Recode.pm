@@ -22,7 +22,7 @@ package PApp::Recode;
 use Convert::Scalar ();
 
 BEGIN {
-   $VERSION = 0.2;
+   $VERSION = 0.22;
 
    require XSLoader;
    XSLoader::load 'PApp::Recode', $VERSION;

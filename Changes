@@ -1,5 +1,25 @@
 Revision history for Perl extension PApp
 
+0.22 Sat Nov  1 14:26:10 CET 2003
+	- editform is now transactional, i.e. first phase check,
+          second phase cb_begin/assignments/cb_end.
+        - editform now supplies a guard value, but doesn't check it
+          (yet).
+	- database upgrade (replace obj_attr).
+        - calling PApp::Event::broadcast caused papp to ignore
+          the next two rounds of events.
+        - papp-env supports multiline-assignments.
+        - xpcse now asks for username/password, using a horrible
+          but low-dependency method.
+	- fix endless-loop bug in PApp::FormBuffer.
+
+0.21 Mon Apr 21 17:15:30 CEST 2003
+	- database upgrade (nuke obj_isa), no release.
+	- xpcse now actually exits correctly and doesn't stay in memory.
+        - zaphod inspired some utf8_upgrade on readonly scalars fixes.
+        - ef_password no longer displays the previous contents,
+          and only stores non-empty inputs.
+
 0.2 Fri Nov 15 20:04:32 CET 2002
 	- new function PApp::fixup_marker which lets you embed fixup markers
           in the output stream and replace them at page output time.

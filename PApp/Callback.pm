@@ -34,7 +34,7 @@ require 5.006;
 
 use base 'Exporter';
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...
@@ -212,7 +212,8 @@ use overload
       my $self = shift;
       sub { 
          unshift @_, $self;
-         goto &call;
+         #goto &call;#d#
+         &call;
       };
    };
 

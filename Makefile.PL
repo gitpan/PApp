@@ -66,7 +66,7 @@ WriteMakefile(
 		    PApp::SQL		=> 0.142,
                     Compress::LZF	=> 0.1045,
                     String::Similarity	=> 0.02,
-                    Convert::Scalar	=> 0.09,
+                    Convert::Scalar	=> 0.1,
                     Crypt::Twofish2	=> 0.01,
 
                     URI			=> 1.22,
@@ -78,7 +78,7 @@ WriteMakefile(
                     DBD::mysql		=> 2.04,
 
                     # the following are more or less optional, but highly useful
-                    XML::Sablotron	=> 0.60, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
+                    XML::Sablotron	=> 0.98, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
                     #mod_perl		=> 1.21, # not necessarily required anymore
                     #CGI::SpeedyCGI	=> 2.21,  # speedycgi uses a broken numbering scheme
                     #XML::LibXSLT	=> 0.0,  # gnome-xml, libxslt

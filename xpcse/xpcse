@@ -8,33 +8,46 @@ $EDITOR   = $ENV{EDITOR} || "vi";
 
 xpcse 
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
-With different environment variables you can change the behavior of xpcse for Linux. 
-These envrironment variables are C<EDITOR> and C<XPCSE_TERMINAL>
+The goal of xpcse is to edit files, database content etc.
+on the client-side with locally installed software.
+
+=head1 CONFIGURATION
+
+=head2 ENVIRONMENT
+
+Environment variables can be used to change the behavior of xpcse.
+These variables are C<EDITOR> and C<XPCSE_TERMINAL>.
 
 Examples: 
-  export XPCSE_TERMINAL='rxvt -g 90x25 -e'
-  export EDITOR='vi'
 
-Prerequesitions:
+  export XPCSE_TERMINAL='rxvt -g 90x25 -e'
+  export EDITOR=vi
+
+=head2 FILES
 
 =over 4
 
-=item * ~/.mailcap you need to add this addepted line
+=item ~/.mailcap or /etc/mailcap
+
+You need to add this line to any of these files to launch xpcse properly
+from within your browser:
+
   application/x-xpcse; /location/of/xpcse '%s'
 
-=item * ~/.mailcap.xpcse or /etc/mailcap.xpcse
-There you need to add like in the standard mailcap the applications that should be used to
-edit the different filetypes. Like this:
+=item ~/.mailcap.xpcse or /etc/mailcap.xpcse
+
+These entries have the same form as standard mailcap entries and can be
+used to override xcpse's idea of what programs should be used to display
+certain content types.
+
+For example, to use a different program to edit jpeg files with xpcse 
+than the one defined in the standard mailcap file, use this line;
+
   image/jpeg;xv -maxpect '%s'; edit=/location/of/program/to/edit '%s'
 
 =back
-
-=head1 DESCRIPTION
-
-The goal of xpcse is to provide the possibility of modify files, contentent of a database 
-or ... at the client-side with any software you want.
 
 =cut
 
@@ -42,6 +55,7 @@ use POSIX ":sys_wait_h";
 use LWP::UserAgent;
 use File::Temp qw(tempdir);
 use IO::Handle;
+use Fcntl;
 use Config;
 
 # 1. init
@@ -59,6 +73,8 @@ our $VERSION = 0.2;
 
 BEGIN {
    $TEMPDIR = tempdir TEMPDIR => 1;
+   chmod 0700, $TEMPDIR
+      or die "unable to chmod $TMPDIR: $!";
 }
 
 END {
@@ -72,7 +88,16 @@ sub msgbox {
    select undef, undef, undef, 0.25; # avoid extreme loops on uncommited messages (does not happen, just to be sure).
 }
 
-$SIG{CHLD} = 'IGNORE';
+sub prompt {
+   my ($msg1, $msg2) = @_;
+   my $cmd = "/bin/echo \Q$msg1\E; /bin/echo -n \Q$msg2\E; stty -echo; read answer; /bin/echo -n \$answer >$TEMPDIR/answer";
+   system "$TERMINAL sh -c \Q$cmd\E";
+   open my $answer, "<$TEMPDIR/answer"
+      or die "error while prompting user\n";
+   unlink "$TEMPDIR/answer";
+   <$answer>;
+}
+
 $SIG{__DIE__} = sub {
    (my $msg = $_[0]) =~ s/\n$//;
    msgbox "xpcse_error", $_[0];
@@ -97,7 +122,42 @@ sub parse_header($) {
    %hdr;
 }
 
-my $ua = new LWP::UserAgent;
+my %auth;
+
+# subclass useragent
+@useragent::ISA = LWP::UserAgent;
+sub useragent::get_basic_credentials {
+   my ($self, $realm, $uri) = @_;
+   my $netloc = $uri->host_port;
+
+   my ($user, $pass) = @{$auth{$netloc}{$realm} || []};
+   
+   if (!(defined $user and defined $pass)) {
+      $user = prompt "A username for '$realm' at '$netloc' is required.", "Username: ";
+      $pass = prompt "A password for '$realm' at '$netloc' is required.", "Password: ";
+
+      $auth{$netloc}{$realm} = [$user, $pass];
+   }
+
+   ($user, $pass);
+}
+
+sub request {
+   my ($ua, $req) = @_;
+
+   for (;;) {
+      my $res = $ua->request ($req);
+
+      if ($res->code == &HTTP::Status::RC_UNAUTHORIZED
+          || $res->code == &HTTP::Status::RC_PROXY_AUTHENTICATION_REQUIRED) {
+         %auth = ();
+      } else {
+         return $res;
+      }
+   }
+}
+
+my $ua = new useragent;
 $ua->env_proxy;
 
 my $nodename = (POSIX::uname)[1];
@@ -111,7 +171,7 @@ sub download {
    my ($url, $file) = @_;
 
    $http_headers->content_type("application/octet-stream");
-   my $res = $ua->request(new HTTP::Request GET => "$hdr{url}?command=fetch$ch", $http_headers, "");
+   my $res = request ($ua, new HTTP::Request GET => "$hdr{url}?command=fetch$ch", $http_headers, "");
 
    if($res->is_success) {
       open my $f, ">", $file or die "can't open file '$file' $!";
@@ -205,7 +265,7 @@ sub upload {
    utime $MTIME, $MTIME, $TEMP;
 
    $http_headers->content_type($hdr{'content-type'});
-   my $res = $ua->request(new HTTP::Request POST => "$hdr{url}?command=store$ch", $http_headers, $file);
+   my $res = request ($ua, new HTTP::Request POST => "$hdr{url}?command=store$ch", $http_headers, $file);
 
    if ($res->is_success) {
       my $content = $res->content;

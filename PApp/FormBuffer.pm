@@ -30,7 +30,7 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 
 no utf8;
 use bytes;
@@ -123,7 +123,7 @@ sub READLINE {
    my $self = shift;
    for(;;) {
       return undef if $self->{datalen} == 0;
-      if ($self->{buffer} =~ s/^([^\15\12]*?)\15\12//) {
+      if ($self->{buffer} =~ s/^([^\15\12]*)\15?\12//) {
          my $line = $1;
          $self->_datalen;
          return $line;

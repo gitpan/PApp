@@ -11,130 +11,117 @@
 
 #define CACHEp "_cache"
 #define CACHEl (sizeof (CACHEp) - 1)
+static U32 CACHEh;
+static SV *CACHEs;
+#define ATTRp  "_attr"
+#define ATTRl  (sizeof (ATTRp) - 1)
+static U32 ATTRh;
+static SV *ATTRs;
 #define TYPEp  "_type"
 #define TYPEl  (sizeof (TYPEp) - 1)
+static U32 TYPEh;
+static SV *TYPEs;
+#define PATHp   "_path"
+#define PATHl   (sizeof (PATHp) - 1)
+static U32 PATHh;
+static SV *PATHs;
+#define GIDp   "_gid"
+#define GIDl   (sizeof (GIDp) - 1)
+static U32 GIDh;
+static SV *GIDs;
 
-static U32 CACHEh, TYPEh;
 static MGVTBL vtbl_agni_object = {0, 0, 0, 0, 0};
 
-static U32
-compute_hash (char *key, I32 len)
-{
-  U32 hash;
+#define MAKEVERS(r,v,s) (((r) << 24) || ((v) << 12) || (s))
+#define PERLVERS MAKEVERS(PERL_REVISION, PERL_VERSION, PERL_SUBVERSION)
 
-  PERL_HASH (hash, key, len);
-
-  return hash;
-}
-
-/* freeze, and store */
 static void
-freeze_store (SV *self, SV *obj, SV *value)
+compute_hash (char *key, I32 len, SV **sv, U32 *hash)
 {
-  dSP;
-  SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
-  SV *data;
-  int c;
-
-  PUSHMARK (SP); EXTEND (SP, 3); PUSHs (self); PUSHs (value); PUSHs (obj); PUTBACK;
-  c = call_method ("freeze", G_SCALAR | G_EVAL);
-  SPAGAIN;
-
-  if (SvTRUE (ERRSV))
-    croak (0);
-
-  if (c == 1)
-    data = POPs;
-  else if (c == 0)
-    data = &PL_sv_undef;
-  else
-    croak ("TYPE->freeze must return at most one return value");
-
-  PUSHMARK (SP); EXTEND (SP, 3); PUSHs (self); PUSHs (obj); PUSHs (data); PUTBACK;
-  call_method ("store", G_VOID | G_DISCARD | G_EVAL);
-  SPAGAIN;
-
-  if (SvTRUE (ERRSV))
-    croak (0);
-
-  if (saveerr)
-    sv_setsv (ERRSV, saveerr);
-
-  PUTBACK;
+  *sv = newSVpvn (key, len);
+  PERL_HASH (*hash, key, len);
 }
 
 static SV *obj_by_gid (SV *obj, SV *gid)
 {
   dSP;
-  SV **path =hv_fetch ((HV *)SvRV (obj), "_path", 5, 0);
+  SV **path = hv_fetch ((HV *)SvRV (obj), "_path", 5, 0);
 
   if (path && *path)
     {
       PUSHMARK (SP); EXTEND (SP, 2); PUSHs (*path); PUSHs (gid);
       PUTBACK;
-      if (call_pv ("Agni::path_obj_by_gid", G_SCALAR | G_EVAL) == 1)
+
+      if (call_pv ("Agni::path_obj_by_gid", G_SCALAR) == 1)
         {
           SPAGAIN;
-          return POPs;
+
+          obj = POPs;
+
+          if (SvOK (obj))
+            {
+              if (!sv_isobject (obj))
+                croak ("FATAL: path_obj_by_gid(%s/%s) did not return an object",
+                       SvPV_nolen (*path), SvPV_nolen (gid));
+
+              return obj;
+            }
         }
+      else if (SvTRUE (ERRSV))
+        croak (0);
     }
 
   return 0;
 }
 
-/* fetch, and thaw, and push ;) */
-static void
-fetch_thaw_push (SV *self, SV *obj)
+static SV *
+agni_key2obj (SV *self, SV **key, int need_member)
 {
-  dSP;
-  SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
-  SV *save_mh = HeVAL (&PL_hv_fetch_ent_mh); /* perl bug, FETCH recursively clobbers PL_hv..mh */
-  SV *data;
-  int c;
+  SV *tobj;
+  char *key_ = SvPV_nolen (*key);
 
-  /* $self->fetch($obj) */
-  PUSHMARK (SP); EXTEND(SP, 2); PUSHs (self); PUSHs (obj); PUTBACK;
-  c = call_method ("fetch", G_SCALAR | G_EVAL);
-  SPAGAIN;
+  /* GID or NAME fetch. */
+  if (key_[0] >= '1' && key_[0] <= '9')
+    {
+      /* GID, fetch obj. */
+      tobj = obj_by_gid (self, *key);
 
-  if (SvTRUE (ERRSV))
-    croak (0);
-
-  if (c == 1)
-    data = POPs;
-  else if (c == 0)
-    data = &PL_sv_undef;
+      if (!tobj)
+        croak ("unable to resolve type '%s' while accessing member by GID", key_);
+    }
   else
-    croak ("TYPE->fetch must return at most one return value");
+    {
+      /* NAME, fetch tobj and GID. */
+      HV *hvt = (HV *)SvRV (HeVAL (hv_fetch_ent ((HV *)SvRV (self), TYPEs, 0, TYPEh)));
+      HE *he = hv_fetch_ent (hvt, *key, 0, 0);
 
-  /* $self->thaw($data) */
-  PUSHMARK (SP); EXTEND (SP, 3); PUSHs (self); PUSHs (data); PUSHs (obj); PUTBACK;
-  c = call_method ("thaw", G_SCALAR | G_EVAL);
-  SPAGAIN;
+      if (!he)
+        if (need_member)
+          croak ("object has no data member named '%s'", key_);
+        else
+          return 0;
 
-  if (SvTRUE (ERRSV))
-    croak (0);
+      tobj = HeVAL (he);
 
-  if (c == 1)
-    XPUSHs (POPs);
-  else if (c == 0)
-    ; /*NOP*/
-  else
-    croak ("TYPE->thaw must return at most one return value");
+      if (!sv_isobject (tobj))
+        croak ("type object for '%s' is not an object (bug in populate method?)", key_);
 
-  HeVAL (&PL_hv_fetch_ent_mh) = save_mh;
+      he = hv_fetch_ent ((HV *)SvRV (tobj), GIDs, 0, GIDh);
 
-  if (saveerr)
-    sv_setsv (ERRSV, saveerr);
+      if (!he)
+        croak ("FATAL: type object for '%s' has no GID", key_);
 
-  PUTBACK;
+      *key = HeVAL (he);
+    }
+
+  return tobj;
 }
 
 /* papp */
 
 /*
  * return wether the given sv really is a "scalar value" (i.e. something
- * we can cann setsv on without getting a headache.
+ * we can cann setsv on without getting a headache.)
  */
 #define sv_is_scalar_type(sv)	\
 	(SvTYPE (sv) != SVt_PVAV \
@@ -186,6 +173,44 @@ x64_enc (uchar *dst, uchar *src, STRLEN len)
     }
 }
 
+/* 0 host, 1 le, 2 be */
+static void
+pack64 (uchar *buf, const char *str, int mode)
+{
+  unsigned long long val;
+
+  val = strtoull(str, 0, 0);
+
+  switch (mode) {
+    case 1:
+#if BYTEORDER != 0x4321 && BYTEORDER != 0x87654321
+    case 0:
+#endif
+       buf[0] = val      ;
+       buf[1] = val >>  8;
+       buf[2] = val >> 16;
+       buf[3] = val >> 24;
+       buf[4] = val >> 32;
+       buf[5] = val >> 40;
+       buf[6] = val >> 48;
+       buf[7] = val >> 56;
+       break;
+    case 2:
+#if BYTEORDER == 0x4321 || BYTEORDER == 0x87654321
+    case 0:
+#endif
+       buf[0] = val >> 56;
+       buf[1] = val >> 48;
+       buf[2] = val >> 40;
+       buf[3] = val >> 32;
+       buf[4] = val >> 24;
+       buf[5] = val >> 16;
+       buf[6] = val >>  8;
+       buf[7] = val      ;
+       break;
+  }
+}
+        
 static I32
 papp_filter_read(pTHX_ int idx, SV *buf_sv, int maxlen)
 {
@@ -462,6 +487,14 @@ expand_path(char *path, STRLEN pathlen, char *cwd, STRLEN cwdlen)
 
   if (*path != '/')
     {
+      if (!cwd)
+        {
+          if (!SvPOK (GvSV (curprfx)))
+            croak ("$PApp::curprfx not set");
+
+          cwd = SvPV (GvSV (curprfx), cwdlen);
+        }
+
       sv_catpvn (res, cwd, cwdlen ? cwdlen : strlen (cwd));
 
       if (SvEND(res)[-1] != '/')
@@ -472,16 +505,16 @@ expand_path(char *path, STRLEN pathlen, char *cwd, STRLEN cwdlen)
 
   return res;
 }
-          
+
+#define surl_expand_path(path,pathlen) expand_path ((path), (pathlen), 0, 0)
+
 static SV *
 eval_path_ (char *path, char *end)
 {
   SV *pathinfo;
 
   if (path > end)
-    {
-      pathinfo = modpath_freeze (GvSV (modules));
-    }
+    pathinfo = modpath_freeze (GvSV (modules));
   else
     {
       SV *modpath;
@@ -575,7 +608,8 @@ eval_path (SV *path)
 
 /* checks wether this surl argument is a single arg (1) or key->value (0) */
 /* should be completely pluggable, i.e. by subclassing/calling PApp::SURL->gen */
-#define SURL_NOARG(sv) (SvROK (sv) && sv_isa (sv, "PApp::Callback::Function"))
+#define SURL_NOARG(sv) (SvROK (sv) && (sv_isa (sv, "PApp::Callback::Function") \
+                                       || sv_isa (sv, "Agni::Callback")))
 
 /*****************************************************************************/
 
@@ -617,13 +651,8 @@ surl(...)
         SV *pathinfo;
         SV *dstmodule;
         SV *path = 0;
-        char *xcurprfx;
-        STRLEN lcurprfx;
         char *svp; STRLEN svl;
         int style = 1;
-
-        if (!SvPOK (GvSV (curprfx)))
-          croak ("$PApp::curprfx not set");
 
         if (SvIOK (GvSV (surlstyle)))
           style = SvIV (GvSV (surlstyle));
@@ -657,10 +686,10 @@ surl(...)
 
             pathinfo = newSVsv (SvRV (dstmodule));
           }
-        else
+        else if (SvOK (dstmodule))
           pathinfo = eval_path (dstmodule);
-
-        xcurprfx = SvPV (GvSV (curprfx), lcurprfx);
+        else
+          pathinfo = modpath_freeze (GvSV (modules));
 
         if (!ix || has_module) /* only set module when explicitly given */
           av_push (args, SvREFCNT_inc (pathinfo));
@@ -716,7 +745,7 @@ surl(...)
                              && !SvROK (val))
                       {
                         svp = SvPV (val, svl);
-                        val = expand_path (svp, svl, xcurprfx, lcurprfx);
+                        val = surl_expand_path (svp, svl);
                       }
                     else
                       {
@@ -728,7 +757,7 @@ surl(...)
                 else
                   {
                     svp = SvPV (arg, svl);
-                    arg = expand_path (svp, svl, xcurprfx, lcurprfx);
+                    arg = surl_expand_path (svp, svl);
                     val = newSVsv (val);
                   }
 
@@ -1205,15 +1234,20 @@ and64(a,b)
 
 
 char *
-unpack64(v)
-        char *v;
+unpack64(sv)
+        SV *sv;
         PROTOTYPE: $
         ALIAS:
            unpack64_le = 1
            unpack64_be = 2
         CODE:
         char buf[64];
+        STRLEN len;
+        char *v = SvPV (sv, len);
         char *p = v;
+
+        if (len < 8)
+          XSRETURN_UNDEF;
 #if BYTEORDER == 0x4321 || BYTEORDER == 0x87654321
         if(ix == 1)
 #else
@@ -1245,50 +1279,20 @@ pack64(v)
            pack64_le = 1
            pack64_be = 2
         CODE:
-        unsigned long long val;
-        uchar buf[64];
+        uchar buf[8];
 
-        val = strtoull(v, 0, 0);
-        switch(ix) {
-          case 1:
-#if BYTEORDER != 0x4321 && BYTEORDER != 0x87654321
-          case 0:
-#endif
-             buf[0] = val      ;
-             buf[1] = val >>  8;
-             buf[2] = val >> 16;
-             buf[3] = val >> 24;
-             buf[4] = val >> 32;
-             buf[5] = val >> 40;
-             buf[6] = val >> 48;
-             buf[7] = val >> 56;
-             break;
-          case 2:
-#if BYTEORDER == 0x4321 || BYTEORDER == 0x87654321
-          case 0:
-#endif
-             buf[0] = val >> 56;
-             buf[1] = val >> 48;
-             buf[2] = val >> 40;
-             buf[3] = val >> 32;
-             buf[4] = val >> 24;
-             buf[5] = val >> 16;
-             buf[6] = val >>  8;
-             buf[7] = val      ;
-             break;
-        }
-        
+        pack64 (buf, v, ix);
+
         RETVAL = newSVpvn(buf, 8);
         OUTPUT:
         RETVAL
 
-        
-
-
-        
 BOOT:
-	CACHEh = compute_hash (CACHEp, CACHEl);
-	TYPEh  = compute_hash (TYPEp,  TYPEl);
+	compute_hash (CACHEp, CACHEl, &CACHEs, &CACHEh);
+	compute_hash (TYPEp,  TYPEl,  &TYPEs,  &TYPEh);
+	compute_hash (ATTRp,  ATTRl,  &ATTRs,  &ATTRh);
+	compute_hash (PATHp,  PATHl,  &PATHs,  &PATHh);
+	compute_hash (GIDp,   GIDl,   &GIDs,   &GIDh);
 
 SV *
 agnibless(SV *rv, char *classname)
@@ -1299,11 +1303,14 @@ agnibless(SV *rv, char *classname)
 
         RETVAL = newSVsv (sv_bless (rv, gv_stashpv(classname, TRUE)));
 
-        if (!hv_fetch (hv, CACHEp, CACHEl, 0))
-          hv_store (hv, CACHEp, CACHEl, newRV_noinc ((SV *)newHV ()), CACHEh);
+        if (!hv_fetch_ent (hv, ATTRs, 0, ATTRh))
+          hv_store_ent (hv, ATTRs, newRV_noinc ((SV *)newHV ()), ATTRh);
 
-        if (!hv_fetch (hv, TYPEp, TYPEl, 0))
-          hv_store (hv, TYPEp,  TYPEl,  newRV_noinc ((SV *)newHV ()), TYPEh);
+        if (!hv_fetch_ent (hv, TYPEs, 0, TYPEh))
+          hv_store_ent (hv, TYPEs, newRV_noinc ((SV *)newHV ()), TYPEh);
+
+        if (!hv_fetch_ent (hv, CACHEs, 0, CACHEh))
+          hv_store_ent (hv, CACHEs, newRV_noinc ((SV *)newHV ()), CACHEh);
 
         sv_magicext ((SV *)hv, Nullsv, PERL_MAGIC_tied, &vtbl_agni_object, Nullch, 0);
 
@@ -1328,6 +1335,59 @@ isobject(SV *rv)
         else
           XSRETURN_NO;
 
+void
+obj_of (SV *ref)
+	PROTOTYPE: $
+	PPCODE:
+
+        if (SvROK (ref) && SvMAGICAL (SvRV (ref)))
+          {
+            MAGIC *mg = mg_find (SvRV (ref), PERL_MAGIC_tiedelem);
+
+            if (mg && mg->mg_obj)
+              {
+                XPUSHs (newSVsv (mg->mg_obj));
+                XSRETURN (1);
+              }
+          }
+
+        XPUSHs (&PL_sv_undef);
+        XSRETURN (1);
+
+SV *
+_data_special_key (SV *self, SV *obj)
+	CODE:
+        if (sv_isobject (self) && sv_isobject (obj))
+          {
+            static uchar k[8+8];
+
+            HV *shv = (HV *)SvRV (self);
+
+            SvRMAGICAL_off (shv);
+            pack64 (k, SvPV_nolen (HeVAL (hv_fetch_ent (shv, GIDs, 0, GIDh))), 2);
+            SvRMAGICAL_on (shv);
+
+            if (SvTRUE (*hv_fetch (shv, "instance_specific", 17, 1)))
+              {
+                HV *ohv = (HV *)SvRV (obj);
+                
+                SvRMAGICAL_off (ohv);
+                pack64 (k + 8, SvPV_nolen (HeVAL (hv_fetch_ent (ohv, GIDs, 0, GIDh))), 2);
+                SvRMAGICAL_on (ohv);
+
+                RETVAL = newSVpvn (k, 16);
+              }
+            else
+              {
+                RETVAL = newSVpvn (k, 8);
+              }
+          }
+        else
+          croak ("_data_special_key must be called with two references");
+
+	OUTPUT:
+        RETVAL
+
 MODULE = PApp		PACKAGE = agni::object
 
 void
@@ -1339,104 +1399,146 @@ DESTROY(SV *rv)
 void
 FETCH(SV *self, SV *key)
         PPCODE:
-        HV *hv = (HV*) SvRV (self);
-        char *key_ = SvPV_nolen (key);
+        HV *hv = (HV *)SvRV (self);
         HE *he;
         
         SvRMAGICAL_off (hv);
 
         /* _-keys go into $self, non-_-keys are store'ed immediately */
-        if (key_[0] == '_')
-          he = hv_fetch_ent (hv, key, 0, 0);
-        else if (key_[0] >= '1' && key_[1] <= '9')
+        if (SvPV_nolen (key)[0] == '_')
           {
-            SV *tobj = obj_by_gid (self, key);
-
+            he = hv_fetch_ent (hv, key, 0, 0);
             SvRMAGICAL_on (hv);
-            if (!tobj)
-              croak ("unable to resolve type '%s' in gid-FETCH", key_);
 
-            PUTBACK; fetch_thaw_push (tobj, self); SPAGAIN;
-            return;
+            if (he)
+              XPUSHs (sv_mortalcopy (HeVAL (he)));
           }
         else
           {
-            HV *hvc = (HV *)SvRV (*(hv_fetch (hv, CACHEp, CACHEl, 0)));
-            he = hv_fetch_ent (hvc, key, 0, 0);
+            SV *tobj = agni_key2obj (self, &key, 0);
 
-            /* if cached, do not call fetch */
-            if (!he)
+            if (tobj)
               {
-                hvc = (HV *)SvRV (*(hv_fetch (hv, TYPEp, TYPEl, 0)));
+                HE *he;
+                HV *hvc;
+                
+                he = hv_fetch_ent (hv, CACHEs, 0, CACHEh);
+
+                if (!he)
+                  croak ("FATAL: FETCH called on an object without _cache");
+
+                hvc = (HV *)SvRV (HeVAL (he));
                 he = hv_fetch_ent (hvc, key, 0, 0);
+                
+                SvRMAGICAL_on (hv);
 
+                /* if cached, do not call fetch */
                 if (he)
-                  {
-                    SvRMAGICAL_on (hv);
-                    PUTBACK; fetch_thaw_push (HeVAL (he), self); SPAGAIN;
-                    return;
-                  }
+                  XPUSHs (sv_mortalcopy (HeVAL (he)));
                 else
-                  he = hv_fetch_ent (hv, key, 0, 0);
+                  {
+#if PERLVERS <  MAKEVERS(5,8,1)
+                    SV *save_mh = HeVAL (&PL_hv_fetch_ent_mh); /* perl bug, FETCH recursively clobbers PL_hv..mh */
+#endif
+                    SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
+                    SV *data;
+                    int c;
+
+                    /* $tobj->fetch($self) */
+                    PUSHMARK (SP); EXTEND (SP, 2); PUSHs (tobj); PUSHs (self); PUTBACK;
+                    c = call_method ("fetch", G_SCALAR | G_EVAL);
+                    SPAGAIN;
+#if PERLVERS <  MAKEVERS(5,8,1)
+                    HeVAL (&PL_hv_fetch_ent_mh) = save_mh;
+#endif
+                    if (SvTRUE (ERRSV))
+                      croak (0);
+
+                    if (c == 1)
+                      data = POPs;
+                    else if (c == 0)
+                      data = &PL_sv_undef;
+                    else
+                      croak ("TYPE->fetch must return at most one return value");
+
+                    /* $tobj->thaw($data) */
+                    PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (data); PUSHs (self); PUTBACK;
+                    c = call_method ("thaw", G_SCALAR | G_EVAL);
+                    SPAGAIN;
+#if PERLVERS <  MAKEVERS(5,8,1)
+                    HeVAL (&PL_hv_fetch_ent_mh) = save_mh;
+#endif
+                    if (SvTRUE (ERRSV))
+                      croak (0);
+
+                    if (c < 0 || c > 1)
+                      croak ("TYPE->thaw must return at most one return value");
+
+                    /* reuse thaw return values for ourselves. */
+
+                    if (saveerr)
+                      sv_setsv (ERRSV, saveerr);
+                  }
               }
+            else
+              SvRMAGICAL_on (hv);
           }
-
-        if (he)
-          XPUSHs (sv_mortalcopy (HeVAL (he)));
-
-        SvRMAGICAL_on (hv);
 
 void
 STORE(SV *self, SV *key, SV *value)
         PPCODE:
         HV *hv = (HV*) SvRV (self);
-        char *key_ = SvPV_nolen (key);
-
         SvRMAGICAL_off (hv);
 
         /* _-keys go into $self, non-_-keys are store'ed immediately */
-        if (key_[0] == '_')
-          hv_store_ent (hv, key, newSVsv (value), 0);
-        else if (key_[0] >= '1' && key_[1] <= '9')
+        if (SvPV_nolen (key)[0] == '_')
           {
-            SV *tobj = obj_by_gid (self, key);
-
+            hv_store_ent (hv, key, newSVsv (value), 0);
             SvRMAGICAL_on (hv);
-            if (!tobj)
-              croak ("unable to resolve type '%s' in gid-STORE", key_);
-
-            PUTBACK; freeze_store (tobj, self, value); SPAGAIN;
-            return;
           }
         else
           {
-            /* now check for a _type entry */
-            HV *hvc = (HV *)SvRV (*(hv_fetch (hv, TYPEp, TYPEl, 0)));
+            SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
+            SV *data;
+            int c;
+
+            SV *tobj = agni_key2obj (self, &key, 1);
+            HV *hvc = (HV *)SvRV (HeVAL (hv_fetch_ent (hv, CACHEs, 0, CACHEh)));
             HE *he = hv_fetch_ent (hvc, key, 0, 0);
+
+            SvRMAGICAL_on (hv);
 
             if (he)
               {
-                SV *tobj = HeVAL (he);
-
-                hvc = (HV *)SvRV (*(hv_fetch (hv, CACHEp, CACHEl, 0)));
-                he = hv_fetch_ent (hvc, key, 0, 0);
-
                 /* always update cache, if it exists */
-                if (he)
-                  {
-                    SvREFCNT_dec (HeVAL (he));
-                    HeVAL (he) = newSVsv (value);
-                  }
-
-                SvRMAGICAL_on (hv);
-                PUTBACK; freeze_store (tobj, self, value); SPAGAIN;
-                return;
+                SvREFCNT_dec (HeVAL (he));
+                HeVAL (he) = newSVsv (value);
               }
-            else
-              hv_store_ent (hv, key, newSVsv (value), 0);
-          }
 
-        SvRMAGICAL_on (hv);
+            PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (value); PUSHs (self); PUTBACK;
+            c = call_method ("freeze", G_SCALAR | G_EVAL);
+            SPAGAIN;
+
+            if (SvTRUE (ERRSV))
+              croak (0);
+
+            if (c == 1)
+              data = POPs;
+            else if (c == 0)
+              data = &PL_sv_undef;
+            else
+              croak ("TYPE->freeze must return at most one return value");
+
+            PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (self); PUSHs (data); PUTBACK;
+            call_method ("store", G_VOID | G_DISCARD | G_EVAL);
+            SPAGAIN;
+
+            if (SvTRUE (ERRSV))
+              croak (0);
+
+            if (saveerr)
+              sv_setsv (ERRSV, saveerr);
+          }
 
 void
 EXISTS(SV *self, SV *key)
@@ -1450,6 +1552,8 @@ EXISTS(SV *self, SV *key)
         /* check _-keys in $self and non-_-keys in $self->{_type} */
         if (key_[0] == '_')
           hvt = hv;
+        else if (key_[0] >= '1' && key_[0] <= '9')
+          hvt = (HV *)SvRV (*(hv_fetch (hv, ATTRp, ATTRl, 0)));
         else
           hvt = (HV *)SvRV (*(hv_fetch (hv, TYPEp, TYPEl, 0)));
 

@@ -2,6 +2,12 @@ use Config;
 
 $PAPPRC = "$ENV{HOME}/.papp_config";
 
+if (-t STDIN) {
+   # flush input
+   use POSIX ();
+   POSIX::tcflush 0, POSIX::TCIFLUSH;
+}
+
 $|=1;
 
 eval {
@@ -57,8 +63,7 @@ sysid\@nethype.de, stating something that we can use to uniquely identify
 you (we keep a database of sysids, anonymized if you want), or use an
 official(!) IPv4 address assigned to you.
 
-If you don't want to assign a sysid (or a sysid has already been assigned
-to your database), enter a zero.
+See the FAQ entry "Why do I need a sysid?"
 
 EOF
 
@@ -149,7 +154,7 @@ PApp::Config - hold common configuration settings
 
 use PApp::SQL;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 
 require Exporter;
 

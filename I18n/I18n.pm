@@ -56,7 +56,7 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 0.2;
+   $VERSION = 0.22;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
@@ -194,7 +194,7 @@ sub translate_langid($;$) {
 =item locale_charsets $locale
 
 Returns a list of character sets that might be good to use for this
-locale. This definition is necessarily inprecise ;)
+locale. This definition is neccessarily imprecise ;)
 
 The charsets returned should be considered to be in priority order, i.e.
 the first charset is the best. The intention of this function is to
@@ -1101,7 +1101,7 @@ vut	vu	Vanuatu
 wlf	wf	Wallis and Futuna Islands
 wsm	ws	Samoa
 yem	ye	Yemen
-yug	yu	Yugoslavia
+scg	cs	Serbia and Montenegro
 zaf	za	South Africa
 zmb	zm	Zambia
 zwe	zw	Zimbabwe

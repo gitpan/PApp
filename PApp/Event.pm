@@ -34,7 +34,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 use PApp::Exception ();
 use Compress::LZF ':freeze';
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 
 our $event_count;
 
@@ -101,13 +101,12 @@ sub broadcast($;@) {
 
    sql_exec $DBH, "unlock table";
 
-   if ($id < $event_count && @_) {
-      # TODO this die doesn't get rhough... it dies, but message is empty, WHY#d#
-      PApp::Exception::fancydie "event table corrupted", "new id $id < current event_count $event_count",
-                                abridged => 1;
-   }
+   if (@_) {
+      $id > $event_count
+         or die "FATAL: event table corrupted; new id $id < current event_count $event_count";
 
-   handle_events($id);
+      handle_events($id) if @_;
+   }
 }
 
 sub skip_all_events {

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 use Getopt::Long;
 
@@ -13,28 +13,26 @@ use Convert::Scalar qw(utf8_valid);
 
 use Agni;
 
-sub up {
-   my $self = $_[0];
-   $self;
-}
-
-sub ag {
-   $g ||= do {
-      up { 1,2,3,3};
-   };
-
-}
-
 sub do_some_tests {
-   #my $root = path_obj_by_gid 0, 1;
-   my $meta_parcel = 5100000280;
-   my $classname = 23;
-   my $mnamespace = 4295048763;
-   my $self = path_obj_by_gid 2,5100000360;
-   Agni::rmagical_off $self;
-   warn PApp::Util::dumpval($self);
-   %$self = ();
-   warn "GID RC ".Convert::Scalar::refcnt_rv $self;
+   warn "heiheihei\n";#d#
+   #my $vo = path_obj_by_gid 1, 783;
+   #warn PApp::Util::dumpval($vo->{_content});
+   #warn "hoiheihei\n";#d#
+   #$vo->{_type}{content}->fetch($vo);
+   #$vo->show_content;
+   #(path_obj_by_gid 1, 5100000652)->show_content;
+   local $Agni::debug=1;
+   #my $o1 = path_obj_by_gid 1,5100000482;
+   my $o1 = path_obj_by_gid 1,5100000016;
+   warn PApp::Util::dumpval($o1->{_cache});
+   exit;
+   my $path = 3;
+   my $t1 = Time::HiRes::time;
+   my $customer = path_obj_by_gid $path, 5100000422;
+   my $lg = path_obj_by_gid $path, 5100000420;
+   my $us = path_obj_by_gid $path, 17180000071;
+   my $t2 = Time::HiRes::time;
+   warn $t2-$t1;
 }
 
 sub quote_attr($) {
@@ -71,6 +69,7 @@ sub parse_objects {
    my ($o, $all);
    my @map_path;
    my %map_path;
+   my $in_o;
 
    require XML::Parser::Expat;
 
@@ -96,8 +95,9 @@ sub parse_objects {
             } elsif ($_[0] eq "o") {
                shift;
                my %o = @_;
+               $in_o and $parser->xpcroak ("nested <o> detected");
+               $in_o = 1;
                $o = { gid => $o{gid}, attr => {} };
-               $o{isa} and $o->{isa} = $o{isa};
 
                if (exists $o{paths}) {
                   $o->{paths} = $map_path{$o{paths}} ||= do {
@@ -111,7 +111,9 @@ sub parse_objects {
                }
 
                push @objs, $o;
-               sub { }
+               sub {
+                  $in_o = 0;
+               }
             } elsif ($_[0] eq "a" or $_[0] eq "m") {
                shift;
                $data = "";
@@ -153,7 +155,7 @@ sub save_image {
    print $fh xml_tag("image", version => '1'),
              "\n\n";
 
-   sql_exec "lock tables obj read, obj_attr read, obj_path read, obj_isa read";
+   sql_exec Agni::lock_all_tables "obj_path";
 
    my %map_path; # mask => list
    my @map_path;
@@ -170,9 +172,9 @@ sub save_image {
    }
    print $fh "\n";
 
-   my $st = sql_exec \my($id, $gid, $paths, $isa),
-   		     "select obj.id, gid, paths, obj_isa.isa
-                      from obj left join obj_isa on (obj.id = obj_isa.id and obj_isa.grade = 1)
+   my $st = sql_exec \my($id, $gid, $paths),
+   		     "select id, gid, paths
+                      from obj
                       order by gid, paths";
 
    while($st->fetch) {
@@ -183,17 +185,17 @@ sub save_image {
                   map $map_path[$_],
                      grep { Agni::and64 $paths, Agni::bit64 $_ } sort @pathids;
 
-      print $fh xml_tag("o", gid => $gid, paths => $paths, $isa ? (isa => $isa) : ()),
-                "\n";
-      my $st = sql_exec \my($type, $data),
-                        "select type, " . (Agni::any_data "obj_attr") . "
-                         from obj_attr where id = ?
-                         order by type",
-                        $id;
+      print $fh xml_tag("o", gid => $gid, paths => $paths);
+      for my $table (@Agni::sqlcol) {
+         my $st = sql_exec \my($type, $data),
+                           "select type, data
+                            from $table where id = ?
+                            order by type",
+                           $id;
 
-      while ($st->fetch) {
-         print_attr $fh, $type, $data;
-         print $fh "\n";
+         while ($st->fetch) {
+            print_attr $fh, $type, $data;
+         }
       }
       print $fh "\n</o><!--$paths/$gid-->\n\n\n";
    }
@@ -206,28 +208,40 @@ sub load_image {
 
    my ($paths, $objs) = parse_objects $file;
 
-   my %isa;
    my %sqlcol;
+
+   # do upgrade translation
+   my %replace = (
+      "string", "d_string",
+      "text",   "d_blob",
+      "int",    "d_int",
+      "double", "d_double",
+   );
+   @replace{@Agni::sqlcol} = @Agni::sqlcol;
    
    # gather info
    for (@$objs) {
-      $isa{$_->{gid}} = $_->{isa};
-      $sqlcol{$_->{gid}} = $_->{attr}{$Agni::OID_ATTR_SQLCOL} if exists $_->{attr}{$Agni::OID_ATTR_SQLCOL};
+      if (exists $_->{attr}{$Agni::OID_ATTR_SQLCOL}) {
+         # first upgrade old sqlcol values
+         $_->{attr}{$Agni::OID_ATTR_SQLCOL} = $sqlcol{$_->{gid}} = $replace{$_->{attr}{$Agni::OID_ATTR_SQLCOL}};
+
+         $sqlcol{$_->{gid}} = $_->{attr}{$Agni::OID_ATTR_SQLCOL};
+      }
    }
 
-   # check consistency
-   # - should check isa chain to object 1
+   # check attr consistency
    for (@$objs) {
       if (my @extra = grep !exists $sqlcol{$_}, keys %{$_->{attr}}) {
          die "object $_->{paths}/$_->{gid} references types (@extra) not in dump";
       }
    }
 
-   sql_exec "lock tables obj write, obj_attr write, obj_path write, obj_isa write";
-   sql_exec "delete from obj";
-   sql_exec "delete from obj_attr";
-   sql_exec "delete from obj_isa";
-   sql_exec "delete from obj_path";
+   sql_exec Agni::lock_all_tables "obj_path";
+
+   for my $table ("obj", "obj_path", @Agni::sqlcol) {
+      sql_exec "delete from $table";
+      sql_exec "alter table $table disable keys";
+   }
 
    # create paths
    for my $id (0 .. $#$paths) {
@@ -238,23 +252,18 @@ sub load_image {
    for (@$objs) {
       $_->{id} = Agni::insert_obj undef, $_->{gid}, $_->{paths};
       while (my ($type, $value) = each %{$_->{attr}}) {
-         sql_exec "insert into obj_attr (id, type, d_$sqlcol{$type}) values (?, ?, ?)",
+         sql_exec "insert into $sqlcol{$type} (id, type, data) values (?, ?, ?)",
                   $_->{id}, $type, $value;
       }
    }
 
-   # create isa tree
-   for (@$objs) {
-      my $grade = 0;
-      my $isa = $_->{gid};
-      do {
-         sql_exec "insert into obj_isa (id, isa, grade) values (?, ?, ?)",
-                  $_->{id}, $isa, $grade++;
-      } while $isa = $isa{$isa};
-   }
-
    PApp::Event::broadcast agni_update => [&Agni::UPDATE_PATHS];
    PApp::Event::broadcast agni_update => [&Agni::UPDATE_ALL];
+
+   for my $table ("obj", "obj_path", @Agni::sqlcol) {
+      sql_exec "alter table $table enable keys";
+      sql_exec "optimize table $table";
+   }
 
    sql_exec "unlock tables";
 }
@@ -270,25 +279,27 @@ sub export_path {
    print $fh xml_tag("database", version => '1', path => $path),
              "\n\n";
 
-   sql_exec "lock tables obj read, obj_attr read, obj_path read, obj_isa read";
+   sql_exec Agni::lock_all_tables;
 
-   my $st = sql_exec \my($id, $gid, $paths, $isa),
-   		     "select obj.id, gid, paths, obj_isa.isa
-                      from obj left join obj_isa on (obj.id = obj_isa.id and obj_isa.grade = 1)
+   my $st = sql_exec \my($id, $gid, $paths),
+   		     "select obj.id, gid, paths
+                      from obj
                       where paths & (1 << ?) <> 0 and paths & ? = 0
                       order by gid, paths",
                      $pathid{$path}, $parpathmask[$pathid{$path}];
 
    while($st->fetch) {
-      print $fh xml_tag("o", gid => $gid,  $isa ? (isa => $isa) : ());
-      my $st = sql_exec \my($type,$data),
-                        "select type, ".(Agni::any_data "obj_attr")."
-                         from obj_attr where id = ?
-                         order by type",
-                        $id;
+      print $fh xml_tag("o", gid => $gid);
+      for my $table (@Agni::sqlcol) {
+         my $st = sql_exec \my($type,$data),
+                           "select type, data
+                            from $table where id = ?
+                            order by type",
+                           $id;
 
-      while ($st->fetch) {
-         print_attr $fh, $type, $data;
+         while ($st->fetch) {
+            print_attr $fh, $type, $data;
+         }
       }
       print $fh "\n</o>\n\n\n";
    }
@@ -326,9 +337,16 @@ sub garbage_collect {
    }
 }
 
+sub paths {
+   for (@Agni::pathname) {
+      printf "%2d %s\n", $Agni::pathid{$_}, $_;
+   }
+}
+
 sub exec_cmd {
-   
    my ($path, @cmd) = @_;
+
+   local $PApp::NOW = time;
 
    die "no such path '$path'" unless defined $Agni::pathid{$path};
    
@@ -349,6 +367,9 @@ Usage: $0 ...
    --export-path path            write path to file (or stdout)
    --import-path path            import path from file
 
+   --gar                         starts garbagecollector
+
+   --paths                       show paths
    --newpath <path>              creates a new path
    
    -e | --exec-cmd path command  executes a command as defined in util::cmdline
@@ -397,8 +418,11 @@ GetOptions(
    "newpath=s" => sub {
       my $path = $_[1]; push @exec, sub { Agni::newpath $path };
    },
-   "test" => sub {
-      push @exec, \&do_some_tests;
+   "paths" => sub {
+      push @exec, \&paths;
+   },
+   "test:s" => sub {
+      my $arg = $_[1]; push @exec, sub { do_some_tests($arg) };
    },
    "exec-cmd|e=s" => sub {
       my $path = $_[1]; push @exec, sub { exec_cmd $path, @ARGV } ;

@@ -38,7 +38,7 @@ my $ef_form;    # the reference to the form html tag
 sub ef_nextid($;$) {
    $EF_KEY or Carp::croak "editform called without outside ef_begin/ef_end calls\n";
    $ef_key = $_[1]{name} ||= $EF_KEY++;
-   $ef_args->{"/"}{$ef_key}{ref} = $_[0] if $_[0];
+   $ef_args->{"/"}{$ef_key} = $_[0] ? { ref => $_[0] } : { };
    $ef_key;
 }
 
@@ -64,8 +64,7 @@ result in an obscure error from surl.
 
 =item ef_sbegin [surl-arguments]
 
-Similar to C<ef_mbegin>, but uses C<PApp::sform> to create the form. This
-disables C<ef_file> widgets with most (if not all browsers).
+Similar to C<ef_mbegin>, but uses C<PApp::sform> to create the form.
 
 =item ef_cbegin [surl-arguments]
 
@@ -84,62 +83,79 @@ Ends the editform. This adds the closing </form> tag.
 
 sub _ef_parse_begin($) {
    my $ef = shift;
-   &$_ for @{$ef->{cb_begin}};
+
+   $ef->{exec} = [];
 }
 
 sub _ef_parse_end($) {
    my $ef = shift;
 
-   for my $field (values %{$ef->{"/"}}) {
-      ${$field->{ref}} = $field->{multi}      if exists $field->{multi};
-      ${$field->{ref}} = $field->{constant}   if exists $field->{constant};
+   exists $ef->{"/"}{a}{value}
+      or fancydie "form data rejected", "guard field missing (incomplete submit?)";
 
-      if (exists $field->{checkbox}) {
+   &$_ for @{$ef->{cb_begin}};
+
+   for my $field (values %{$ef->{"/"}}) {
+      if (exists $field->{submit}) {
+         PApp::set_alternative delete $field->{submit}
+            if $field->{submit} && delete $field->{value};
+      } elsif (exists $field->{checkbox}) {
          if ($field->{checkbox}) {
-            ${$field->{ref}} &=~ $field->{checkbox};
+            if (delete $field->{value}) {
+               ${$field->{ref}} |= $field->{checkbox};
+            } else {
+               ${$field->{ref}} &= ~$field->{checkbox};
+            }
          } else {
-            ${$field->{ref}} = 0;
+            ${$field->{ref}} = ! ! delete $field->{value};
          }
+      } elsif (exists $field->{multi}) {
+         ${$field->{ref}} = delete $field->{value} || [];
+      } elsif (exists $field->{ref}) {
+         ${$field->{ref}} = delete $field->{value} if exists $field->{value};
+         ${$field->{ref}} = $field->{constant}     if exists $field->{constant};
       }
    }
 
    &$_ for @{$ef->{cb_end}};
-
-   PApp::set_alternative $ef->{args};
 }
 
 sub _ef_parse_field($$$) {
    my ($field, $data, $charset) = @_;
 
-   if ($charset) {
-      $charset = lc $charset;
-      if ($charset eq "utf-8") {
-         Convert::Scalar::utf8_on $data;
-      } elsif ($charset ne "" and $charset ne "iso-8859-1") {
-         my $pconv = PApp::Recode::Pconv::open PApp::CHARSET, $charset
-                        or fancydie "charset conversion from $charset not available";
-         $data = Convert::Scalar::utf8_on $pconv->convert($data);
+   if (exists $field->{submit}) {
+      $field->{value} = 1;
+   } elsif (exists $field->{ref}) {
+      if ($charset) {
+         $charset = lc $charset;
+         if ($charset eq "utf-8") {
+            Convert::Scalar::utf8_on $data;
+         } elsif ($charset ne "" and $charset ne "iso-8859-1") {
+            my $pconv = PApp::Recode::Pconv::open PApp::CHARSET, $charset
+                           or fancydie "charset conversion from $charset not available";
+            $data = Convert::Scalar::utf8_on $pconv->convert($data);
+         }
+         $data =~ s/\r//g;
       }
-      $data =~ s/\r//g;
-   }
 
-   if (exists $field->{map}) {
-      $data = $data >= 0 && $data < @{$field->{map}}
-            ? $field->{map}[$data]
-            : fancydie "form data error: selectbox value out of range";
-   }
+      if (exists $field->{map}) {
+         $data = $data >= 0 && $data < @{$field->{map}}
+               ? $field->{map}[$data]
+               : fancydie "form data rejected", "security violation: selectbox value out of range";
+      }
 
-   if (exists $field->{multi}) {
-      push @{$field->{multi}}, $data;
-   } elsif (exists $field->{checkbox}) {
-      if ($field->{checkbox}) {
-         ${$field->{ref}} |= $field->{checkbox};
+      if (exists $field->{multi}) {
+         push @{$field->{value}}, $data;
+
+      } elsif (exists $field->{checkbox}) {
+         $field->{value} = 1;
+
+      } elsif (exists $field->{password}) {
+         $field->{value} = $data unless $data eq ""; # only assign nonempty inputs
+
       } else {
-         ${$field->{ref}} = 1;
+         $field->{value} = $data;
       }
-      delete $field->{checkbox};
-   } else {
-      ${$field->{ref}} = $data;
    }
 }
 
@@ -152,17 +168,13 @@ sub ef_parse_simple {
       if (exists $ef->{"/"}{$name}) {
          my $field = $ef->{"/"}{$name};
          my $data = $P{$name}; #FIXME# was delete $P, but that's not good for debugging#d#
-         if (exists $field->{ref}) {
+         if (exists $field->{path}) {
+            fancydie "file upload widgets are not supported with either ef_sbegin or ef_cbegin/ef_begin, use ef_mbegin instead";
+         } else {
             for $data (ref $data ? @$data : $data) {
                $data =~ s/\r//g;
-               _ef_parse_field($field, $data, $state{papp_lcs});
+               _ef_parse_field ($field, $data, $state{papp_lcs});
             }
-         } elsif (exists $field->{path}) {
-            fancydie "file upload widgets are not supported with either ef_sbegin or ef_cbegin/ef_begin, use ef_mbegin instead";
-         } elsif (exists $field->{submit}) {
-            PApp::set_alternative delete $field->{submit} if $field->{submit};
-         } else {
-            fancydie "internal error (EF01), please report";
          }
       }
    }
@@ -191,50 +203,50 @@ my $ef_parse_m = register_callback {
    
    parse_multipart_form {
       my ($fh, $name, $ct, $cta, $cd) = @_;
-      my $field = $ef->{"/"}{$name};
 
-      if (exists $field->{ref}) {
-         my $data;
-         $fh->read($data, 1024*128);
-         $data =~ s/\r\n$//;
-         my $charset = $ct =~ /^text\// ? $cta->{charset} : undef;
-         _ef_parse_field($field, $data, $charset);
-      } elsif (exists $field->{path}) {
-         my $dest;
-         my $path = $field->{path};
+      if (my $field =  $ef->{"/"}{$name}) {
+         if (exists $field->{path}) {
+            my $dest;
+            my $path = $field->{path};
 
-	 # $ct eq "multipart/mixed" then multipart-file-upload
-	 # would just need to recycle PApp::FormBuffer
-	 
-         $path = $path->($fh, $name, $ct, $cta, $cd) if ref $path;
-         return 0 unless defined $path; # skip unless defined
-         if (ref $path) {
-            $dest = $path;
-            undef $path;
+            # $ct eq "multipart/mixed" then multipart-file-upload
+            # would just need to recycle PApp::FormBuffer
+
+            $path = $path->($fh, $name, $ct, $cta, $cd) if ref $path;
+            return 0 unless defined $path; # skip unless defined
+            if (ref $path) {
+               $dest = $path;
+               undef $path;
+            } else {
+               open $dest, ">", "$path~"
+                  or return 0;
+            }
+            my $size = 0;
+            my $data;
+            while ($fh->read($data, 64*1024) > 0) {
+               $size += syswrite $dest, $data;
+            }
+            close $dest;
+            if ($size > 0) {
+               rename "$path~", $path if defined $path;
+               # ok if rename worked
+            } else {
+               unlink "$path~" if defined $path;
+               # empty file upload ignored
+            }
          } else {
-            open $dest, ">", "$path~"
-               or return 0;
+            my $data;
+            $fh->read($data, 1024*128);
+            $data =~ s/\r\n$//;
+
+            my $charset = $ct =~ /^text\// ? $cta->{charset} : undef;
+
+            _ef_parse_field($field, $data, $charset);
          }
-         my $size = 0;
-         my $data;
-         while ($fh->read($data, 64*1024) > 0) {
-            $size += syswrite $dest, $data;
-         }
-         close $dest;
-         if ($size > 0) {
-            rename "$path~", $path if defined $path;
-            # ok if rename worked
-         } else {
-            unlink "$path~" if defined $path;
-            # empty file upload ignored
-         }
-      } elsif (exists $field->{submit}) {
-         PApp::set_alternative delete $field->{submit} if $field->{submit};
-         return;
       } else {
-         warn "WARNING: form submitted with superfluous field '$name'\n";
-         return;
+         fancydie "form data rejected", "data received for illegal field '$name'";
       }
+
       return 1;
    } or fancydie "missing form data: multipart/form-data expected, but none posted";
 
@@ -249,17 +261,20 @@ sub _ef_begin {
       $ef_type       ||= $type;
       $ef_args->{attr} = { %$attr, %{$ef_args->{attr}} };
       push @{$ef_args->{args}}, @_;
-      "";
+
+      return "";
    } else {
       $ef_recurse = 1;
       $ef_stateid = $PApp::stateid;
       $ef_type    = $type;
-      $EF_KEY     = "ef00";
+      $EF_KEY     = "a";
       $ef_args    = {
-         attr => $attr,
-         args => &PApp::salternative,
+         attr  => $attr,
+         args  => [@_],
       };
-      ((undef, $ef_form) = fixup_marker)[0];
+      ($html, $ef_form) = fixup_marker;
+
+      return $html . hidden ef_nextid(\$ef_args->{guard}), "ä";
    }
 }
 
@@ -277,10 +292,12 @@ sub ef_end* {
    if (--$ef_recurse) {
       "";
    } else {
+      my @args = (delete $ef_args->{attr}, @{delete $ef_args->{args}});
+
       $$ef_form = 
-         $ef_type & 4 ? multipart_form $ef_parse_m->($ef_args)
-       : $ef_type & 2 ? cform          $ef_parse_c->($ef_args)
-       : $ef_type & 1 ? sform          $ef_parse_s->($ef_args)
+         $ef_type & 4 ? multipart_form @args, $ef_parse_m->($ef_args)
+       : $ef_type & 2 ? cform          @args, $ef_parse_c->($ef_args)
+       : $ef_type & 1 ? sform          @args, $ef_parse_s->($ef_args)
        : Carp::croak "editform: internal error, ef_type is $ef_type";
 
       # delete $ef_args->{radioref};
@@ -360,13 +377,20 @@ returns a newly generated name. You are responsible for creating an input
 element with the given name. Since it doesn't generate an HTML element it
 will of course not accept an \%attrs hash.
 
+This can be used to implement custom input elements:
+
+ my $name = ef_field \$self->{value};
+ echo tag "input", { name => $name };
+
 =item ef_string fieldref, [length=20]
 
 Output a text input field.
 
 =item ef_password fieldref, [length=20]
 
-Output a non-readable text input field.
+Output a non-readable text input field. To ensure that it is not readable,
+no default text will be displayed (the reference won't be read), and only
+non-empty result strings will be assigned back to the reference.
 
 =item ef_text fieldref, width, [height]
 
@@ -413,7 +437,9 @@ cannot guarentee this).
 <macro name="ef_password*"><perl><![CDATA[
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    $attr->{size} ||= $_[1]||20;
-   password_field $attr, ef_nextid($_[0], $attr), ${$_[0]};
+   my $id = ef_nextid($_[0], $attr);
+   $ef_args->{"/"}{$id}{password} = 1;
+   password_field $attr, $id; #, ${$_[0]}; don't show anything
 ]]></perl></macro>
 
 <macro name="ef_button*"><perl><![CDATA[
@@ -429,7 +455,10 @@ cannot guarentee this).
 <macro name="ef_text*"><perl><![CDATA[
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    $attr->{cols} ||= $_[1];
-   $attr->{rows} ||= $_[2] || int (length ${$_{0}} / ($attr->{cols}-5.0001)) + 30;
+   $attr->{rows} ||= $_[2] > 0
+                        ? $_[2]
+                        : int (length ${$_[0]} / ($attr->{cols}-5.0001)) - $_[2]
+                          + (${$_[0]} =~ y/\n/\n/);
    $attr->{wrap} ||= 'wrap';
    textarea $attr, ef_nextid($_[0], $attr), escape_html ${$_[0]};
 ]]></perl></macro>
@@ -460,12 +489,13 @@ an array-ref a multiple-select selectbox is created, otherwise a
 simple single-select box is used. C<values>... can be as many C<value,
 description> pairs as you like.
 
-Beginning with version 0.143 of PApp, C<ef_selectbox> (and functions that
-use it, like C<ef_relation>) doesn't send the key values to the client,
-but instead enumerates them on checks wetehr submitted values are in
+Beginning with version 0.143 of PApp, C<ef_selectbox> (and other functions
+that use it, like C<ef_relation>) don't send the key values to the client,
+but instead enumerate them and check wether submitted values are in
 range. This has two consequences: first, the client can only submit valid
 keys, and second, keys can be complex perl objects (like undef ;), where
-they could only be strings before.
+they could only be strings earlier. Only arrayrefs need to be treated
+differently.
 
 Equality of key values (used to find the currently "active" selection) is
 done by string comparison after stringifying the keys.
@@ -484,10 +514,11 @@ done by string comparison after stringifying the keys.
 
    my $id = ef_nextid $field, $attr;
 
-   if (ref $content) {
+   if (ARRAY:: eq ref $content) {
       @content{@$content} = ();
       $attr->{multiple} = "multiple";
-      $ef_args->{"/"}{$id}{multi} = [];
+
+      $ef_args->{"/"}{$id}{multi} = 1;
    } else {
       $content{$content} = ();
    }
@@ -607,7 +638,7 @@ form.
 <macro name="ef_file*"><perl><![CDATA[
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    my $id = ef_nextid(undef, $attr);
-   $ef_type ||= 4;
+   $ef_type |= 4;
    $ef_args->{"/"}{$id}{path} = $_[0];
    filefield $attr, $id, $_[1];
 ]]></perl></macro>
@@ -653,6 +684,30 @@ registered (first in, first out).
 
 <macro name="ef_cb_end*" args="$cb"><perl><![CDATA[
    push @{$ef_args->{cb_end}}, $cb;
+]]></perl></macro>
+
+<macro name="ef_cb_end*" args="$cb"><perl><![CDATA[
+   push @{$ef_args->{cb_end}}, $cb;
+]]></perl></macro>
+
+<perl><![CDATA[
+
+=item ef_form_name
+
+This function adds a unique C<name="id"> attribute to the opening form tag
+and returns the id value to the caller. You can call it as often as you
+like. If this function isn't called, no name attribute will be created.
+
+=cut
+
+]]></perl>
+
+<macro name="ef_form_name*" args=""><perl><![CDATA[
+   $ef_args->{attr}{name} ||= $EF_KEY++;
+]]></perl></macro>
+
+<macro name="ef_custom*" args=""><perl><![CDATA[
+   $ef_args->{attr}{name} ||= $EF_KEY++;
 ]]></perl></macro>
 
 <perl><![CDATA[

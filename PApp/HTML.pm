@@ -19,7 +19,7 @@ use base Exporter;
 use utf8;
 no bytes;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT = qw(
 
       errbox
@@ -58,9 +58,9 @@ use Convert::Scalar ();  # DEVEL7952 bug workaround #d# #FIXME#
 
 sub escape_html($) {
    local $_ = shift;
-   Convert::Scalar::utf8_upgrade($_);
-   s/([<>&\x00-\x07\x09\x0b\x0d-\x1f\x7f-\x9f])/sprintf "&#%d;", ord($1)/ge;
-   Convert::Scalar::utf8_on($_); # DEVEL7952 bug workaround #d# #FIXME#
+   s/([\x00-\x08\x0b\x0d-\x1f\x80-\x9f])/sprintf "<illegal character 0x%02x>", ord $1/ge;
+   s/([<>&])/sprintf "&#%d;", ord $1/ge;
+   $_;
 }
 
 sub escape_uri($) {

@@ -6,7 +6,7 @@ PApp::MimeType - analyze and normalize mimetypes and extensions
 
  use PApp::MimeType;
 
- my $mt = (PApp::MimeType->by_extension => "jpg")->mimetype;
+ my $mt = (PApp::MimeType::by_extension "jpg")->mimetype;
 
 =head1 DESCRIPTION
 
@@ -23,7 +23,7 @@ package PApp::MimeType;
 
 use base Exporter;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT_OK = qw(by_extension by_filename by_mimetype clear_mimedb load_mimedb);
 
 my %by_extension;

@@ -169,10 +169,10 @@ SQL
 sql_exec <<SQL;
    create table /*! if not exists */ event (
      id int(10) unsigned not null auto_increment,
-     event varchar(255) not null,
+     event tinyblob not null,
      ctime timestamp(14),
      data mediumblob default '' not null,
-     primary key (id, event(16))
+     primary key (id, event(8))
    )
 SQL
 
@@ -194,11 +194,12 @@ SQL
 }
 
 if ($installed_version < 0.143) {
-   $DBH->do("drop table eventcount") if $mode_update;
+   if ($mode_update) {
+      $DBH->do("drop table eventcount");
 
-   $DBH->do("alter table msgid change id id mediumblob not null, change context context blob not null");
-   $DBH->do("alter table msgstr change msg msg mediumblob not null");
-
+      $DBH->do("alter table msgid change id id mediumblob not null, change context context blob not null");
+      $DBH->do("alter table msgstr change msg msg mediumblob not null");
+   }
 
    sql_exec <<SQL;
       create table /*! if not exists */ event_count (
@@ -276,6 +277,14 @@ if ($mode_update && $installed_version < 0.142) {
 
       print " done.\n";
    };
+}
+
+if ($mode_update && $installed_version < 0.21) {
+   sql_exec "drop table obj_isa";
+}
+
+if ($mode_update && $installed_version < 0.22) {
+   sql_exec "drop table /*! if exists */ obj_attr";
 }
 
 sql_exec <<SQL;
@@ -373,6 +382,67 @@ sql_exec <<SQL;
   )
 SQL
 
+if ($installed_version < 0.22) {
+sql_exec <<SQL;
+   CREATE TABLE d_fulltext (
+     id int unsigned not null,
+     type bigint unsigned not null,
+     data mediumtext,
+
+     index type (type),
+     fulltext data (data),
+     primary key (id, type)
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE d_string (
+     id int unsigned not null,
+     type bigint unsigned not null,
+     data tinyblob,
+
+     index type (type),
+     index data (data(32)),
+     primary key (id, type)
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE d_blob (
+     id int unsigned not null,
+     type bigint unsigned not null,
+     data mediumblob,
+
+     index type (type),
+     primary key (id, type)
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE d_double (
+     id int unsigned not null,
+     type bigint unsigned not null,
+     data double,
+
+     index type (type),
+     index data (data),
+     primary key (id, type)
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE d_int (
+     id int unsigned not null,
+     type bigint unsigned not null,
+     data bigint,
+
+     index type (type, data, id),
+     index data (data, type, id),
+     primary key (id, type)
+   ) TYPE=MyISAM
+SQL
+}
+
 # Agni
 if ($installed_version < 0.2) {
 
@@ -387,27 +457,19 @@ sql_exec <<SQL;
 SQL
 
 sql_exec <<SQL;
-   CREATE TABLE obj_isa (
-     id int unsigned NOT NULL default '0',
-     isa bigint unsigned NOT NULL default '0',
-     grade tinyint not null,
-     primary key (isa, grade, id),
-     unique (id, grade, isa)
-   ) TYPE=MyISAM
-SQL
-
-sql_exec <<SQL;
    CREATE TABLE obj_attr (
      id int unsigned not null default '0',
      type bigint unsigned not null default '0',
-     d_string varchar(255) binary,
+     d_string tinyblob,
      d_text mediumblob,
      d_int bigint,
      d_double double,
-     primary key (id,type),
-     index (type, d_string(16)),
-     index (type, d_int),
-     index (type, d_double)
+
+     primary key (id, type),
+     index type(type),
+     index d_int(d_int, type),
+     index d_double(d_double, type),
+     index d_string(d_string(16), type)
    ) TYPE=MyISAM
 SQL
 
@@ -449,6 +511,17 @@ if ($installed_sysid) {
 
    die "PAPP_SYSID and actual obj_gidseq do NOT match"
      if $measured_sysid > 0 && $measured_sysid != $installed_sysid;
+}
+
+{
+   # check the sysid
+   my ($sysid, $oid) = sql_fetch "select seq >> 32, seq & 0xffffffff from obj_gidseq"
+      or die "no sysid installed, a sysid is now required, please make reconfig";
+
+   my $maxid = sql_fetch "select max(gid) & 0xffffffff from obj where gid >= (? << 32) and gid < (? << 32)",
+                         $sysid, $sysid+1;
+   $maxid < $oid
+      or die "installation check found objects > oidseq, either your sysid is broken or your database is corrupt";
 }
 
 $DBH->do("delete from pkg");

@@ -68,6 +68,7 @@ papp.vim		vim syntax file
 
 apps/papp.papp		internal papp pages
 apps/admin.papp
+apps/empty.papp
 apps/bench.papp		benchmark
 apps/sbench.papp	benchmarks using redirects, written by Stefan Traby <stefan@sime.com>
 
@@ -138,3 +139,4 @@ Storable/Storable.xs
 Agni.pm			The Agni CMS runtime system
 bin/agni		The Agni daemon/tool
 
+META.yml                                Module meta-data in YAML

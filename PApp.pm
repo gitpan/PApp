@@ -77,8 +77,8 @@ changed and improved to accomodate new features (like CGI-only operation).
 =item * No documentation. Especially tutorials are missing, so you are
 most probably on your own.
 
-=item * Perl5.7.0 is required (actually, a non-released bugfixed version
-of 5.7). While not originally an disadvantage in my eyes, Randal Schwartz
+=item * Perl5.8.0 is required (actually, a non-released bugfixed version
+of 5.8.1). While not originally an disadvantage in my eyes, Randal Schwartz
 asked me to provide some explanation on why this is so (at the time I only
 required 5.6):
 
@@ -139,7 +139,7 @@ use PApp::Event ();
 <<' */'=~m>>;
  
 /*
- * the DataRef (and Callback) module must be included just in case
+ * the DataRef (and Callback) modules must be included just in case
  * no application has been loaded and we need to deserialize state,
  * since overloaded packages must already exist before an object becomes
  * overloaded. Ugly.
@@ -150,7 +150,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 0.2;
+   $VERSION = 0.22;
 
    use base Exporter;
 
@@ -1164,7 +1164,7 @@ no need to call this function unless you have a long-running operation
 and want to partially output the page. Please note, however, that, as
 headers have to be output on the first call, no headers (this includes the
 content-type and character set) can be changed after this call. Also, you
-must not change any state variables or any related info afetr this call,
+must not change any state variables or any related info after this call,
 as the result might not get saved in the database, so you better commit
 everything before flushing and then just continue output (use GET or POST
 to create new links after this).
@@ -1228,15 +1228,17 @@ sub flush_snd {
    $$routput = "";
 }
 
-sub flush_snd_length {
-   use bytes;
-   $request->header_out('Content-Length', length $$routput);
-   flush_snd;
-}
-
 sub flush {
    flush_cvt;
    local $| = 1;
+   flush_snd;
+}
+
+sub flush_snd_length {
+   use bytes;
+
+   flush_cvt;
+   $request->header_out('Content-Length', length $$routput);
    flush_snd;
 }
 
@@ -1659,6 +1661,10 @@ sub switch_userid {
    }
 }
 
+=item $userid = PApp::newuid
+
+Create a new (anonymous) user id.
+
 =item $userid = getuid
 
 Return a user id, allocating it if necessary (i.e. if the user has no
@@ -1668,10 +1674,14 @@ current userid (which might be zero).
 
 =cut
 
+sub newuid() {
+   $st_newuserid->execute;
+   return sql_insertid $st_newuserid;
+}
+
 sub getuid() {
    $userid ||= do {
-      $st_newuserid->execute;
-      switch_userid sql_insertid $st_newuserid;
+      switch_userid newuid;
       $userid;
    }
 }
@@ -1871,6 +1881,15 @@ sub handle_error($) {
    }
 }
 
+my $last_bench;
+sub bench {
+   my $n = Time::HiRes::time;
+   if ($NOW <= $last_bench && @_) {
+      warn "($_[0]): " . ($n - $last_bench);
+   }
+   $last_bench = $n;
+}
+
 ################################################################################################
 #
 #   the PApp request handler
@@ -1989,6 +2008,8 @@ sub _handler {
          $papp->event("childinit");
       }
 
+      local $module = undef; # in case a callback calls abort_to etc. #d# remove?
+
       # do not use for, as papp_execonce might actually grow during
       # execution of these callbacks.
       (shift @{$state{papp_execonce}})->() while @{$state{papp_execonce}};
@@ -2028,8 +2049,6 @@ sub _handler {
 
    undef $request; # preserve memory
 
-   #benchlog;
-   
    return &OK;
 }
 

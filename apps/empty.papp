@@ -1,0 +1,11 @@
+<package name="empty">
+
+<description>
+   an empty application, sometimes useful for fake mounts
+</description>
+
+<module name="">
+</module>
+
+</package>
+

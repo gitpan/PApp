@@ -20,7 +20,7 @@ moderately easy to add XML::Transformiix or XML::XSLT).
 
 package PApp::XSLT;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 
 no bytes;
 
@@ -71,7 +71,7 @@ sub new($;%) {
 
 =item $old = $xslt->stylesheet([stylesheet-uri])
 
-Set the stylesheet to use for later transofrmation requests by specifying
+Set the stylesheet to use for later transformation requests by specifying
 a uri. The only supported scheme is currently C<data:,verbatim xml
 stylesheet text> (the comma is not a typoe, see rfc2397 on why this is
 the most compatible form to the real data: scheme ;).

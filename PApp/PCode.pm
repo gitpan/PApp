@@ -28,7 +28,7 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"
@@ -154,10 +154,14 @@ our $register_callback = {
 sub __compile_cb {
    my ($cb, $hasargs) = @_;
 
-   require PApp::Util;
+   require Digest::SHA1;
    require PApp::Callback;
 
-   (my $hash = PApp::Util::digest($cb)) =~ y/a-zA-Z0-9//cd;
+   # SHA1 downgrades, so we upgrade and turn off the utf8 flag temporarily.
+   utf8_upgrade $cb;
+   utf8_off $cb;
+   my $hash = Digest::SHA1::sha1_hex($cb);
+   utf8_on $cb;
 
    if ($hasargs) {
       $hasargs = $register_callback->{argument_preamble} ? "->($register_callback->{argument_preamble}," : "->(";
@@ -165,14 +169,14 @@ sub __compile_cb {
       $hasargs = $register_callback->{argument_preamble} ? "->append($register_callback->{argument_preamble})" : "";
    }
 
-   "+do{BEGIN{\$papp_pcode_cb_$hash=$register_callback->{register_function} "
-   ."sub{use strict 'vars';$register_callback->{callback_preamble}$cb},name=>'$hash'}\$papp_pcode_cb_$hash}$hasargs";
+   "+do{our \$papp_pcode_cb_$hash;BEGIN{\$papp_pcode_cb_$hash=$register_callback->{register_function} "
+   . "sub{use strict 'vars';$register_callback->{callback_preamble}$cb},name=>'$hash'}\$papp_pcode_cb_$hash}$hasargs";
 }
 
 
 sub _register_callbacks($) {
    local $_ = $_[0];
-   s/\{: ( (?:[^:]+|:[^}])* ) :\}\s*(\()?/__compile_cb $1, $2 eq "("/gex;
+   s/\{: ( (?:[^:]+|:[^}])* ) :\}\s*(\()?/__compile_cb "$1", $2 eq "("/gex;
    $_;
 }
 
@@ -204,7 +208,9 @@ sub pxml2pcode($) {
    for(;;) {
       # STRING
       $res .= $dx;
-      $data =~ /\G([:?])>((?:[^<]+|<[^:?])*)/xgcs or last;
+      # perl 5.8.x recursion bug: the extra [^<]* bug works around this effectively
+      #        /\G([:?])>((?:[^<]+|<[^:?])*)/xgcs or last;
+      $data =~ /\G([:?])>((?:[^<]+|<[^:?][^<]*)*)/xgcs or last;
       $mode = $1 eq ":" ? $dx : $dy; # for ?>
       warn "?> is not a legal pxml modifier anymore, will treat it as :>" if $1 eq "?";
 
@@ -247,6 +253,7 @@ sub pcode2perl($) {
    my $pcode = $dx . $_[0];
    my ($mode, $src);
    my $res = "";#d#
+
    for (;;) {
       # STRING
       $pcode =~ /\G([$dx$dy])((?:[^$dx$dy$dq]+|$dq [$dx$dy$dq])*)/xgcso or last;
@@ -259,8 +266,7 @@ sub pcode2perl($) {
       }
 
       # CODE
-      # $pcode =~ /\G([$dx$dy])([0-9a-f \010\012\015]*)/gcso or last; # faster, but #d#DEVEL17205
-      $pcode =~ /\G([$dx$dy])((?:[0-9a-f \010\012\015]*)*)/gcso or last; # double *)*) is just #d#DEVEL17205 fix(!)
+      $pcode =~ /\G([$dx$dy])([0-9a-f \010\012\015]*)/gcso or last;
       ($mode, $src) = ($1, $2);
       $src = _unquote_perl $src;
       if ($src !~ /^[ \t]*$/) {

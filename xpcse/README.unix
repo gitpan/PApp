@@ -1,7 +1,7 @@
 xpcse client installation:
 
    1. copy "xpcse" and "run-mailcap" to a directory included in $PATH
-      (if you install PApp, it will be copied automagically to $Config{sitebin}
+      (if you install PApp, it will be copied automatically to $Config{sitebin}
        so this step should not be needed in this case)
    2. Add the "xpcse" helper application to your browser.
       Mozilla:

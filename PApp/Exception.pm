@@ -24,7 +24,7 @@ use PApp::HTML;
 
 use utf8;
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 @EXPORT = qw(fancydie try catch);
 
 no warnings;

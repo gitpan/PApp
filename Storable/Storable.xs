@@ -5924,7 +5924,7 @@ static SV *retrieve_agni_object(stcxt_t *cxt, char *cname)
         sv = SvREFCNT_inc (POPs);
 
         if (!SvOK (sv))
-          fprintf (stderr, "WARNING: PApp::Storable: Agni::path_obj_by_gid (%d/%08lx:%08lx) did not return an object, probably harmless", path, h, l);
+          fprintf (stderr, "WARNING: PApp::Storable: Agni::path_obj_by_gid (%d/%lld) did not return an object, probably harmless\n", path, gid);
 
         PUTBACK;
 

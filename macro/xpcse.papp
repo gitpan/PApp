@@ -88,7 +88,7 @@
             $outflags{"Extension"}              = $flags{extension}
                                                   or "." . (PApp::MimeType::by_mimetype($data->{mime})
                                                             or PApp::MimeType::by_mimetype("application/octet-stream"))->extension;
-            $outflags{"Url"}                    = "http://" . $request->hostname . ":" . $request->get_server_port . $data->{upd};
+            $outflags{"Url"}                    = $data->{url};
             $outflags{"Content-Type"}           = $data->{mime};
             $outflags{"Server-Date"}            = time2str();
             $outflags{"Xpcse-Protocol-Version"} = "1.1";
@@ -122,12 +122,26 @@
 <macro name="client_edit_surl*" args="$ref $mime %flags"><perl><![CDATA[
    $mime = PApp::MimeType::by_extension $flags{extension} if !defined $mime && $flags{extension};
    $mime = (PApp::MimeType::by_filename $ref)->mimetype if !defined $mime && !ref $ref;
+
    my $data = {
       (ref $ref) ? (ref => $ref) : (file => $ref),
       mime  => $mime,
       flags => { %flags },
    };
-   $data->{upd} = surl $papp_ppkg->refer('remote_edit', $data, 1);
+
+   my ($url, $key) = surl SURL_STYLE_STATIC, $papp_ppkg->refer('remote_edit', $data, 1);
+
+   if (defined $PApp::papp->{xpcse_prefix}) {
+      $url = $PApp::papp->{xpcse_prefix};
+   } else {
+      $url = "http://"
+           . $request->hostname
+           . ":" . $request->get_server_port
+           . $url;
+   }
+
+   $data->{url} = "$url/$key";
+
    surl $papp_ppkg->refer('remote_edit', $data, 0);
 ]]></perl></macro>
 
@@ -137,6 +151,13 @@
 ]]></perl></macro>
 
 <perl><![CDATA[
+
+=head1 CONFIG OPTIONS
+
+The papp mount config variable C<xpcse_prefix> can be used to specify an
+access port that xpcse uses. This is useful in case the application itself
+is protected by basic authentication or cookies and xpcse cannot make use
+of them.
 
 =head1 FUNCTIONS
 

@@ -1,5 +1,29 @@
 <faq title="PApp Frequently Asked Questions &amp; Tips and Tricks">
 
+<section title="Installation">
+
+<qa q='Why do I need a SYSID?'>
+
+The Agni subsystem in PApp needs unique IDs when creating new objects,
+like users.  To enable you to exchange data with other Agni users, these
+IDs must not collide with IDs from other system. The easiest way is to use
+a unique sysid as part of the object ID. That's the reason why a unique
+system ID is important.
+
+</qa>
+
+<qa q='How do I get a SYSID?'>
+
+One way is to use an officially-assigned (thus unique) IPv4
+address. Another way is to write an email to sysid@nethype.de, informally
+asking for a system ID. If you want, you can provide us with something we
+can identify you, so we can keep records of your sysid, but that's not
+required.
+
+</qa>
+
+</section>
+
 <section title="Common Mistakes">
 
 <qa q='print "____________"; doesn&apos;t work as expected'>

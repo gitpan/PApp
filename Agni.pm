@@ -13,6 +13,14 @@ Agni - persistent data and objects
 
 Agni is a germanic god of fire. The rest is obvious...
 
+Most of these functions are low-level stuff. Better look at the methods
+of the agni root object (本) first, which has most of the functionality
+packaged in a nicer way.
+
+=head2 FUNCTIONS
+
+=over 4
+
 =cut
 
 use utf8;
@@ -29,7 +37,7 @@ use PApp::PCode qw(pxml2pcode perl2pcode pcode2perl);
 use PApp::Callback ();
 use PApp::Exception;
 
-use Convert::Scalar ();
+use Convert::Scalar ":utf8";
 
 use base Exporter;
 
@@ -49,7 +57,7 @@ BEGIN {
 
       %obj_cache
 
-      path_obj_by_gid gid
+      path_obj_by_gid gid obj_of
 
       %pathid @pathname @pathmask @subpathmask @parpathmask @parpath
 );
@@ -101,6 +109,9 @@ $OID_ATTR_TAG		= 29; # objects used as tags for containers
 $OID_META_PACKAGE	= 30; # perl package name
 $OID_INTERFACE		= 31; # class interface
 $OID_ROOTSET		= 32; # a container containing all objects that are alive "by default"
+$OID_ISA		= 33; # the data/method parent for lookups
+$OID_ISA_METHOD		= 5100001742;
+$OID_ISA_DATA		= 5100001741;
 $OID_CMDLINE_HANDLER    = 21474836484; # util::cmdline
 $OID_META_NAMESPACE	= 4295048763;
 $OID_NAMESPACE_AGNI     = 4295049779; # lots of special-casing for that one
@@ -109,14 +120,14 @@ $OID_META_PARCEL	= 5100000280;
 our %BOOTSTRAP_LEVEL; # indexed by {gid}
 
 sub UPDATE_PATHID() { 0x01 }
-sub UPDATE_DATA()   { 0x02 }
+sub UPDATE_ATTR()   { 0x02 }
 sub UPDATE_CLASS()  { 0x04 }
 sub UPDATE_PATHS()  { 0x08 }
 sub UPDATE_ALL()    { 0x10 }
 
 sub init_paths {
-   %pathname =
-   @pathid =
+   %pathid =
+   @pathname =
    @pathmask =
    @subpathmask =
    @parpathmask = ();
@@ -155,14 +166,20 @@ sub top_path {
 }
 
 our @sqlcol = (
-   "string",
-   "text",
-   "int",
-   "double",
+   "d_int",
+   "d_double",
+   "d_string",
+   "d_blob",
+   "d_fulltext",
 );
 
-sub any_data($) {
-   "coalesce(" . (join ",", map "$_[0].d_$_", @sqlcol) . ")";
+our %sqlcol_is_numeric = (
+   d_double => 1,
+   d_int    => 1,
+);
+
+sub lock_all_tables {
+   "lock tables obj write, ". join ", ", map "$_ write", @sqlcol, @_;
 }
 
 sub new_objectid() {
@@ -264,7 +281,7 @@ sub path_obj_by_gid($$) {
    $obj_cache{$_[1]}[$_[0]]
       or do {
          local $PApp::SQL::DBH = $DBH;
-         update_class({ _path => $_[0], _gid => $_[1] })
+         update_class({ _path => $_[0], _gid => $_[1], _loading => 1 })
       };
 }
 
@@ -299,68 +316,8 @@ sub empty_package ($) {
 
 our $bootstrap; # bootstrapping?
 our %bootstrap; # contains postponed methods/objects
-
-sub update_data {
-   my $self = shift;
-
-   # used to detect which types need to be removed
-   my %prev = %{$self->{_type}};
-
-   my $st = sql_exec \my($type, $name, $data),
-                     "select m.type, name.d_string, " . (any_data "m") . "
-                      from obj_attr m
-   /* $self */                inner join obj tobj on (m.type = tobj.gid and tobj.paths & (1 << ?) <> 0)
-                                 inner join obj_isa on (tobj.id = obj_isa.id and obj_isa.isa = $OID_DATA)
-                                 inner join obj_attr name on (tobj.id = name.id and name.type = $OID_ATTR_NAME)
-                      where m.id = ?",
-                     $self->{_path}, $self->{_id};
-
-   my %data;
-
-   while ($st->fetch) {
-      delete $prev{$name};
-
-      if ($bootstrap) {
-         $bootstrap{$self} = $self;
-         # classes directly descending from string and having a name are considered simple strings
-         if (sql_exists 
-                "obj inner join obj_isa using (id)
-                     inner join obj_attr name using (id)
-                 where gid = ?
-                   and isa = $OID_DATA_STRING and grade = 1
-                   and name.type = $OID_ATTR_NAME
-                   and paths & (1 << ?) <> 0",
-                $type,
-                $self->{_path}) {
-            $self->{_cache}{$name} = $data;
-         }
-
-         # plant a bomb
-         $self->{_type}{$name} = "non-bootstrap data access during bootstrap ($self->{_path}/$self->{_gid}\{$type=$name}";
-
-         $self->{_postponed}{type}{$name} = $type;
-         $self->{_postponed}{data}{$name} = $data;
-      } else {
-         my $tobj = path_obj_by_gid $self->{_path}, $type
-            or die "unable to handle datatype $type\n";
-
-         $self->{_type}{$name} = $tobj;
-
-         eval {
-            $data{$name} = $tobj->thaw($data, $self) if defined $data;
-         };
-         warn $@ if $@;
-      }
-   }
-
-   delete @{$self->{_type}}{keys %prev};
-   delete @{$self->{_cache}}{keys %prev};
-
-   eval {
-      $self->update(\%data);
-   };
-   warn $@ if $@;
-}
+our %bootstrap_cache;
+our $update_level;
 
 # for bootstrapping and used in object::attr::named::method
 
@@ -417,6 +374,7 @@ sub compile {
    #local $SIG{__DIE__}; local $SIG{__WARN__}; # speed, among others
    my $code = $_[0];
 
+
    $code =~ s{
       $objtag_start([$objtag_type_lo-$objtag_type_hi])([^$objtag_end]*)$objtag_end
    }{
@@ -433,7 +391,7 @@ sub compile {
       }
    }ogex;
 
-   eval "package $NAMESPACE->{package}; $code";
+   eval "package $NAMESPACE->{_package}; $code";
 }
 
 sub compile_method_perl {
@@ -442,10 +400,10 @@ sub compile_method_perl {
    my $args = join ",", '$self', split /[ \t,]+/, $args;
 
    my $class     = ref $self;
-   my $isa_class = $self->{_isa} ? ref $self->{_isa} : agni::object::;
+   my $isa_class = ref $self->{_isa};
 
    $code =~ s/->SUPER::/"->$isa_class\::"/ge;
-   $code =~ s/->SUPER(?!\w)/"->$isa_class\::$name$1"/ge;
+   $code =~ s/->SUPER(?!\w)/"->$isa_class\::$name"/ge;
 
    my $err = eval {
       compile "sub $class\::$name { my ($args) = \@_;\n"
@@ -496,7 +454,7 @@ sub get_namespace {
          $namespace = path_obj_by_gid $path, $gid;
       }
 
-      $namespace->{package} = "ns::$namespace->{_path}::$namespace->{_gid}";
+      $namespace->{_package} = "ns::$namespace->{_path}::$namespace->{_gid}";
 
       my $init_code = q~
          use Carp;
@@ -514,7 +472,7 @@ sub get_namespace {
 
          use PApp::Application ();
 
-         use Agni qw(*env *app path_obj_by_gid gid);
+         use Agni qw(*env *app path_obj_by_gid gid obj_of);
 
          sub obj($) {
             ref $_[0] ? $_[0] : path_obj_by_gid PATH, $_[0];
@@ -527,15 +485,8 @@ sub get_namespace {
          use PApp::UserObs;
          use PApp::PCode qw(pxml2pcode perl2pcode pcode2perl);
 
-         #sub cins { (obj 787)->show($_[0]); }
-         #sub oins { (obj 787)->print($_[0]); }
-
-         #sub staticurl {
-         #   (surl "static", &SURL_STYLE_STATIC) . "?obj=$_[0]";
-         #}
-
          $papp_translator = PApp::I18n::open_translator(
-                               "$PApp::i18ndir/mercury",
+                               "$PApp::i18ndir/mercury", "eng",
                             );
          sub __      ($){ PApp::I18n::Table::gettext(PApp::I18n::get_table($papp_translator, $PApp::langs), $_[0]) }
          sub gettext ($){ PApp::I18n::Table::gettext(PApp::I18n::get_table($papp_translator, $PApp::langs), $_[0]) }
@@ -550,8 +501,8 @@ sub get_namespace {
          # HACK END
       ~;
 
-      ${"$namespace->{package}::PATH"}      = $path;
-      ${"$namespace->{package}::NAMESPACE"} = $namespace;
+      ${"$namespace->{_package}::PATH"}      = $path;
+      ${"$namespace->{_package}::NAMESPACE"} = $namespace;
 
       $namespace->eval(qq~
             sub PATH() { $path }
@@ -582,11 +533,14 @@ sub agni_bootstrap($) {
       or fancydie "bootstrapping error", "tried to bootstrap path '$path', which is not a valid path";
 
    local $bootstrap = 1;
+   local %bootstrap_cache;
 
    # Load the absolute minimum set of objects that allows
    # loading of arbitrary other objects. These objects
    # will only load partially(!)
-   for my $gid ($OID_OBJECT, $OID_NAMESPACE_AGNI) {
+   for my $gid ($OID_OBJECT, $OID_NAMESPACE_AGNI,
+                $OID_ROOTSET, $OID_ISA_DATA, $OID_ISA_METHOD,
+                $OID_META_PARCEL) {
       path_obj_by_gid $path, $gid;
       $BOOTSTRAP_LEVEL{$gid} ||= $bootstrap;
    }
@@ -601,7 +555,7 @@ sub agni_bootstrap($) {
    delete $agni_bootns[$path]
       or die "FATAL 21: no bootnamespace for path $path after bootstrapping";
 
-   $namespace->{package} = "ns::$namespace->{_path}::$namespace->{_gid}";
+   $namespace->{_package} = "ns::$namespace->{_path}::$namespace->{_gid}";
    $namespace->initialize;
 
    ####################
@@ -619,28 +573,60 @@ sub agni_bootstrap($) {
          $BOOTSTRAP_LEVEL{$self->{_gid}} ||= $bootstrap;
 
          # fixing datatypes
-         while (my ($name, $type) = each %{$postponed->{type}}) {
+         while (my ($type, $data) = each %$postponed) {
             my $tobj = path_obj_by_gid $self->{_path}, $type
                or die "FATAL 24: unable to handle bootstrap datatype $type for object $self->{_path}/$self->{_gid}\n";
-            $self->{_type}{$name} = $tobj;
             eval {
-               $self->update($name => $tobj->thaw($postponed->{data}{$name}, $self));
+               $tobj->populate ($self, $data);
             };
             warn $@ if $@;
          }
-
-         # compile remaining methods
-         local $PApp::PCode::register_callback = register_callback_info($self);
-         while (my ($type, $data) = each %{$postponed->{method}}) {
-            local $NAMESPACE = get_namespace $self->{_path}, $OID_NAMESPACE_AGNI; # loads bootnamespace
-            eval {
-               (path_obj_by_gid $self->{_path}, $type)->compile($self, $data);
-            };
-            warn $@ if $@;
-         }
-
       }
    }
+}
+
+# update the in-memory class of an object to $new
+sub update_isa_class($$) {
+   my ($self, $new) = @_;
+
+   # when loading an object we never care for (nonexistant) instances
+   if ($self->{_loading}) {
+      agnibless $self, $new;
+   } else {
+      my $obj;
+      my $old = ref $self;
+
+      if ($old eq ref $self->{_isa}) {
+         # has no own methods or similar, so inherits package
+       
+         if ($old ne $new) {
+            for (values %obj_cache) {
+               agnibless $obj, $new
+                  if ($obj = $_->[$self->{_path}])
+                      && ($old eq ref $obj)
+                      && $obj->isa($self);
+            }
+         }
+      }
+   }
+}
+
+# update the isa of an in-memory object
+sub update_isa_mem($$) {
+   my ($self, $gid) = @_;
+
+   my $isa = path_obj_by_gid $self->{_path}, $gid;
+
+   if (!$isa) {
+      $self->{_gid} eq "1"
+         or Carp::cluck "ISA class ($gid) of object $self->{_path}/$self->{_gid} doesn't exist or couldn't be loaded";
+
+      $isa = $toplevel_object;
+   }
+
+   update_isa_class $self, ref $isa;
+
+   $self->{_isa} = $isa;
 }
 
 sub update_class($) {
@@ -649,7 +635,7 @@ sub update_class($) {
    rmagical_off $self;
 
    # sanity check since mysql compares 45 and '45"' as equal..
-   "$self->{_path}$self->{_gid}" =~ /^[0-9]+$/ or return undef;
+   "$self->{_path},$self->{_gid}" =~ /^[0-9]+,[0-9]+$/ or return undef;
 
    # is the root object available or do we need to bootstrap?
    unless ($obj_cache{1}[$self->{_path}] or $bootstrap) {
@@ -661,12 +647,10 @@ sub update_class($) {
       return path_obj_by_gid $self->{_path}, $self->{_gid};
    }
 
-   sql_fetch \my($id, $paths, $isa, $namespace),
-             "select obj.id, paths, isa, namespace.d_int
+   sql_fetch \my($id, $paths),
+             "select id, paths
               from obj
-                 left join obj_isa on (obj.id = obj_isa.id and grade = 1)
-                 left join obj_attr namespace on (obj.id = namespace.id and namespace.type = $OID_META_NAMESPACE)
-              where obj.gid = ? and paths & (1 << ?) <> 0",
+              where gid = ? and paths & (1 << ?) <> 0",
              "$self->{_gid}", $self->{_path};
 
    $id or return undef;
@@ -675,113 +659,113 @@ sub update_class($) {
    # (not a problem under normal circumstances)
    $obj_cache{$self->{_gid}}[$self->{_path}] = $self;
 
-   $self->{_id}        = $id;
-   $self->{_paths}     = $paths;
-   $self->{_namespace} = $namespace;
-   $self->{_isa}       = $isa ? path_obj_by_gid($self->{_path}, $isa) : $toplevel_object
-      or die "ISA class ($isa) of object $self->{_path}/$self->{_gid} doesn't exist or couldn't be loaded";
+   $self->{_id}    = $id;
+   $self->{_paths} = $paths;
 
-   my $isa_class = ref $self->{_isa};
-   my $old_class = ref $self eq "HASH" ? undef : ref $self;
+   local $update_level = $update_level + 1;
 
-   my $st = $namespace && sql_exec \my($type, $data),
-                     "select m.type, m.d_text
-                      from obj_attr m
-   /* $self */                inner join obj tobj on (m.type = tobj.gid and tobj.paths & (1 << ?) <> 0)
-                              inner join obj_isa on (tobj.id = obj_isa.id and obj_isa.isa = $OID_METHOD)
-                      where m.id = ?",
-                     $self->{_path},
-                     $self->{_id};
+   $update_level < 100 or croak "deep recursion in object loader (check for circular isa?)";
 
-   if ($st and $st->fetch) {
-      local $NAMESPACE = get_namespace $self->{_path}, $self->{_namespace};
+   my (%data, %type);
 
-      my $method_type;
+   for (@sqlcol) {
+      my $st = sql_exec \my($type, $data),
+                        "select type, data
+                         from $_
+                         where id = ?",
+                        $id;
 
-      !$bootstrap or $self->{_namespace} == $OID_NAMESPACE_AGNI
-         or die "FATAL 31: bootstrapping object $self->{_path}/$self->{_gid} needs non-agni namespace $self->{_namespace}";
+      while ($st->fetch) {
+         $data{$type} = $data;
+         undef $type{$type};
+      }
+   }
 
-      local $PApp::PCode::register_callback = register_callback_info($self);
+   # use populate for these, too! #d# #FIXME#
+   update_isa_mem $self, delete $data{$OID_ISA};
 
-      $class = "agni::$self->{_path}::$self->{_gid}";
+   if (exists $data{$OID_META_NAMESPACE}) {
+      $self->{_namespace} = delete $data{$OID_META_NAMESPACE};
+   }
 
-      @{"$class\::ISA"} = $isa_class;
+   if ($bootstrap) {
+      $bootstrap{$self} = $self;
 
-      agnibless $self, $class;
-
-      do {
-         # preset the _method_type hash
-         $method_type->{$name} = $type;
-
-         if ($bootstrap) {
-            $bootstrap{$self} = $self;
-
+      # now load some data and method types
+      while (my ($type, $data) = each %data) {
+         my ($ismethod, $isnamed, $name, $args, $superclass) = @{$bootstrap_cache{$self->{_path},$type} ||=  [
             # classes directly descending from method::perl and having a name are considered simple perl methods
-            sql_fetch \my($name, $args, $super_class),
-                "select name.d_string, args.d_string, obj_isa.isa
+            sql_ufetch
+                "select args.id is not null, 1, name.data, args.data, isa.data
                  from obj
-                     inner join obj_isa using (id)
-                     inner join obj_attr name using (id)
-                     inner join obj_attr args using (id)
+                     inner join d_int    isa  on (obj.id = isa.id  and isa.type  = $OID_ISA)
+                     inner join d_string name on (obj.id = name.id and name.type = $OID_ATTR_NAME)
+                     left  join d_string args on (obj.id = args.id and args.type = $OID_METHOD_ARGS)
                  where gid = ?
-                   and grade = 1
-                   and name.type = $OID_ATTR_NAME
-                   and args.type = $OID_METHOD_ARGS
                    and paths & (1 << ?) <> 0",
                 $type,
-                $self->{_path};
+                $self->{_path},
+            ]};
 
-            if ($super_class == $OID_METHOD_PERL) {
-               compile_method_perl $self, $name, $args, pcode2perl perl2pcode $data;
-            } else {
-               # non-perl-method, store for later use
- 
-               # plant a bomb
-               *{"$class\::$name"} = sub { die "non-bootstrap method $class->$name ($args) called during bootstrap" };
+         if ($ismethod) { # if it has an args attribute...
+            $self->{_namespace} eq $OID_NAMESPACE_AGNI
+               or die "FATAL 31: bootstrapping object $self->{_path}/$self->{_gid} needs non-agni namespace $self->{_namespace}";
 
-               $self->{_postponed}{method}{$type} = $data;
-            }
-              
-         } else {
-            eval {
-               (path_obj_by_gid $self->{_path}, $type)->compile($self, $data);
-            };
-            warn $@ if $@;
-         }
+            $self->_compile_method_environment (sub {
+               if ($superclass eq $OID_METHOD_PERL) {
+                  compile_method_perl $self, $name, $args, pcode2perl perl2pcode utf8_on $data;
+               } else {
+                  # non-perl-method, store for later use
+    
+                  # plant a bomb
+                  my $class = ref $self;
+                  *{"$class\::$name"} = sub { die "non-bootstrap method $class->$name ($args) called during bootstrap" };
 
-      } while $st->fetch;
-
-      my $old_methods = delete $self->{_method_type};
-      $self->{_method_type} = $method_type;
-
-      # clean up package
-   } else {
-      if ($old_class and $old_class ne $isa_class) {
-         empty_package $old_class;
-      }
-      agnibless $self, $isa_class;
-   }
-
-   update_data $self;
-
-   # may need to fix up the ISA of objects on ISA changes
-   #d# ALSO NEED TO FIX @ISA(!!!) #d# TODO #FIXME
-   if ($old_class and $old_class ne $isa_class) {
-      warn "noclass => class upgrades not yet fully implemented!!!\n";#d#
-      my $isa = { $self->{_gid} => 1 };
-      do {
-         my $next;
-         for (values %obj_cache) {
-            if ($old_class eq ref $_->[$self->{_path}]) {
-               my $o = $_->[$self->{_path}];
-               if ($isa->{$o->{_isa}{_gid}}) {
-                  agnibless $o, ref $self if ref $o eq $old_class;
-                  $next->{$o->{_gid}}++;
+                  $self->{_postponed}{$type} = $data;
                }
-            }
+            });
+
+         } elsif ($isnamed) { # no args attribute but named, must be data
+            # pretend to be able to handle descendents of OID_DATA_STRING and nothing else.
+            $self->{_cache}{$type} = $data if $superclass eq $OID_DATA_STRING;
+
+            # plant a bomb, so other accesses than fetch die
+            $self->{_type}{$name} = bless { _gid => $type }, 
+                                    "non-bootstrap data access during bootstrap ($self->{_path}/$self->{_gid}\{$type=$name}";
+
+            $self->{_postponed}{$type} = $data;
+         } else {
+            $self->{_postponed}{$type} = $data;
          }
-      } while %{$isa = $next};
+      }
+   } else {
+      while (my ($type, $data) = each %data) {
+         # undef data must be populated, too...
+         my $tobj = path_obj_by_gid($self->{_path}, $type);
+         eval {
+            $tobj->populate ($self, $data);
+         };
+         warn $@ if $@;
+      }
+
+      # cannot happen during bootstrap
+      for (keys %{$self->{_attr}}) {
+         unless (exists $type{$_}) {
+            my $tobj = path_obj_by_gid($self->{_path}, $_)
+               or croak "$self->{_path}/$self->{_gid}: unable to load type object $_, unable to depopulate\n";
+            $tobj->depopulate($self);
+         }
+      }
    }
+
+   # if we were loading this object, then it's loaded now...
+   # this is just used to avoid expensive loops in
+   # update_isa_class in the common case.
+   delete $self->{_loading};
+
+   rmagical_on $self;
+
+   $self->{_attr} = \%type;
 
    $self;
 }
@@ -796,7 +780,8 @@ sub update_class($) {
 sub split_obj {
    my ($paths, $gid, $id, $target) = @_;
 
-   sql_exec "lock tables obj write, obj_attr write, obj_isa write";
+   sql_exec lock_all_tables();
+
    my $newid = eval {
       local $SIG{__DIE__};
       insert_obj undef, $gid, and64 $paths, $subpathmask[$target];
@@ -804,18 +789,14 @@ sub split_obj {
    if ($newid) {
       sql_exec "update obj set paths = paths &~ ? where id = ?", $subpathmask[$target], $id;
 
-      my $st = sql_exec \my($isa, $grade), "select isa, grade from obj_isa where id = ?", $id;
-      sql_exec "insert into obj_isa (id, isa, grade) values (?, ?, ?)", $newid, $isa, $grade
-         while $st->fetch;
-
-      @Agni::sqlcol == 4 or die "FATAL: \@Agni::sqlcol has been changed\n";
-
-      my $st = sql_exec \my($type, $d_string, $d_text, $d_int, $d_double),
-                        "select type, d_string, d_text, d_int, d_double from obj_attr where id = ?",
-                        $id;
-      sql_exec "insert into obj_attr (id, type, d_string, d_text, d_int, d_double) values (?, ?, ?, ?, ?, ?)",
-               $newid, $type, $d_string, $d_text, $d_int, $d_double
-         while $st->fetch;
+      for my $table (@sqlcol) {
+         my $st = sql_exec \my($type, $data),
+                           "select type, data from $table where id = ?",
+                           $id;
+         sql_exec "insert into $table (id, type, data) values (?, ?, ?)",
+                  $newid, $type, $data
+            while $st->fetch;
+      }
 
       sql_exec "unlock tables";
 
@@ -824,6 +805,26 @@ sub split_obj {
       sql_exec "unlock tables";
    }
    $newid;
+}
+
+sub agni::object::_compile_method_environment {
+   my ($self, $cb) = @_;
+
+   $self->{_namespace}
+      or croak "unable to compile method $self->{name}: no namespace in object $self->{_path}/$self->{_gid}";
+
+   local $NAMESPACE = get_namespace $self->{_path}, $self->{_namespace};
+   local $PApp::PCode::register_callback = register_callback_info $self;
+
+   if ((ref $self) eq (ref $self->{_isa})) {
+      my $class = "agni::$self->{_path}::$self->{_gid}";
+
+      @{"$class\::ISA"} = ref $self;
+
+      update_isa_class $self, $class;
+   }
+
+   &$cb;
 }
 
 sub agni::object::copy_to_path {
@@ -845,29 +846,6 @@ sub agni::object::copy_to_path {
    }
 }
 
-sub agni::object::store_data {
-   my $self = shift;
-   my @names = @_;
-
-   return unless $self->{_id};
-
-   #sql_exec "lock tables obj_attr write, obj write";
-   eval {
-      local $SIG{__DIE__};
-
-      @names or @names = keys %{$self->{_type}};
-
-      for my $name (@names) {
-         $tobj = $self->{_type}{$name}
-            or die "tried to call store_data with non-existent data member '$name'";
-         $tobj->store($self, $tobj->freeze($self->{$name}));
-      }
-   };
-   #sql_exec "unlock tables";
-   die if $@;
-
-}
-
 sub agni::object::name     { "\x{4e0a}" }
 sub agni::object::fullname { "\x{4e0a}" }
 
@@ -877,22 +855,59 @@ sub agni::object::isa_obj {
 
 sub update_isa {
    my ($self) = @_;
-   my $grade = 0;
-   my $id = $self->{_id};
 
-   sql_exec "lock tables obj_isa write";
-   do {
-      sql_exec "replace into obj_isa (id, isa, grade) values (?, ?, ?)", $id, $self->{_gid}, $grade++;
-      $self = $self->{_isa};
-   } while $self->{_gid};
-   sql_exec "delete from obj_isa where id = ? and grade >= ?", $id, $grade;
-   sql_exec "unlock tables";
+   sql_exec "replace into d_int (id, type, data) values (?, ?, ?)", $self->{_id}, $OID_ISA, $self->{_isa}{_gid};
 }
 
 sub agni::object::obj {
    my ($self, $gid_or_obj) = @_;
 
    die "self->obj is obsolete, use 'obj gid' instead";
+}
+
+=item path_gid2name $path, $gid
+
+Tries to return the name of the object, or some descriptive string, in
+case the object lacks a name. Does not load the object into memory.
+
+=cut
+
+sub path_gid2name($$) {
+   my ($path, $gid) = @_;
+   if (my $obj = $obj_cache[$path]{$gid}) {
+      return $obj->name;
+   } else {
+      sql_fetch \my($parcel, $namespace, $name, $name2, $isa),
+                "select p.data, s.data, n.data, o.data, i.data
+                 from obj
+                    left join d_int    p on obj.id = p.id and p.type = $OID_META_PARCEL
+                    left join d_int    s on obj.id = s.id and s.type = $OID_META_NAMESPACE
+                    left join d_string n on obj.id = n.id and n.type = $OID_META_NAME
+                    left join d_string o on obj.id = o.id and o.type = $OID_ATTR_NAME
+                    left join d_int    i on obj.id = i.id and i.type = $OID_ISA
+                 where obj.paths & (1 << ?) <> 0 and obj.gid = ?",
+                $path, $gid;
+      $namespace &&= (path_obj_by_gid $path, $namespace)->name . "/";
+      $parcel and $namespace = "(" . (path_obj_by_gid $path, $parcel)->name . ")$namespace";
+      $name2 and $name ||= "#$name2";
+      if ($name) {
+         return $namespace . Convert::Scalar::utf8_on $name;
+      } elsif ($isa) {
+         $namespace . (path_obj_by_gid $path, $isa)->name . "(#$gid)";
+      } else {
+         "$namespace#$gid";
+      }
+   }
+}
+
+=item obj2name $obj
+
+Same as path_gid2name, but works on an existing object.
+
+=cut
+
+sub obj2name($) {
+   path_gid2name $_[0]{_path}, $_[0]{_gid};
 }
 
 =item commit_objs [$gid, $src_path, $dst_path], ...
@@ -909,102 +924,122 @@ It returns a html fragment describing it's operations.
  # delete the root object (gid 1) from the staging path
  Agni::commit_objs [1, $Agni::pathid{"root/staging/"}, undef];
 
+ # kind of read-modify-write for an object
+ # 1. get an object into the staging path
+ my $sobj = $obj->to_staging_path;
+ # 2. modify it
+ $sobj->{...} = ...;
+ # 3a. either commit it ("save changes"):
+ Agni::commit_objs [$sobj->{_gid}, $sobj->{_path}, $obj->{_path}];
+ # 3b. or delete it ("cancel"):
+ Agni::commit_objs [$sobj->{_gid}, $sobj->{_path}, undef];
+
 =cut
 
 sub commit_objs {
    my $args = \@_;
+   my $wantlog = defined wantarray;
    PApp::capture {
       my @event;
-      sql_exec "lock tables obj write, obj_attr write, obj_isa write,
-                            obj_attr name1 read, obj_attr name2 read";
+
+      sql_exec lock_all_tables "d_string name1", "d_string name2";
 
       :><p><:
       eval {
          for (@$args) {
             my ($obj_gid, $src, $dst) = @$_;
-            my ($obj_paths, $obj_id);
 
             :>gid <?$obj_gid:>...<:
 
             if (my $obj = $obj_cache{$obj_gid}[$src]) {
-               :><b><?escape_html $obj->fullname:></b>...<:
                ($obj_paths, $obj_id) = ($obj->{_paths}, $obj->{_id});
             } else {
-               ($obj_paths, $obj_id, my $name)
-                  = sql_fetch "select paths, obj.id, coalesce(name1.d_string, concat('#', name2.d_string), concat('#', gid))
-                               from obj
-                                  left join obj_attr name1 on (obj.id = name1.id and name1.type = $OID_META_NAME)
-                                  left join obj_attr name2 on (obj.id = name2.id and name2.type = $OID_ATTR_NAME)
-                               where paths & (1 << ?) <> 0 and gid = ?",
+               ($obj_paths, $obj_id)
+                  = sql_fetch "select paths, id from obj where paths & (1 << ?) <> 0 and gid = ?",
                               $src, $obj_gid;
+            }
+
+            if ($wantlog) {
+               my $name = sql_fetch "select coalesce(name1.data, concat('#', name2.data), concat('#', gid))
+                                     from obj
+                                        left join d_string name1 on (obj.id = name1.id and name1.type = $OID_META_NAME)
+                                        left join d_string name2 on (obj.id = name2.id and name2.type = $OID_ATTR_NAME)
+                                     where paths & (1 << ?) <> 0 and gid = ?",
+                                    $src, $obj_gid;
                :><b><?escape_html Convert::Scalar::utf8_on $name:></b>...<:
             }
 
-            and64 $parpathmask[$src], $obj_paths
-               and croak "commit_objs: src_path $src not the highest path of object $obj_gid";
-
-            # first unlink the object from the src layer.
-            sql_exec "update obj set paths = paths | ? where gid = ? and paths & (1 << ?) <> 0",
-                     $obj_paths, $obj_gid, $parpath[$src];
-
-            if (defined $dst) {
-               my $dst_paths;
-
-               # then find the object that currently is visible in the target layer
-               sql_fetch \my($id, $paths),
-                         "select id, paths from obj where gid = ? and paths & (1 << ?) <> 0",
-                         $obj_gid, $dst;
-
-               # can't happen anymore?
-               $id != $obj_id or croak "FATAL, pls report! commit_objs: src_path $src_path not the highest path of object $obj_gid";
-                         
-               if ($id) {
-                  # remove it from the target path
-                  if (andnot64 $paths, $subpathmask[$dst]) {
-                     :><?"splitting $id...":><:
-                     sql_exec "update obj set paths = paths &~ ? where id = ?",
-                               $subpathmask[$dst], $id;
-                  } else {
-                     :><?"replacing $id...":><:
-                     sql_exec "delete from obj      where id = ?", $id;
-                     sql_exec "delete from obj_isa  where id = ?", $id;
-                     sql_exec "delete from obj_attr where id = ?", $id;
-                  }
-                  push @event, [UPDATE_PATHID, $paths, $obj_gid];
-
-                  # move the commit object into the target path
-                  $dst_paths = and64 $paths, $subpathmask[$dst];
-               } else {
-                  :><?"created $id...":><:
-                  # calculcate all mask bits sans the obj_paths, use sum
-                  $dst_paths = sql_fetch "select sum(paths) from obj where id != ? and gid = ?", $obj_id, $obj_gid;
-
-                  # now move the object into the target path
-                  $dst_paths = andnot64 $subpathmask[$dst], $dst_paths;
-               }
-
-               sql_exec "update obj set paths = ? where id = ?", $dst_paths, $obj_id;
-               push @event, [UPDATE_CLASS, (or64 $dst_paths, $obj_paths), $obj_gid];
+            if (and64 $parpathmask[$src], $obj_paths) {
+               :><?"already committed ...":><:
+               # croak "commit_objs: src_path $src not the highest path of object $obj_gid";
             } else {
-               :><?"removing $obj_id...":><:
+               # first unlink the object from the src layer.
+               sql_exec "update obj set paths = paths | ? where gid = ? and paths & (1 << ?) <> 0",
+                        $obj_paths, $obj_gid, $parpath[$src];
 
-               sql_exec "delete from obj      where id = ?", $obj_id;
-               sql_exec "delete from obj_isa  where id = ?", $obj_id;
-               sql_exec "delete from obj_attr where id = ?", $obj_id;
+               if (defined $dst) {
+                  my $dst_paths;
 
-               push @event, [UPDATE_CLASS, $obj_paths, $obj_gid];
+                  # then find the object that currently is visible in the target layer
+                  sql_fetch \my($id, $paths),
+                            "select id, paths from obj where gid = ? and paths & (1 << ?) <> 0",
+                            $obj_gid, $dst;
+
+                  # can't happen anymore?
+                  $id != $obj_id or croak "FATAL, pls report! commit_objs: src_path $src_path not the highest path of object $obj_gid";
+                            
+                  if ($id) {
+                     # remove it from the target path
+                     if (andnot64 $paths, $subpathmask[$dst]) {
+                        :><?"splitting $id...":><:
+                        sql_exec "update obj set paths = paths &~ ? where id = ?",
+                                  $subpathmask[$dst], $id;
+                     } else {
+                        :><?"replacing $id...":><:
+                        sql_exec "delete from $_ where id = ?", $id for ("obj", @sqlcol);
+                     }
+                     push @event, [UPDATE_PATHID, $paths, $obj_gid];
+
+                     # move the commit object into the target path
+                     $dst_paths = and64 $paths, $subpathmask[$dst];
+                  } else {
+                     :><?"created ...":><:
+                     # calculcate all mask bits sans the obj_paths, use sum
+                     $dst_paths = sql_fetch "select sum(paths) from obj where id != ? and gid = ?", $obj_id, $obj_gid;
+
+                     # now move the object into the target path
+                     $dst_paths = andnot64 $subpathmask[$dst], $dst_paths;
+                  }
+
+                  sql_exec "update obj set paths = ? where id = ?", $dst_paths, $obj_id;
+                  push @event, [UPDATE_CLASS, (or64 $dst_paths, $obj_paths), $obj_gid];
+               } else {
+                  :><?"removing $obj_id...":><:
+
+                  sql_exec "delete from $_ where id = ?", $obj_id for ("obj", @sqlcol);
+
+                  push @event, [UPDATE_CLASS, $obj_paths, $obj_gid];
+               }
             }
             :><br /><:
          }
       }
       :></p><:
 
-      if ($@) {
-         :><error><?escape_html $@:></error><:
-      }
+      my $err = $@;
 
       sql_exec "unlock tables";
-      PApp::Event::broadcast agni_update => @event;
+
+      PApp::Event::broadcast agni_update => @event if @event;
+
+      if ($err) {
+         if ($wantlog) {
+            :><error><?escape_html $err:></error><:
+         } else  {
+            die $err;
+         }
+      }
+
    };
 }
 
@@ -1029,7 +1064,7 @@ sub import_objs {
       $obj{$_->{gid}} = $_;
    }
 
-   sql_exec "lock tables obj write, obj_attr write, obj_gidseq write, obj_isa write";
+   sql_exec lock_all_tables();
 
    eval {
       for (@$objs) {
@@ -1041,11 +1076,11 @@ sub import_objs {
             unshift @isa, $gid;
             $obj{$gid} ||= do {
                my $id = sql_fetch "select id from obj where gid = ? and paths & (1 << ?) <> 0", $gid, $pathid;
-               my $isa = sql_fetch "select isa from obj_isa where grade = 1 and id = ?", $id;
+               my $isa = sql_fetch "select data from d_int where type = $OID_ISA and id = ?", $id;
                $isa or croak "import_objs: can't resolve isa of object $gid";
-               { isa => $isa };
+               { attr => { $OID_ISA => $isa } };
             };
-            $gid = $obj{$gid}{isa};
+            $gid = $obj{$gid}{attr}{$OID_ISA};
          } while $gid;
 
          $_->{isa_array} = \@isa;
@@ -1055,7 +1090,7 @@ sub import_objs {
             exists $type_cache{$type} or $type_cache{$type} = do {
                my $id = sql_fetch "select id from obj where gid = ? and paths & (1 << ?) <> 0", $type, $pathid
                   or croak "import_objs: can't resolve type $type (used in object $_->{gid})";
-               sql_ufetch "select d_string from obj_attr where id = ? and type = ?", $id, $OID_ATTR_SQLCOL;
+               sql_ufetch "select data from d_string where id = ? and type = ?", $id, $OID_ATTR_SQLCOL;
             };
             defined $type_cache{$type} or !defined $value;
          }
@@ -1068,7 +1103,7 @@ sub import_objs {
                            "select id from obj where paths & ? <> 0 and paths & ? = 0",
                            $pathmask, $parpathmask[$pathid];
          while ($st->fetch) {
-            sql_exec "delete from obj_attr where id = ? and type = $Agni::OID_ROOTSET", $id;
+            sql_exec "delete from d_int where id = ? and type = $Agni::OID_ROOTSET", $id;
          }
       }
 
@@ -1077,9 +1112,9 @@ sub import_objs {
 
          my $st = sql_exec \my($id), "select id from obj where gid = ? and paths & ? <> 0", $o->{gid}, $pathmask;
          while ($st->fetch) {
-            sql_exec "delete from obj      where id = ?", $id;
-            sql_exec "delete from obj_isa  where id = ?", $id;
-            sql_exec "delete from obj_attr where id = ?", $id;
+            for ("obj", @sqlcol) {
+               sql_exec "delete from $_ where id = ?", $id;
+            }
          }
 
          my $obj_mask = sql_fetch "select ? - coalesce(sum(paths),0) from obj where gid = ? and paths & ~? = 0",
@@ -1090,21 +1125,8 @@ sub import_objs {
          #print "importing $o->{gid} (@{$o->{isa_array}}) ($pathmask,$submask,objmask $obj_mask) as $id\n";
 
          while (my ($type, $data) = each %{$o->{attr}}) {
-            if (defined $type_cache{$type}) {
-               sql_exec "insert into obj_attr (id, type, d_$type_cache{$type}) values (?, ?, ?)",
-                        $id, $type, $data;
-            } else {
-               sql_exec "insert into obj_attr (id, type) values (?, ?)",
-                        $id, $type;
-            }
-         }
-
-         my $isa = $o->{isa_array};
-
-         # slow but faster :(, maybe due to lock tables?
-         for (my $grade = @$isa; $grade--; ) {
-            sql_exec "insert into obj_isa (id, isa, grade) values (?, ?, ?)",
-                     $id, $isa->[$grade], @$isa - 1 - $grade;
+            sql_exec "insert into $type_cache{$type} (id, type, data) values (?, ?, ?)",
+                     $id, $type, $data;
          }
 
          push @event, [Agni::UPDATE_CLASS, $obj_mask, $o->{gid}];
@@ -1118,6 +1140,21 @@ sub import_objs {
    die if $@;
 }
 
+sub gc_find_instances_by_id(&@) {
+   my ($cb, @seed) = @_;
+
+   while (@seed) {
+      $cb->(@seed);
+
+      @seed = sql_fetchall
+                 "select distinct obj.id
+                  from obj
+                     inner join d_int on (obj.id = d_int.id and d_int.type = $OID_ISA)
+                     inner join obj iobj on (iobj.gid = d_int.data and obj.paths & iobj.paths <> 0)
+                  where iobj.id in (" . join(",", @seed) . ")";
+   }
+}
+
 sub find_dead_objects {
    my %dead; # all dead gids
    my %isai; # all ids implementing the attr_container interface
@@ -1125,8 +1162,7 @@ sub find_dead_objects {
 
    my ($seed, $next); # set of seed (newly alive) object ids, objects alive in next round
 
-   my $lock_tables = "lock tables obj read, obj iobj read, obj_isa isa read, obj_attr attr read, obj type read";
-
+   my $lock_tables = lock_all_tables "obj iobj", "obj type";
    sql_exec $lock_tables;
 
    eval {
@@ -1135,19 +1171,23 @@ sub find_dead_objects {
       $dead{$id} = 1 while $st->fetch;
 
       # find all types implementing $OID_IFACE_CONTAINER
-      my $st = sql_exec \my($id),
-                        "select iobj.id
-                         from obj
-                            inner join obj_attr attr on (attr.id = obj.id and attr.type = $OID_IFACE_CONTAINER)
-                            inner join obj_isa isa on (isa.isa = obj.gid)
-                            inner join obj iobj on (isa.id = iobj.id and iobj.paths & obj.paths <> 0)";
-      $isai{$id} = 1 while $st->fetch;
+      {
+         my @seed = sql_fetchall
+                           "select obj.id
+                            from obj
+                               inner join d_int on (d_int.id = obj.id and d_int.type = $OID_IFACE_CONTAINER)
+                           ";
+         gc_find_instances_by_id { $isai{$_} = 1 for @_ } @seed;
+      }
 
       # find all types that are attr::container's and special-case them (fast)
+      {
+         my @seed = sql_fetchall
+                        "select id from obj
+                         where gid = $OID_ATTR_CONTAINER";
 
-      my $st = sql_exec \my($id),
-                        "select id from obj_isa isa where isa = $OID_ATTR_CONTAINER";
-      $isac{$id} = delete $isai{$id} or die "isac $id is not isai!" while $st->fetch;
+         gc_find_instances_by_id { $isac{$_} = delete $isai{$_} or die "isac $_ is not isai!" for @_ } @seed;
+      }
 
       grep !defined $_, values %isac and croak "isac not a subset of isai, check type tree!";
 
@@ -1156,18 +1196,21 @@ sub find_dead_objects {
 
       while (@$seed) {
          $next = [];
+         #print "GC " . (scalar @$seed) . "\n";
 
          for my $id (@$seed) {
             # check wether this object is a container type
             # (this is an important optimization)
             if ($isac{$id}) {
-               push @$next, grep delete $dead{$_},
-                  sql_fetchall "select distinct obj.id
-                                from obj
-                                   inner join obj_attr attr using (id)
-                                   inner join obj type on (type.gid = attr.type)
-                                where type.id = ? and obj.paths & type.paths <> 0",
-                               $id;
+               for (@sqlcol) {
+                  push @$next, grep delete $dead{$_},
+                     sql_fetchall "select distinct obj.id
+                                   from obj
+                                      inner join $_ using (id)
+                                      inner join obj type on (type.gid = $_.type)
+                                   where type.id = ? and obj.paths & type.paths <> 0",
+                                  $id;
+               }
             }
          }
 
@@ -1177,47 +1220,49 @@ sub find_dead_objects {
          push @$next, grep delete $dead{$_},
             sql_fetchall "select distinct iobj.id
                           from obj iobj
-                             inner join obj_isa isa on (isa.isa = iobj.gid and grade = 1)
-                             inner join obj on (obj.id = isa.id)
+                             inner join d_int on (d_int.type = $OID_ISA and d_int.data = iobj.gid)
+                             inner join obj on (obj.id = d_int.id)
                           where obj.id in ($in) and obj.paths & iobj.paths <> 0";
             
-         # now fetch all attrs of the objects, mark them alive and resolve forward references
-         my $st = sql_exec \my($id, $tgid, $tid, $paths),
-                           "select obj.id, attr.type, type.id, type.paths
-                            from obj
-                               inner join obj_attr attr on (attr.id = obj.id)
-                               inner join obj type on (attr.type = type.gid)
-                            where obj.id in ($in)";
+         for my $sqlcol (@sqlcol) {
+            # now fetch all attrs of the objects, mark them alive and resolve forward references
+            my $st = sql_exec \my($id, $tgid, $tid, $paths),
+                              "select obj.id, $sqlcol.type, type.id, type.paths
+                               from obj
+                                  inner join $sqlcol on ($sqlcol.id = obj.id)
+                                  inner join obj type on ($sqlcol.type = type.gid)
+                               where obj.id in ($in)";
 
-         sql_exec "unlock tables";
+            sql_exec "unlock tables";
 
-         while ($st->fetch) {
-            # mark the types alive
-            push @$next, $tid if !$isac{$tid} && delete $dead{$tid};
+            while ($st->fetch) {
+               # mark the types alive
+               push @$next, $tid if !$isac{$tid} && delete $dead{$tid};
 
-            # forward-resolve types implementing the obj_container interface
-            if ($isai{$tid}) {
+               # forward-resolve types implementing the attr_container interface
+               if ($isai{$tid}) {
 
-               # do it for every single path. this is not very efficient, but very correct
-               for my $path (values %pathid) {
-                  next unless and64 $paths, $pathmask[$path];
+                  # do it for every single path. this is not very efficient, but very correct
+                  for my $path (values %pathid) {
+                     next unless and64 $paths, $pathmask[$path];
 
-                  my $tobj = path_obj_by_gid $path, $tgid
-                     or croak "FATAL: garbage_collect cannot load type object ({$paths}/$tgid)";
+                     my $tobj = path_obj_by_gid $path, $tgid
+                        or croak "FATAL: garbage_collect cannot load type object ({$paths}/$tgid)";
 
-                  my $data =
-                     sql_fetch "select d_$tobj->{sqlcol}
-                                from obj_attr attr where id = ? and type = ?",
-                               $id, $tgid;
+                     my $data =
+                        sql_fetch "select data
+                                   from $tobj->{sqlcol} attr where id = ? and type = ?",
+                                  $id, $tgid;
 
-                  my $gids = $tobj->attr_enum_gid($data);
+                     my $gids = $tobj->attr_enum_gid($data);
 
-                  if (@$gids) {
-                     my $st = sql_exec \my($id), "select id from obj
-                                                  where gid in (".(join ",", @$gids).") and paths & (1 << ?) <> 0",
-                                                 $path;
-                     while ($st->fetch) {
-                        push @$next, $id if delete $dead{$id};
+                     if (@$gids) {
+                        my $st = sql_exec \my($id), "select id from obj
+                                                     where gid in (".(join ",", @$gids).") and paths & (1 << ?) <> 0",
+                                                    $path;
+                        while ($st->fetch) {
+                           push @$next, $id if delete $dead{$id};
+                        }
                      }
                   }
                }
@@ -1240,20 +1285,33 @@ sub find_dead_objects {
 sub mass_delete_objects {
    my ($ids) = @_;
 
-   sql_exec "lock tables obj write, obj_isa write, obj_attr write";
+   sql_exec lock_all_tables("obj typ");
 
    # adjust paths... should instead call an object method instead
    for my $id (@$ids) {
       my ($gid, $paths) = sql_fetch "select gid, paths from obj where id = ?", $id;
       sql_exec "update obj set paths = paths | ? where gid = ? and paths & ? <> 0",
                $paths, $gid, $parpathmask[top_path($paths)];
+
+      for my $table (@sqlcol) {
+         my $st = sql_exec \my($did),
+                           "select obj.id from obj
+                               inner join $table on ($table.id = obj.id and $table.type = ?)
+                               left join obj typ on (obj.paths & typ.paths <> 0 and typ.gid = ? and typ.id <> ?)
+                            where typ.gid is null",
+                           $gid, $gid, $id;
+
+         sql_exec "delete from $table where id = ? and type = ?", $did, $gid
+            while $st->fetch;
+      }
    }
 
    my $in = join ",", @$ids;
 
-   sql_exec "delete from obj      where id in ($in)";
-   sql_exec "delete from obj_isa  where id in ($in)";
-   sql_exec "delete from obj_attr where id in ($in)";
+   for my $table ("obj", @sqlcol) {
+      sql_exec "delete from $table where id in ($in)";
+   }
+
    sql_exec "unlock tables";
 }
 
@@ -1280,29 +1338,38 @@ PApp::Event::on agni_update => sub {
    shift;
 
    my %todo;
+   my $todo;
 
    # this bundling does slightly more than necessary, i.e. if one object
    # gets a PATHID update in one path and an CLASS update in another
    # it will class-update all
    for (@_) {
-      my ($type, $paths, $gid) = @$_;
+      my ($type, $paths, $gid, $attr) = @$_;
 
-      if ($type == UPDATE_PATHS) {
-         init_paths;
-         for (values %obj_cache) {
-            for (@$_) {
-               $_
-                  and $_->{_paths} =
-                     sql_fetch "select paths from obj where gid = ? and paths & (1 << ?) <> 0",
-                               $_->{_gid}, $_->{_path};
-            }
-         }
-      } elsif ($type == UPDATE_ALL) {
-         flush_all_objects;
+      if ($type & (UPDATE_PATHS | UPDATE_ALL)) {
+         $todo |= $type;
+      } else {
+         $todo{$gid}[0] |= $type;
+         $todo{$gid}[1] = or64 $todo{$gid}[1], $paths;
+         $todo{$gid}[2]{$attr}++ if $attr;
       }
+   }
 
-      $todo{$gid}[0] |= $type;
-      $todo{$gid}[1] = or64 $todo{$gid}[1], $paths;
+   if ($todo & UPDATE_PATHS) {
+      init_paths;
+      for (values %obj_cache) {
+         for (@$_) {
+            $_
+               and $_->{_paths} =
+                  sql_fetch "select paths from obj where gid = ? and paths & (1 << ?) <> 0",
+                            $_->{_gid}, $_->{_path};
+         }
+      }
+   }
+
+   if ($todo & UPDATE_ALL) {
+      flush_all_objects;
+      return;
    }
 
    while (my ($gid, $v) = each %todo) {
@@ -1311,7 +1378,7 @@ PApp::Event::on agni_update => sub {
          for (grep $_, @{$obj_cache{$gid}}) {
             my $refcnt = Convert::Scalar::refcnt_rv $_; # we use a temporary value since ->{_paths} incs the refcnt
             if (and64 $paths, $_->{_paths}) {
-               if (1 >= $refcnt and !$BOOTSTRAP_LEVEL{$gid}) {
+               if (1 >= $refcnt and !$BOOTSTRAP_LEVEL{$gid} && 0) {
                   $_ = undef;
                } else {
                   update_class $_;
@@ -1320,67 +1387,56 @@ PApp::Event::on agni_update => sub {
          }
       } else {
          if ($type & UPDATE_PATHID) {
-            for (@{$obj_cache{$gid}}) {
-               if ($_ and and64 $paths, $_->{_paths}) {
-                  ($_->{_paths}, $_->{_id}) =
-                     sql_fetch "select paths, id from obj
-                                where paths & (1 << ?) <> 0 and gid = ?",
-                                $_->{_path}, $_->{_gid};
-               }
+            for (grep { $_ and and64 $paths, $_->{_paths} } @{$obj_cache{$gid}}) {
+               ($_->{_paths}, $_->{_id}) =
+                  sql_fetch "select paths, id from obj
+                             where paths & (1 << ?) <> 0 and gid = ?",
+                             $_->{_path}, $_->{_gid};
             }
          }
 
-         if ($type & UPDATE_DATA) {
-            $_ and and64 $paths, $_->{_paths} and update_data $_ for @{$obj_cache{$gid}};
+         if ($type & UPDATE_ATTR) {
+            for my $obj (grep { $_ and and64 $paths, $_->{_paths} } @{$obj_cache{$gid}}) {
+               for (map { path_obj_by_gid $obj->{_path}, $_ } keys %{$v->[2]}) {
+                  if ($_) {
+                     $_->update ($obj, $_->fetch ($obj));
+                  } else {
+                     warn "unable to update some types for object $obj->{_path}/$obj->{_gid}";
+                  }
+               }
+            }
          }
       }
    }
 };
 
-=head2 UTILITY FUNCTIONS
+#############################################################################
 
-=over 4
+package Agni::Callback;
 
-=item path_gid2name $path, $gid
+use overload
+   fallback => 1,
+   #'""'  => \&asString,
+   '&{}' => sub {
+      my ($self, $method, $args) = @{$_[0]};
+      my $method = ($self->can ($method)
+         or die "can't call method $method of $self, method does not exist");
+      sub {
+         local $PApp::SQL::DBH = $PApp::Config::DBH;
+         $method->($self, @$args, @_);
+      };
+   };
 
-Tries to return the name of the object, or some descriptive string, in
-case the object lacks a name. Does not load the object into memory.
+sub new {
+   my $class = shift;
 
-=cut
-
-sub path_gid2name($$) {
-   my ($path, $gid) = @_;
-   if (my $obj = $obj_cache[$path]{$gid}) {
-      return $obj->name;
-   } else {
-      sql_fetch \my($parcel, $namespace, $name, $name2, $isa),
-                "select p.d_int, s.d_int, n.d_string, o.d_string, i.isa
-                 from obj
-                    left join obj_attr p on obj.id = p.id and p.type = $OID_META_PARCEL
-                    left join obj_attr s on obj.id = s.id and s.type = $OID_META_NAMESPACE
-                    left join obj_attr n on obj.id = n.id and n.type = $OID_META_NAME
-                    left join obj_attr o on obj.id = o.id and o.type = $OID_ATTR_NAME
-                    left join obj_isa i on obj.id = i.id and i.grade = 1
-                 where obj.paths & (1 << ?) <> 0 and obj.gid = ?",
-                $path, $gid;
-      $namespace &&= (path_obj_by_gid $path, $namespace)->name . "/";
-      $parcel and $namespace = "(" . (path_obj_by_gid $path, $parcel)->name . ")$namespace";
-      $name2 and $name ||= "#$name2";
-      if ($name) {
-         return $namespace . Convert::Scalar::utf8_on $name;
-      } elsif ($isa) {
-         $namespace . (path_obj_by_gid $path, $isa)->name . "(#$gid)";
-      } else {
-         "$namespace#$gid";
-      }
-   }
+   bless [ @_ ], $class;
 }
 
-=back
-
-=cut
 
 1;
+
+=back
 
 =head1 SEE ALSO
 

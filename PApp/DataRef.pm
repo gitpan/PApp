@@ -27,7 +27,7 @@ package PApp::DataRef;
 
 use Convert::Scalar ();
 
-$VERSION = 0.2;
+$VERSION = 0.22;
 
 =item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...
 
@@ -98,7 +98,7 @@ Create a new handle that fetches and stores a file. [NYI]
 Create a scalar reference that calls your callbacks when accessed. Valid arguments are:
 
   fetch => coderef($self)          # ref not present
-  fetch => coderef($self, $ref)    # ref present
+  fetch => coderef($self, $value)  # ref present
     A coderef which is to be called for every read access
 
   value => constant

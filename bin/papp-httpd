@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/bin/perl
 
 # This is a very very very very very simple httpd
 # it does break the http specification in a lot of small
@@ -229,8 +229,8 @@ sub handle {
          $hdr{lc $1} .= ",$2"
             while $req =~ /\G
                   ([^:\000-\040]+):
-                  [\008\040]*
-                  ((?: [^\015\012]+ | \015\012[\008\040] )*)
+                  [\011\040]*
+                  ((?: [^\015\012]+ | \015\012[\011\040] )*)
                   \015\012
                /gxc;
 
