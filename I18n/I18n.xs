@@ -36,8 +36,8 @@ typedef unsigned int HASH;
 /* we assume natural alignment is ok */
 struct dpo_head {
   U32 sig;
-  unsigned int version;
-  unsigned int hashsize;
+  U32 version;
+  U32 hashsize;
   OFS hash[1];
   /* followed by aligned dpo_str's */
 };
@@ -64,7 +64,7 @@ hash (const unsigned char *msg, unsigned int len)
     len = MAXHASH;
   else if (len != 0)
     do {
-      hval ^= (hval << 4) + (hval >> 25) + (unsigned int)*msg++;
+      hval ^= (hval << 4) + (hval >> 25) + (HASH)*msg++;
     } while (--len);
 
   return hval;
@@ -79,6 +79,7 @@ typedef struct dpo_writer {
 typedef struct dpo_table {
   void *start;
   size_t length;
+  SV *lang;
 } *PApp__I18n__Table;
 
 /* skip any leading \{} or \{\ tag */
@@ -130,6 +131,8 @@ add(self, msgid, msgstr)
         SV *	msgid
         SV *	msgstr
         CODE:
+        sv_utf8_upgrade (msgid);
+        sv_utf8_upgrade (msgstr);
 {
 	STRLEN len1, len2;
         unsigned char *xmsgid  = SvPV (msgid , len1);
@@ -173,20 +176,21 @@ DESTROY(self)
 MODULE = PApp::I18n		PACKAGE = PApp::I18n::Table
 
 PApp::I18n::Table
-new(class, path = 0)
+new(class, path = 0, lang = &PL_sv_undef)
 	SV *	class
 	char *	path
+        SV *	lang
         CODE:
 {
         int fd;
         void *start = 0;
         size_t length;
 
-        if (path)
+        if (path && *path)
           {
             struct dpo_head *hdr;
 
-            fd = open (path, 0666);
+            fd = open (path, O_RDONLY);
             if (fd <= 0)
               croak ("unable to open translation table '%s': %s", path, strerror (errno));
 
@@ -217,7 +221,16 @@ new(class, path = 0)
         Newz(0, RETVAL, 1, struct dpo_table);
         RETVAL->start = start;
         RETVAL->length = length;
+        RETVAL->lang = newSVsv (lang);
 }
+	OUTPUT:
+        RETVAL
+
+SV *
+lang(self)
+	PApp::I18n::Table self
+        CODE:
+        RETVAL = SvREFCNT_inc (self->lang);
 	OUTPUT:
         RETVAL
 
@@ -225,8 +238,12 @@ void
 DESTROY(self)
 	PApp::I18n::Table self
         CODE:
+
         if (self->start)
           munmap (self->start, self->length);
+
+        if (self->lang)
+          SvREFCNT_dec (self->lang);
 
         Safefree (self);
 
@@ -237,8 +254,12 @@ gettext(self, msgid)
         CODE:
 {
         STRLEN len;
-        char *xmsgid = SvPV (msgid, len);
+        char *xmsgid;
+        
+        if (!SvUTF8 (msgid)) /* optimization */
+          sv_utf8_upgrade (msgid);
 
+        xmsgid = SvPV (msgid, len);
         SKIP_META (xmsgid, len);
 
         if (self->start)
@@ -263,7 +284,8 @@ gettext(self, msgid)
 
         /* default: return "original" string */
         RETVAL = newSVpvn (xmsgid, len);
-found: ;
+found:
+        SvUTF8_on (RETVAL);
 }        
         OUTPUT:
         RETVAL

@@ -1,5 +1,183 @@
 Revision history for Perl extension PApp
 
+0.12
+	- marked & moved Pconv && Recode into it's own subdir.
+	- fixed buggy flush logic AGAIN.
+	- enhanced make test a bit. should now do basic sanity checks.
+	- vastly improved PApp::Pconv (therefore renamed from iconv).
+          should be outsourced.
+	- allowed both #elsif and #elif.
+	- documented and maybe fixed sub/ret functionality.
+	- fix escape_uri description and code.
+	- new functions for group management in PApp::User.
+	- mime headers that contain the letter "r" are not longer ignored.
+	- deuglified macro/admin/loginbox.
+	- moved papp statedb management into PApp::Config.
+	- papp-env can now evaluate perl expressions when setting vars.
+	- renamed $sessid to sessionid, sessionid is now part of
+          the surl (which is redundant and could be used for
+          additional sanity-checks).
+	- new module: PApp::User, use it instead of macro/admin.
+	- <import> can now import perl modules (experimental feature).
+	- adedd PApp::abort_with_file (and PApp::CGI::send_fd).
+	- added abort_with, design inspred by oesi, implemented against
+          his wishes ;)
+	- added sessid to state db. The session id will be available in
+          $sessid.
+
+0.11 <no release>
+	- reserved %T for transaction variables.
+	- I18n no longer opens translation tables RDWR or in other
+          invalid modes.
+	- new configure option: errorlog.
+	- totally redid the PApp::CGI interface. See eg/admin.cgi for
+          changes.
+        - did you know that you need to localize $@ at the right place
+          when you overload exceptions? uh-hu.
+	- elmex found & fixed a DoS in macro/tinychat.papp.
+	- fixed papp-admin --user.
+	- more ssl-stuff from oesiman.
+	- added eg/ directory with example stuff.
+	- finalized PApp::CGI. Works surprisingly fast. With SpeedyCGI
+          it rocks.
+	- tweaked error handling. perl is just too unstable.
+	- i18n dpo tables are now written by papp-install.
+        - the uid/gid settings now don't get lost on reconfig.
+        - increased the default size of msgid/msgstr/env AND state. For
+          env/msgstr etc.. it's not speed-relevant in the general case.
+          for state it might be a small problem, but I just hit the page
+          where 64k wasn't enough (sablotron generation time: 2min,
+          netscape rendering time >>30min and then out of memory).
+	- greatly enhanced and fixed macro/admin.papp.
+        - added completely transparent sslauth->user mapping.
+	- implemented and use macro/tinychat ;) If our oesi finds it cool
+          it *must* be cool.
+	- PApp::Env now uses mysql-shared-locks instead of lock tables.
+	- rename SURL_FILENAME to SURL_SUFFIX; SURL_STYLE_EMPTY to
+          SURL_STYLE_STATIC.
+	- changed serialized modpath representation, chop off '-' signs
+          at the end since we can syntehsize them if we know the length.
+	- seperated PApp::SQL from the main sources, renamed ::database to
+          ::Database.
+	- fixed selectbox to be conform with the other functions.
+        - streamlined editform.
+	- fixed important security bug (testing for nonexistant access rights
+          always returned true).
+	- added PApp::Admin.
+	- additional language translation now get auto-detected.
+        - papp-install is now less disturbing.
+        - lots of i18n fixes, language ids get normalized now
+          (you must run i18n-normalize after upgrade!).
+        - first try on an generalized top-level exception mechanism.
+	- implemented surl-styles (see PApp::surlstyle, surl and the
+          new surlstyle attribute for the package element).
+	- --export-po and --import-po for papp-admin.
+	- elaborate microsoft-can't-mime workaround for msie ;(
+	- fixed a bug that kept surl from accepting references
+          as destination "path".
+	- work around bug in mod_perl's $r->args && $r->content. As a side
+          effect, query string with ";" as separator are now supported.
+        - added flush function for outputing partial
+          pages. As a side effect, data is no longer being copied on output
+          (unless a conversion is necssary, of course).
+	- multiple field submits are now supported (see desc. of %P).
+          macro/editform transparently supports this.
+	- ef_button hinzugefügt (== marco is too dumb to write english).
+        - objectbox in selectbox umbenannt.
+	- fixed method discard, new method dirty for PApp::DataRef.
+	- added bin/papp-admin.
+	- apps/admin improved.
+        - app.config is now used directly in the new PApp::Application call,
+          so things like database can be set via the config mechanism.
+	- %state is now no longer destroyed but rather freed, so
+          DESTROY will not be called for objects in %state, if they
+          are saved into the satet database. This is expected, I think.
+	- PApp::XSLT now supports dynamic scheme handlers.
+	- moved from Compress::LZV1 to Compress::LZF, please do:
+          update user set prefs=""; delete from state;
+          or edit PApp.pm and replace LZF by LZV1.
+	- fixed PApp::HTML::radio/checkbox.
+	- fixed ef_relation to support where arguments again.
+	- 5.5-ified SQL/SQL.xs.
+	- argl, form-headers are now treated as bytes.
+	- greatly improved (and fixed) ef_file [untested ;-].
+	- charset conversion done for ef_sbegin/ef_cbegin.
+        - some utf8-support for DataRef::DB_row, for dumb databases.
+	- PApp::HTML::textarea now outputs additional \n before and
+          after the text (for normalization).
+	- macro/editform normalizes text data now (\r\n => \n!)
+	- move from georgian-char-hack to corporate use zone.
+	- documentation enhancements.
+        - new function macro/editform/ef_field.
+        - module name "." == current module in surl.
+	- enhanced macro/editform to parse "normal" GET and POST requests,
+          ef_hidden, better ef_submit.
+        - surl now supports multiple module targets.
+
+0.10 <Unreleased: missing license. Write to marco@toytest.com for complaints>
+	- input/output charset conversion is automatically done for %P and
+          all text/plain fields in macro/editform.
+	- papp now stores the character set the last page was submitted in.
+	- added PApp::Recode, which in turn uses PApp::Iconv (which in turn
+          uses iconv*) to add character-set-conversion.
+	- added macro/ssl.
+        - rewrite of PApp::HTML and extended functionality for
+          macro/editform, for the benefit of ecmascriptloosers.
+	- modulepath from url parsing enabled again.
+	- fixed import state key processing.
+	- fix PApp::Apache to supprot mount_config.
+	- replaced <module src> by <include src>.
+	- <pxml> now supported on a basic level.
+	- String::Similarity 0.02 required (who would have thought...).
+	- added PApp::Lock.
+	- capture {} works again, stderr is no longer redirected
+	- implemeted catch/try (experimental).
+	- reload_p fixed to work correctly.
+	- more robust && correct sql_*-functions.
+	- added PApp::Application, the base class for each
+          application.
+        - removed the concept of nested modules (use nested packages). NYI.
+        - added PApp::Util and PApp::Parser, moving lots of
+          functions from PApp::Parser there.
+        - changed config&mount-mechanism substantially. mounting
+          is now done dynamically.
+	- improved XHTML compliance.
+	- xslt stylesheets can be specified using perl expressions.
+        - more utf8-fixes (translation database + poedit is now in utf8, use
+          i18n-upgradeutf8 to update your translation tables).
+	- mount now properly anchors the url at the serverroot.
+	- reloading works again.
+	- workaround a perl bug with respect to weakrefs in PApp::I18n.
+	- added PApp::XSLT.
+	- Storable-0.7.2 is finally sufficient for PApp without any patches.
+	- first round of stylesheet support inside papp.
+	- renamed pappxml: namespace to simply papp:.
+        - replaced phtml2perl by a more versatile function family (PApp::PCode).
+        - simplified internal rep. of PApp::Callback::Function::'s.
+	- new surl modifiers: SURL_PUSH/UNSHIFT/EXEC/SAVE_PREFS.
+	- PApp::DataRef now fetches and stores the value, not a reference.
+        - new PApp::DataRef::Scalar.
+        - new functions if macro/editform (+ better docs).
+        - MAJOR REWRITE OF THE INNER ENGINE:
+          - nested submodules
+          - embeddable applications
+	- added editable comment and type forms to apps/dbedit.
+        - PApp::Exception->as_string now wraps text better.
+        - %S is now available within newuser and newsession callbacks.
+        - added first try at an PApp::Log module.
+        - papp now caches config information (and the app itself!)
+          in the database (whew, room to improvement).
+        - nfreeze is used everywhere except in the state database.
+        - changed internal %state format, old states are no longer
+          compatible.
+        - nested modules are no longer allowed (to allow for further
+          enhancements!)
+        - fixed PApp::weaken.
+        - backtrace now contains arguments.
+        - wrote, uploaded and required Convert::Scalar module.
+        - improved and fixed a lot of things in PApp::Exception.
+        - PApp::SQL now tries to reconnect two times.
+
 0.08  Sun Jun 18 23:53:50 CEST 2000
 	- PApp now overwrites $SIG{__DIE__}, be careful!
 	- PApp::Exception has a compatibility mode now.

@@ -32,56 +32,14 @@ currently true in all cases.
 package PApp::Env;
 
 use Storable;
+use PApp::Config;
 use PApp::SQL;
+use PApp::Exception;
 
-require Exporter;
+use base Exporter;
 
-@ISA = qw(Exporter);
-$VERSION = 0.08;
+$VERSION = 0.12;
 @EXPORT = qw(setenv getenv unsetenv modifyenv lockenv listenv);
-
-=item PApp::Env->configure name => value, ...
-
-Used to configure the papp module. Only the following keys are currently
-understood:
-
-  statedb	the dsn of the papp database
-  statedb_user	the username used to open the dbi connection
-  statedb_pass	the password used to open the connection
-
-Defaults for these will be fetched from the PApp::Config module (L<PApp::Config>).
-
-=cut
-
-sub configure {
-   my %attr = @_;
-   exists $attr{statedb}      and $statedb = $attr{statedb};
-   exists $attr{statedb_user} and $statedb = $attr{statedb_user};
-   exists $attr{statedb_pass} and $statedb = $attr{statedb_pass};
-
-   $configured = 1;
-}
-
-our $statedb;
-our $statedb_user;
-our $statedb_pass;
-our $configured;
-
-sub dbconnect {
-   if (defined $PApp::statedbh) {
-      $DBH = $PApp::statedbh;
-   } else {
-      unless ($configured) {
-         require PApp::Config;
-         $statedb      ||= $PApp::Config{STATEDB};
-         $statedb_user ||= $PApp::Config{STATEDB_USER};
-         $statedb_pass ||= $PApp::Config{STATEDB_PASS};
-         $configured = 1;
-      }
-
-      $DBH = PApp::SQL::connect_cached(__PACKAGE__ . __FILE__, $statedb, $statedb_user, $statedb_pass);
-   }
-}
 
 =item setenv key => value
 
@@ -90,13 +48,12 @@ Sets a single environment variable to the specified value. (mysql-specific ;)
 =cut
 
 sub setenv($$) {
-   dbconnect unless $DBH;
    my ($key, $val) = @_;
 
    $val = "\x00".Storable::nfreeze($val)
       if ref $val || !defined $val || substr($val, 0, 1) eq "\x00";
 
-   sql_exec "replace into env (name, value) values (?, ?)", $key, $val;
+   sql_exec PApp::Config::DBH, "replace into env (name, value) values (?, ?)", $key, $val;
 }
 
 =item unsetenv key
@@ -106,9 +63,8 @@ Unsets (removes) the specified environment variable.
 =cut
 
 sub unsetenv($) {
-   dbconnect unless $DBH;
    my $key = shift;
-   sql_exec "delete from env where name = ?", $key;
+   sql_exec PApp::Config::DBH, "delete from env where name = ?", $key;
 }
 
 =item getenv key
@@ -118,9 +74,8 @@ Return the value of the specified environment value
 =cut
 
 sub getenv($) {
-   dbconnect unless $DBH;
    my $key = shift;
-   my $st = sql_exec \my($val), "select value from env where name = ?", $key;
+   my $st = sql_exec PApp::Config::DBH, \my($val), "select value from env where name = ?", $key;
    if ($st->fetch) {
       substr ($val, 0, 1) eq "\x00" ? Storable::thaw(substr $val, 1) : $val;
    } else {
@@ -142,12 +97,19 @@ Calls to lockenv can be nested.
 our $locklevel;
 
 sub lockenv(&) {
-   dbconnect unless $DBH;
-   sql_exec "lock tables env write" unless $locklevel;
-   my $res = eval { local $locklevel=$locklevel+1; $_[0]->() };
-   my $err = $@;
-   sql_exec "unlock tables" unless $locklevel;
-   die $@ if $@;
+   local $DBH = PApp::Config::DBH;
+   sql_fetch "select get_lock('PAPP_ENV_LOCK_ENV', 60)"
+      or fancydie "PApp::Env::lockenv: unable to aquire database lock";
+   my $res = eval {
+      local $SIG{__DIE__};
+      local $locklevel=$locklevel+1;
+      $_[0]->();
+   };
+   {
+      local $@;
+      sql_exec "select release_lock('PAPP_ENV_LOCK_ENV')";
+   }
+   die if $@;
    $res;
 }
 
@@ -182,7 +144,7 @@ Returns a list of all environment variables (names).
 =cut
 
 sub listenv {
-   dbconnect unless $DBH;
+   local $DBH = PApp::Config::DBH;
    sql_fetchall "select name from env";
 }
 

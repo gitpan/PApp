@@ -1,11 +1,22 @@
 #!/usr/bin/perl
 
 use File::Copy;
-use File::Glob;
+use File::Compare;
+use File::Glob ':glob';
 use DBI;
 
-require "PApp/Config.pm";
-require "./config";
+use blib;
+use lib '.';
+
+BEGIN {
+   require 'PApp/Config.pm';
+   require "./config.pl";
+}
+
+use PApp;
+use PApp::Admin;
+use PApp::SQL;
+use PApp::I18n;
 
 $|=1;
 
@@ -17,32 +28,42 @@ sub crdir {
    local $_ = shift;
    print "making directory $_... ";
    if (-d $_) {
-      print "already exists\n";
+      print "[skipped] ";
    } else {
       mkdir $_, 0777 or die "$!\n";
-      print "ok\n";
+   }
+   chown $CFG{PAPP_UID}, $CFG{PAPP_GID}, $_;
+   print "ok\n";
+}
+
+sub install($$) {
+   my ($s, $d) = @_;
+   if (compare($s, $d)) {
+      copy($s, "$d~") or die "copy($s,$d~): $!\n";
+      chown $CFG{PAPP_UID}, $CFG{PAPP_GID}, "$d~";
+      chmod ((stat $s)[2] & 07777, "$d~");
+      rename "$d~", $d or die "rename($d~,$d): $!\n";
+      0;
+   } else {
+      chown $CFG{PAPP_UID}, $CFG{PAPP_GID}, $d;
+      chmod ((stat $s)[2] & 07777, $d);
+      1;
    }
 }
 
 crdir $lib;
 crdir $CFG{I18NDIR};
-crdir "$lib/apps";
-crdir "$lib/macro";
 
-for my $app (File::Glob::glob "apps/*.papp", GLOB_ERR|GLOB_NOCHECK|GLOB_NOSORT) {
-   $app =~ s/.*?([^\/]+)\.papp$/$1/;
-   print "apps/$app.papp => $lib/apps...";
-   File::Copy::copy("apps/$app.papp", "$lib/apps/$app.papp~") or die "$!\n";
-   rename "$lib/apps/$app.papp~", "$lib/apps/$app.papp" or die "$!\n";
-   print "ok\n";
-}
+for my $dir (qw(macro widget apps demo style)) {
+   crdir "$lib/$dir";
 
-for my $app (File::Glob::glob "macro/*.papp", GLOB_ERR|GLOB_NOCHECK|GLOB_NOSORT) {
-   $app =~ s/.*?([^\/]+)\.papp$/$1/;
-   print "macro/$app.papp => $lib/macro...";
-   File::Copy::copy("macro/$app.papp", "$lib/macro/$app.papp~") or die "$!\n";
-   rename "$lib/macro/$app.papp~", "$lib/macro/$app.papp" or die "$!\n";
-   print "ok\n";
+   for my $app (bsd_glob "$dir/*.{papp,xsl,pxsl}",
+                                 GLOB_ERR|GLOB_NOSORT|GLOB_BRACE) {
+      $app =~ s/.*?([^\/]+)$/$1/;
+      print "$dir/$app => $lib/$dir...";
+      print "[skipped] " if install "$dir/$app", "$lib/$dir/$app";
+      print "ok\n";
+   }
 }
 
 print <<EOF;
@@ -59,9 +80,11 @@ EOF
 
 print "trying to open state database... ";
 
-$dbi = DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, { RaiseError => 0, PrintError => 1 });
+$DBH =
+   DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS},
+                { RaiseError => 0, PrintError => 1 });
 
-if (!$dbi) {
+if (!$DBH) {
    print "failed\n";
    $CFG{STATEDB} =~ /DBI:([^:]+):([^:]+).*?(?:host=([^;]*))?/i or die "unable to parse database name ($CFG{STATEDB})\n";
 
@@ -72,13 +95,17 @@ if (!$dbi) {
    $drh = DBI->install_driver($driver) or die "unable to find DBI driver $driver\n";
    $drh->func("createdb", $db, "localhost", $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, "admin");
 
-   $dbi = DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, { RaiseError => 1 });
-   $dbi or die "unable to create database $CFG{STATEDB}, please create it manually and re-run papp-install\n";
+   $DBH = DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, { RaiseError => 1 });
+   $DBH or die "unable to create database $CFG{STATEDB}, please create it manually and re-run papp-install\n";
 
    print "seems to have worked\n";
 } else {
    print "already exists (good)\n";
 }
+
+$PApp::SQL::DBH = $DBH;
+
+$installed_version = eval { sql_fetch "select value from env where name = ?", "PAPP_VERSION" };
 
 print <<EOF;
 
@@ -88,7 +115,124 @@ version you have to drop the database manually.
 
 EOF
 
-$dbi->do(<<SQL);
+$DBH->do(<<SQL);
+   CREATE TABLE env (
+     name varchar(255) binary not null,
+     value longblob not null,
+     PRIMARY KEY (name)
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE msgid (
+     nr mediumint(6) unsigned NOT NULL auto_increment,
+     id mediumtext NOT NULL,
+     domain varchar(30) NOT NULL,
+     lang varchar(16) NOT NULL,
+     context text NOT NULL,
+     PRIMARY KEY (nr),
+     INDEX (id(64))
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE msgstr (
+     nr mediumint(6) unsigned DEFAULT '0' NOT NULL,
+     lang varchar(16) NOT NULL,
+     flags set('valid','fuzzy','unused') not null,
+     msg mediumtext NOT NULL,
+     UNIQUE nr (nr,lang)
+   )
+SQL
+
+$DBH->do("DROP TABLE state") if $installed_version < 0.12;
+
+$DBH->do(<<SQL);
+   CREATE TABLE state (
+     id int(10) unsigned NOT NULL auto_increment,
+     ctime timestamp(14),
+     previd int(10) unsigned DEFAULT '0' NOT NULL,
+     alternative mediumint(8) unsigned DEFAULT '0' NOT NULL,
+     userid int(10) unsigned DEFAULT '0' NOT NULL,
+     sessid int(10) unsigned DEFAULT '0' not null,
+     state mediumblob DEFAULT '' NOT NULL,
+     PRIMARY KEY (id),
+     KEY (alternative, previd)
+   ) delay_key_write=1
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE user (
+     id int(10) unsigned NOT NULL auto_increment,
+     ctime timestamp(14),
+     prefs blob NOT NULL,
+     user varchar(100) NOT NULL,
+     pass varchar(14) NOT NULL,
+     comment text NOT NULL,
+     PRIMARY KEY (id),
+     KEY user (user)
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE grp (
+     id int(10) unsigned NOT NULL auto_increment,
+     name varchar(100) NOT NULL,
+     longdesc text NOT NULL,
+     PRIMARY KEY (id)
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE usergrp (
+     userid int(10) unsigned DEFAULT '0' NOT NULL,
+     grpid int(8) unsigned DEFAULT '0' NOT NULL,
+     PRIMARY KEY (userid,grpid)
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE app (
+     id smallint(6) unsigned NOT NULL auto_increment,
+     name varchar(255) binary DEFAULT '' NOT NULL,
+     appset smallint(5) unsigned DEFAULT '0' NOT NULL,
+     path varchar(255) binary DEFAULT '' NOT NULL,
+     mountconfig mediumtext DEFAULT '' NOT NULL,
+     config mediumtext DEFAULT '' NOT NULL,
+     PRIMARY KEY (id),
+     UNIQUE (name)
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE appset (
+     id smallint(5) unsigned NOT NULL auto_increment,
+     name varchar(255) DEFAULT '' NOT NULL,
+     PRIMARY KEY (id),
+     UNIQUE (name)
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE pkg (
+     id varchar(255) DEFAULT '' NOT NULL,
+     ctime timestamp(14),
+     config mediumblob DEFAULT '' NOT NULL,
+     code longblob DEFAULT '' NOT NULL,
+     PRIMARY KEY (id)
+   )
+SQL
+
+$DBH->do(<<SQL);
+   CREATE TABLE locks (
+     id varchar(255) binary DEFAULT '' NOT NULL,
+     breaktime int(10) unsigned DEFAULT '0' NOT NULL,
+     data varchar(255) binary DEFAULT '' NOT NULL,
+     PRIMARY KEY (id)
+   )
+SQL
+
+$DBH->do(<<SQL);
    CREATE TABLE error (
      id mediumint(6) unsigned NOT NULL auto_increment,
      ctime timestamp(14),
@@ -98,77 +242,18 @@ $dbi->do(<<SQL);
    )
 SQL
 
-$dbi->do(<<SQL);
-   CREATE TABLE env (
-     name varchar(255) binary not null,
-     value blob not null,
-     PRIMARY KEY (name)
-   )
-SQL
-
-$dbi->do(<<SQL);
-   CREATE TABLE msgid (
-     nr mediumint(6) unsigned NOT NULL auto_increment,
-     id blob DEFAULT '' NOT NULL,
-     app varchar(30) DEFAULT '' NOT NULL,
-     lang varchar(5) DEFAULT '' NOT NULL,
-     context text DEFAULT '' NOT NULL,
-     PRIMARY KEY (nr),
-     INDEX (id(64))
-   )
-SQL
-
-$dbi->do(<<SQL);
-   CREATE TABLE msgstr (
-     nr mediumint(6) unsigned DEFAULT '0' NOT NULL,
-     lang varchar(5) DEFAULT '' NOT NULL,
-     flags set('valid','fuzzy') DEFAULT '' NOT NULL,
-     msg blob DEFAULT '' NOT NULL,
-     UNIQUE nr (nr,lang)
-   )
-SQL
-
-$dbi->do(<<SQL);
-   CREATE TABLE state (
-     id int(10) unsigned NOT NULL auto_increment,
-     ctime timestamp(14),
-     previd int(10) unsigned DEFAULT '0' NOT NULL,
-     userid int(10) unsigned DEFAULT '0' NOT NULL,
-     state blob DEFAULT '' NOT NULL,
+$DBH->do(<<SQL);
+   CREATE TABLE ssluser (
+     id int(10) unsigned NOT NULL default '0',
+     cert varchar(255) NOT NULL default '',
      PRIMARY KEY (id),
-     KEY previd (previd)
+     UNIQUE KEY cert(cert)
    )
 SQL
 
-$dbi->do(<<SQL);
-   CREATE TABLE user (
-     id int(10) unsigned NOT NULL auto_increment,
-     ctime timestamp(14),
-     prefs blob DEFAULT '' NOT NULL,
-     user varchar(20) DEFAULT '' NOT NULL,
-     pass varchar(14) DEFAULT '' NOT NULL,
-     comment varchar(255) DEFAULT '' NOT NULL,
-     PRIMARY KEY (id),
-     KEY user (user)
-   )
-SQL
 
-$dbi->do(<<SQL);
-   CREATE TABLE grp (
-     id int(10) unsigned NOT NULL auto_increment,
-     name varchar(20) DEFAULT '' NOT NULL,
-     longdesc text DEFAULT '' NOT NULL,
-     PRIMARY KEY (id)
-   )
-SQL
-
-$dbi->do(<<SQL);
-   CREATE TABLE usergrp (
-     userid int(10) unsigned DEFAULT '0' NOT NULL,
-     grpid int(8) unsigned DEFAULT '0' NOT NULL,
-     PRIMARY KEY (userid,grpid)
-   )
-SQL
+$DBH->do("delete from pkg");
+   # if $PApp::Config::VERSION != $installed_version;
 
 print <<EOF;
 
@@ -180,14 +265,14 @@ EOF
 print "creating admin user and admin group... ";
 eval {
    my $pass = crypt "public", "xx";
-   $dbi->do("insert into user values (1, NULL, '', 'admin', '$pass', 'Main Administrator')")
-   and $dbi->do("insert into grp values (1, 'admin', 'hyperuser access rights')")
-   and $dbi->do("insert into grp values (2, 'poedit', 'general translator access')")
-   and $dbi->do("insert into grp values (3, 'poedit_*', 'translator access for all apps')")
-   and $dbi->do("insert into grp values (4, 'poedit_papp', 'translator access for papp itself')")
-   and $dbi->do("insert into usergrp values (1, 1)")
-   and $dbi->do("insert into usergrp values (1, 2)")
-   and $dbi->do("insert into usergrp values (1, 3)")
+   $DBH->do("insert into user values (1, NULL, '', 'admin', '$pass', 'Main Administrator')")
+   and $DBH->do("insert into grp values (1, 'admin'      , 'hyperuser access rights')")
+   and $DBH->do("insert into grp values (2, 'poedit'     , 'general translator access')")
+   and $DBH->do("insert into grp values (3, 'poedit_*'   , 'translator access for all apps')")
+   and $DBH->do("insert into grp values (4, 'poedit_papp', 'translator access for papp itself')")
+   and $DBH->do("insert into usergrp values (1, 1)")
+   and $DBH->do("insert into usergrp values (1, 2)")
+   and $DBH->do("insert into usergrp values (1, 3)")
    or die;
    print <<EOF;
 ok
@@ -202,11 +287,22 @@ if ($@) {
    print "failed (or already exists)\n";
 }
 
-print "(i18n tables and files are not being installed yet, this is a bug!)\n";
+$DBH->do("delete from env where name='PAPP_VERSION'");
+$DBH->do("insert into env (name, value) values ('PAPP_VERSION', '$PApp::Config::VERSION')");
 
+my $umask = umask 077;
+install("config.pl", "$lib/config.pl");
+chmod 0600, "$lib/config.pl"; # just to be sure
+umask $umask;
 
+print "\nimporting i18n tables\n";
+for my $domain (qw(papp bench dbedit demo iso639 iso3166)) {
+   PApp::Admin::import_po 0, "i18n/$domain.po", 1;
+   print "exporting $domain to $CFG{I18NDIR}/$domain\n";
+   PApp::I18n::export_dpo $domain, "$CFG{I18NDIR}/$domain", $CFG{PAPP_UID}, $CFG{PAPP_GID};
+}
 
-
-
+print "\n$lib/config.pl is chmod 600, better chown or chgrp it to the group
+your webserver or trusted user is running under.\n\n";
 
 

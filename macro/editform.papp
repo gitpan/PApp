@@ -1,4 +1,5 @@
-<papp name="papp">
+<package name="editform">
+<domain name="papp" lang="en">
 
 <xperl><![CDATA[
 
@@ -12,208 +13,539 @@ macro/editform - macros used for creating sql editing forms
 
 =head1 DESCRIPTION
 
-*sigh* :(
+*sigh* :( Not yet.
+      
+Basically, this package lets you create very powerful html forms.
+
+Unless noted otherwise, all the functions creating input elements accept
+an optional additional argument which must be a hashref with additional
+attribute => value pairs to use in the resulting element (see the similar
+functions in L<PApp::HTML>. The C<name> attribute can optionally be
+overriden.
+
+=over 4
 
 =cut
 
-sub ef_edit*() {
-   $S{ef_edit};
-}
+use Convert::Scalar ();
 
-my $EF_KEY = "ef000000";
+my $EF_KEY = "ef00000";
 my $ef_args;
+my $ef_key;
 
-sub ef_nextid($) {
-   my $field = shift;
-   my $key = $EF_KEY++;
-   $ef_args->{$key}{field} = $field;
-   $key;
+sub ef_nextid($;$) {
+   $ef_key = $_[1]{name} ||= $EF_KEY++;
+   $ef_args->{"/"}{$ef_key}{ref} = $_[0] if $_[0];
+   $ef_key;
 }
+
+=item ef_mbegin [surl-arguments]
+
+Start an editform. This directive outputs the <form> header (using
+C<PApp::multipart_form>). The arguments are treated exactly like
+PApp::surl arguments. If it contains SURL_EXEC or similar commands then
+these will be executed AFTER the form has been processed.
+
+=item ef_sbegin [surl-arguments]
+
+Similar to C<ef_begin>, but uses C<PApp::sform> to create the form. This
+disables C<ef_file> widgets with most (if not all browsers).
+
+=item ef_cbegin [surl-arguments]
+
+Similar to C<ef_sbegin>, but uses C<PApp::cform> to create the form.
+
+=item ef_begin [surl-arguments]
+
+Identical to C<ef_cbegin>, just for your convinience.
+
+=item ef_end
+
+Ends the editform. This adds the closing </form> tag.
+
+=cut
+
+sub _ef_parse_begin($) {
+   my $ef = shift;
+   &$_ for @{$ef->{cb_begin}};
+}
+
+sub _ef_parse_end($) {
+   my $ef = shift;
+
+   for my $field (values %{$ef->{"/"}}) {
+      ${$field->{ref}} = $field->{multi}    if exists $field->{multi};
+      ${$field->{ref}} = $field->{constant} if exists $field->{constant};
+   }
+
+   # TODO: ef_submit should be communicated here
+   &$_ for @{$ef->{cb_end}};
+}
+
+sub _ef_parse_field($$$) {
+   my ($field, $data, $charset) = @_;
+
+   if ($charset) {
+      $charset = lc $charset;
+      if ($charset eq "utf-8") {
+         Convert::Scalar::utf8_on $data;
+      } elsif ($charset ne "" and $charset ne "iso-8859-1") {
+         my $pconv = PApp::Recode::Pconv::open PApp::CHARSET, $charset
+                        or fancydie "charset conversion from $charset not available";
+         $data = Convert::Scalar::utf8_on $pconv->convert($data);
+      }
+      $data =~ s/\r//g;
+   }
+
+   if (exists $field->{multi}) {
+      push @{$field->{multi}}, $data;
+   } else {
+      ${$field->{ref}} = $data;
+   }
+}
+
+my $ef_parse_multipart = register_callback {
+   my $ef = shift;
+
+   _ef_parse_begin($ef);
+   
+   parse_multipart_form {
+      my ($fh, $name, $ct, $cta, $cd) = @_;
+      my $field = $ef->{"/"}{$name};
+
+      if (exists $field->{ref}) {
+         my $data;
+         $fh->read($data, 1024*128);
+         $data =~ s/\r\n$//;
+         my $charset = $ct =~ /^text\// ? $cta->{charset} : undef;
+         _ef_parse_field($field, $data, $charset);
+      } elsif (exists $field->{path}) {
+         my $dest;
+         my $path = $field->{path};
+         $path = $path->($fh, $name, $ct, $cta, $cd) if ref $path;
+         return 0 unless defined $path; # skip unless defined
+         if (ref $path) {
+            $dest = $path;
+            undef $path;
+         } else {
+            open $dest, ">", "$path~"
+               or return 0;
+         }
+         my $size = 0;
+         my $data;
+         while ($fh->read($data, 64*1024, length $data) > 0) {
+            if (length $data > 2) {
+               my $len = (length $data) - 2;
+               syswrite $dest, $data, $len; #d# returncode not checked
+               $size += $len;
+               substr($data, 0, $len) = "";
+            }
+         }
+         if ($data ne "\015\012") {
+            warn "macro/ef_file_upload: no trailing CRLF found (please report!)";
+            syswrite $dest, $data;
+            $size += 2;
+         }
+         close $dest;
+         if ($size > 0) {
+            rename "$path~", $path if defined $path;
+            # ok if rename worked
+         } else {
+            unlink "$path~" if defined $path;
+            # empty file upload ignored
+         }
+      } elsif (exists $field->{submit}) {
+         PApp::set_alternative delete $field->{submit} if $field->{submit};
+         return;
+      } else {
+         warn "WARNING: form submitted with superfluous field '$name'\n";
+         return;
+      }
+      return 1;
+   };
+
+   _ef_parse_end($ef);
+} name => "papp_ef_m";
+
+my $ef_parse_simple = register_callback {
+   my $ef = shift;
+
+   _ef_parse_begin($ef);
+
+   for my $name (keys %P) {
+      if (exists $ef->{"/"}{$name}) {
+         my $field = $ef->{"/"}{$name};
+         my $data = $P{$name}; #FIXME# was delete $P, but that's not good for debugging#d#
+         if (exists $field->{ref}) {
+            for $data (ref $data ? @$data : $data) {
+               $data =~ s/\r//g;
+               _ef_parse_field($field, $data, $state{papp_charset});
+            }
+         } elsif (exists $field->{path}) {
+            fancydie "file upload widgets are not supported with either ef_sbegin or ef_cbegin";
+         } elsif (exists $field->{submit}) {
+            PApp::set_alternative delete $field->{submit} if $field->{submit};
+         } else {
+            fancydie "internal error (EF01), please report";
+         }
+      }
+   }
+   
+   _ef_parse_end($ef);
+} name => "papp_ef_s";
+
+sub _ef_begin {
+   my $ef_parse = shift;
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   $ef_args = {};
+   $attr, (@_ & 1 ? shift : ()), SURL_EXEC, $ef_parse->($ef_args), @_;
+}
+
+sub ef_mbegin* { echo multipart_form _ef_begin($ef_parse_multipart, @_) }
+sub ef_sbegin* { echo sform          _ef_begin($ef_parse_simple   , @_) }
+sub ef_cbegin* { echo cform          _ef_begin($ef_parse_simple   , @_) }
+
+# sub ef_begin* { # hack to get it exported
+*ef_begin = *ef_cbegin;
+
+sub ef_end* {
+   echo endform;
+   undef $ef_args; # important for database accessors
+}
+
+=item ef_edit [group]
+
+Returns wether the global edit-mode is active (i.e. if C<$S{ef_edit}> is
+true). If the argument C<group> is given, additionally check for the stated
+access right.
+
+=cut
+
+sub ef_edit*(;$) {
+   $S{ef_edit} and (!@_ or access_p $_[0]);
+}
+
+=item ef_may_edit
+
+Display a link that activates or de-activates global edit-mode (see
+C<ef_edit>).
+
+=cut
 
 ]]></xperl>
 
-<macro name="ef_parse*"><phtml><![CDATA[
-<:
-   my $ef = delete $A{ef_args};
-   return unless $ef;
-   local *FILE;
-   my %multi;
-
-   if (reload_p) {
-      echo __"[not updating anything due to page reload]", "<br>";
-   } else {
-      my %set;
-      parse_multipart_form {
-         my ($fh, $name, $ct, $cd) = @_;
-         my $data;
-         my $field = $ef->{$name};
-
-         if (defined $field->{field}) {
-            $fh->read($data, 1024*128);
-            $data =~ s/\r\n$//;
-            if (exists $field->{multi}) {
-               push @{$field->{multi}}, $data;
-            } else {
-               ${$field->{field}} = $data;
-            }
-         } elsif (my $path = $field->{path}) {
-            my $prev;
-            echo "<tt>";
-            echo "file upload to '$path'<br>";
-            if (open FILE, ">", "$path~") {
-               my $size = 0;
-               while ($fh->read($data, 16*1024) > 0) {
-                  $size += length $data;
-                  print FILE $prev, substr($data, 0, length($data) - 2);
-                  $prev = substr $data, -2;
-               }
-               if ($prev ne "\015\012") {
-                  echo "=&gt;&nbsp;WARNING: no trailing CRLF found<br>";
-                  print FILE $prev;
-               } else {
-                  $size -= 2;
-               }
-               close FILE;
-               if ($size > 0) {
-                  echo "=&gt;&nbsp;read $size bytes<br>";
-                  rename "$path~", $path;
-                  echo "=&gt;&nbsp;renaming to final destination ($!)<br>";
-               } else {
-                  unlink "$path~";
-                  echo "=&gt;&nbsp;empty file upload ignored<br>";
-               }
-            } else {
-               echo "=&gt;&nbsp;$path~: $!<br>";
-            }
-            echo "</tt>";
-         } else {
-            # submit et. al.
-         }
-         return 1;
-      };
-
-      for my $field (values %$ef) {
-         ${$field->{field}} = $field->{multi}    if exists $field->{multi};
-         ${$field->{field}} = $field->{constant} if exists $field->{constant};
-      }
-   }
-   return 1;
-:>
-]]></phtml></macro>
-
 <macro name="ef_may_edit*"><phtml><![CDATA[
 #if $S{ef_edit}
-   <?slink __"[Leave Edit Mode]", ef_edit => undef:><p>
+   <?slink __"[Leave Edit Mode]", ef_edit => undef:>
 #else
-   <?slink __"[Enter Edit Mode]", ef_edit => 1:><p>
+   <?slink __"[Enter Edit Mode]", ef_edit => 1:>
 #endif
 ]]></phtml></macro>
 
-<macro name="ef_submit*(;$)" args="$text"><phtml><![CDATA[
-   <?submit "submit_editform", $text || __"Save Changes":>
-]]></phtml></macro>
+<perl><![CDATA[
 
-<macro name="ef_reset*"><phtml><![CDATA[
-   <?submit "reset", __"Restore Values":>
-]]></phtml></macro>
+=item ef_submit [\%attrs,] [$value] [,surl-args...]
 
-<macro name="ef_begin*"><phtml><![CDATA[
-   <:ef_parse:>
-   <?
-      multipart_form;
-   :>
-]]></phtml></macro>
+Output a submit button. If C<$value> is omitted, __"Save Changes" is
+used. The rest of the arguments is interpreted in exactly the same way
+as the arguments to C<PApp::surl>, with one exception: if no destination
+module is given, the module destination from the C<ef_begin> macro is used
+instead of overwriting the destination with the module (as C<surl> usually
+does).
 
-<macro name="ef_end*"><phtml><![CDATA[<:
-   echo endform -ef_args => $ef_args;
-   undef $ef_args;
-:>]]></phtml></macro>
+=item ef_reset [\%attrs,] [$value]
 
-<macro name="ef_string*" args="$field $len"><phtml><![CDATA[
-   <?textfield ef_nextid($field), value => $$field, size => $len||20:>
-]]></phtml></macro>
-
-<macro name="ef_text*" args="$field $w $h"><phtml><![CDATA[
-   <:$h ||= int (length ($content) / ($w-5.0001)) + 30:>
-   <?textarea ef_nextid($field), cols => $w, rows => $h, wrap => undef?><?escape_html $$field:></textarea>
-]]></phtml></macro>
-
-<![CDATA[
-=item ef_optionbox $ref, values...
-
-Creates an optionbox for the given values. If $$ref evaluates to an
-array-ref a multiple-select optionbox is created, otherwise a simple
-single-select box is used. C<values>... can be as many C<value =>
-description< pairs as you like.
+Output a reset button. If C<$value> is omitted, __"Restore Values" is used.
 
 =cut
-]]>
 
-<macro name="ef_optionbox*" args="$field @values"><phtml><![CDATA[
-<:
+]]></perl>
+
+<macro name="ef_submit*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   my $value = shift || __"Save Changes";
+   my $key = ef_nextid (undef, $attr);
+   $ef_args->{"/"}{$key}{submit} = @_
+      ? do {
+           &surl;
+           my $sub = pop @{$state{papp_alternative}};
+           shift @$sub unless @_ & 1; # kill module path unless explicitly given
+           $sub;
+        }
+      : undef;
+   submit $attr, $key, $value;
+:>]]></phtml></macro>
+
+<macro name="ef_reset*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   reset_button $attr, ef_nextid("reset", $attr), $_[0] || __"Restore Values";
+:>]]></phtml></macro>
+
+<perl><![CDATA[
+
+=item $name = ef_field fieldref [, name]
+
+This rarely used function does not output an element itself but rather
+I<registers> a field name within the editform.  If the name is omitted it
+returns a newly generated name. You are responsible for creating an input
+element with the given name. since it doesn't generate an HTML element it
+will of course not accept an \%attrs hash.
+
+=item ef_string fieldref, [length=20]
+
+Output a text input field.
+
+=item ef_password fieldref, [length=20]
+
+Output a non-readable text input field.
+
+=item ef_text fieldref, width, [height]
+
+Output a textarea tag with the given C<width> (if C<height> is omitted
+C<ef_text> tries to be intelligent).
+
+=item ef_checkbox fieldref
+
+Output a checkbox. C<fieldref> is evaluated as a normal perl boolean.
+
+=item ef_button fieldref
+
+Output an input button element.
+
+=item ef_hidden fieldref
+
+Output a field of type "hidden" (see also C<ef_constant> for a way to
+specify constants that cannot be altered by the user).
+
+=cut
+
+]]></perl>
+
+<macro name="ef_field*"><perl><![CDATA[
+   return ef_nextid($_[0], { name => $_[1] });
+]]></perl></macro>
+
+<macro name="ef_string*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   $attr->{size} ||= $_[1]||20;
+   textfield $attr, ef_nextid($_[0], $attr), ${$_[0]};
+:>]]></phtml></macro>
+
+<macro name="ef_password*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   $attr->{size} ||= $_[1]||20;
+   password_field $attr, ef_nextid($_[0], $attr), ${$_[0]};
+:>]]></phtml></macro>
+
+<macro name="ef_button*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   button $attr, ef_nextid($_[0], $attr), ${$_[0]};
+:>]]></phtml></macro>
+
+<macro name="ef_hidden*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   hidden $attr, ef_nextid($_[0], $attr), ${$_[0]};
+:>]]></phtml></macro>
+
+<macro name="ef_text*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   $attr->{cols} ||= $_[1];
+   $attr->{rows} ||= $_[2] || int (length ${$_{0}} / ($attr->{cols}-5.0001)) + 30;
+   $attr->{wrap} ||= 'wrap';
+   textarea $attr, ef_nextid($_[0], $attr), escape_html ${$_[0]};
+]]></phtml></macro>
+
+<macro name="ef_checkbox*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   $attr->{checked} = "checked" if ${$_[0]};
+   checkbox $attr, ef_nextid($_[0], $attr);
+:>]]></phtml></macro>
+
+<perl><![CDATA[
+
+=item ef_selectbox $ref, values...
+
+Creates an selectbox for the given values. If $$ref evaluates to
+an array-ref a multiple-select selectbox is created, otherwise a
+simple single-select box is used. C<values>... can be as many C<value,
+description> pairs as you like.
+
+=cut
+
+]]></perl>
+
+<macro name="ef_selectbox*"><phtml><![CDATA[<:
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   my ($field, @values) = @_;
    my $values = ref $values[0] eq "ARRAY" ? $values[0] : \@values;
 
    my %content;
    my $content = $$field;
 
-   my $id = ef_nextid $field;
+   my $id = ef_nextid $field, $attr;
 
    if (ref $content) {
       @content{@$content} = ();
-      echo "<select name=$id multiple>";
-      $ef_args->{$id}{multi} = [];
+      $attr->{multiple} = "multiple";
+      $ef_args->{"/"}{$id}{multi} = [];
    } else {
       $content{$content} = ();
-      echo "<select name=$id>";
    }
 
+   my $options;
    for (my $i = 0; $i < $#$values; $i += 2) {
-      echo "<option";
-      echo " selected" if exists $content{$$values[$i]};
-      echo " value=".escape_attr($$values[$i]).">".escape_html($$values[$i+1])."</option>";
+      $options .= "<option" .
+                  (exists $content{$$values[$i]} ? " selected='selected'" : "") .
+                  " value=" .
+                  escape_attr($$values[$i]) .
+                  ">" .
+                  escape_html($$values[$i+1]) .
+                  "</option>";
    }
-   echo "</select>";
-:>
-]]></phtml></macro>
+   echo xmltag "select", $attr, $options;
+:>]]></phtml></macro>
 
-<macro name="ef_relation*" args="$field $relation @values"><phtml><![CDATA[
-<:
+<perl><![CDATA[
+
+=item ef_relation fieldref, relation, [key => value]...
+
+Output relation, e.g. an selectbox with values from a sql
+table. C<relation> is an arrayref containing a string (and optionally
+arguments) for a select statement that must output key => value
+pairs. The values will be used as display labels in an selectbox and the
+corresponding key will be stored in the result field. Examples:
+
+  ef_relation \$field, ["id, name from manufacturer order by 2"];
+  ef_relation \$field, ["game_number, game_name 
+                         from games where game_name like ?", "A%"];
+
+Additional C<key> => C<value> pairs can be appended and will be used.
+
+=item ef_set fieldref, relation [mysql-specific]
+
+Similar to C<ef_relation>, but multiple selections are possible. The field
+value must be of type "arrayref" for this to work. Example:
+
+  ef_set \$field, [game => "categories"];
+
+=item ef_enum fieldref, relation [mysql-specific]
+
+Similar to C<ef_set>, but is based on the ENUM type in sql.
+
+  ef_set \$field, [game => "type"];
+
+=cut
+
+]]></perl>
+
+<macro name="ef_relation*"><phtml><![CDATA[<:
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   my ($field, $relation, @values) = @_;
    my ($sel, @arg) = @$relation;
-   my $st = sql_exec \my($id,$val), "select $sel order by 2";
+   my $st = sql_exec \my($id,$val), "select $sel", @arg;
    push @values, $id => $val while $st->fetch;
-   ef_optionbox $field, \@values;
-:>
-]]></phtml></macro>
+   ef_selectbox $field, \@values;
+:>]]></phtml></macro>
 
-<macro name="ef_set*" args="$field $relation"><phtml><![CDATA[
-<:
+<macro name="ef_set*"><phtml><![CDATA[<:
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   my ($field, $relation) = @_;
    my ($table, $fild) = @$relation;
    my $st = sql_exec "show columns from $table like ?", $fild;
    my $type = $st->fetchrow_arrayref->[1];
    $type =~ s/^set\('(.*)'\)$/$1/ or die "ef_set: field '$fild' is not of set type\n";
 
-   ef_optionbox $field, map {$_, $_} split /','/, $type;
+   ef_selectbox $field, map {$_, $_} split /','/, $type;
+:>]]></phtml></macro>
 
-   #ef_optionbox [split /,/, $$field], $field, [ map {$_, $_} split /','/, $type ];
-:>
-]]></phtml></macro>
+<macro name="ef_enum*"><phtml><![CDATA[<:
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   my ($field, $relation) = @_;
+   my ($table, $fild) = @$relation;
+   my $st = sql_exec "show columns from $table like ?", $fild;
+   my $type = $st->fetchrow_arrayref->[1];
+   $type =~ s/^enum\('(.*)'\)$/$1/ or die "ef_enum: field '$fild' is not of enum type\n";
 
-<macro name="ef_file*" args="$path"><phtml><![CDATA[
-<:
-   my $id = ef_nextid(undef);
-   $ef_args->{$id}{path} = $path;
-   echo filefield $id;
-:>
-]]></phtml></macro>
-
-<macro name="ef_constant*" args="$field $value"><phtml><![CDATA[
-<:
-   my $id = ef_nextid($field);
-   $ef_args->{$id}{constant} = $value;
-?>
-]]></phtml></macro>
+   ef_selectbox $field, map {$_, $_} split /','/, $type;
+:>]]></phtml></macro>
 
 <perl><![CDATA[
+
+=item ef_file destination-path[, source-path]
+
+Output a file upload box. The file (if submitted) will be stored as
+C<destination-path>. If C<destination-path> is a coderef it will be executed
+like this:
+
+   $res = $callback->($fh, $name, $ct, $cta, $cd);
+
+(see C<PApp::parse_multipart_form>, which uses the exact same parameters).
+The return value can be undefined, in which case the file will be skipped,
+a normal string which will be treated as a path to store the file to or
+something else, which will be used as a file-handle.
+
+If a destination path is given, the file will be replaced atomically (by
+first writing a file with a prepended "~" and renaming (success case) or
+unlinking it).
+
+=cut
+
+]]></perl>
+
+<macro name="ef_file*"><phtml><![CDATA[<?
+   my $attr = ref $_[0] eq "HASH" ? shift : {};
+   $attr->{value} ||= $_[1];
+   my $id = ef_nextid(undef, $attr);
+   $ef_args->{"/"}{$id}{path} = $_[0];
+   filefield $attr, $id;
+:>]]></phtml></macro>
+
+<perl><![CDATA[
+
+=item ef_constant fieldref, constant
+
+Set the field to the given C<constant>. This is useful when creating
+a database row and some of the fields need to be set to a constant
+value. The user cannot change this value in any way. Since this function
+doesn't output an html tag it doesn't make sense to prepend an initial
+hashref with additonal name => value pairs.
+
+=cut
+
+]]></perl>
+
+<macro name="ef_constant*" args="$field $value"><perl><![CDATA[
+   my $id = ef_nextid($field);
+   $ef_args->{"/"}{$id}{constant} = $value;
+]]></perl></macro>
+
+<perl><![CDATA[
+
+=item ef_cb_begin coderef
+
+=item ef_cb_end coderef
+
+Add a callback the is to be called at BEGINing or END of result
+processing, i.e. call every BEGIN callback before the form results are
+beign processed and call every END callback after all form arguments have
+been processed.
+
+=cut
+
+]]></perl>
+
+<macro name="ef_cb_begin*" args="$cb"><perl><![CDATA[
+   push @{$ef_args->{cb_begin}}, $cb;
+]]></perl></macro>
+
+<macro name="ef_cb_end*" args="$cb"><perl><![CDATA[
+   push @{$ef_args->{cb_end}}, $cb;
+]]></perl></macro>
+
+<perl><![CDATA[
+
+=back
+
 =head1 SEE ALSO
 
 L<PApp>
@@ -224,7 +556,8 @@ L<PApp>
  http://www.goof.com/pcg/marc/
 
 =cut
+
 ]]></perl>
 
-</papp>
-
+</domain>
+</package>

@@ -1,0 +1,70 @@
+<package name="sbench">
+<domain lang="en">
+<database dsn="DBI:mysql:"/>
+<description>
+Stupid Benchmark with redirection
+</description>
+<import src="macro/editform"/>
+<module name="">
+<perl><![CDATA[
+
+if  (!defined $S{nr_rounds} || reload_p) {
+	$S{nr_rounds} |= 10;
+	$S{nr_debug} |= 0;
+	$S{nr_surl} |= 10;
+    	$S{round} = 0;
+        delete $S{res};
+    	echo __"<H1>./configure benchmark</H1>";
+  	ef_begin;
+  		echo "<br><li>Number of rounds : "; ef_string \$S{nr_rounds};
+  		echo "<br><li>Number of Debug-Boxes : "; ef_string \$S{nr_debug};
+  		echo "<br><li>Number of surl's : "; ef_string \$S{nr_surl};
+  		echo "<br>";
+  		ef_submit __"Run benchmark";
+  	ef_end;
+} else {
+# Pfurz
+    $x = pack("LL", ());
+    syscall(78, $x, 0);
+    @x  = unpack("LL", $x);
+    $S{res}{$S{round}} = $x[0] + $x[1] / 1e6;
+    
+    $S{round}++;
+    if($S{round} > $S{nr_rounds}) {
+        my ($min, $max, $sum) = (1e8, 0, 0);
+        echo "<H1>Benchmark results:</H1>" .
+        "<H2>Input Parameters</H2>" .
+        "<br><li>Rounds: $S{nr_rounds}" .
+        "<br><li>Debug-Boxes : $S{nr_debug}" .
+        "<br><li>Surls: $S{nr_surl}" .
+        "<H2>Timing Detail</H2>";
+        for(my $i = 1; $i < $S{round}; $i++) {
+            $sum += ($r = $S{res}{$i} - $S{res}{$i-1});
+                $max = $r if($r > $max);
+                $min = $r if($r < $min);
+            echo "<br><li>$i run: $r\n";
+        }
+        $sum /= $S{nr_rounds};
+        $rs = 1 / (($S{res}{$S{nr_rounds}} -  $S{res}{0}) / $S{nr_rounds});
+        echo "<H2>Timing Summary</H2>min=$min avg=$sum max=$max Requests/Second=$rs\n";
+        
+        return;
+    }
+    print __"<H1>Benchmark round $S{round} of $S{nr_rounds}</H1>";
+
+ for (my $i = 0; $i < $S{nr_surl}; $i++) {
+	 print "<br><li><A HREF=\"" . surl . "\"> surl($i)</A>\n";
+ }
+  $state{papp_debug} = $S{nr_debug} ? 1 : 0;
+  for (my $i = 0; $i < $S{nr_debug}; $i++) {
+  	debugbox;
+ }
+ $request->status(302);
+ $request->header_out(Location => &surl);
+}
+
+]]></perl>
+</module>
+</domain>
+</package>
+

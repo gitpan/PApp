@@ -1,17 +1,21 @@
-<papp name="bench" lang="en">
-
-<database dsn="DBI:mysql:"/>
-<language lang="en" desc="English"/>
+<package name="bench">
+<domain lang="en">
 
 <description>
    a very simple test application for papp
 </description>
 
+<module name="">
 <phtml><![CDATA[
    <html><body>
-   <?slink __"This is a test"?>
+   <: print $S{x} :>
+   <br>
+   
+   <?slink __"This is a real test", x => $S{x}+1?>
    </body></html>
 ]]></phtml>
+</module>
 
-</papp>
+</domain>
+</package>
 

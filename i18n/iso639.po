@@ -1,0 +1,2888 @@
+# PApp translation table 1.0
+#
+#$domain=iso639
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain: charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#$lang=deu
+msgid ""
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Abkhazian"
+msgstr "Aserbeidschan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Adangme"
+msgstr "Ändern"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Afar"
+msgstr "Afrika"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Afrikaans"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Afro-Asiatic (Other)"
+msgstr "Sonstige afro-asiatische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Aleut"
+msgstr "Aleutisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Algonquian languages"
+msgstr "Mehrsprachlich"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Altaic (Other)"
+msgstr "Sonstige altaische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Amharic"
+msgstr "Aramäisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Arabic"
+msgstr "Arabisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Aramaic"
+msgstr "Aramäisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Arawak"
+msgstr "Aramäisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Artificial (Other)"
+msgstr "Sonstige Kunstsprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Assamese"
+msgstr "Assamesisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Athapascan languages"
+msgstr "Mehrsprachlich"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Australian languages"
+msgstr "Australische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Austronesian (Other)"
+msgstr "Sonstige austronesische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Avaric"
+msgstr "Awarisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Azerbaijani"
+msgstr "Aserbeidschanisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Balinese"
+msgstr "Balinesisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Baltic (Other)"
+msgstr "Sonstige baltische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Bamileke languages"
+msgstr "Mehrsprachlich"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Banda"
+msgstr "Ruanda"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bantu (Other)"
+msgstr "Sonstige Bantusprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Basque"
+msgstr "Baskisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Batak (Indonesia)"
+msgstr "Indonesien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Belarusian"
+msgstr "Weissrussisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bengali"
+msgstr "Bengalisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Berber (Other)"
+msgstr "Sonstige Berbersprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Bhojpuri"
+msgstr "Stunde"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bosnian"
+msgstr "Bosnisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Braj"
+msgstr "Brasilien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Breton"
+msgstr "Bretonisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Buginese"
+msgstr "Balinesisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgarisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Buriat"
+msgstr "Bulgarien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Carib"
+msgstr "Karibisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalanisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Caucasian (Other)"
+msgstr "Sonstige kaukasische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Cebuano"
+msgstr "Libanon"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Celtic (Other)"
+msgstr "Sonstige keltische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Central American Indian (Other)"
+msgstr "Sonstige zentralamerikanische Indianersprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Chamic languages"
+msgstr "Sonstige Samisprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Chamorro"
+msgstr "Kamerun"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Chechen"
+msgstr "Tschechisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Cherokee"
+msgstr "hier"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Church Slavic"
+msgstr "Kirchenslawisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Coptic"
+msgstr "Koptisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cornish"
+msgstr "Kornisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Corsican"
+msgstr "Korsisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cree"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins (Other)"
+msgstr "Sonstige Kreol- und Pidginsprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins, English based (Other)"
+msgstr "Sonstige Kreol- und Pidginsprachen (englischbasierend)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins, French-based (Other)"
+msgstr "Sonstige Kreol- und Pidginsprachen (französischbasierend)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins, Portuguese-based (Other)"
+msgstr "Sonstige Kreol- und Pidginsprachen (portugiesischbasierend)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cushitic (Other)"
+msgstr "Sonstige kuschitische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Czech"
+msgstr "Tschechisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dakota"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Danish"
+msgstr "Dänisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Dayak"
+msgstr "Tag"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Dogri"
+msgstr "Login"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dravidian (Other)"
+msgstr "Sonstige drawidische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Dutch, Middle (ca. 1050-1350)"
+msgstr "Mittelfranzösisch (ca. 1400-1600)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Egyptian (Ancient)"
+msgstr "Altägyptisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Elamite"
+msgstr "Elamitisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "English"
+msgstr "Englisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "English, Middle (1100-1500)"
+msgstr "Englisch, Mittelalter (ca. 1100-1500)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "English, Old (ca. 450-1100)"
+msgstr "Altenglisch (ca. 450-1100)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Esperanto"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Estonian"
+msgstr "Estonisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Fang"
+msgstr "Sprache"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fanti"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Faroese"
+msgstr "Faröesisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fijian"
+msgstr "Fidschianisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Finnish"
+msgstr "Finnisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Finno-Ugrian (Other)"
+msgstr "Sonstige finno-ugaritische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "French"
+msgstr "Französisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "French, Middle (ca. 1400-1600)"
+msgstr "Mittelfranzösisch (ca. 1400-1600)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "French, Old (842-ca. 1400)"
+msgstr "Altfranzösisch (842-ca. 1400)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Frisian"
+msgstr "Friesisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Friulian"
+msgstr "Friaulisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fulah"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ga"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gaelic (Scots)"
+msgstr "Gaelisch (Schottisch)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gayo"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Geez"
+msgstr "Griechenland"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "German"
+msgstr "Deutsch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "German, Middle High (ca. 1050-1500)"
+msgstr "Mittelhochdeutsch (ca. 1050-1500)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "German, Old High (ca. 750-1050)"
+msgstr "Althochdeutsch (ca. 750-1050)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Germanic (Other)"
+msgstr "Sonstige germanische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Gondi"
+msgstr "Indien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gothic"
+msgstr "Gotisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Greek, Ancient (to 1453)"
+msgstr "Altgriechisch (bis 1453)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Modernes Griechisch (1453-)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Guarani"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gujarati"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Haida"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hausa"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hawaiian"
+msgstr "Hawaianisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebräisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Herero"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Indic (Other)"
+msgstr "Sonstige indische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Indo-European (Other)"
+msgstr "Sonstige indoeuropäische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Interlingua (International Auxiliary Language Association)"
+msgstr "Interlingua (IALA)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Interlingue"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Iranian (Other)"
+msgstr "Sonstige iranische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Irish"
+msgstr "Irisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Iroquoian languages"
+msgstr "Australische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Khoisan (Other)"
+msgstr "Sonstige Khoisansprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Low German; Low Saxon; German, Low; Saxon, Low"
+msgstr "Niedersächsisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Manobo languages"
+msgstr "Manobo-Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Manx"
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mayan languages"
+msgstr "Mayan-Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Miscellaneous languages"
+msgstr "Sonstige Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mon-Khmer (Other)"
+msgstr "Sonstige Mon-Khmer-Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Multiple languages"
+msgstr "Mehrsprachlich"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Munda languages"
+msgstr "Munda-Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Niger-Kordofanian (Other)"
+msgstr "Sonstige iranische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Nilo-Saharan (Other)"
+msgstr "Sonstige finno-ugaritische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nubian languages"
+msgstr "Nubische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Otomian languages"
+msgstr "Otomanische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Papuan (Other)"
+msgstr "Sonstige Papuansprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Persian"
+msgstr "Persisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Philippine (Other)"
+msgstr "Sonstige philippinische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugiesisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Prakrit languages"
+msgstr "Australische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "Romance (Other)"
+msgstr "Sonstige germanische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sami languages (Other)"
+msgstr "Sonstige Samisprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Semitic (Other)"
+msgstr "Sonstige semitische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sino-Tibetan (Other)"
+msgstr "Sonstige sino-tibetische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Slavic (Other)"
+msgstr "Sonstige slawische Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+#$flags=2
+msgid "South American Indian (Other)"
+msgstr "Sonstige zentralamerikanische Indianersprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tai (Other)"
+msgstr "Sonstige Tai-Sprachen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tibetan"
+msgstr "Tibetisch"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Welsh"
+msgstr "Walisisch"
+
+#$lang=fra
+msgid ""
+msgstr ""
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Abkhazian"
+msgstr "abkhaze"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Achinese"
+msgstr "aceh"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Acoli"
+msgstr "acoli"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Adangme"
+msgstr "adangme"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Afar"
+msgstr "afar"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Afrihili"
+msgstr "afrihili"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Afrikaans"
+msgstr "afrikaans"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Afro-Asiatic (Other)"
+msgstr "afro-asiatiques, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Akan"
+msgstr "akan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Akkadian"
+msgstr "akkadien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Albanian"
+msgstr "albanais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Aleut"
+msgstr "aléoute"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Algonquian languages"
+msgstr "algonquines, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Altaic (Other)"
+msgstr "altaïques, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Amharic"
+msgstr "amharique"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Apache languages"
+msgstr "apache"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Arabic"
+msgstr "arabe"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Aramaic"
+msgstr "araméen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Arapaho"
+msgstr "arapaho"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Araucanian"
+msgstr "araucan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Arawak"
+msgstr "arawak"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Armenian"
+msgstr "arménien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Artificial (Other)"
+msgstr "artificielles, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Assamese"
+msgstr "assamais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Athapascan languages"
+msgstr "athapascanes, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Australian languages"
+msgstr "australiennes, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Austronesian (Other)"
+msgstr "malayo-polynésiennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Avaric"
+msgstr "avar"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Avestan"
+msgstr "avestique"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Awadhi"
+msgstr "awadhi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Aymara"
+msgstr "aymara"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Azerbaijani"
+msgstr "azéri"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Balinese"
+msgstr "balinais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Baltic (Other)"
+msgstr "baltiques, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Baluchi"
+msgstr "baloutchi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bambara"
+msgstr "bambara"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bamileke languages"
+msgstr "bamilékés, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Banda"
+msgstr "banda"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bantu (Other)"
+msgstr "bantoues, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Basa"
+msgstr "basa"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bashkir"
+msgstr "bachkir"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Basque"
+msgstr "basque"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Batak (Indonesia)"
+msgstr "batak (Indonésie)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Beja"
+msgstr "bedja"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Belarusian"
+msgstr "biélorusse"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bemba"
+msgstr "bemba"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bengali"
+msgstr "bengali"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Berber (Other)"
+msgstr "berbères, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bhojpuri"
+msgstr "bhojpuri"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bihari"
+msgstr "bihari"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bikol"
+msgstr "bikol"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bini"
+msgstr "bini"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bislama"
+msgstr "bichlamar"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bosnian"
+msgstr "bosniaque"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Braj"
+msgstr "braj"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Breton"
+msgstr "breton"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Buginese"
+msgstr "bugi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgare"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Buriat"
+msgstr "bouriate"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Burmese"
+msgstr "birman"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Caddo"
+msgstr "caddo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Carib"
+msgstr "caribe"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Catalan"
+msgstr "catalan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Caucasian (Other)"
+msgstr "caucasiennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cebuano"
+msgstr "cebuano"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Celtic (Other)"
+msgstr "celtiques, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Central American Indian (Other)"
+msgstr "indiennes d'Amérique centrale, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chagatai"
+msgstr "djaghataï"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chamic languages"
+msgstr "chames, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chamorro"
+msgstr "chamorro"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chechen"
+msgstr "tchetchène"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cherokee"
+msgstr "cherokee"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cheyenne"
+msgstr "cheyenne"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chibcha"
+msgstr "chibcha"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chichewa; Nyanja"
+msgstr "chichewa; nyanja"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chinese"
+msgstr "chinois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chinook jargon"
+msgstr "chinook, jargon"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chipewyan"
+msgstr "chipewyan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Choctaw"
+msgstr "choctaw"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Church Slavic"
+msgstr "slavon d'église"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chuukese"
+msgstr "chuuk"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Chuvash"
+msgstr "tchouvache"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Coptic"
+msgstr "copte"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cornish"
+msgstr "cornique"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Corsican"
+msgstr "corse"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cree"
+msgstr "cree"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creek"
+msgstr "muskogee"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins (Other)"
+msgstr "créoles et pidgins divers"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins, English based (Other)"
+msgstr "créoles et pidgins anglais, autres"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins, French-based (Other)"
+msgstr "créoles et pidgins français, autres"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Creoles and pidgins, Portuguese-based (Other)"
+msgstr "créoles et pidgins portugais, autres"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Croatian"
+msgstr "croate"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Cushitic (Other)"
+msgstr "couchitiques, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Czech"
+msgstr "tchèque"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dakota"
+msgstr "dakota"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Danish"
+msgstr "danois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dayak"
+msgstr "dayak"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Delaware"
+msgstr "delaware"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dinka"
+msgstr "dinka"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Divehi"
+msgstr "maldivien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dogri"
+msgstr "dogri"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dogrib"
+msgstr "dogrib"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dravidian (Other)"
+msgstr "dravidiennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Duala"
+msgstr "douala"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dutch"
+msgstr "néerlandais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dutch, Middle (ca. 1050-1350)"
+msgstr "néerlandais moyen (ca. 1050-1350)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dyula"
+msgstr "dioula"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Dzongkha"
+msgstr "dzongkha"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Efik"
+msgstr "efik"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Egyptian (Ancient)"
+msgstr "égyptien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ekajuk"
+msgstr "ekajuk"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Elamite"
+msgstr "élamite"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "English"
+msgstr "anglais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "English, Middle (1100-1500)"
+msgstr "anglais moyen (1100-1500)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "English, Old (ca. 450-1100)"
+msgstr "anglo-saxon (ca. 450-1100)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Esperanto"
+msgstr "espéranto"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Estonian"
+msgstr "estonien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ewe"
+msgstr "éwé"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ewondo"
+msgstr "éwondo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fang"
+msgstr "fang"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fanti"
+msgstr "fanti"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Faroese"
+msgstr "féroïen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fijian"
+msgstr "fidjien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Finnish"
+msgstr "finnois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Finno-Ugrian (Other)"
+msgstr "finno-ougriennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fon"
+msgstr "fon"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "French"
+msgstr "français"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "French, Middle (ca. 1400-1600)"
+msgstr "français moyen (1400-1600)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "French, Old (842-ca. 1400)"
+msgstr "français ancien (842-ca. 1400)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Frisian"
+msgstr "frison"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Friulian"
+msgstr "frioulan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Fulah"
+msgstr "peul"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ga"
+msgstr "ga"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gaelic (Scots)"
+msgstr "gaélique d'Ecosse"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gallegan"
+msgstr "galicien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ganda"
+msgstr "ganda"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gayo"
+msgstr "gayo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gbaya"
+msgstr "gbaya"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Geez"
+msgstr "guèze"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Georgian"
+msgstr "géorgien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "German"
+msgstr "allemand"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "German, Middle High (ca. 1050-1500)"
+msgstr "allemand, moyen haut (ca. 1050-1500)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "German, Old High (ca. 750-1050)"
+msgstr "allemand, vieux haut (ca. 750-1050)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Germanic (Other)"
+msgstr "germaniques, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gilbertese"
+msgstr "kiribati"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gondi"
+msgstr "gond"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gorontalo"
+msgstr "gorontalo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gothic"
+msgstr "gothique"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Grebo"
+msgstr "grebo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Greek, Ancient (to 1453)"
+msgstr "grec ancien (jusqu'à 1453)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "grec moderne (après 1453)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Guarani"
+msgstr "guarani"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gujarati"
+msgstr "goudjrati"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gwich´in"
+msgstr "gwich´in"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Haida"
+msgstr "haida"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hausa"
+msgstr "haoussa"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hawaiian"
+msgstr "hawaïen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hebrew"
+msgstr "hébreu"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Herero"
+msgstr "herero"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hiligaynon"
+msgstr "hiligaynon"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Himachali"
+msgstr "himachali"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hindi"
+msgstr "hindi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hiri Motu"
+msgstr "hiri motu"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hittite"
+msgstr "hittite"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hmong"
+msgstr "hmong"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hungarian"
+msgstr "hongrois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Hupa"
+msgstr "hupa"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Iban"
+msgstr "iban"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Icelandic"
+msgstr "islandais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Igbo"
+msgstr "igbo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ijo"
+msgstr "ijo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Iloko"
+msgstr "ilocano"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Indic (Other)"
+msgstr "indo-aryennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Indo-European (Other)"
+msgstr "indo-européennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonésien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Interlingua (International Auxiliary Language Association)"
+msgstr "interlingua (langue auxiliaire internationale)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Interlingue"
+msgstr "interlingue"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Inuktitut"
+msgstr "inuktitut"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Inupiaq"
+msgstr "inupiaq"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Iranian (Other)"
+msgstr "iraniennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Irish"
+msgstr "irlandais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Irish, Middle (900-1200)"
+msgstr "irlandais moyen (900-1200)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Irish, Old (to 900)"
+msgstr "irlandais ancien (jusqu'à 900)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Iroquoian languages"
+msgstr "iroquoises, langues (famille)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Italian"
+msgstr "italien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Japanese"
+msgstr "japonais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Javanese"
+msgstr "javanais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Judeo-Persian"
+msgstr "judéo-persan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kabyle"
+msgstr "kabyle"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kachin"
+msgstr "kachin"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kalaallisut"
+msgstr "groenlandais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kamba"
+msgstr "kamba"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kannada"
+msgstr "kannada"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kanuri"
+msgstr "kanouri"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kara-Kalpak"
+msgstr "karakalpak"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Karen"
+msgstr "karen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kashmiri"
+msgstr "kashmiri"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kawi"
+msgstr "kawi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kazakh"
+msgstr "kazakh"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Khasi"
+msgstr "khasi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Khmer"
+msgstr "khmer"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Khoisan (Other)"
+msgstr "khoisan, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Khotanese"
+msgstr "khotanais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kikuyu"
+msgstr "kikuyu"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kimbundu"
+msgstr "kimbundu"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kinyarwanda"
+msgstr "rwanda"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kirghiz"
+msgstr "kirghize"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Komi"
+msgstr "kom"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kongo"
+msgstr "kongo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Konkani"
+msgstr "konkani"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Korean"
+msgstr "coréen"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kosraean"
+msgstr "kosrae"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kpelle"
+msgstr "kpellé"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kru"
+msgstr "krou"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kumyk"
+msgstr "koumyk"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kurdish"
+msgstr "kurde"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kurukh"
+msgstr "kurukh"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Kutenai"
+msgstr "kutenai"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ladino"
+msgstr "judéo-espagnol"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lahnda"
+msgstr "lahnda"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lamba"
+msgstr "lamba"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lao"
+msgstr "lao"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Latin"
+msgstr "latin"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Latvian"
+msgstr "letton"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Letzeburgesch"
+msgstr "luxembourgeois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lezghian"
+msgstr "lezghien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lingala"
+msgstr "lingala"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lithuanian"
+msgstr "lituanien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Low German; Low Saxon; German, Low; Saxon, Low"
+msgstr "bas allemand; bas saxon; allemand, bas; saxon, bas"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lozi"
+msgstr "lozi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Luba-Katanga"
+msgstr "luba-katanga"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Luba-Lulua"
+msgstr "luba-lulua"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Luiseno"
+msgstr "luiseno"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Lunda"
+msgstr "lunda"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Luo (Kenya and Tanzania)"
+msgstr "luo (Kenya et Tanzanie)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "lushai"
+msgstr "Lushai"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Macedonian"
+msgstr "macédonien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Madurese"
+msgstr "madourais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Magahi"
+msgstr "magahi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Maithili"
+msgstr "maithili"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Makasar"
+msgstr "makassar"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Malagasy"
+msgstr "malgache"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Malay"
+msgstr "malais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Malayalam"
+msgstr "malayalam"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Maltese"
+msgstr "maltais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Manchu"
+msgstr "mandchou"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mandar"
+msgstr "mandar"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mandingo"
+msgstr "mandingue"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Manipuri"
+msgstr "manipuri"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Manobo languages"
+msgstr "manobo, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Manx"
+msgstr "manx"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Maori"
+msgstr "maori"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Marathi"
+msgstr "marathe"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mari"
+msgstr "mari"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Marshall"
+msgstr "marshall"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Marwari"
+msgstr "marvari"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Masai"
+msgstr "massaï"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mayan languages"
+msgstr "maya, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mende"
+msgstr "mendé"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Micmac"
+msgstr "micmac"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Minangkabau"
+msgstr "minangkabau"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Miscellaneous languages"
+msgstr "diverses, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mohawk"
+msgstr "mohawk"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Moldavian"
+msgstr "moldave"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mon-Khmer (Other)"
+msgstr "môn-khmer, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mongo"
+msgstr "mongo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mongolian"
+msgstr "mongol"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Mossi"
+msgstr "moré"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Multiple languages"
+msgstr "multilingue"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Munda languages"
+msgstr "mounda, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nahuatl"
+msgstr "nahuatl"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nauru"
+msgstr "nauruan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Navajo"
+msgstr "navaho"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ndebele, North"
+msgstr "ndébélé du Nord"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ndebele, South"
+msgstr "ndébélé du Sud"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ndonga"
+msgstr "ndonga"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nepali"
+msgstr "népalais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Newari"
+msgstr "newari"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nias"
+msgstr "nias"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Niger-Kordofanian (Other)"
+msgstr "nigéro-congolaises, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nilo-Saharan (Other)"
+msgstr "nilo-sahariennes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Niuean"
+msgstr "niué"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Norse, Old"
+msgstr "norrois, vieux"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "North American Indian"
+msgstr "indiennes d'Amérique du Nord, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Northern Sami"
+msgstr "sami du Nord"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Norwegian"
+msgstr "norvégien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Norwegian Bokmål"
+msgstr "norvégien bokmål"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Norwegian Nynorsk"
+msgstr "norvégien nynorsk"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nubian languages"
+msgstr "nubiennes, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nyamwezi"
+msgstr "nyamwezi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nyankole"
+msgstr "nyankolé"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nyoro"
+msgstr "nyoro"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Nzima"
+msgstr "nzema"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Occitan (post 1500); Provençal"
+msgstr "occitan (après 1500); provençal"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ojibwa"
+msgstr "ojibwa"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Oriya"
+msgstr "oriya"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Oromo"
+msgstr "galla"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Osage"
+msgstr "osage"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ossetian; Ossetic"
+msgstr "ossète"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Otomian languages"
+msgstr "otomangue, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Pahlavi"
+msgstr "pahlavi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Palauan"
+msgstr "palau"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Pali"
+msgstr "pali"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Pampanga"
+msgstr "pampangan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Pangasinan"
+msgstr "pangasinan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Panjabi"
+msgstr "pendjabi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Papiamento"
+msgstr "papiamento"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Papuan (Other)"
+msgstr "papoues, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Persian"
+msgstr "persan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Persian, Old (ca. 600-400 b.c.)"
+msgstr "perse, vieux (ca. 600-400 av. j.-c.)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Philippine (Other)"
+msgstr "philippines, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Pohnpeian"
+msgstr "pohnpei"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Polish"
+msgstr "polonais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Portuguese"
+msgstr "portugais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Prakrit languages"
+msgstr "prâkrit"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Provençal, Old (to 1500)"
+msgstr "provençal ancien (jusqu'à 1500)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Pushto"
+msgstr "pachto"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Quechua"
+msgstr "quechua"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Rajasthani"
+msgstr "rajasthani"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Rapanui"
+msgstr "rapanui"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Rarotongan"
+msgstr "rarotonga"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Romance (Other)"
+msgstr "romanes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Romanian"
+msgstr "roumain"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Romany"
+msgstr "tsigane"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Rundi"
+msgstr "rundi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Russian"
+msgstr "russe"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Salishan languages"
+msgstr "salish, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Samaritan Aramaic"
+msgstr "samaritain"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sami languages (Other)"
+msgstr "sami, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Samoan"
+msgstr "samoan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sandawe"
+msgstr "sandawe"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sango"
+msgstr "sango"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sanskrit"
+msgstr "sanskrit"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Santali"
+msgstr "santal"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sardinian"
+msgstr "sarde"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sasak"
+msgstr "sasak"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Scots"
+msgstr "écossais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Selkup"
+msgstr "selkoupe"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Semitic (Other)"
+msgstr "sémitiques, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Serbian"
+msgstr "serbe"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Serer"
+msgstr "sérère"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Shan"
+msgstr "chan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Shona"
+msgstr "shona"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sidamo"
+msgstr "sidamo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sign Languages"
+msgstr "langues des signes"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Siksika"
+msgstr "blackfoot"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sindhi"
+msgstr "sindhi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sinhalese"
+msgstr "singhalais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sino-Tibetan (Other)"
+msgstr "sino-tibétaines, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Siouan languages"
+msgstr "sioux, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Slave (Athapascan)"
+msgstr "esclave (athapascan)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Slavic (Other)"
+msgstr "slaves, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Slovak"
+msgstr "slovaque"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Slovenian"
+msgstr "slovène"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sogdian"
+msgstr "sogdien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Somali"
+msgstr "somali"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Songhai"
+msgstr "songhai"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Soninke"
+msgstr "soninké"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sorbian languages"
+msgstr "sorabes, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sotho, Northern"
+msgstr "sotho du Sud"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sotho, Southern"
+msgstr "sotho du Sud"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "South American Indian (Other)"
+msgstr "indiennes d'Amérique du Sud, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Spanish"
+msgstr "espagnol"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sukuma"
+msgstr "sukuma"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sumerian"
+msgstr "sumérien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Sundanese"
+msgstr "soundanais"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Susu"
+msgstr "soussou"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Swahili"
+msgstr "swahili"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Swati"
+msgstr "swati"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Swedish"
+msgstr "suédois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Syriac"
+msgstr "syriaque"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tagalog"
+msgstr "tagalog"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tahitian"
+msgstr "tahitien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tai (Other)"
+msgstr "thaïes, autres langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tajik"
+msgstr "tadjik"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tamashek"
+msgstr "tamacheq"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tamil"
+msgstr "tamoul"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tatar"
+msgstr "tatar"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Telugu"
+msgstr "télougou"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tereno"
+msgstr "tereno"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tetum"
+msgstr "tetum"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Thai"
+msgstr "thaï"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tibetan"
+msgstr "tibétain"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tigre"
+msgstr "tigré"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tigrinya"
+msgstr "tigrigna"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Timne"
+msgstr "temne"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tiv"
+msgstr "tiv"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tlingit"
+msgstr "tlingit"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tok Pisin"
+msgstr "tok pisin"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tokelau"
+msgstr "tokelau"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tonga (Nyasa)"
+msgstr "tonga (Nyasa)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tonga (Tonga Islands)"
+msgstr "tongan (Îles Tonga)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tsimshian"
+msgstr "tsimshian"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tsonga"
+msgstr "tsonga"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tswana"
+msgstr "tswana"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tumbuka"
+msgstr "tumbuka"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Turkish"
+msgstr "turc"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Turkish, Ottoman (1500-1928)"
+msgstr "turc ottoman (1500-1928)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Turkmen"
+msgstr "turkmène"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tuvalu"
+msgstr "tuvalu"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Tuvinian"
+msgstr "touva"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Twi"
+msgstr "twi"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ugaritic"
+msgstr "ougaritique"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Uighur"
+msgstr "ouïgour"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Ukrainian"
+msgstr "ukrainien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Umbundu"
+msgstr "umbundu"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Undetermined"
+msgstr "indéterminée"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Urdu"
+msgstr "ourdou"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Uzbek"
+msgstr "ouszbek"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Vai"
+msgstr "vaï"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Venda"
+msgstr "venda"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Vietnamese"
+msgstr "vietnamien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Volapük"
+msgstr "volapük"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Votic"
+msgstr "vote"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Wakashan languages"
+msgstr "wakashennes, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Walamo"
+msgstr "walamo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Waray"
+msgstr "waray"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Washo"
+msgstr "washo"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Welsh"
+msgstr "gallois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Wolof"
+msgstr "wolof"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Xhosa"
+msgstr "xhosa"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Yakut"
+msgstr "iakoute"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Yao"
+msgstr "yao"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Yapese"
+msgstr "yapois"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Yiddish"
+msgstr "yiddish"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Yoruba"
+msgstr "yoruba"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Yupik languages"
+msgstr "yupik, langues"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Zande"
+msgstr "zandé"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Zapotec"
+msgstr "zapotèque"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Zenaga"
+msgstr "zenaga"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Zhuang"
+msgstr "zhuang"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Zulu"
+msgstr "zoulou"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Zuni"
+msgstr "zuni"
+

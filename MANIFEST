@@ -1,58 +1,98 @@
 README
+README.DB
 Changes
 MANIFEST
 INSTALL
+THANKS
+LICENSE
+FAQ
 
 Makefile.PL
 PApp.pm
 PApp.xs
+PApp/Admin.pm
 PApp/FormBuffer.pm
 PApp/Exception.pm
+PApp/Application.pm
+PApp/Package.pm
+PApp/Util.pm
 PApp/Parser.pm
+PApp/PCode.pm
+PApp/Util.pm
 PApp/Config.pm.PL
 PApp/HTML.pm
 PApp/CGI.pm
 PApp/Apache.pm
 PApp/XML.pm
+PApp/XSLT.pm
 PApp/Env.pm
 PApp/Callback.pm
 PApp/DataRef.pm
-SQL/Makefile.PL
-SQL/SQL.pm
-SQL/SQL.xs
+PApp/Log.pm
+PApp/Lock.pm
+PApp/User.pm
+
 I18n/Makefile.PL
 I18n/I18n.pm
 I18n/I18n.xs
 I18n/typemap
 
-bin/papp-env
+Recode/Makefile.PL
+Recode/Recode.pm
+Recode/Recode.xs
+Recode/typemap
+Recode/t/00_load.t
+Recode/t/01_pconv.t
 
 macro/admin.papp	user administration package
 macro/util.papp		some utility functions
 macro/editform.papp	very easy edit-forms for sql tables
+macro/ssl.papp		some support macros for ssl environments
+macro/tinychat.papp	very dumb, very cool server-wide chatbox
 papp.dtd		xml-DTD for papp-files
 papp.vim		vim syntax file
 
-i18n/papp/papp.pot
-i18n/papp/de.po
+apps/papp.papp		internal papp pages
+apps/admin.papp
+apps/bench.papp		benchmark
+apps/sbench.papp	benchmarks using redirects, written by Stefan Traby <stefan@sime.com>
+
+demo/demo.papp
+demo/demo1.pxsl
+demo/demo2.pxsl
 
 apps/poedit.papp	simple translation editor
-i18n/poedit/poedit.pot
-i18n/poedit/de.po
+widget/poedit.papp
 
 apps/dbedit.papp	simple mysql database editor
-i18n/dbedit/dbedit.pot
+widget/dbedit.papp
 
-apps/acedit.papp	simple user & access rights editor
-i18n/acedit/acedit.pot
-i18n/acedit/de.po
+widget/acedit.papp	simple user & access rights editor
 
-apps/bench.papp		benchmark
+style/simple.xsl	simple stylesheet for developing new stylesheets
+style/html.xsl		not-so-simple stylesheet that allows html-in-html
 
-t/load.t
+t/00_load.t
+
+i18n/papp.po
+i18n/bench.po
+i18n/dbedit.po
+i18n/demo.po
+i18n/iso639.po
+i18n/iso3166.po
+
+bin/papp-env
+bin/papp-admin
 
 papp-install
-httpd.conf
+i18n-upgradeutf8
+i18n-normalize
 
-storable-0.611.patch	fix 0.611 to make it work with overloaded objects
+eg/httpd.conf		normal, simple httpd.conf
+eg/httpd.conf.ssl	elaborate config using ssl
+eg/admin.cgi		admin-app using cgi or CGI::SpeedyCGI
+eg/exec.cgi		mount an appset using cgi/CGI::SpeedyCGI
+
+doc/intro.sdf		lame english introduction (no tutorial)
+doc/pws2001.sdf		the perl-workshop-2001 introduction/tutorial (german)
 

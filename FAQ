@@ -1,0 +1,33 @@
+Common Mistakes
+
+Q: I am using SURL_SET_LANG => 'xxx' (or any other SURL cookie) but it
+   doesn't seem to work.
+A: Perl auto-quotes the identifier preceding "=>", so the above just sets
+   the state key "SURL_SET_LANG". Use a normal comma instead:
+   SURL_SET_LANG, 'xxx'.
+
+Q: print "____________"; doesn't work as expected
+A: __"..." marks a translation. If this character pattern shows up
+   in your source you might get problems. Try to escape it like this
+   print "___________\_";
+
+Features
+
+Q: How do I get the currently selected language?
+A: my $langid = $papp_ppkg_table->lang
+
+Q: How can I quickly get a language selector for all supported languages?
+A: <:language_selector $papp_translator, $papp_ppkg_table->lang:>
+
+Q: How do I include a filename in a surl (e.g. for a nice Save As preset)
+A: Use the GET surlstyle together with SURL_SUFFIX, e.g:
+   surl "download", SURL_STYLE_GET, SURL_SUFFIX, "doc.ps";
+
+Unexplainable Errors
+
+Q: I get an error like "self is not of type PApp::I18n::Table" while
+   my application gets compiled. What gives?
+A: You are calling __ or gettext in your module initialization code. This
+   is too early sicne there is no user and thus no selected language at
+   that point.
+

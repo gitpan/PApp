@@ -4,23 +4,41 @@ use PApp::Env;
 
 $unset = 0;
 
+sub printval {
+   my $val = shift;
+   if (ref $val) {
+      print "{{{$val}}}\n";
+   } else {
+      print "$val\n";
+   }
+}
+
 if (@ARGV) {
    for (@ARGV) {
       if ($_ eq "-u") {
          $unset = 1;
+      } elsif ($_ eq "-e") {
+         $eval = 1;
       } elsif (/^([^=]+)=(.*)$/) {
-         setenv $1, $2;
+         my ($var, $val) = ($1, $2);
+         if ($eval) {
+            my $_val = $val;
+            $val = eval $_val;
+            die "$var=$_val: $@\n" if $@;
+         }
+         setenv $var, $val;
       } else {
          if ($unset) {
             unsetenv $_;
          } else {
-            print getenv $_;
+            printval getenv $_;
          }
       }
    }
 } else {
    for (listenv) {
-      print "$_=", getenv($_),"\n";
+      print "$_=";
+      printval getenv($_);
    }
 }
 
@@ -43,13 +61,17 @@ Set some env-variables:
 
    papp-env var1=value1 var2=value2 "var3=value 3" var4="contains == equal!"
 
-Unset some env-variables:
+Unsetting instead of setting env-variables:
  
    papp-env -u var1 var2 var3
 
 Combine almost all of the above:
 
    papp-env var=value printvar1 -u v2 v3 v4
+
+Evaluate value as perl code rather than as strings:
+
+   papp-env -e arrayvar="['val1', 'val2']" hashvar="{ a => 5, b => 7}"
 
 =head1 DESCRIPTION
 

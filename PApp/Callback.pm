@@ -34,10 +34,9 @@ package PApp::Callback;
 
 require 5.006;
 
-require Exporter;
+use base 'Exporter';
 
-@ISA = qw(Exporter);
-$VERSION = 0.08;
+$VERSION = 0.12;
 @EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...
@@ -53,8 +52,8 @@ omitted the filename and linenumber will be used, but that is fragile.
 Examples:
 
  my $func = register_callback {
-               print "arg1 is 5 $_[0], arg2 is 7 $_[1]\n";
-            }, name => "toytest_myfunc1";
+               print "arg1=$_[0] (should be 5), arg2=$_[1] (should be 7)\n";
+            } name => "toytest_myfunc1";
 
  my $cb = $func->refer(5);
  # experimental alternative: $func->(5)
@@ -119,15 +118,16 @@ It will behave as if the original registered callback function would be
 called with the arguments given to C<register_callback> first and then the
 arguments given to the C<call>-method.
 
+C<refer> is implemented in a fast way and the returned objects are
+optimised to be as small as possible.
+
 =cut
 
 sub refer($;@) {
    my $self = shift;
-
-   bless {
-      func => $self,
-      args => \@_,
-   }, PApp::Callback::Function::;
+   my @func = $self->{id};
+   push @func, [@_] if @_;
+   bless \@func, PApp::Callback::Function;
 }
 
 use overload
@@ -144,6 +144,8 @@ package PApp::Callback::Function;
 
 use Carp 'croak';
 
+# a Function is a [$id, \@args]
+
 =item $cb->call([args...])
 
 Call the callback function with the given arguments.
@@ -152,16 +154,25 @@ Call the callback function with the given arguments.
    
 sub call($;@) {
    my $self = shift;
-   my $id = $self->{func}{id};
-   my $cb;
-   croak "callback '$id' not registered" unless $cb = $PApp::Callback::registry{$id};
-   unshift @_, @{$self->{args}};
+   my ($id, $args) = @$self;
+   my $cb = $PApp::Callback::registry{$id};
+   unless ($cb) {
+      #d#
+      # too bad, no callback -> try to load applications
+      # until callback is found or everything is in memory
+      for (values %PApp::papp) {
+         $_->load_code;
+         last if $cb = $PApp::Callback::registry{$id};
+      }
+   }
+   $cb or croak "callback '$id' not registered";
+   unshift @_, @$args;
    goto &$cb;
 }
 
 sub asString {
    my $self = shift;
-   "CODE($self->{func}{id})";
+   "CODE($self->[0])";
 }
 
 use overload

@@ -1,0 +1,74 @@
+<package name="demo"> <domain lang="en">
+
+<!-- out default database -->
+<database dsn="DBI:mysql:demodb"/>
+
+<translate fields="project.name place.name" lang="en"/>
+<translate fields="project.description" lang="*" style="auto"/>
+
+<import src="macro/util"/>
+<import src="macro/editform"/>
+
+<perl><![CDATA[
+   $stylesheet[0] = $ppkg->load_stylesheet("demo/demo1");
+   $stylesheet[1] = $ppkg->load_stylesheet("demo/demo2");
+]]></perl>
+
+<style apply="output" expr="$stylesheet[ $S{style} ]">
+
+<module name=""><phtml><![CDATA[
+<p/><?slink __"To the editor", "editor":>
+<p/><?slink __"Edit project #1", "editor", projectid => 1:>
+<p/><?slink "(press to generate an error)", "error":>
+]]></phtml></module>
+
+<module name="error">
+<phtml>&lt;x&gt;</phtml>
+</module>
+
+<module name="editor">
+<state keys="projectid" local="yes"/>
+<phtml><![CDATA[
+
+#if defined $S{projectid}
+<:ef_begin:>
+
+<:my $row = new PApp::DataRef 'DB_row',
+        table => "project",
+        where => [id => $S{projectid}]:>
+
+<table>
+<tr><td>__"Name":</td><td><:ef_string \$row->{name}, 40:></td></tr>
+<tr><td>__"Budget"</td><td><:ef_string \$row->{budget}, 8:></td></tr>
+<tr><td>__"Description":</td><td><:ef_text \$row->{description}, 60, 10:></td></tr>
+<tr><td><:ef_submit __"Update":></td></tr>
+</table>
+
+<:ef_end:>
+#else
+<table><tr><th>__"Project"</th><th>__"Budget"</th></tr>
+<:
+   my $st =
+      sql_exec \my($id, $name, $budget),
+          "select id, name, budget
+           from project";
+
+   while ($st->fetch) {
+      :><tr><td>
+         <?slink gettext$name,
+                 projectid => $id?></td>
+        <td>$budget</td>
+        </tr>
+      <:
+   }
+:>
+</table>
+#endif
+
+<:footer:>
+]]></phtml></module>
+
+</style>
+
+</domain> </package>
+

@@ -1,4 +1,5 @@
-<papp name="papp">
+<package name="util">
+<domain name="papp" lang="en">
 
 <perl><![CDATA[
 =head1 NAME
@@ -29,7 +30,7 @@ Create a plain and ugly html footer.
 
 Create a simple access-protected page. C<$access> is the required access
 level (L<macro/editform>), C<$title> is the page title. The C<body>
-argument must be a fucntion reference. If the uer has the required access
+argument must be a function reference. If the uer has the required access
 right a plain page is created (using the functions above) and the body
 function is called. Otherwise the user is informed of his missing rights
 and gets the opportunity to log-in.
@@ -41,13 +42,15 @@ Use it like this:
       <h1>Main Page</h1>
       You are logged in now ;)
    <:}:>
-   ]]>
+   ]]>]]&lt;<![CDATA[
 
 =back
 
 =cut
-</perl>
 
+]]></perl>
+
+<import pm="PApp::User">access_p</import>
 <import src="macro/admin"/>
 
 <macro name="plain_header*(;$)" args="$head"><phtml><![CDATA[
@@ -97,9 +100,9 @@ L<PApp>
  http://www.goof.com/pcg/marc/
 
 =cut
+
 ]]></perl>
 
-</papp>
-
-
+</domain>
+</package>
 

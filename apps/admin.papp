@@ -1,0 +1,209 @@
+<package name="admin" surlstyle="get">
+<domain name="papp" lang="en">
+
+<description>administration package for papp</description>
+
+<perl>
+   $ppkg->set_database(PApp::Config::Database);
+</perl>
+
+<import src="macro/admin"/>
+<import pm="PApp::User">access_p authen_p</import>
+
+<package name="admin">
+
+<package name="acedit" src="widget/acedit"/>
+<package name="poedit" src="widget/poedit"/>
+
+<import src="macro/editform"/>
+<import pm="PApp::User">access_p</import>
+
+<module name=""><phtml><![CDATA[
+
+<h2>__"General Info"</h2>
+__"Version": <em><:?>$PApp::VERSION</em><br />
+__"Interface": <em><?join " ", PApp->interface:></em><br />
+__"Currently Mounted Applications":<br />
+<table border="1" color-even="#f0f0f0" color-odd="#c0c0c0">
+<tr><th>__"ID"</th><th>__"Name"</th><th>__"Path"</th><th>__"#config"</th><th>__"#code"</th><th>&#160;</th></tr>
+<:
+   while (my ($k, $v) = each %PApp::papp) {
+
+      sql_fetch \my($config, $code),
+         "select length(config), length(code) from pkg where id = ?", $v->{path};
+
+      ?><tr><td>$k</td><td>$v->{name}</td><td>$v->{path}</td><td align="right">$config</td><td align="right">$code</td><:
+#if admin_p
+      ?><td><?eval { $v->slink(__"[try to enter]") } || "$@"?></td><: <!-- aus sicherheitsgruenden disabled -->
+#endif
+      ?></tr><:
+   }
+:>
+</table>
+
+]]></phtml></module>
+
+<module name="acedit"><phtml><![CDATA[
+<h2>__"Edit Access Rights"</h2>
+<:$ppkg->embed('acedit'):>
+]]></phtml></module>
+
+<module name="poedit"><phtml><![CDATA[
+<:$ppkg->embed('poedit'):>
+]]></phtml></module>
+
+<module name="apps"><phtml><![CDATA[
+<h2>__"Edit Applications"</h2>
+
+<h3>__"Select an Application to edit, or create a new one"</h3>
+
+#if $A{delete}
+<:sql_exec "delete from app where id = ?", $A{delete}:>
+#endif
+
+<table border="1">
+<tr><th>__"Appset"</th><th>__"Name"</th><th>__"Path"</th><th>&#160;</th><th>&#160;</th></tr>
+<:
+   my $st = sql_exec \my($id, $name, $appset, $path),
+                     "select a.id, a.name, s.name, a.path
+                      from app as a left join appset as s on (a.appset = s.id)
+                      order by 2,3";
+
+   while ($st->fetch) {
+      $appset ||= __"[DISABLED]";
+      ?><tr><td>$appset</td><td>$name</td><td>$path</td>
+            <td><?slink "[EDIT]", "app_edit", -appid => $id?></td>
+            <td><?slink "[D]", -delete => $id?>ELETE</td>
+      </tr><:
+   }
+:>
+</table>
+<?slink __"[CREATE] a new entry in the application table", "app_edit":>
+]]></phtml></module>
+
+<module name="app_edit">
+<state keys="appref" local="yes"/>
+<phtml><![CDATA[
+<:
+   my $row = $S{appref} ||= new PApp::DataRef 'DB_row',
+      table => "app", where => [id => $A{appid}];
+
+   $row->{mountconfig} ||= "\$Location{'/$row->{name}'} = \\%papp_handler," if defined $row->{name};
+?>
+
+<h2>__"Edit Application:" $row->{name}</h2>
+
+<?slink __"[BACK]", "apps":>
+
+<:ef_begin:>
+<table>
+
+<tr><td>__"app. set"</td><td><:ef_relation \$row->{appset}, ["id, name from appset"], 0 => __"[DISABLED]":></td></tr>
+<tr><td>__"app. name"</td><td><:ef_string \$row->{name}, 60:></td>
+<td>e.g. <tt>testapp</tt></td>
+</tr>
+<tr><td>__"source path"</td><td><:ef_string \$row->{path}, 60:></td>
+<td>e.g. <tt>apps/test</tt></td>
+</tr>
+<tr><td>__"mount config"</td><td><:ef_text { nowrap => nowrap }, \$row->{mountconfig}, 60,8:></td>
+<td>e.g.<pre>
+$Location{'/'.$papp->{name}} = \%papp_handler;
+</pre></td>
+</tr>
+<tr><td>__"app. config"</td><td><:ef_text { nowrap => nowrap }, \$row->{config}, 60,8:></td>
+<td>e.g.<pre>
+database => (new PApp::SQL::Database "", "DBI:mysql:<em>mydb</em>", '<em>user</em>', '<em>pass</em>'),
+delayed  => 0,
+</pre></td>
+</tr>
+<tr><td>&#160;</td><td><:ef_submit __"Save Changes", "apps":></td></tr>
+
+</table>
+<:ef_end:>
+
+]]></phtml></module>
+
+<module name="memory"><phtml><![CDATA[
+#if eval { require B::TerseSize; require Devel::Symdump }
+<h1>__"Module Memory Usage"</h1>
+<table>
+<tr><th>__"Module"</th><th>__"Total Opcount"</th><th>__"Total Opsize"</th></tr>
+<:
+   my $obj = rnew Devel::Symdump;
+   for my $pkg (sort $obj->packages) {
+      my ($rval, $ops, $bytes) = B::TerseSize::package_size($pkg);
+      :><tr><td><?escape_html $pkg?></td><td>$ops</td><td>$bytes</td></tr><:
+   }
+:>
+#else
+<h1>__"<tt>B::TerseSize</tt> and <tt>Devel::Symdump</tt> required."</h1>
+#endif
+]]></phtml></module>
+
+</package>
+
+<callback name="httpd_restart"><perl><![CDATA[
+   if (!reload_p) {
+      my $pid = getppid;
+      warn "restarting httpd (pid $pid)...\n";
+      kill 'USR1', $pid;
+   }
+]]></perl></callback>
+
+<callback name="flush_cache"><perl><![CDATA[
+   PApp::flush_pkg_cache;
+]]></perl></callback>
+
+<import src="macro/tinychat"/>
+
+<module name=""><phtml><![CDATA[
+<html>
+<head>
+<title>__"PApp Administration Desk"</title>
+</head>
+<body text="black" link="#1010C0" vlink="#101080" alink="red" bgcolor="white">
+<table width="100%"><tr><td><h1>__"PApp Administration Desk"</h1></td><td align="right">
+<:language_selector $papp_translator, $papp_ppkg_table->lang:>
+</td></tr></table>
+<:tinychat_top:>
+
+#if !authen_p
+__"You need to authentificate yourself first"<p />
+<:loginbox:>
+#else
+
+<h1>__"Administration/Maintenance"</h1>
+<table bgcolor="#f0f0c0" cellspacing="5" cellpading="5"><tr>
+<td><?slink __"General Info", "admin/":></td>
+# if admin_p
+<td><?slink __"Edit Access Rights", "admin/acedit,admin/acedit/":></td>
+<td><?slink __"Edit Applications", "admin/apps":></td>
+<td><?slink __"Flush Package Cache", SURL_EXEC, $ppkg->refer('flush_cache'):></td>
+#  if (PApp->interface)[0] eq "PApp::Apache"
+<td><?slink __"Restart Apache (USR1)", SURL_EXEC, $ppkg->refer('httpd_restart'):></td>
+#  endif
+# endif
+# if access_p "poedit"
+<td><?slink __"Edit Translations", "admin/poedit,admin/poedit/":></td>
+# endif
+<td><?slink __"Memory Usage", "admin/memory":></td>
+</tr></table>
+
+#if $A{restart}
+<:kill 'USR1', $A{restart}:>
+<p>Apache (pid $A{restart}) has been sent the USR1 signal</p>
+#endif
+
+<p />
+
+<:$ppkg->embed('admin'):>
+#endif
+
+<:tinychat_bot:>
+</body>
+</html>
+]]></phtml></module>
+
+</domain>
+</package>
+

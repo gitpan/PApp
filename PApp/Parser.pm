@@ -9,10 +9,7 @@ PApp::Parser - PApp format file parser
 This module manages papp files (parsing, compiling etc..). Sorry, you have
 to look at the examples to understand the descriptions here :(
 
-This module exports nothing at the moment, but might soon export C<phtml2perl>
-and other nifty functions.
-
-This module also implements the pmod class itself, currently.
+This module exports nothing (and might never do).
 
 =over 4
 
@@ -21,406 +18,451 @@ This module also implements the pmod class itself, currently.
 package PApp::Parser;
 
 use Carp;
+use Convert::Scalar ':utf8';
+
 use PApp::Exception;
+use PApp::SQL;
+use PApp::Util;
+use PApp::Config;
+use PApp::PCode qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
+use PApp::XML qw(xml2utf8);
+use PApp::I18n qw(normalize_langid);
 
-$VERSION = 0.08;
+no bytes;
+use utf8;
 
-=item phtml2perl "pthml-code";
+$VERSION = 0.12;
 
-Convert <phtml> code to normal perl. The following four mode-switches are
-allowed, the initial mode is "?>" (i.e. interpolated html).
+=item ($ppkg, $name, $code) = parse_file $papp, $path
 
- <:	start verbatim perl section ("perl-mode")
- :>	start plain html section (non-interpolated html)
- <?	start perl expression (single expr, result will echo'd) (eval this!)
- ?>	start interpolated html section (similar to qq[...]>)
-
-Within plain and interpolated html sections you can also use the
-__I<>"string" construct to mark (and map) internationalized text. The
-construct must be used verbatim: two underlines, one double-quote, text,
-and a trailing double-quote. For more complex uses, just escape to perl
-(e.g. <?__I<>"xxx"?>).
-
-White space is preserved all over the html-sections. If you do not like
-this (e.g. you want to output a png or other binary data) use perl section
-instead.
-
-In html sections (and only there!), you can also use preprocessor commands
-(the C<#> must be at the beginning of the line, between the C<#> and the
-command name can be any amount of white space, just like in C!)
-
- #if any_perl_condition
-   any phtml code
- #elif any_perl_conditon
-   ...
- #else
-   ...
- #endif
-
-=begin comment
-   
-And also these experimental preprocessor commands (these currently trash the line number info, though!)
-
- #?? condition ?? if-yes-phtml-code
- #?? condition ?? if-yes-phtml-code ?? if-no-phtml-code
-
-=end comment
+Parse the specified file and return the tree of nested packages ($ppkg,
+the config data) and the tree containing all the (prepocessed) sourcecode
+that implements the semantics ($code). $name contains the name of the
+topmost (root) package.
 
 =cut
 
-sub phtml2perl {
-   my $data = shift;
-   $data = "?>$data<:";
-   my $perl;
-   for ($data) {
-      /[\x00-\x06]/ and croak "phtml2perl: phtml code contains  illegal control characters (\\x00-\\x06)";
-      # could be improved a lot, but this is not timing-critical
-      my ($n,$p, $s,$q) = ":";
-      for(;;) {
-         # PERL
-         last unless /\G(.*?)([:?])>/sgc;
-         $p = $n; $n = $2;
-         if ($1 ne "") {
-            if ($p eq ":") {
-               $perl .= $1 . ";";
-            } else {
-               $perl .= '$PApp::output .= do { ' . $1 . ' }; ';
-            }
-         }
-         # HTML
-         last unless /\G(.*?)<([:?])/sgc;
-         $p = $n; $n = $2;
-         if ($1 ne "") {
-            for ($s = $1) {
-               # I use \x01 as string-delimiter (it's not whitespace...)
-               if ($p eq ":") {
-                  $q = "";
-                  s/\\/\\\\/g;
-               } else {
-                  $q = "q";
-               }
-               # __ "text", use [_]_ so it doesn't get mis-identified by pxgettext ;)
-               s/([_]_"(?:(?:[^"\\]+|\\.)*)")/\x01.($1).q$q\x01/gs;
-               # preprocessor commands
-               #s/^#\s*\?\?\s(.*)\?\?(.*?)(?:\?\?(.*))?$/#if 1:$1\n2:$2\n#else\n3:$3\n#endif\nXXXX/gm;
-               s/^#\s*if\s(.*)$/\x01; if ($1) { \$PApp::output .= q$q\x01/gm;
-               s/^#\s*elsif\s(.*)$/\x01} elsif ($1) { \$PApp::output .= q$q\x01/gm;
-               s/^#\s*else\s*$/\x01} else { \$PApp::output .= q$q\x01/gm;
-               s/^#\s*endif\s*$/\x01} \$PApp::output .= q$q\x01/gm;
-            }
-            $perl .= "\$PApp::output .= q$q\x01$s\x01; ";
-         }
-      }
-      #print STDERR "DATA $data\nPERL $perl\n";# if $perl =~ /rating/;
-   }
-   $perl;
-}
-
-# PApp::Base is the superclass for all papp modules
-@PApp::Base::ISA = 'Exporter';
-
-my $upid = "PMOD000000";
-
-sub DESTROY {
-   my $self = shift;
-
-   # try to get rid of the package
-   requite Symbol;
-   Symbol::delete_package($self->{package});
-}
-
-sub _eval {
-   # be careful not to use "my" for global variables -> my vars
-   # are visible  within the subs we do!
-   my $sub = eval "package $_[0]->{package};\n$_[1]\n;";
-
-   die $@ if $@;
-
-   #if ($@) {
-   #   my $msg = $@;
-   #   ($msg, $data) = @$msg if ref $msg;
-   #   $data =~ s/</&lt;/g;
-   #   $data =~ s/>/&gt;/g;
-   #   $s = 0; $data =~ s/^/sprintf "%03d: ", ++$s/gem;
-   #   send_errorpage($_[0], 'Script compilation error', $msg."<p><p><p>$data");
-   #}
-
-   $sub;
-}
-
-sub compile {
-   my $pmod = shift;
-
-   $pmod->{package} = "PApp::".++$upid;
-
-   @{$pmod->{package}."::EXPORT"} = @{$pmod->{export}};
-   @{$pmod->{package}."::ISA"} = qw(PApp::Base);
-   ${$pmod->{package}."::papp_translator"} =
-      PApp::I18n::open_translator("$pmod->{i18ndir}/$pmod->{name}", keys %{$pmod->{lang}});
-
-   $pmod->_eval("
-      use PApp;
-      use PApp::SQL;
-      use PApp::HTML;
-      use PApp::Exception;
-      use PApp::Callback;
-      use PApp::DataRef ();
-
-#line 1 \"(internal gettext)\"
-      sub gettext(\$) {
-         PApp::I18n::Table::gettext(\$papp_table, \$_[0]);
-      }
-      sub __(\$) {
-         PApp::I18n::Table::gettext(\$papp_table, \$_[0]);
-      }
-   ");
-
-   $pmod->{cb_src}{request} = "
-#line 1 \"(language initialization)\"
-      (\$$pmod->{package}::lang, \$$pmod->{package}::papp_table) = \$$pmod->{package}::papp_translator->get_language(\$PApp::langs);
-   ".$pmod->{cb_src}{request};
-
-   for $imp (@{$pmod->{import}}) {
-      $pmod->_eval("BEGIN { import $imp->{package} }");
-   }
-
-   $pmod->_eval($pmod->{module}{init}{cb_src});
-
-   for my $type (keys %{$pmod->{cb_src}}) {
-      $pmod->{cb}{$type} = $pmod->_eval("sub {\n$pmod->{cb_src}{$type}\n}");
-   }
-
-   for my $module (@{$pmod->{modules}}) {
-      next if $pmod->{module}{$module}{cb};
-      next if $module eq "init";
-      $pmod->{module}{$module}{cb} = $pmod->_eval("sub {\n$pmod->{module}{$module}{cb_src}\n}");
-   }
-}
-
-sub event {
-   my $pmod = shift,
-   my $event = shift,
-   $pmod->{cb}{$event}() if exists $pmod->{cb}{$event};
-}
-
-sub mark_statekey {
-   my ($pmod, $key, $attr, $extra) = @_;
-   $pmod->{state}{preferences}{$key}   = 1 if $attr eq "preferences";
-   $pmod->{state}{sysprefs}{$key}      = 1 if $attr eq "sysprefs";
-   $pmod->{state}{import}{$key}        = 1 if $attr eq "import";
-   $pmod->{state}{local}{$key}{$extra} = 1 if $attr eq "local";
-}
-
-my %import;
-
-# parse a file _and_ put it into PApp::Config's hash
-sub load_file {
-   my $class = shift;
+sub parse_file {
+   my $papp = shift;
    my $path = shift;
-   my $dmod = shift || "";
-   my $pmod = shift || bless {
-      import => [],
-      cb_src => {
-                   init       => "",
-                   childinit  => "",
-                   childexit  => "",
-                   request    => "",
-                   cleanup    => "",
-                   newsession => "",
-                   newuser    => "",
-                },
-      lang   => {},
-      path   => $path,
-      i18ndir=> $PApp::i18ndir,
-      modules=> [ '' ],
-      state  => { 
-                   import      => { "/lang" => 1 },
-                   preferences => { },
-                   sysprefs    => {
-                                     lang => 1,
-                                     papp_visits => 1,
-                                     papp_last_cookie => 1,
-                                  },
-                },
-      @_,
-   }, __PACKAGE__;
 
-   $pmod->{file}{$path}{mtime} = (stat $path)[9];
-
-   require XML::Parser::Expat;
-   my $parser = new XML::Parser::Expat(
-      ErrorContext => 0,
-      ParseParamEnt => 0,
-      Namespaces => 1,
-   );
-
-   my @curmod;
+   my @curpmod; # current pmod stack
+   my @curppkg; # current papp stack
    my @curend;
-   my @curchr;
+   my @curchr = (undef);
+   my @curxsl;
+   my @curfile;
+   my @curwant;
+   my @curdom = ['default','*'];
+   my $parser;
+   my $curcode;
+   my @curpath;
+
+   my $root;
+   my %code;
+   my $code;
 
    my $lineinfo = sub {
-      "\n;\n#line ".($parser->current_line)." \"$path\"\n";
+      PApp::PCode::perl2pcode "\n;\n#line ".($_[0]->current_line)." \"$path\"\n";
    };
 
-   $parser->setHandlers(
+   my $load_fragment;
+
+   my $handler = {
       Char => sub {
          my ($self, $cdata) = @_;
-         # convert back to latin1 (from utf8)
-         {
-            use utf8;
-            $cdata =~ tr/\x{80}-\x{ff}//UC;
+         if ($curwant[-1]) {
+            $curchr[-1] .= $cdata;
+         } elsif ($cdata !~ /^\s*$/) {
+            $self->xpcroak("no character data allowed here");
          }
-         $curchr[-1] .= $cdata;
          1;
       },
       End => sub {
-         my ($self, $element) = @_;
-         my $char = pop @curchr;
-         (pop @curend)->($char);
+         #my ($self, $element) = @_;
+         (pop @curend)->(pop @curchr);
+         pop @curwant;
          1;
       },
+
       Start => sub {
          my ($self, $element, %attr) = @_;
          my $end = sub { };
+         my $ppkg = $curppkg[-1];
+         my $pmod = $curpmod[-1];
+
+         push @curwant, 0;
          push @curchr, "";
-         if ($element eq "papp") {
-            push @curmod, $dmod;
-            $pmod->{name} = $attr{name} if defined $attr{name};
-            $pmod->{domain} = $attr{name} if defined $attr{name};
-            $pmod->{file}{$path}{lang} = $attr{lang} if defined $attr{lang};
-            $end = sub {
-               $pmod->{module}{$dmod}{cb_src} .= $_[0];
-            };
-         } elsif ($element eq "module") {
-            #defined $attr{name} or $self->xpcroak("<module>: required attribute 'name' not specified");
-            $attr{name} ||= "";#d# really?
-            $attr{defer} and $self->xpcroak("<module>: defer not yet implemented");
-            push @curmod, $attr{name};
-            $pmod->{module}{$attr{name}}{nosession}
-               = defined $attr{nosession} ? $attr{nosession} : $attr{name};
-            if ($attr{src}) {
-               my $path = PApp::expand_path $attr{src};
-               $pmod->{file}{$path}{lang} = $pmod->{file}{$pmod->{path}}{lang};
-               $self->xpcroak("<module>: external module '$attr{src}}' not found") unless defined $path;
-               load_file PApp::Parser $path, $attr{name}, $pmod;
+
+         if ($element eq "package") {
+            length $attr{name} > 1 or $parser->xpcroak("<package>: required attribute 'name' missing or empty");
+
+            if ($ppkg) {
+               my $pkg = new PApp::Package;
+               $ppkg->{embed}{$attr{name}} = $pkg;
+               $ppkg = $pkg;
+            } else {
+               $root and fancydie "$path must only contain a single <package>\n";
+               $ppkg = $root = new PApp::Package;
             }
+
+            $ppkg->{name}      = $attr{name};
+            $ppkg->{surlstyle} =
+                 $attr{surlstyle} eq "get"   ? scalar &PApp::SURL_STYLE_GET
+                                             : scalar &PApp::SURL_STYLE_URL;
+
+            push @curppkg, $ppkg;
+            push @curpath, $attr{name};
+            push @curpmod, undef;
+
+            $code = \%{$code{"/".join "/", @curpath}};
+
+            push @apps, $ppkg unless @curppkg; #FIXME# necessary??
+
+            #my $pmod = new PApp::Module; #FIXME# still needed?
+            #$ppkg->{"/"} = $pmod;
+            #push @curpmod, $pmod;
+
+            push @curxsl, undef; # style tags don't propagate
+
             $end = sub {
-               push @{$pmod->{modules}}, $attr{name};
-               if ($attr{src}) {
-                  $self->xpcroak("<module>: no content allowed if src attribute used") if $_[0] !~ /^\s*$/;
-               } else {
-                  $pmod->{module}{$attr{name}}{cb_src} = $_[0];
+               $code->{body} .= pcode2perl $_[0];
+               pop @curppkg;
+               pop @curpmod;
+               pop @curpath;
+               pop @curxsl;
+               $code = \%{$code{"/".join "/", @curpath}} if @curpath; #FIXME# better use a stack?
+            };
+
+            if (defined $attr{src}) {
+               # this is merely an include
+               my $src = PApp::Config::find_file $attr{src};
+               eval { $load_fragment->($src) };
+               $@ and fancydie "file '$attr{src}', included in line ".$self->current_line, $@;
+            }
+
+         } elsif ($element eq "domain") {
+            @curppkg or $self->xpcroak("<$element> found outside any package (not yet supported)");
+            push @curdom, [$attr{name} || $ppkg->{name}, normalize_langid($attr{lang} || "*")];
+            $ppkg->{domain} = $curdom[-1][0];
+            push @{$ppkg->{langs}}, $curdom[-1][1];
+            $papp->{file}{$path}{domain} = $curdom[-1][0];
+            $papp->{file}{$path}{lang}   = $curdom[-1][1];
+            $end = sub {
+               $curchr[-1] .= $_[0];
+               pop @curdom;
+            };
+
+         } elsif ($element eq "style") {
+            $attr{src} or $attr{expr} or $self->xpcroak("<style> requires either a src or an expr attribute");
+
+            my $type  = $attr{type};
+            my $eval  = $attr{eval}  || "onload";
+            my $apply = $attr{apply} || "onload";
+
+            my $xsl;
+
+            if (defined $attr{src}) {
+               if ($type eq "pxml" and $eval ne "onload") {
+                  $self->xpcroak("<style>.pxml: unsupported value for eval attribute ('$eval')");
                }
-               pop @curmod;
+
+               $xsl = $ppkg->load_stylesheet($attr{src}, $type, $papp->{file}{$path}{lang});
+            } else {
+               my $li = pcode2perl $lineinfo->($parser);
+               $xsl = "do { $li$attr{expr} }";
+            }
+
+            push @curxsl, [$xsl, $eval, $apply];
+
+            $end = sub {
+               $curchr[-1] .= $_[0];
+               pop @curxsl;
             };
+
+         } elsif ($element eq "module") {
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            $pmod and $self->xpcrroak("<$element> found inside another module (but modules are not nestable)");
+            exists $attr{name} or $self->xpcroak("<module>: required atribute 'name' missing");
+
+            my $name = $attr{name};
+
+            defined $src and $self->xpcroak("<module>: attributes name and src are currently mutually exclusive");
+            $attr{defer} and $self->xpcroak("<module>: defer not yet implemented");
+            exists $ppkg->{module}{$name} and $self->xpcroak("<module name='$name'> already declared");
+
+            $pmod = $ppkg->{module}{$name} = {
+               name => $name, #FIXME#only needed for mark_statekey(local)
+            };
+            $pmod->{nosession} = $attr{nosession} if defined $attr{nosession};
+            push @curpmod, $pmod;
+
+            $end = sub {
+               my $data = $_[0];
+               delete $ppkg->{module}{$name};##d#FIXME#really needed?
+               if ($src) {
+                  $self->xpcroak("<module>: no content allowed if src attribute used") if $data !~ /^\s*$/;
+               } else {
+                  if ($curxsl[-1]) {
+                     my ($xslt, $eval, $apply) = @{$curxsl[-1]};
+
+                     # xslt can be a string (== eval to get var)
+
+                     if ($apply eq "onload") {
+                        $data = $ppkg->xslt_transform($name, ref $xslt ? $xslt : eval $xslt, $data);
+                     } elsif ($apply eq "output") {
+                        my $xslt    = ref $xslt ? $ppkg->gen_lexical($xslt) : $xslt;
+                        my $package = $ppkg->gen_lexical($ppkg);
+                        my $name    = $ppkg->gen_lexical($name);
+                        $data = perl2pcode('
+                           $PApp::output .= do {
+                              local $PApp::output = "";
+                        ') . $data . perl2pcode("
+                              $package->xslt_transform($name, $xslt, \$PApp::output);
+                           }
+                        ");
+                     } else {
+                        $self->xpcroak("<style>: unsupported value for apply attribute ('$apply')");
+                     }
+                  }
+                  $code->{module}{$name} = pcode2perl $data;
+
+               }
+               pop @curpmod;
+               undef $pmod;
+            };
+
+         } elsif ($element eq "include") {
+            $attr{src} or $self->xpcroak("<include>: required attrbiute 'src' missing");
+
+            my $src = PApp::Config::find_file $attr{src};
+            $load_fragment->($src);
+
+            $end = sub {
+               $curchr[-1] .= $_[0];
+            };
+
+         } elsif ($element eq "embed") {
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            $attr{name} or $self->xpcroak("<embed>: required attribute 'name' not specified");
+            $attr{src}  or $self->xpcroak("<embed>: attribute 'src' is currently required!");
+            die "<embed> not yet supported\n";
+
          } elsif ($element eq "import") {
-            $attr{src} or $self->xpcroak("<import>: required attribute 'src' not specified");
-            my $path = PApp::expand_path $attr{src};
-            defined $path or $self->xpcroak("<import>: imported file '$attr{src}' not found");
-            my $imp = $import{$path};
-            if ($checkdeps || !defined $imp) {
-               $imp = load_file PApp::Parser $path;
-               $import{$path} = $imp;
-               $imp->compile;
-               $imp->{module}{""}{cb}->();
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+
+            if ($attr{pm}) {
+               my $li = $lineinfo->($parser);
+               $curwant[-1] = 1;
+               $end = sub {
+                  my $use = "use $attr{pm}";
+                  if ($attr{pm} !~ /\s/ && $_[0] =~ /\S/) {
+                     if ($_[0] =~ /^\s*\(\)\s*$/) {
+                        $use .= " ()";
+                     } else {
+                        $use .= " qw($_[0])";
+                     }
+                  }
+                  $curchr[-1] .= $li . perl2pcode "$use;\n"
+               };
+            } else {
+               $attr{src} or $self->xpcroak("<import>: required attribute 'src' not specified");
+               $attr{export} eq "yes" and $self->xpcroak("<import>: attribute export=yes currently unsupported");#FIXME#NYI
+               my $path = PApp::Config::find_file $attr{src};
+               defined $path or $self->xpcroak("<import>: imported file '$attr{src}' not found");
+               $ppkg->{import}{$path}++;
             }
-            while (my($k,$v) = each %{$imp->{cb_src}}) {
-               $pmod->{cb_src}{$k} .= $v;
-            }
-            push @{$pmod->{import}}, $imp;
-            if ($attr{export} eq "yes") {
-               push @{$pmod->{export}}, @{$imp->{export}};
-            }
+
          } elsif ($element eq "macro") {
+            @curppkg or $self->xpcroak("<$element> found outside any package");
             defined $attr{name} or $self->xpcroak("<macro>: required attribute 'name' not specified");
-            $attr{name} =~ s/(\(.*\))$//;
-            my ($prototype, $args, $attrs) = $1;
+            my ($prototype, $args, $attrs);
+            $prototype = $1 if $attr{name} =~ s/(\(.*\))$//;
             if ($attr{args}) {
                $args = "my (".(join ",", split /\s+/, $attr{args}).") = \@_;";
             }
             if ($attr{attrs}) {
                $attrs = " : ".$attr{attrs};
             }
-            push @{$pmod->{export}}, $attr{name} if $attr{name} =~ s/\*$//;
+            push @{$ppkg->{export}}, $attr{name} if $attr{name} =~ s/\*$//;
+            $curwant[-1] = 1;
             $end  = sub {
-               $curchr[-1] .= "sub $attr{name}$prototype$attrs { $args\n" . $_[0] . "\n}\n";
+               $curchr[-1] .= (perl2pcode "sub $attr{name}$prototype$attrs { $args\n") .
+                              $_[0] .
+                              (perl2pcode "\n}\n");
             };
-         } elsif ($element eq "phtml") {
-            my $li = &$lineinfo;
+
+         } elsif ($element eq "phtml" or $element eq "pxml") {
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            my $li = $lineinfo->($parser);
+            $curwant[-1] = 1;
             $end = sub {
-               $curchr[-1] .= $li . phtml2perl shift;
+               $curchr[-1] .= $li . pxml2pcode shift;
             };
+
          } elsif ($element eq "xperl") {
-            my $li = &$lineinfo;
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            my $li = $lineinfo->($parser);
+            $curwant[-1] = 1;
             $end = sub {
                my $code = shift;
+               no utf8; #d# 5.7.0 bug workaround#FIXME#
                $code =~ s{(?<!\w)sub (\w+)\*(?=\W)}{
-                  push @{$pmod->{export}}, $1; "sub $1"
-               }meg;
-               $curchr[-1] .= $li . $code;
+                  push @{$ppkg->{export}}, $1; "sub $1 "
+               }eg;
+               $curchr[-1] .= $li . perl2pcode $code;
             };
+
          } elsif ($element eq "perl") {
-            my $li = &$lineinfo;
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            my $li = $lineinfo->($parser);
+            $curwant[-1] = 1;
             $end = sub {
-               $curchr[-1] .= $li . shift;
+               $curchr[-1] .= $li . perl2pcode shift;
             };
+
          } elsif ($element eq "callback") {
-            # borken, not really up-to-date
-            #$attr{type} =~ /^(init|cleanup|childinit|childexit|newsession|newuser)$/ or $self->xpcroak("<callback>: unknown callback 'type' specified");
-            $end = sub {
-               $pmod->{cb_src}{$attr{type}} .= shift;
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+
+            if (exists $attr{type} && !exists $attr{name}) {
+               # borken, not really up-to-date
+               $attr{type} =~ /^(init|cleanup|childinit|childexit|newsession|newuser|request)$/
+                  or $self->xpcroak("<callback>: unknown callback type '$attr{type}' specified");
+
+               $end = sub {
+                  push @{$code->{cb}{$attr{type}}}, pcode2perl shift;
+               }
+            } elsif (!exists $attr{type} && exists $attr{name}) {
+               $pmod and $self->xpcroak("<$element> inside <module>'s are not yet implemented");
+
+               my $args;
+               my $set = "\$ppkg->{callback}{$attr{name}}";
+               my $name = $ppkg->gen_lexical("$path:$ppkg->{name}:$attr{name}");
+
+               if ($attr{args}) {
+                  $args = "my (".(join ",", split /\s+/, $attr{args}).") = \@_;";
+               }
+
+               $end = sub {
+                  $code->{body} .= "$set = PApp::Callback::register_callback(sub { $args\n".
+                     pcode2perl(shift).
+                     "\n}, name => $name);\n\n";
+               }
+            } else {
+               $self->xpcroak("<$element>: exactly one of the attributes 'type' or 'name' must be specified");
             }
+
          } elsif ($element eq "state") {
+            @curppkg or $self->xpcroak("<$element> found outside any package");
             defined $attr{keys} or $self->xpcroak("<state>: required attribute 'keys' is missing");
             while (my ($attr, $value) = each %attr) {
                for (split / /, $attr{keys}) {
-                  $pmod->mark_statekey($_, $attr, $curmod[-1]) if $value eq "yes";
+                  $ppkg->mark_statekey($_, $attr, $pmod->{name}) if $value eq "yes";
                }
             }
+
          } elsif ($element eq "database") {
-            $pmod->{database} = [
-               ($attr{dsn}      || ""),
-               ($attr{username} || ""),
-               ($attr{password} || ""),
-            ];
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            $ppkg->set_database(new PApp::SQL::Database
+                  "papp_parser",
+                  ($attr{dsn}      || ""),
+                  ($attr{username} || ""),
+                  ($attr{password} || ""),
+            );
+
          } elsif ($element eq "description") {
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            $curwant[-1] = 1;
+            #FIXME# per-module per-app per-package descriptions??
             $end = sub {
-               $pmod->{description} .= shift;
+               $ppkg->{description} .= shift;
             }
+
          } elsif ($element eq "translate") {
-            for (split / /, $attr{fields}) {
-               $pmod->{translate}{$_} = [$attr{lang}, $attr{style}||"plain"];
+            @curppkg or $self->xpcroak("<$element> found outside any package");
+            for (split /\s+/, $attr{fields}) {
+               $papp->{translate}{$_} = [
+                  $ppkg->{database},
+                  $curdom[-1][0],
+                  normalize_langid($attr{lang}) || $curdom[-1][1],
+                  $attr{style} || "plain"
+               ];
             }
+
          } elsif ($element eq "language") {
+            @curppkg or $self->xpcroak("<$element> found outside any package");
             defined $attr{lang} or $self->xpcroak("<language>: required attribute 'lang' is missing");
             defined $attr{desc} or $self->xpcroak("<language>: required attribute 'desc' is missing");
 
             my $lang = $attr{lang};
 
-            $pmod->{lang}{$lang} = $attr{desc};
-            for (split / /, $attr{aliases}) {
-               $pmod->{lang}{$_} = \$lang;
+            $ppkg->{lang}{$lang} = $attr{desc};
+            for (split /\s+/, $attr{aliases}) {
+               $ppkg->{lang}{$_} = \$lang;
             }
+
+         } elsif ($element eq "fragment") {
+            # empty semantics
+            $end = sub {
+               $curchr[-1] .= $_[0];
+            };
+
          } else {
             $self->xpcroak("Element '$element' not recognized");
          }
+
          push @curend, $end;
          1;
       },
-   );
+   };
 
-   my $file = do { local(*X,$/); open X, "<", $path or die "$path: $!\n"; <X> };
-   unless ($file =~ /<\/papp>\s*$/) {
-      $file = "<papp>$file</papp>";
-   }
-   $file = "<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"no\"?>".
-           "<!DOCTYPE papp SYSTEM \"/root/src/Fluffball/papp.dtd\">".
-           $file;
+   $load_fragment = sub {
+      my ($_parser, $_path, $_line)  = ($parser, $path);
 
-   eval { $parser->parse($file) };
-   fancydie "Error while parsing file '$path':", $@ if $@;
+      require XML::Parser::Expat;
 
-   $pmod;
+      $path = $_[0];
+
+      $parser = new XML::Parser::Expat(
+         ErrorContext  => 0,
+         ParseParamEnt => 0,
+         Namespaces    => 1,
+      );
+      $parser->setHandlers(%$handler);
+
+      $papp->{file}{$path}{mtime}  = (stat $path)[9];
+      $papp->{file}{$path}{domain} = $curdom[-1][0];
+      $papp->{file}{$path}{lang}   = $curdom[-1][1];
+
+      eval {
+         my $file = do { local(*X,$/); open X, "<", $path or fancydie "$path: $!\n"; <X> };
+
+         my ($version, $encoding, $standalone) = xml2utf8($file);
+
+         $file = "<?xml version='$version' encoding='$encoding' standalone='$standalone'?>".
+                 "<!DOCTYPE fragment SYSTEM \"/root/src/Fluffball/papp.dtd\">".
+                 "<fragment xmlns='$PApp::xmlnspapp'>".
+                 $file.
+                 "</fragment>";
+
+         local $SIG{__DIE__} = \&PApp::Exception::diehandler;
+         $parser->parse($file)
+      };
+
+      my $error = $@;
+
+      $parser->release;
+
+      ($parser, $path) = ($_parser, $_path);
+
+      fancydie "parse error while parsing $_[0]:", $error if $error;
+   };
+
+   $load_fragment->($path);
+
+   $root or fancydie "$path did not contain any <package>s\n";
+
+   ($root, \%code);
 }
 
 1;

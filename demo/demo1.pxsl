@@ -1,0 +1,32 @@
+<xsl:stylesheet version="1.0"
+   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+   xmlns:papp="http://www.plan9.de/xmlns/papp"
+>
+
+<xsl:output method="html" omit-xml-declaration='yes' media-type="text/html" encoding="utf-8"/>
+
+<xsl:template match="papp:module">
+   <html>
+   <title><xsl:value-of select="@module"/></title>
+   <body>
+   <?slink "English", "/lang" => 'en':>
+   <xsl:text> </xsl:text>
+   <?slink "Deutsch", "/lang" => "de":>
+   <br/>
+   <?slink __"Fancy", style => 1:>
+
+   <hr/>
+   <xsl:apply-templates/>
+   <hr/>
+   <:debugbox:>
+   </body>
+   </html>
+</xsl:template>
+
+<xsl:template match="node()|@*">
+   <xsl:copy>
+      <xsl:apply-templates/>
+   </xsl:copy>
+</xsl:template>
+
+</xsl:stylesheet>

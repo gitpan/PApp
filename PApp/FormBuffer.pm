@@ -29,7 +29,9 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.08;
+$VERSION = 0.12;
+
+no utf8;
 
 use PApp::Exception;
 

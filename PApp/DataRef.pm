@@ -25,7 +25,9 @@ All of the generated references and handles can be serialized.
 
 package PApp::DataRef;
 
-$VERSION = 0.08;
+use Convert::Scalar ();
+
+$VERSION = 0.12;
 
 =item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...;
 
@@ -59,10 +61,29 @@ Parameters
    preload       if set to a true value, preloads the values from the table on
                  object creation. If set to an array reference, only the mentioned
                  fields are being cached.
+   database      the PApp::SQL::Database object to use. If not specified,
+                 the default database at the time of the new call is used.
+   force_utf8    can be set to a boolean, an arrayref or hashref that decides
+                 wether to force the utf8 bit on or off for the selected fields.
+                 [THIS IS AN EXPERIMENTAL EXTENSION]
 
 =item $hd = new PApp::DataRef 'File', path => ..., perm => ...;
 
-Create a new handle that fetches and stores a file. NYI.
+Create a new handle that fetches and stores a file. [NYI]
+
+=item $hd = new PApp::DataRef 'Scalar', fetch => ..., ...;
+
+Create a scalar reference that calls your callbacks when accessed. Valid arguments are:
+
+  fetch => coderef
+    a coderef which is to be called for every read access
+  value => constant
+    as an alternative to fetch, always return a constant on read accesses
+  store => coderef
+    a coderef which is to be called with the new value for every write access
+
+Either C<fetch> or C<value> must be present. If C<store> is missing,
+stored values get thrown away.
 
 =cut
 
@@ -72,7 +93,7 @@ sub new {
    my $type = "PApp::DataRef::".shift;
 
    unless (defined &{"${type}::new"}) {
-      eval "use $type"; die $@ if $@;
+      eval "use $type"; die if $@;
    }
 
    $type->new(@_);
@@ -87,31 +108,49 @@ sub TIESCALAR {
    bless shift, $class;
 }
 
+sub new   { Carp::croak "new() not implemented for ".ref $_[0] }
 sub FETCH { Carp::croak "FETCH not implemented for ".ref $_[0] }
 sub STORE { Carp::croak "STORE not implemented for ".ref $_[0] }
 
 sub DESTROY { }
 
-package PApp::DataRef::DB_row_field;
+package PApp::DataRef::Scalar;
 
 @ISA = PApp::DataRef::Base::;
 
+sub new {
+   my $class = shift;
+
+   my $handle;
+   tie $handle, $class, @_;
+   \$handle;
+}
+
+sub TIESCALAR {
+   my $class = shift;
+   bless { @_ }, $class;
+}
+
 sub FETCH {
-   my $self = shift;
-   my $value = $self->{row}->_fetch($self->{field});
-   $value = $self->{fetch}($self, $value) if exists $self->{fetch};
-   $value;
+   my $self = $_[0];
+   if ($self->{fetch}) {
+      return $self->{fetch}();
+   } elsif (exists $self->{value}) {
+      return $self->{value};
+   } else {
+      # might become a warning or fatal error
+      return undef;
+   }
 }
 
 sub STORE {
-   my $self = shift;
-   my $value = shift;
-   if (exists $self->{store}) {
-      my @value = $self->{store}($self, $value);
-      return unless @value;
-      $value = $value[0];
+   my $self = $_[0];
+   if ($self->{store}) {
+      $self->{store}($_[1]);
+   } else {
+      # might become a warning or fatal error
+      ();
    }
-   $self->{row}->_store($self->{field}, $value);
 }
 
 package PApp::DataRef::DB_row;
@@ -128,25 +167,38 @@ sub new {
    bless \%handle, PApp::DataRef::DB_row::Proxy;
 }
 
+sub dbh {
+   $_[0]{database}->dbh;
+}
+
 sub TIEHASH {
    my $class = shift;
    my %a = @_;
 
    exists $a{autocommit} or $a{autocommit} = 1;
+   exists $a{database}   or $a{database}   = $PApp::SQL::Database
+      or die "no database given and no default database found";
 
    exists $a{table} or Carp::croak("mandatory parameter table missing");
    exists $a{where} or Carp::croak("mandatory parameter where missing");
 
+   if (exists $a{force_utf8}) {
+      if (ref $a{force_utf8} eq "ARRAY") {
+         my %a; @a{@{$a{force_utf8}}} = (1) x @{$a{force_utf8}};
+         $a{force_utf8} = \%a;
+      }
+   }
+
    if (my $preload = delete $a{preload} and defined $a{where}[1]) {
       # try to preload, enabled caching
       $preload = ref $preload ? join ",", @$preload : "*";
-      my $st = sql_exec "select $preload from $a{table}";
+      my $st = sql_exec $a{database}->dbh, "select $preload from $a{table}";
       my $hash = $st->fetchrow_hashref;
       $a{_cache}{$field} = $value while my ($field, $value) = each %$hash;
       $st->finish;
    }
 
-   my $self = bless \%a, $class;
+   bless \%a, $class;
 }
 
 =item $hd->{fieldname} or $hd->{[fieldname, extra-args]}
@@ -156,16 +208,16 @@ C<fetch> and C<store> can be given code-references that are called at
 every fetch and store, and should return their first argument (possibly
 modified), e.g. to fetch and store a crypt'ed password field:
 
-  my $pass_fetch = register_callback { "" };
-  my $pass_store = register_callback { crypt $_[1], <salt> };
+  my $pass_fetch = create_callback { "" };
+  my $pass_store = create_callback { crypt $_[1], <salt> };
 
-  $hd->refer("password", fetch => $pass_fetch->(), store => $pass_store->());
+  $hd->{["password", fetch => $pass_fetch, store => $pass_store]};
 
 Additional named parameters are:
 
-  fetch => coderef($self, $value) => value
-  store => coderef($self, $value) => value
-
+  fetch => $fetch_cb,
+  sore => $store_cb,
+     
      Functions that should be called with the fetched/to-be-stored value
      as second argument that should be returned, probably after some
      transformations have been used on it. This can be used to convert
@@ -176,97 +228,107 @@ Additional named parameters are:
 
      L<PApp::Callback> for a way to create serializable code references.
 
-  filter => <predefined filter name>
-     
-     PApp::DataRef::DB_row predefines some filter types:
+     PApp::DataRef::DB_row predefines some filter types (these functions
+     return four elements, i.e. fetch => xxx, store => xxx, so that you
+     cna just cut & paste them).
 
-        sql_set   converts strings of the form a,b,c into array-refs and
+        PApp::DataRef::DB_row::filter_sql_set
+                  converts strings of the form a,b,c into array-refs and
                   vice versa.
 
-        password  returns the empty string and crypt's the value if nonempty.
+        PApp::DataRef::DB_row::filter_password
+                  returns the empty string and crypt's the value if nonempty.
 
 =cut
 
 use PApp::Callback;
 
-my $sql_set_fetch = register_callback {
+my $sql_set_fetch = create_callback {
    [split /,/, $_[1]];
-} name => __PACKAGE__."-sql_set_fetch";
+} name => "papp_dataref_set_fetch";
 
-my $sql_set_store = register_callback {
+my $sql_set_store = create_callback {
    join ",", @{$_[1]};
-} name => __PACKAGE__."-sql_set_store";
+} name => "papp_dataref_set_store";
 
-my $sql_pass_fetch = register_callback {
+my $sql_pass_fetch = create_callback {
    "";
-} name => __PACKAGE__."-sql_pass_fetch";
+} name => "papp_dataref_pass_fetch";
 
-my $sql_pass_store = register_callback {
+my $sql_pass_store = create_callback {
    $_[1] ne "" ? crypt $_[1], join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64] : ();
-} name => __PACKAGE__."-sql_pass_store";
+} name => "papp_dataref_pass_store";
 
-my %filter = (
-   sql_set  => [ fetch => $sql_set_fetch->(),  store => $sql_set_store->()  ],
-   password => [ fetch => $sql_pass_fetch->(), store => $sql_pass_store->() ],
-);
-
-sub refer {
-   my $self = shift;
-   if (ref $_[0]) {
-      @_ = @{$_[0]};
-   }
-
-   my $self = { row => $self, "field", @_ };
-
-   if (my $filter = delete $self->{filter}) {
-      Carp::croak("refer called with undefined filter type '$filter'") unless exists $filter{$filter};
-      %$self = (%$self, @{$filter{$filter}});
-   }
-
-   my $scalar;
-   tie $scalar, PApp::DataRef::DB_row_field, $self;
-   \$scalar;
-}
-
-*FETCH = \&refer;
-
-sub STORE {
-   Carp::croak ref($_[0])." is readonly";
-}
-
-sub _fetch {
-   my ($self, $field) = @_;
-   if (exists $self->{_cache}{$field}) {
-      return $self->{_cache}{$field};
-   } else {
-      if ($self->{where}[1]) {
-         my $value = sql_fetch "select $field from $self->{table} where $self->{where}[0] = ?",  $self->{where}[1];
-         $self->{_cache}{$field} = $value if $self->{cache};
-         $value;
-      } else {
-         ();
-      }
-   }
-}
+sub filter_sql_set  (){ ( fetch => $sql_set_fetch,  store => $sql_set_store  ) }
+sub filter_password (){ ( fetch => $sql_pass_fetch, store => $sql_pass_store ) }
 
 sub _sequence {
    my $self = shift;
 
    unless (defined $self->{where}[1]) {
       # create a new ID
-      sql_exec "insert into $self->{table} values ()";
-      $self->{where}[1] = sql_insertid;
+      $self->{where}[1] = sql_insertid
+         sql_exec $self->dbh,
+            "insert into $self->{table} values ()";
    }
 }
 
-sub _store {
-   my ($self, $field, $value) = @_;
+sub FETCH {
+   my $self = shift; my ($field, %args) = ref $_[0] ? @{+shift} : shift;
+   my $value;
+
+   if (exists $self->{_cache}{$field}) {
+      $value = $self->{_cache}{$field};
+   } else {
+      if ($self->{where}[1]) {
+         $value = sql_fetch $self->dbh, "select $field from $self->{table} where $self->{where}[0] = ?",  $self->{where}[1];
+         Convert::Scalar::utf8_on $value if $self->{force_utf8} && (!ref $self->{force_utf8} || $self->{force_utf8}{$field});
+         $self->{_cache}{$field} = $value if $self->{cache};
+      } else {
+         $value = ();
+      }
+   }
+
+   ref $args{fetch} ? $args{fetch}->($self, $value) : $value;
+}
+
+sub STORE {
+   my $self = shift; my ($field, %args) = ref $_[0] ? @{+shift} : shift;
+   my @value = ref $args{store} ? $args{store}->($self, shift) : shift;
+   return unless @value;
+
+   Convert::Scalar::utf8_upgrade $value[0] if $self->{force_utf8} && (!ref $self->{force_utf8} || $self->{force_utf8}{$field});
+
    if ($self->{delay}) {
-      $self->{_store}{$field} = \($self->{_cache}{$field} = $value);
+      $self->{_store}{$field} = \($self->{_cache}{$field} = $value[0]);
    } else {
       $self->_sequence unless defined $self->{where}[1];
-      sql_exec "update $self->{table} set $field = ? where $self->{where}[0] = ?",  $value, $self->{where}[1];
+      sql_exec $self->dbh, "update $self->{table} set $field = ? where $self->{where}[0] = ?",  $value[0], $self->{where}[1];
    }
+}
+
+# we do not support iterators yet, but define them so we can display this object
+sub FIRSTKEY {
+   my $self = shift;
+   keys %{$self->{_cache}};
+   each %{$self->{_cache}};
+}
+
+sub NEXTKEY {
+   my $self = shift;
+   each %{$self->{_cache}};
+}
+
+=item $key = $hd->id
+
+Returns the key for the selected row, creating it if necessary.
+
+=cut
+
+sub id($) {
+   my $self = shift;
+   $self->_sequence;
+   $self->{where}[1];
 }
 
 =item $hd->flush
@@ -280,27 +342,67 @@ Flush all pending store operations.
 sub flush {
    my $self = shift;
 
-   $self->_sequence;
-
    my $store = delete $self->{_store};
 
    if (%$store) {
-      sql_exec "update $self->{table} set" .
-               (join ",", map " $_ = ?", keys %$store) .
-               " where $self->{where}[0] = ?",
-               (map $$_, values %$store), $self->{where}[1];
+      if (defined $self->{where}[1]) {
+         sql_exec $self->dbh,
+                  "update $self->{table} set" .
+                     (join ",", map " $_ = ?", keys %$store) .
+                  " where $self->{where}[0] = ?",
+                  (map $$_, values %$store), $self->{where}[1];
+      } else {
+         $self->{where}[1] = sql_insertid
+            sql_exec $self->dbh,
+                  "insert into $self->{table} (" .
+                     (join ",", keys %$store) .
+                  ") values (" .
+                     (join ",", map "?", keys %$store) .
+                  ")",
+                  (map $$_, values %$store);
+      }
    }
+}
+
+=item $hd->dirty
+
+Return true when there are store operations that are delayed. Call
+C<flush> to execute these.
+
+=cut
+
+sub dirty {
+   my $self = shift;
+   !!%{$self->{_store}};
 }
 
 =item $hd->discard
 
-Discard all pending store operations. Only sensible when C<delay => 1>.
+Discard all pending store operations. Only sensible when C<delay> is true.
 
 =cut
 
 sub discard {
-   my $self = shift,
+   my $self = shift;
    delete $self->{_store};
+}
+
+=item $hd->delete
+
+Delete the row from the database
+
+=cut
+
+sub delete {
+   my $self = shift;
+
+   $self->discard;
+   if (defined $self->{where}[1]) {
+      sql_exec $self->dbh,
+               "delete from $self->{table} where $self->{where}[0] = ?",
+               delete $self->{where}[1];
+   }
+   $self->dirty;
 }
 
 sub DESTROY {
@@ -326,10 +428,6 @@ sub AUTOLOAD {
 sub DESTROY { }
 
 =back
-
-=head1 BUGS
-
- - requires mysql auto_increment feature for auto-insertions.
 
 =head1 SEE ALSO
 

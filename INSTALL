@@ -3,9 +3,29 @@ INSTALLATION INSTRUCTIONS
 Installation is difficult, and this document is badly written, so keep
 confident ;)
 
-REQUIRENMENTS
 
-- mysql (version 3.24 recommended), other databases might work, but
+STATUS
+
+- due to uncountable bugs in perl (esp. with respect to utf-8), version
+  5.7 (DEVEL7952) is REQUIRED to run this module at the moment. You can
+  get a copy from the papp homepage at http://papp.plan9.de/
+
+
+VERSIONS
+
+I personally use this version of PApp with the following other software
+packages (other perl modules are listed in the requirements section of the
+Makefile.PL).
+
+- apache-1.3.17 WITHOUT EXPAT(!) (1.3.14 well-tested)
+- mod_perl-1.25 (1.24 well-tested)
+- perl 5.7.0 DEVEL7952 (other versions won't work)
+- mysql-3.23.31 (higher versions usually pose no problem);
+
+
+REQUIREMENTS
+
+- mysql (version 3.23+ recommended), other databases might work, but
   probably require small changes (I'd be interested to hear about
   problems, though!).
 
@@ -13,6 +33,10 @@ REQUIRENMENTS
   mod_perl is the recommended and fastest way. if you can't get mod_perl, try
   the CGI::SpeedyCGI module. If even that fails, you could still use PApp,
   but it will not be funny for you (read: dog-slow).
+
+- XML::Sablotron (from http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act)
+  This is optional but HIGHLY recommended (also, it is required for many applications
+  and demos)
 
 
 INSTALLATION STEP-BY-STEP
@@ -23,16 +47,24 @@ INSTALLATION STEP-BY-STEP
    make test
    make install
 
-2. create the papp database on your mysql server
-   read gen-db.sql first, and check wether it is ok for your database!
-
-   $ mysql <gen-db.sql
-
-   should create a new database "papp"
-
-3a. mod_perl:
+2a. mod_perl:
    configure apache, see the included httpd.conf
+   due to bugs in apache you must be sure to NOT build with expat-lite.
+   a rm -rf lib/expat-lite on the right place should help. ;-)
+   no component of apache uses expat statically and using it dynamically (i.e. 
+   from XML::Parser) causes a segmentation fault.
+   And do not forget to enable PERL_SECTIONS when configuring modperl
+   (perl Makefile.PL PERL_SECTIONS=1)
 
-3b. speedycgi:
-   not working yet ;)
+2b. speedycgi:
+   much easier than mod_perl, only slightly slower: just copy eg/admin.cgi
+   (for a single application) or eg/exec.cgi (for a whole appset) to
+   your cgi directory and customize it (i.e. edit the bangpath and the
+   app/appset name).
 
+3. use papp-admin to configure papp for its first use
+   First create an appset (usually default)
+   ./papp-admin --addset default
+   then add the first application
+   ./papp-admin --app admin --appset default --path apps/admin.papp \
+                --mount /admin

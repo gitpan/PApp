@@ -9,12 +9,13 @@ PApp::XML - pxml sections and more
 
 =head1 DESCRIPTION
 
-The PApp::XML module manages XML templates containing papp xml directives
-and perl code similar to phtml sections. Together with stylesheets
-(L<XML::XSLT>) this can be used to almost totally seperate content from
-layout. Image a database containing XML documents with customized tags.
-A stylesheet can then be used to transofrm this XML document into html +
-special pappxml directives that can be used to create links etc...
+Apart from providing XML convinience functions, the PApp::XML module
+manages XML templates containing papp xml directives and perl code similar
+to phtml sections. Together with stylesheets (L<XML::XSLT>) this can be
+used to almost totally seperate content from layout. Image a database
+containing XML documents with customized tags.  A stylesheet can then be
+used to transform this XML document into html + special pappxml directives
+that can be used to create links etc...
 
 # to be written
 
@@ -24,7 +25,192 @@ special pappxml directives that can be used to create links etc...
 
 package PApp::XML;
 
-$VERSION = 0.08;
+use Convert::Scalar ':utf8';
+
+use base 'Exporter';
+
+$VERSION = 0.12;
+@EXPORT_OK = qw(xml_quote xml_unquote xml_check xml_encoding xml2utf8);
+
+=item xml_quote $string
+
+Quotes (and returns) the given string using CDATA so that it's contents
+won't be interpreted by an XML parser.
+
+=item xml_unquote $string
+
+Unquotes (and returns) an XML string (by resolving it's entities and CDATA
+sections). Currently, only the named predefined xml entities and decimal
+character constants are resolved. Everything else is silently ignored.
+
+=cut
+
+sub xml_quote {
+   local $_ = shift;
+   s/]]>/]]>]]&gt;<![CDATA[/g;
+   "<![CDATA[$_]]>";
+}
+
+sub xml_unquote($) {
+   local $_ = shift;
+   s{&([^;]+);|<!\[CDATA\[(.*?)]]>}{
+      if (defined $2) {
+         $2;
+      } elsif (substr($1,0,1) eq "#") {
+         if (substr($1,1,1) eq "x") {
+            # hex not yet supported
+         } else {
+            chr substr $1,1;
+         }
+      } else {
+        { gt => '>', lt => '<', amp => '&', quot => '"', apos => "'" }->{$1}
+      }
+   }ge;
+   $_;
+}
+
+=item ($msg, $line, $col, $byte) = xml_check $string [, $prolog, $epilog]
+
+Checks wether the given document is well-formed (as opposed to
+valid). This merely tries to parse the string as an xml-document. Nothing
+is returned if the document is well-formed.
+
+Otherwise it returns the error message, line (one-based), column
+(zero-based) and character-position (zero-based) of the point the error
+occured.
+
+The optional argument C<$prolog> is prepended to the string, while
+C<$epilog> is appended (i.e. the document is "$prolog$string$epilog"). The
+trick is that the epilog/prolog strings are not counted in the error
+position (and yes, they should be free of any errors!).
+
+(TIP: Remember to utf8_upgrade before calling this function or make sure
+that a encoding is given in the xml declaration).
+
+=cut
+
+sub xml_check {
+   my ($string, $prolog, $epilog) = @_;
+
+   require XML::Parser::Expat;
+
+   my $parser = new XML::Parser::Expat;
+   #$parser->finish;
+
+   $prolog =~ s/\n//;
+   $epilog =~ s/\n//;
+
+   $string = "$prolog\n$string$epilog";
+
+   eval {
+      local $SIG{__DIE__};
+      $parser->parsestring($string);
+   };
+   my $err = $@;
+
+   $parser->release;
+   return () unless $err;
+
+   $err =~ /^\n(.*?) at line (\d+), column (\d+), byte (\d+)/
+      or die "unparseable xml error message: $err";
+   ($1, $2 - 1, $3, $4 - 1 - length $prolog);
+}
+
+=item xml_encoding xml-string [deprecated]
+
+Convinience function to detect the encoding used by the given xml
+string. I uses a variety of heuristics (mainly as given in appendix F
+of the XML specification). UCS4 and UTF-16 are ignored, mainly because
+I don't want to get into the byte-swapping business (maybe write an
+interface module for giconv?). The XML declaration itself is being
+ignored.
+
+=cut
+
+sub xml_encoding($) {
+   use bytes;
+   no utf8;
+
+   #      00 00 00 3C: UCS-4, big-endian machine (1234 order) 
+   #      3C 00 00 00: UCS-4, little-endian machine (4321 order) 
+   #      00 00 3C 00: UCS-4, unusual octet order (2143) 
+   #      00 3C 00 00: UCS-4, unusual octet order (3412) 
+   #      FE FF: UTF-16, big-endian 
+   #      FF FE: UTF-16, little-endian 
+   #     00 3C 00 3F: UTF-16, big-endian, no Byte Order Mark (and thus, strictly speaking, in error) 
+   #     3C 00 3F 00: UTF-16, little-endian, no Byte Order Mark (and thus, strictly speaking, in error) 
+
+   # 3C 3F 78 6D: UTF-8, ISO 646, ASCII, some part of ISO 8859, Shift-JIS, EUC, or any other 7-bit, 8-bit,
+   # 4C 6F A7 94: EBCDIC (in some flavor; the full encoding declaration must be read to tell which
+
+   # this is rather borken
+   substr($_[0], 0, 4) eq "\x00\x00\x00\x3c" and return "ucs-4"; # BE
+   substr($_[0], 0, 4) eq "\x3c\x00\x00\x00" and return "ucs-4"; # LE
+   substr($_[0], 0, 2) eq "\xfe\xff" and return "utf-16"; # BE
+   substr($_[0], 0, 2) eq "\xff\xfe" and return "utf-16"; # LE
+   substr($_[0], 0, 4) eq "\x00\x3c\x00\x3f" and return "utf-16"; # BE
+   substr($_[0], 0, 4) eq "\x3c\x00\x3f\x00" and return "utf-16"; # LE
+   return utf8_valid $_[0] ? "utf-8" : "iso-8859-1";
+}
+
+=item ($version, $encoding, $standalone) = xml_remove_decl $xml[, $encoding]
+
+Remove the xml header, if any, from the given string and return
+the info. If the declaration is missing, C<("1.0", $encoding ||
+xml_encoding(), "yes")> is returned.
+
+=cut
+
+sub xml_remove_decl($;$) {
+   use bytes;
+   no utf8;
+
+   if ($_[0] =~ s/^\s*<\? xml
+      \s+ version \s*=\s* ["']([a-zA-Z0-9.:\-]+)["']
+      (?:\s+ encoding \s*=\s* ["']([A-Za-z][A-Za-z0-9._\-]*)["'] )?
+      (?:\s+ standalone \s*=\s* ["'](yes|no)["'] )?
+      \s* \?>//x) {
+      return ($1, $2, $3);
+   } else {
+      return ("1.0", $_[1] || &xml_encoding, "yes");
+   }
+}
+
+=item ($version, $encoding, $standalone) = xml2utf8 xml-string[, encoding]
+
+Tries to convert the given string into utf8 (inplace). Currently only
+supports UTF-8 and ISO-8859-1, but could be extended easily to handle
+everything Expat can. Uses C<xml_encoding> to autodetect the encoding
+unless an explicit encoding argument is given.
+
+It returns the xml declaration parameters (where encoding is always utf-8).
+
+=cut
+
+sub xml2utf8($;$) {
+   use bytes;
+   no utf8;
+
+   my ($version, $encoding, $standalone) = &xml_remove_decl;
+
+   if ($encoding =~ /^utf-?8$/i) {
+      utf8_on $_[0];
+   } elsif ($encoding =~ /^iso-?8859-?1$/i) {
+      utf8_off $_[0]; # just to be sure ;)
+      utf8_upgrade $_[0];
+   } else {
+      # use expat!
+      die "xml encoding '$encoding' not yet supported by PApp::XML::xml2utf8";
+   }
+
+   ($version, "utf-8", $standalone);
+}
+
+=back
+
+=head2 The PApp::XML factory object.
+
+=over 4
 
 =item new PApp::XML parameter => value...
 
@@ -58,9 +244,9 @@ almost directly into a call to slink (a leading underscore in an attribute
 name gets changed into a minus (C<->) to allow for one-shot arguments),
 e.g:
 
- <pappxml:special _special="slink" module="kill" name="Bill" _doit="1">
+ <papp:special _special="slink" module="kill" name="Bill" _doit="1">
     Do it to Bill!
- </pappxml:special>
+ </papp:special>
 
 might get changed to (note that C<module> is treated specially):
 
@@ -69,12 +255,12 @@ might get changed to (note that C<module> is treated specially):
 In a XSLT stylesheet one could define:
 
   <xsl:template match="link">
-     <pappxml:special _special="slink">
+     <papp:special _special="slink">
         <xsl:for-each select="@*">
            <xsl:copy/>
         </xsl:for-each>
         <xsl:apply-templates/>
-     </pappxml:special>
+     </papp:special>
   </xsl:template>
 
 Which defines a C<link> element that can be used like this:
@@ -85,6 +271,9 @@ Which defines a C<link> element that can be used like this:
 
 use PApp qw(echo sublink slink current_locals);
 
+            BEGIN {
+               defined &sublink or die;
+            }
 sub new($;%) {
    my $class = shift,
    my %args = @_;
@@ -124,34 +313,34 @@ functions).
 On error, nothing is returned. Use the C<error> method to get more
 information about the problem.
 
-In addition to the syntax accepted by C<PApp::Parser::phtml2perl>, this
+In addition to the syntax accepted by C<PApp::PCode::pxml2pcode>, this
 function evaluates certain XML Elements (please note that I consider the
-"pappxml" namespace to be reserved):
+"papp" namespace to be reserved):
 
- pappxml:special _special="special-name" attributes...
+ papp:special _special="special-name" attributes...
    
    Evaluate the special with the name given by the attribute C<_special>
    after evaluating its content. The special will receive two arguments:
    a hashref with all additional attributes and a string representing an
    already evaluated code fragment.
  
- pappxml:unquote
+ papp:unquote
 
    Expands ("unquotes") some (but not all) entities, namely lt, gt, amp,
    quot, apos. This can be easily used within a stylesheet to create
    verbatim html or perl sections, e.g.
 
-   <pappxml:unquote><![CDATA[
+   <papp:unquote><![CDATA[
       <: echo "hallo" :>
-   ]]></pappxml:unquote>
+   ]]></papp:unquote>
 
    A XSLT stylesheet that converts <phtml> sections just like in papp files
    might look like this:
 
    <xsl:template match="phtml">
-      <pappxml:unquote>
+      <papp:unquote>
          <xsl:apply-templates/>
-      </pappxml:unquote>
+      </papp:unquote>
    </xsl:template>
 
 =begin comment
@@ -195,45 +384,11 @@ sub error {
    $self->{error};
 }
 
-=item xml_quote $string
-
-Quotes (and returns) the given string using CDATA so that it's contents
-won't be interpreted by an XML parser.
-
-=item xml_unquote $string
-
-Unquotes (and returns) an XML string (by resolving it's
-entities). Currently, only the named predefined xml entities and decimal
-character constants are resolved. Everything else is silently ignored.
-
-=cut
-
-sub xml_quote {
-   local $_ = shift;
-   s/\]\]>/]]>]]&gt;<![CDATA[/g;
-   "<![CDATA[$_]]>";
-}
-
-sub xml_unquote($) {
-   local $_ = shift;
-   s{&([^;]+);}{
-      if (substr($1,0,1) eq "#") {
-         if (substr($1,1,1) eq "x") {
-            # hex not yet supported
-         } else {
-            chr substr $1,1;
-         }
-      } else {
-        { gt => '>', lt => '<', amp => '&', quot => '"', apos => "'" }->{$1}
-      }
-   }ge;
-   $_;
-}
-
 package PApp::XML::Template;
 
-use PApp::Parser ();
-use XML::DOM;
+use PApp::PCode ();
+
+our $_res;
 
 sub __dom2sub($) {   
    my $node = $_[0]->getFirstChild;
@@ -241,9 +396,9 @@ sub __dom2sub($) {
    while ($node) {
       my $type = $node->getNodeType;
 
-      if ($type == TEXT_NODE || $type == CDATA_SECTION_NODE) {
+      if ($type == &XML::DOM::TEXT_NODE || $type == &XML::DOM::CDATA_SECTION_NODE) {
          $_res .= $node->toString;
-      } elsif ($type == ELEMENT_NODE) {
+      } elsif ($type == &XML::DOM::ELEMENT_NODE) {
          my $name = $node->getTagName;
          my %attr;
          {
@@ -253,8 +408,8 @@ sub __dom2sub($) {
                $attr{$attr->getName} = $attr->getValue;
             }
          }
-         if (substr($name, 0, 8) eq "pappxml:") {
-            if ($name eq "pappxml:special") {
+         if (substr($name, 0, 5) eq "papp:") {
+            if ($name eq "papp:special") {
                my $name = delete $attr{_special};
                my $sub = $_self->{attr}{special}{$name} || $_factory->{special}{$name};
 
@@ -274,7 +429,7 @@ sub __dom2sub($) {
                      $_res .= '<:
                         $_dom2sub_local['.($idx).'](
                               $_dom2sub_local['.($idx+1).'],
-                              capture { $_dom2sub_local['.($idx+2).']() },
+                              PApp::capture { $_dom2sub_local['.($idx+2).']() },
                               $_dom2sub_self,
                         )
                      :>';
@@ -284,15 +439,15 @@ sub __dom2sub($) {
                   __dom2sub($node);
                   $_res .= "' &gt;&gt;&gt;";
                }
-            } elsif ($name eq "pappxml:unquote") {
+            } elsif ($name eq "papp:unquote") {
                my $res = do {
-                  local $_res;
+                  local $_res = "";
                   __dom2sub($node);
                   $_res;
                };
                $_res .= PApp::XML::xml_unquote $res;
             } else {
-               $_res .= "&lt;&lt;&lt; undefined pappxml element '$name' containing '";
+               $_res .= "&lt;&lt;&lt; undefined papp element '$name' containing '";
                __dom2sub($node);
                $_res .= "' &gt;&gt;&gt;";
             }
@@ -304,7 +459,7 @@ sub __dom2sub($) {
                $_res .= " $k='$v'";
             }
             my $content = do {
-               local $_res;
+               local $_res = "";
                __dom2sub($node);
                $_res;
             };
@@ -334,7 +489,7 @@ sub _dom2sub($$$$) : locked {
    my @_dom2sub_local;
    local $_local = \@_dom2sub_local;
 
-   local $_res;
+   local $_res = "";
    __dom2sub($_dom);
 
    my $_dom2sub_self = $_self;
@@ -342,13 +497,9 @@ sub _dom2sub($$$$) : locked {
 package $_package;
 sub {
 #line 1 \"anonymous PApp::XML::Template\"
-${\(PApp::Parser::phtml2perl($_res))}
+${\(PApp::PCode::pcode2perl(PApp::PCode::pxml2pcode($_res)))}
 }
 EOC
-   {
-      use utf8;
-      $_doc2sub_str =~ tr/\x{80}-\x{ff}//UC;
-   }
    my $self = $_self;
    my $sub = eval $_dom2sub_str;
 
@@ -356,7 +507,7 @@ EOC
       $_factory->{error} = new PApp::Exception error => $@, info => $_dom2sub_str;
       return;
    } else {
-      delete $_factory->{err};
+      delete $_factory->{error};
       return $sub;
    }
 }
@@ -419,8 +570,7 @@ sub attr($$;$) {
 =item $template->print
 
 Print (and execute any required specials). You can capture the output
-using the C<PApp::capture> function. The output will be in iso-8859-1, not
-utf8, as one might expect.
+using the C<PApp::capture> function.
 
 =cut
 
@@ -550,7 +700,7 @@ An example stylesheet would look like this:
    </xsl:template>
 
    <xsl:template match="include">
-      <pappxml:special _special="include" name="{@name}"/>
+      <papp:special _special="include" name="{@name}"/>
    </xsl:template>
 
    # add the earlier XSLT examples here.
@@ -566,11 +716,11 @@ This stylesheet would transform the following XML snippet:
 Which would be turned into something like this:
 
    <p>Look at
-      <pappxml:special _special="slink" module="product" productid="7">
+      <papp:special _special="slink" module="product" productid="7">
          our rubber-wobber-cake
       </apppxml:special>
       before it is <em>sold out</em>!
-      <pappxml:special _special="include" name="product_description_7"/>
+      <papp:special _special="include" name="product_description_7"/>
    </p>
 
 Now go back and try to understand the above code! But wait! Consider that you

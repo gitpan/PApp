@@ -5,15 +5,17 @@ $PAPPRC = "$ENV{HOME}/.papp_config";
 $|=1;
 
 eval {
-   require "PApp/Config.pm";
-   require "./config";
+   require "./PApp/Config.pm";
+   require "./config.pl";
    $CFG{$k} = $v while ($k, $v) = each %PApp::Config;
 };
 if ($@) {
+   print "[notice] unable to read new configuration\n";
    eval {
       require PApp::Config;
       $CFG{$k} = $v while my ($k, $v) = each %PApp::Config;
    };
+   print "[notice] unable to read already-installed configuration\n";
 }
 
 if (-e $PAPPRC) {
@@ -28,6 +30,7 @@ sub get_value($$$$) {
    #unless (defined $CFG{$var}) {
       print "$desc [$CFG{$var}]? ";
       chomp (my $res = <STDIN>);
+      $res =~ s/^\"(.*)\"$/$1/s;
       $CFG{$var} = $res if $res =~ /\S/;
    #}
 }
@@ -44,15 +47,41 @@ EOF
 get_value 0, "LIBDIR",  "papp library directory", "$Config{installprefixexp}/lib/papp";
 get_value 0, "I18NDIR", "directory for i18n tables", "$CFG{LIBDIR}/i18n";
 get_value 0, "STATEDB", "papp database", "DBI:mysql:papp";
-get_value 0, "STATEDB_USER", "papp database user", "";
-
-$cfg2 = "$CFG{LIBDIR}/config";
 
 print <<EOF;
 
-The following values will be stored in the file $cfg2
-and are security-sensitive. Secure this file with appropriate permissions
-after running "make install".
+PApp will usually run as a specific user/group (e.g. www/www). All files
+installed will be chown'ed to that uid/gid, including the file that
+contains "secret" information.
+
+EOF
+
+do {
+   get_value 0, "PAPP_UID", "papp user id", "0";
+} until (($CFG{PAPP_UID}!=getpwnam $CFG{PAPP_UID}
+          && getpwnam $CFG{PAPP_UID})
+         || ($CFG{PAPP_UID}!=getpwuid $CFG{PAPP_UID}
+             && getpwuid $CFG{PAPP_UID}));
+
+do {
+   get_value 0, "PAPP_GID", "papp group id", "0";
+} until (($CFG{PAPP_GID}!=getgrnam $CFG{PAPP_GID}
+          && getgrnam $CFG{PAPP_GID})
+         || ($CFG{PAPP_GID}!=getgrgid $CFG{PAPP_GID}
+             && getgrgid $CFG{PAPP_GID}));
+
+$CFG{PAPP_UID} &&= (getpwnam $CFG{PAPP_UID})[2] || $CFG{PAPP_UID};
+$CFG{PAPP_GID} &&= (getgrnam $CFG{PAPP_GID})[2] || $CFG{PAPP_GID};
+
+get_value 0, "STATEDB_USER", "papp database user", "";
+
+$cfg2 = "$CFG{LIBDIR}/config.pl";
+
+print <<EOF;
+
+The following values will be stored in the file $cfg2 and are
+security-sensitive. Secure this file with appropriate permissions after
+running "make install".
 
 If you do not want to specify them here just leave them empty (you can
 override them for each program/server).
@@ -63,7 +92,7 @@ get_value 1, "STATEDB_PASS", "papp database password", "";
 srand;
 get_value 1, "CIPHERKEY", "the serverwide cipherkey", join "", map sprintf("%02x", rand 256), 0..31;
 
-$cfg2 = "config";
+$cfg2 = "config.pl";
 
 print <<EOF;
 
@@ -84,16 +113,17 @@ PApp::Config - hold common configuration settings
 
 =cut
 
-$VERSION = 0.08;
+$VERSION = 0.12;
 
 require Exporter;
 
 @ISA = qw(Exporter);
 @EXPORT = qw();
-@EXPORT_OK = qw();
+@EXPORT_OK = qw($DBH DBH Database);
 
 our %papp; # loaded applications
 our %pimp; # loaded imports
+our $DBH;
 
 =item @paths = search_path [path...]
 
@@ -146,11 +176,12 @@ EOF
 
 print "Writing $cfg2\n";
 open CFG2, ">", $cfg2 or die "$cfg2: $!\n";
+chmod 0600, $cfg2;
 
 while (my ($k, $v) = each %CFG) {
    if ($secure{$k}) {
       printf CFG2 "\$PApp::Config%-20s = %s;\n", "{\"\Q$k\E\"}", "\"\Q$v\E\"";
-   } else {
+   } elsif ($k ne "SECURE") {
       printf PM "%-20s => %s,\n", "\"\Q$k\E\"", "\"\Q$v\E\"";
    }
 }
@@ -160,13 +191,55 @@ print CFG2 "\n1;\n";
 print PM <<'EOF';
 );
 
-$PApp::Config{SECURE} = do "$PApp::Config{LIBDIR}/config";
+$PApp::Config{SECURE} = do "$PApp::Config{LIBDIR}/config.pl";
 
 our @incpath = $PApp::Config{LIBDIR};
 
 sub search_path {
    push @incpath, @_;
    @incpath;
+}
+
+sub find_file {
+   my $file = shift;
+   my @ext = @_ ? map ".$_", @_ : ".papp";
+   for my $path (substr ($file, 0, 1) eq "/" ? "" : map "$_/", search_path) {
+      for my $ext ("", @ext) {
+         return "$path$file$ext" if -f "$path$file$ext";
+      }
+   }
+   undef;
+}
+
+$PApp::statedb      = $PApp::Config{STATEDB};
+$PApp::statedb_user = $PApp::Config{STATEDB_USER};
+$PApp::statedb_pass = $PApp::Config{STATEDB_PASS};
+
+sub _prepare_DBH {
+   my $dbh = shift;
+
+   $PApp::st_fetchstate  = $dbh->prepare("select state, userid, previd, sessid from state where id = ?");
+   $PApp::st_newstateid  = $dbh->prepare("insert into state (previd, alternative) values (?, ?)");
+   $PApp::st_updatestate = $dbh->prepare("update state set state = ?, userid = ?, sessid = ? where id = ?");
+
+   $PApp::st_reload_p    = $dbh->prepare("select count(*) from state where previd = ? and alternative = ?");
+
+   $PApp::st_fetchprefs  = $dbh->prepare("select prefs from user where id = ?");
+   $PApp::st_newuserid   = $dbh->prepare("insert into user () values ()");
+   $PApp::st_updateprefs = $dbh->prepare("update user set prefs = ? where id = ?");
+}
+
+sub Database() {
+   # "inlined" into next function
+   new PApp::SQL::Database "papp_1", $PApp::statedb, $PApp::statedb_user, $PApp::statedb_pass;
+}
+
+sub DBH() {
+   $DBH = PApp::SQL::connect_cached("papp_1", $PApp::statedb, $PApp::statedb_user, $PApp::statedb_pass, {
+      AutoCommit => 1,
+      RaiseError => 1,
+      PrintError => 0,
+   }, \&_prepare_DBH) or die "error connecting to papp database: $DBI::errstr";
 }
 
 1;

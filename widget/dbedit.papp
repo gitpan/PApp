@@ -1,0 +1,391 @@
+<!--
+   dbedit - simple yet working mysql database editor
+   (c)2000 Marc Lehmann <pcg@goof.com>
+   http://www.goof.com/pcg/marc/
+   (requires PApp)
+
+   version 0.31
+-->
+
+<domain name="dbedit" lang="en">
+
+<description>
+   a simple mysql database editor specially suited for developing complex
+   relational databases "on-the-fly".
+</description>
+
+<macro name="page(&amp;)" args="$body"><phtml><![CDATA[
+         &gt; <?slink __"Databases", "" :>
+#if $S{db}
+         &gt; <?slink "db=$S{db}", "database" :>
+# if $S{table}
+         &gt; <?slink "table=$S{table}", "table" :>
+#  if $S{id}
+         &gt; <?slink "$S{pri_key}=$S{id}", "row" :>
+#  endif
+# endif
+#endif
+         <p>
+      <:
+
+      if (defined $S{sql}) {
+         my $sql = delete $S{sql};
+         $sql =~ s/%1/$P{text1}/;
+         for (split /\n/, $sql) {
+            print "<hr><pre>Executing: $_<br>";
+            eval { sql_exec $_ };
+            if ($@) {
+               echo errbox $@;
+            } else {
+               print "OK";
+            }
+            print "</pre><hr><p>";
+         }
+      }
+
+      &$body;
+:>
+]]></phtml></macro>
+
+<module name="">
+<phtml><![CDATA[
+<:page {:>
+   <ul>
+   <li>__"Create Database" <?sform sql => "create database %1":><?textfield "text1":><?endform:>
+   </ul>
+
+   <table cellspacing=0 cellpadding=2 border=0>
+   <:
+      for my $db (sql_fetchall "show databases") {
+         ?><tr><td><b><?slink $db, "database", db => $db:></b></td><:
+         print "<td>", slink __"[EDIT]", "database", db => $db;
+         print "<td><font size='-3'>[", slink("D", sql => "drop database $db"), "]ROP</font></td>";
+         :></tr><:
+      }
+   :>
+   </table>
+
+<:}:>
+]]></phtml>
+</module>
+
+<module name="database" nosession="">
+<state keys="db" local="yes"/>
+<phtml><![CDATA[
+<:page {:>
+
+   <ul><li>
+       <?sform sql => "create table $S{db}.%1 (id mediumint unsigned not null auto_increment primary key)":>
+          __"Create Table"&nbsp;<?textfield "text1":>
+       <?endform:>
+   </li></ul>
+
+   <table border="0" cellspacing="5" cellpadding="3">
+   <:
+      for (sql_fetchall "show table status from $S{db}") {
+         :><tr><:
+         my ($table, $type, $row_format, $rows, $avg_row_len,$data_len,
+               $max_data_len, $index_len, $data_free, $auto_inc, $ctime,$mtime,
+               $checktime, $create_opt, $comment) = @$_;
+         my @t = ("table", table => "$S{db}.$table");
+
+         :><td><b><?slink $table, @t:></b></td><:
+         :><td align="right"><tt><?slink $rows, @t:></tt></td><:
+         :><td><?slink $comment, @t:></td><:
+         :></tr><:
+      }
+   :>
+   </table>
+
+<:}:>
+]]></phtml></module>
+
+<module name="table_alter" nosession="">
+<state keys="db table" local="yes"/>
+<phtml><![CDATA[
+<:page {:>
+   <?slink __"[EDIT]", "table":>
+
+   <h2><?$S{table}:></h2>
+
+   <:
+      (my $table = $S{table}) =~ s/^[^.]+.//;
+      
+      sql_fetch \my ($table, $type, $row_format, $rows, $avg_row_len, $data_len,
+                     $max_data_len, $index_len, $data_free, $auto_inc, $ctime, $mtime,
+                     $checktime, $create_opt, $comment),
+                "show table status from $S{db} like ?", 
+                $table;
+   :>
+
+   __"Please type enter after changing <em>any</em> field."
+
+   <:my $alter = "alter table $S{table}":>
+
+   <table cellspacing=0 cellpadding=0 border=0>
+   <?sform(sql => "$alter rename as %1", alter => undef):>
+   <tr><td valign=baseline>__"Rename:"&nbsp;<td><?textfield("text1", $S{table}):>
+   <?endform:>
+
+   <?sform(sql => "$alter comment='%1'"):>
+   <tr><td valign=baseline>__"Comment:"&nbsp;<td><?textfield({ size => 50 }, "text1", "$comment"):>
+   <?endform:>
+   </table>
+
+   <h3>__"Columns (editing columns may take a long time)"</h3>
+
+   <table cellspacing=0 cellpadding=0 border=0>
+   <tr><th align=left>__"Name"&nbsp;<th align=left>__"Create"&nbsp;<th align=left>__"Drop"&nbsp;<th align=left>__"Default?"
+   <:{
+      my $s = sql_exec "show fields from $S{table}";
+      print "<tr><td>&nbsp;",sform(sql => "$alter add %1 first"),"<td>",textfield({ size => 70 }, "text1"),"</td>",endform;
+      while (my ($name,$type,$null,$key,$default,$extra,$priviledges) = @{$s->fetchrow_arrayref}) {
+         print "<tr><td valign=baseline>$name&nbsp;</td>";
+         $type .= " not null" unless $null;
+         $type .= " primary key" if $key eq "pri";
+         $type .= " default '$default'" if $default;
+         $type .= " $extra" if $extra;
+         print sform(sql => "$alter change $name %1"),"<td>",textfield({ size => 70 }, "text1", "$name $type"),"</td>",endform;
+         print "<td>&nbsp;[",slink("D", sql => "$alter drop column $name"), "]ROP";
+         print "<td valign=baseline>&nbsp;";
+         print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
+
+         print "<tr><td valign=baseline>",sform(sql => "$alter add %1 after $name"),"<td>",textfield({size => 70}, "text1"),"</td>",endform;
+      }
+   }:>
+   </table>
+
+   <h3>__"Keys (changing keys often takes a long time!)"</h3>
+
+   <table cellspacing=0 cellpadding=0 border=0>
+   <:
+      my $s = sql_exec "show keys from $S{table}";
+      my %key;
+      $s->bind_columns(\my($table,$non_unique,$name,$seq,$cname,$collation,$cardinality,$sub_part,$packed,$comment));
+      while ($s->fetch) {
+         $cname .= "($sub_part)" if $sub_part;
+         push @{$key{$name}{col}}, $cname;
+         $key{$name}{unique} = !$non_unique;
+      }
+      while (my($name,$v)=each %key) {
+         my ($spec, $drop);
+         if ($name eq "PRIMARY") {
+            $name = $spec = $drop = "primary key";
+            $spec .= " ";
+         } else {
+            $spec = ($v->{unique} ? "unique" : "index")." $name";
+            $drop = "index $name";
+         }
+         $spec .= "(".(join ", ", @{$v->{col}}).")";
+         print "<tr><td valign=baseline>$name&nbsp;";
+         print "<td>",sform(sql => "$alter drop $drop, add %1"),
+                      textfield({ size => 60 }, "text1", "$spec"),endform;
+                      print "<td valign=baseline>&nbsp;[",slink("D", sql => "$alter drop $drop"),"]ROP";
+      }
+      print "<tr><td valign=baseline>".(__"NEW")." -->&nbsp;";
+      print "<td>",sform(sql => "$alter add %1"),textfield({ size => 60 }, "text1"),endform;
+   :>
+   </table>
+
+   <h3>__"Table Options (may require a full copy)"</h3>
+   <:
+      echo sform(sql => "$alter %1"),textfield({ size => 60 }, "text1", $create_opt),endform;
+                
+      echo sform(sql => "$alter type=%1"), '<select name=text1>';
+      for(qw(MyISAM BerkeleyDB HEAP ISAM)) {
+          print "<option value=\"$_\"";
+          print " selected" if $_ eq $type;
+          print ">$_</option>";
+      }
+      echo "</select>",submit("Set", "Set"), endform;
+
+   :>
+
+<:}:>
+]]></phtml>
+</module>
+
+<macro name="tableinfo"><perl><![CDATA[
+   $S{_table} = $S{table};
+   my $st = sql_exec "show columns from $S{table}";
+   my $i = 0;
+   delete $S{pri_key};
+   while (my ($field, $type, $null, $key, $default) = $st->fetchrow_array) {
+      my ($basetype, $subtype) = ($type =~ /^(\w+)(.*)$/);
+      #print "<pre>$i:$field*$basetype*$subtype*$null*$key*$default\n</pre>";
+      $S{field}{$i} = {
+         name		=> $field,
+         type		=> $basetype,
+         subtype	=> $subtype,
+         null		=> $null,
+         key		=> $key,
+         default	=> $default
+      };
+      $S{pri_key} = $field if $key eq "PRI";
+      $i++;
+   }
+   $S{nfields} = $i;
+]]></perl></macro>
+
+<module name="table" nosession="">
+<state keys="db table begin" local="yes"/>
+<phtml><![CDATA[
+<:page {:>
+   <?slink __"[ALTER]", "table_alter":>
+      <!--
+         #print "<td><font size='-3'>[", slink("D", sql => "drop table $S{db}.$table"), "]ROP</font></td>";-->
+   <:tableinfo:>
+
+   <:
+      BEGIN {
+         %view_short = (
+               bigint	=> sub { shift },
+               int	=> sub { shift },
+               mediumint=> sub { shift },
+               smallint	=> sub { shift },
+               tinyint	=> sub { shift },
+               float	=> sub { shift },
+               double	=> sub { shift },
+               decimal	=> sub { shift },
+               varchar	=> sub { substr shift, 0, 20 },
+               char	=> sub { substr shift, 0, 20 },
+               text	=> sub { substr shift, 0, 20 },
+               tinytext	=> sub { substr shift, 0, 20 },
+               mediumtext=> sub { substr shift, 0, 30 },
+               longtext	=> sub { substr shift, 0, 40 },
+               enum	=> sub { shift },
+               set	=> sub { shift },
+               blob	=> sub { substr shift, 0, 20 },
+               mediumblob=> sub { substr shift, 0, 30 },
+               longblob	=> sub { substr shift, 0, 40 },
+               date	=> sub { shift },
+               time	=> sub { shift },
+               timestamp=> sub { shift },
+          );
+      }
+
+      print "<p>", slink __"CREATE ROW", "row";
+
+      my $order = $S{pri_key} ? " order by $S{pri_key}" : "";
+      my $st = sql_exec "select * from $S{table}$order limit ?,?", $S{begin}*1, 20;
+
+      print "<table width=\"40%\"><tr><td align=left>", slink "&lt;&lt;&lt;", begin => $S{begin}-20;
+      print "<td align=right>", slink "&gt;&gt;&gt;", begin => $S{begin}+20;
+      print "</table>\n";
+      print "<table border=1>\n";
+      print "<tr><th>", join "<th>", map $S{field}{$_}{name}, 0..($S{nfields}-1);
+      print "<th>&nbsp;";
+      my $priid;
+      while (my $f = $st->fetchrow_arrayref) {
+         print "<tr>";
+         for (0..$#$f) {
+            my $data = $f->[$_];
+            $data =~ s/</&lt;/g; $data =~ s/>/&gt;/g;
+            $data = $view_short{$S{field}{$_}{type}}->($data);
+            if ($S{field}{$_}{name} eq $S{pri_key}) {
+               $priid = $f->[$_];
+               $data = slink $data, "row", id => $priid;
+            }
+            $data = "&nbsp;" unless $data ne "";
+            print "<td>$data";
+         }
+         if ($priid) {
+            print "<td>", slink __"[DELETE]", sql => "delete from $S{table} where $S{pri_key} = '$priid'";
+         }
+      }
+      print "</table>\n";
+   :>
+
+<:}:>
+]]></phtml>
+</module>
+
+<module name="row" nosession="">
+<state keys="db table begin id" local="yes"/>
+<phtml><![CDATA[
+<:page {:>
+   <:tableinfo:>
+
+   <:
+      unless ($S{id}) {
+         my $st = sql_exec "insert into $S{table} () values ()";
+         $S{id} = sql_insertid $st;
+      }
+
+      sub edit_text {
+         my ($size, $ft, $data) = @_;
+         if ($ft->{subtype} =~ /^\((\d+)\)/) {
+            $size = $1;
+         }
+         $size = 80 if $size > 80;
+         if ($size > 0 && $data !~ /\n/) {
+                 textfield ({ size => $size, maxlength => 500 },
+                            "param_".$ft->{name}, $data);
+         } else {
+                 textarea  ({ size => $size, maxlength => 500, rows => 10, cols => 80, wrap => "wrap" }, 
+                            name => "param_".$ft->{name});
+                    $data.
+                    "</textarea>";
+         }
+      }
+
+      BEGIN {
+         %edit_field = (
+               bigint	=> sub { edit_text(20, @_) },
+               int	=> sub { edit_text(13, @_) },
+               mediumint=> sub { edit_text( 7, @_) },
+               smallint	=> sub { edit_text( 6, @_) },
+               tinyint	=> sub { edit_text( 4, @_) },
+               float	=> sub { edit_text(20, @_) },
+               double	=> sub { edit_text(20, @_) },
+               decimal	=> sub { edit_text(20, @_) },
+               varchar	=> sub { edit_text(90, @_) },
+               char	=> sub { edit_text(90, @_) },
+               text	=> sub { edit_text(-1, @_) },
+               tinytext	=> sub { edit_text(90, @_) },
+               mediumtext=> sub { edit_text(-1, @_) },
+               longtext	=> sub { edit_text(-1, @_) },
+               enum	=> sub { edit_text(20, @_) },
+               set	=> sub { edit_text(60, @_) },
+               blob	=> sub { edit_text(20, @_) },
+               date	=> sub { edit_text(10, @_) },
+               time	=> sub { edit_text( 5, @_) },
+               timestamp=> sub { edit_text(30, @_) },
+          );
+      }
+
+
+      if (defined $P{"param_$S{pri_key}"}) {
+         eval {
+            sql_exec "replace into $S{table} values ("
+                     .join(",", ("?") x $S{nfields})
+                     .")", map "".$P{"param_".$S{field}{$_}{name}},
+                               0..$S{nfields}-1;
+         };
+         if ($@) {
+            print errbox("database update failed", $@);
+         }
+      }
+      
+      my $st = sql_exec "select * from $S{table} where $S{pri_key} = ?", $S{id};
+
+      print cform;
+      my $f = $st->fetchrow_arrayref;
+      print "<table border='0'>\n";
+      for my $i (0..$#$f) {
+         my $ft = $S{field}{$i};
+         my $data = $f->[$i];
+         my $name = $ft->{name};
+         $name = "<b>$name</b>" if $name eq $S{pri_key};
+         print "<tr><td>",$ft->{type},"&nbsp;<td>$name&nbsp;", "<td>", $edit_field{$ft->{type}}->($ft, $data);
+      }
+      print "</table><p>", submit("submit", __"Update");
+      print endform;
+
+   :>
+
+<:}:>
+]]></phtml>
+</module>
+
+</domain>
