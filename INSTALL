@@ -68,3 +68,8 @@ INSTALLATION STEP-BY-STEP
    then add the first application
    ./papp-admin --app admin --appset default --path apps/admin.papp \
                 --mount /admin
+
+P.S: When first entering the Admin menu the User is: admin and
+     password is: public 
+     !!! PLEASE CHANGE THAT BEFORE YOU DO SOMETHING ELSE !!!
+

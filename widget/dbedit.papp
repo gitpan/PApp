@@ -1,13 +1,16 @@
 <!--
    dbedit - simple yet working mysql database editor
-   (c)2000 Marc Lehmann <pcg@goof.com>
+   (c)2000,2001 Marc Lehmann <pcg@goof.com>
    http://www.goof.com/pcg/marc/
    (requires PApp)
 
-   version 0.31
+   version 0.32
 -->
 
 <domain name="dbedit" lang="en">
+
+<import src="macro/editform"/>
+<import pm="Convert::Scalar">:utf8</import>
 
 <description>
    a simple mysql database editor specially suited for developing complex
@@ -25,41 +28,93 @@
 #  endif
 # endif
 #endif
-         <p>
-      <:
 
-      if (defined $S{sql}) {
-         my $sql = delete $S{sql};
-         $sql =~ s/%1/$P{text1}/;
-         for (split /\n/, $sql) {
-            print "<hr><pre>Executing: $_<br>";
-            eval { sql_exec $_ };
-            if ($@) {
-               echo errbox $@;
-            } else {
-               print "OK";
-            }
-            print "</pre><hr><p>";
-         }
-      }
+<p />
 
-      &$body;
+#if $A{sql_exec}
+<:my $colour:>
+<:my $sql = capture  {:>
+<:
+   my ($cmd, @arg) = @{delete $A{sql_exec}};
+
+   # {name} => unquoted
+   # :name  => standard sql-quoted named argument
+
+   $cmd =~ s{
+     \{(\S+)\} (?{ $P{$1} })
+   | :(\S+)    (?{ $PApp::SQL::DBH->quote($P{$2}) })
+   }{
+      $^R
+   }xge;
 :>
+<hr />
+<h2>__"SQL-Execution"</h2>
+__"command:" <tt><?$cmd:></tt><br />
+#  if @arg
+__"arguments:" <tt><?join ";", @arg:></tt><br />
+#  endif
+# if reload_p
+<:$colour = "#aaee55":>
+<?
+  use Convert::Scalar; Convert::Scalar::utf8_on # DEVEL9961
+  sprintf __"SQL execution skipped due to page reload.
+             You can <a href='%s'>force re-execution</a> if you want.", surl -sql_exec => [$cmd, @arg];
+:>
+# elif $A{sql_ask}
+<:$colour = "#eeee22":>
+<?
+  Convert::Scalar::utf8_on # DEVEL9961
+  sprintf __"Do you <em>really</em> want to execute this potentially harmful command? <a href='%s'>[yes]</a>",
+             surl -sql_exec => [$cmd, @arg];
+:>
+# else
+<:
+   my $st = eval { sql_exec $cmd, @arg };
+   my $err = $@;
+:>
+#  if $err
+<:$colour = "#ff4444":>
+__"evaluation error:" <tt><?$err:></tt><br />
+</td></tr></table>
+#  else
+<:$colour = "#22ff22":>
+#  endif
+#  if $st
+__"rows affected:" <tt><?$st->rows:></tt><br />
+#  endif
+# endif
+<hr />
+<:}:>
+<table cellpadding="5" cellspacing="0" width="100%" bgcolor="<?$colour:>"><tr><td>
+<?$sql:>
+</td></tr></table>
+#endif
+
+<:&$body:>
 ]]></phtml></macro>
+
+<perl><![CDATA[
+   sub sqlform {
+      sform -sql_exec => [@_];
+   }
+]]></perl>
 
 <module name="">
 <phtml><![CDATA[
 <:page {:>
-   <ul>
-   <li>__"Create Database" <?sform sql => "create database %1":><?textfield "text1":><?endform:>
-   </ul>
+   <ul><li>
+     <?sqlform "create database {database}":>__"Create Database" <?textfield "database":><?endform:>
+   </li></ul>
 
-   <table cellspacing=0 cellpadding=2 border=0>
+   <table cellspacing="0" cellpadding="2" border="0">
    <:
       for my $db (sql_fetchall "show databases") {
-         ?><tr><td><b><?slink $db, "database", db => $db:></b></td><:
-         print "<td>", slink __"[EDIT]", "database", db => $db;
-         print "<td><font size='-3'>[", slink("D", sql => "drop database $db"), "]ROP</font></td>";
+         :><tr><:
+         :><td><b><?slink $db, "database", db => $db:></b></td><:
+         :><td><?slink __"[EDIT]", "database", db => $db:></td><:
+         :><td><font size='-3'><?
+            slink __"[DROP]", -sql_exec => ["drop database $db"], -sql_ask => 1;
+         :></font></td><:
          :></tr><:
       }
    :>
@@ -75,8 +130,9 @@
 <:page {:>
 
    <ul><li>
-       <?sform sql => "create table $S{db}.%1 (id mediumint unsigned not null auto_increment primary key)":>
-          __"Create Table"&nbsp;<?textfield "text1":>
+       <?sqlform "create table $S{db}.{table} (id mediumint unsigned not null auto_increment primary key)":>
+       __"Create Table"
+       <?textfield "table":>
        <?endform:>
    </li></ul>
 
@@ -90,6 +146,9 @@
          my @t = ("table", table => "$S{db}.$table");
 
          :><td><b><?slink $table, @t:></b></td><:
+         :><td><font size='-3'><?
+            slink __"[DROP]", -sql_exec => ["drop table $S{db}.$table"], -sql_ask => 1;
+         :></font></td><:
          :><td align="right"><tt><?slink $rows, @t:></tt></td><:
          :><td><?slink $comment, @t:></td><:
          :></tr><:
@@ -118,46 +177,97 @@
                 $table;
    :>
 
-   __"Please type enter after changing <em>any</em> field."
+   <p>__"Please type enter after changing <em>any</em> field."</p>
+
+   <?slink __"[DROP]", "database", -sql_exec => ["drop table $S{db}.$table"], -sql_ask => 1:><br />
 
    <:my $alter = "alter table $S{table}":>
 
-   <table cellspacing=0 cellpadding=0 border=0>
-   <?sform(sql => "$alter rename as %1", alter => undef):>
-   <tr><td valign=baseline>__"Rename:"&nbsp;<td><?textfield("text1", $S{table}):>
+   <table cellspacing="0" cellpadding="0" border="0">
+   <?sform "database", -sql_exec => ["$alter rename as {newname}"]:>
+   <tr>
+      <td valign="baseline">__"Rename:"&#160;</td>
+      <td><?textfield "newname", $S{table}:></td>
+   </tr>
    <?endform:>
 
-   <?sform(sql => "$alter comment='%1'"):>
-   <tr><td valign=baseline>__"Comment:"&nbsp;<td><?textfield({ size => 50 }, "text1", "$comment"):>
+   <?sform -sql_exec => ["$alter comment=:comment"]:>
+   <tr>
+      <td valign="baseline">__"Comment:"&#160;</td>
+      <td><?textfield { size => 50 }, "comment", "$comment":></td>
+   </tr>
    <?endform:>
    </table>
 
    <h3>__"Columns (editing columns may take a long time)"</h3>
 
-   <table cellspacing=0 cellpadding=0 border=0>
-   <tr><th align=left>__"Name"&nbsp;<th align=left>__"Create"&nbsp;<th align=left>__"Drop"&nbsp;<th align=left>__"Default?"
+   <table cellspacing="0" cellpadding="0" border="0">
+   <tr>
+      <th align="left">__"Name"&#160;</th>
+      <th align="left">__"Create"&#160;</th>
+      <th align="left">__"Drop"&#160;</th>
+      <th align="left">__"Default?"&#160;</th>
+   </tr>
    <:{
-      my $s = sql_exec "show fields from $S{table}";
-      print "<tr><td>&nbsp;",sform(sql => "$alter add %1 first"),"<td>",textfield({ size => 70 }, "text1"),"</td>",endform;
-      while (my ($name,$type,$null,$key,$default,$extra,$priviledges) = @{$s->fetchrow_arrayref}) {
-         print "<tr><td valign=baseline>$name&nbsp;</td>";
+      my $st = sql_exec "show fields from $S{table}";
+
+      :>
+         <tr>
+           <td>&#160;</td>
+           <td>
+             <?sform -sql_exec => ["$alter add {create} first"]:>
+             <?textfield { size => 70 }, "create":>
+             <?endform:>
+           </td>
+         </tr>
+      <:
+
+      while (my($name, $type, $null, $key, $default, $extra, $privileges)
+                = $st->fetchrow_array) {
+
          $type .= " not null" unless $null;
          $type .= " primary key" if $key eq "pri";
          $type .= " default '$default'" if $default;
          $type .= " $extra" if $extra;
-         print sform(sql => "$alter change $name %1"),"<td>",textfield({ size => 70 }, "text1", "$name $type"),"</td>",endform;
-         print "<td>&nbsp;[",slink("D", sql => "$alter drop column $name"), "]ROP";
-         print "<td valign=baseline>&nbsp;";
-         print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
 
-         print "<tr><td valign=baseline>",sform(sql => "$alter add %1 after $name"),"<td>",textfield({size => 70}, "text1"),"</td>",endform;
+         :>
+           <tr>
+             <td valign="baseline"><?$name:>&#160;</td>
+
+             <td>
+               <?sform -sql_exec => ["$alter change $name {alter}"]:>
+               <?textfield { size => 70 }, "alter", "$name $type":>
+               <?endform:>
+             </td>
+
+             <td valign="baseline">
+               <?slink __"[DROP]", -sql_exec => ["$alter drop column $name"], -sql_ask => 1:>
+             </td>
+             <td valign="baseline">
+               <?
+                 $default
+                    ? slink __"[drop default]", -sql_exec => ["$alter alter $name drop default"]
+                    : "&#160;"
+               :>
+             </td>
+           </tr>
+
+           <tr>
+             <td valign="baseline">&#160;</td>
+             <td>
+               <?sform -sql_exec => ["$alter add {create} after $name"]:>
+               <?textfield {size => 70}, "create":>
+               <?endform:>
+             </td>
+           </tr>
+         <:
       }
    }:>
    </table>
 
    <h3>__"Keys (changing keys often takes a long time!)"</h3>
 
-   <table cellspacing=0 cellpadding=0 border=0>
+   <table cellspacing="0" cellpadding="0" border="0">
    <:
       my $s = sql_exec "show keys from $S{table}";
       my %key;
@@ -177,29 +287,56 @@
             $drop = "index $name";
          }
          $spec .= "(".(join ", ", @{$v->{col}}).")";
-         print "<tr><td valign=baseline>$name&nbsp;";
-         print "<td>",sform(sql => "$alter drop $drop, add %1"),
-                      textfield({ size => 60 }, "text1", "$spec"),endform;
-                      print "<td valign=baseline>&nbsp;[",slink("D", sql => "$alter drop $drop"),"]ROP";
+
+         :>
+           <tr><td valign="baseline"><?$name:>&#160;</td>
+             <td>
+               <?sform -sql_exec => ["$alter drop $drop, add {index}"]:>
+               <?textfield { size => 60 }, "index", "$spec":>
+               <?endform:>
+             </td>
+
+             <td valign="baseline">&#160;</td>
+             <td valign="baseline">
+               <?slink __"[DROP]", -sql_exec => ["$alter drop $drop"]:>
+             </td>
+           </tr>
+         <:
+
       }
-      print "<tr><td valign=baseline>".(__"NEW")." -->&nbsp;";
-      print "<td>",sform(sql => "$alter add %1"),textfield({ size => 60 }, "text1"),endform;
+
+      :>
+        <tr>
+          <td valign="baseline">__"NEW" -->&#160;</td>
+          <td>
+             <?sform -sql_exec => ["$alter add {index}"]:>
+             <?textfield { size => 60 }, "index":>
+             <?endform:>
+          </td>
+        </tr>
+      <:
    :>
    </table>
 
    <h3>__"Table Options (may require a full copy)"</h3>
-   <:
-      echo sform(sql => "$alter %1"),textfield({ size => 60 }, "text1", $create_opt),endform;
-                
-      echo sform(sql => "$alter type=%1"), '<select name=text1>';
-      for(qw(MyISAM BerkeleyDB HEAP ISAM)) {
-          print "<option value=\"$_\"";
-          print " selected" if $_ eq $type;
-          print ">$_</option>";
-      }
-      echo "</select>",submit("Set", "Set"), endform;
 
+   <?sform -sql_exec => ["$alter {optins}"]:>
+   <?textfield { size => 60 }, "options", $create_opt:>
+   <?endform:>
+                
+   <?sform -sql_exec => ["$alter type={type}"]:>
+   <?
+      selectbox "type", $type,
+         MyISAM	=> 'MyISAM',
+         ISAM	=> 'ISAM',
+         BDB	=> 'BDB',
+         InnoDB	=> 'InnoDB',
+         GEMINI	=> 'GEMINI',
+         MERGE	=> 'MERGE',
+         HEAP	=> 'HEAP',
    :>
+   <?submit "set", __"Set":>
+   <?endform:>
 
 <:}:>
 ]]></phtml>
@@ -210,10 +347,11 @@
    my $st = sql_exec "show columns from $S{table}";
    my $i = 0;
    delete $S{pri_key};
-   while (my ($field, $type, $null, $key, $default) = $st->fetchrow_array) {
+   delete $S{field};
+   while (my($field, $type, $null, $key, $default) = $st->fetchrow_array) {
       my ($basetype, $subtype) = ($type =~ /^(\w+)(.*)$/);
       #print "<pre>$i:$field*$basetype*$subtype*$null*$key*$default\n</pre>";
-      $S{field}{$i} = {
+      push @{$S{field}}, {
          name		=> $field,
          type		=> $basetype,
          subtype	=> $subtype,
@@ -222,18 +360,15 @@
          default	=> $default
       };
       $S{pri_key} = $field if $key eq "PRI";
-      $i++;
    }
-   $S{nfields} = $i;
 ]]></perl></macro>
 
 <module name="table" nosession="">
-<state keys="db table begin" local="yes"/>
+<state keys="db table begin order where select" local="yes"/>
 <phtml><![CDATA[
 <:page {:>
    <?slink __"[ALTER]", "table_alter":>
-      <!--
-         #print "<td><font size='-3'>[", slink("D", sql => "drop table $S{db}.$table"), "]ROP</font></td>";-->
+
    <:tableinfo:>
 
    <:
@@ -249,12 +384,13 @@
                decimal	=> sub { shift },
                varchar	=> sub { substr shift, 0, 20 },
                char	=> sub { substr shift, 0, 20 },
-               text	=> sub { substr shift, 0, 20 },
                tinytext	=> sub { substr shift, 0, 20 },
+               text	=> sub { substr shift, 0, 20 },
                mediumtext=> sub { substr shift, 0, 30 },
                longtext	=> sub { substr shift, 0, 40 },
                enum	=> sub { shift },
                set	=> sub { shift },
+               tinyblob => sub { substr shift, 0, 30 },
                blob	=> sub { substr shift, 0, 20 },
                mediumblob=> sub { substr shift, 0, 30 },
                longblob	=> sub { substr shift, 0, 40 },
@@ -264,36 +400,90 @@
           );
       }
 
-      print "<p>", slink __"CREATE ROW", "row";
+      $S{order} ||= $S{pri_key} if $S{pri_key};
+      :>
+        <p><?slink __"CREATE ROW", "row":></p>
 
-      my $order = $S{pri_key} ? " order by $S{pri_key}" : "";
-      my $st = sql_exec "select * from $S{table}$order limit ?,?", $S{begin}*1, 20;
+        <table border="0">
+          <tr>
+             <td>__"where:"&#160;</td>
+             <td><?ef_begin:><?ef_string \$S{where}, 60:><?ef_end:></td>
+          </tr>
+          <tr>
+             <td>__"order by:"&#160;</td>
+             <td><?ef_begin:><?ef_string \$S{order}, 60:><?ef_end:></td>
+          </tr>
+        </table>
 
-      print "<table width=\"40%\"><tr><td align=left>", slink "&lt;&lt;&lt;", begin => $S{begin}-20;
-      print "<td align=right>", slink "&gt;&gt;&gt;", begin => $S{begin}+20;
-      print "</table>\n";
-      print "<table border=1>\n";
-      print "<tr><th>", join "<th>", map $S{field}{$_}{name}, 0..($S{nfields}-1);
-      print "<th>&nbsp;";
-      my $priid;
-      while (my $f = $st->fetchrow_arrayref) {
-         print "<tr>";
-         for (0..$#$f) {
-            my $data = $f->[$_];
-            $data =~ s/</&lt;/g; $data =~ s/>/&gt;/g;
-            $data = $view_short{$S{field}{$_}{type}}->($data);
-            if ($S{field}{$_}{name} eq $S{pri_key}) {
-               $priid = $f->[$_];
-               $data = slink $data, "row", id => $priid;
+      <:
+
+      my ($where, $order, $sql);
+      $order = " order by $S{order}" if $S{order} =~ /\S/;
+      $where = " where $S{where}" if $S{where} =~ /\S/;
+
+      my $st = eval {
+         $sql = "select * from $S{table}$where$order limit ?,?";
+         utf8_upgrade $sql if $S{force_utf8};
+         sql_exec $sql, $S{begin}*1, 20;
+      };
+
+      if ($st) {
+         :>
+           <table width="40%"><tr>
+             <td align="left"><?slink "&lt;&lt;&lt;", begin => $S{begin}-20:></td>
+             <td align="right"><?slink "&gt;&gt;&gt;", begin => $S{begin}+20:></td>
+           </tr></table>
+           <?ef_sbegin:>
+           <?ef_checkbox \$S{force_utf8}:>&#160;<?ef_submit __"force utf-8 on/off":>
+           <?ef_end:>
+           <table border="1">
+             <tr>
+               <?join "", map "<th>".escape_html($_->{name})."</th>", @{$S{field}}:>
+               <th>&#160;</th>
+             </tr>
+         <:
+
+         my $priid;
+
+         while (my $f = $st->fetchrow_arrayref) {
+
+            :><tr><:
+
+            for (0..$#$f) {
+               my $data = $f->[$_];
+               utf8_on $data if $S{force_utf8} && utf8_valid $data;
+               $data = escape_html $view_short{$S{field}[$_]{type}}->($data);
+               if ($S{field}[$_]{name} eq $S{pri_key}) {
+                  $priid = $f->[$_];
+                  $data = slink $data, "row", id => $priid;
+               }
+               $data = "&#160;" unless $data ne "";
+               :><td><?$data:></td><:
             }
-            $data = "&nbsp;" unless $data ne "";
-            print "<td>$data";
+
+            if ($priid) {
+               :>
+                 <td>
+                   <?slink __"[DELETE]", -sql_exec => ["delete from $S{table} where $S{pri_key} = ?", $priid]:>
+                 </td>
+               <:
+            }
+
+            :></tr><:
+
          }
-         if ($priid) {
-            print "<td>", slink __"[DELETE]", sql => "delete from $S{table} where $S{pri_key} = '$priid'";
-         }
+         :></table><:
+
+         :>
+           <table width="40%"><tr>
+              <td align="left"><?slink "&lt;&lt;&lt;", begin => $S{begin}-20:></td>
+              <td align="right"><?slink "&gt;&gt;&gt;", begin => $S{begin}+20:></td>
+           </tr></table>
+         <:
+      } else {
+         :><p>__"error while evaluating SQL expression:" <?$@:><:
       }
-      print "</table>\n";
+
    :>
 
 <:}:>
@@ -301,7 +491,8 @@
 </module>
 
 <module name="row" nosession="">
-<state keys="db table begin id" local="yes"/>
+<state keys="force_utf8" preferences="yes"/>
+<state keys="db table begin order where select" local="yes"/>
 <phtml><![CDATA[
 <:page {:>
    <:tableinfo:>
@@ -319,35 +510,36 @@
          }
          $size = 80 if $size > 80;
          if ($size > 0 && $data !~ /\n/) {
-                 textfield ({ size => $size, maxlength => 500 },
-                            "param_".$ft->{name}, $data);
+            textfield ({ size => $size, maxlength => 500 },
+                       "param_".$ft->{name}, $data);
          } else {
-                 textarea  ({ size => $size, maxlength => 500, rows => 10, cols => 80, wrap => "wrap" }, 
-                            name => "param_".$ft->{name});
-                    $data.
-                    "</textarea>";
+            textarea  ({ size => $size, maxlength => 500, rows => 10, cols => 80, wrap => "wrap" }, 
+                       "param_".$ft->{name}, $data);
          }
       }
 
       BEGIN {
          %edit_field = (
-               bigint	=> sub { edit_text(20, @_) },
-               int	=> sub { edit_text(13, @_) },
-               mediumint=> sub { edit_text( 7, @_) },
-               smallint	=> sub { edit_text( 6, @_) },
                tinyint	=> sub { edit_text( 4, @_) },
+               smallint	=> sub { edit_text( 6, @_) },
+               mediumint=> sub { edit_text( 7, @_) },
+               int	=> sub { edit_text(13, @_) },
+               bigint	=> sub { edit_text(20, @_) },
                float	=> sub { edit_text(20, @_) },
                double	=> sub { edit_text(20, @_) },
                decimal	=> sub { edit_text(20, @_) },
                varchar	=> sub { edit_text(90, @_) },
                char	=> sub { edit_text(90, @_) },
-               text	=> sub { edit_text(-1, @_) },
                tinytext	=> sub { edit_text(90, @_) },
+               text	=> sub { edit_text(-1, @_) },
                mediumtext=> sub { edit_text(-1, @_) },
                longtext	=> sub { edit_text(-1, @_) },
                enum	=> sub { edit_text(20, @_) },
                set	=> sub { edit_text(60, @_) },
+               tinyblob	=> sub { edit_text(20, @_) },
                blob	=> sub { edit_text(20, @_) },
+               mediumblob=> sub { edit_text(20, @_) },
+               longblob => sub { edit_text(20, @_) },
                date	=> sub { edit_text(10, @_) },
                time	=> sub { edit_text( 5, @_) },
                timestamp=> sub { edit_text(30, @_) },
@@ -356,11 +548,14 @@
 
 
       if (defined $P{"param_$S{pri_key}"}) {
+         $S{force_utf8} = $P{force_utf8};
          eval {
             sql_exec "replace into $S{table} values ("
-                     .join(",", ("?") x $S{nfields})
-                     .")", map "".$P{"param_".$S{field}{$_}{name}},
-                               0..$S{nfields}-1;
+                        .join(",", ("?") x @{$S{field}})
+                        .")",
+                     map $S{force_utf8} ? utf8_upgrade $_ : $_,
+                     map $P{"param_".$S{field}[$_]{name}},
+                                0..$#{$S{field}};
          };
          if ($@) {
             print errbox("database update failed", $@);
@@ -369,18 +564,36 @@
       
       my $st = sql_exec "select * from $S{table} where $S{pri_key} = ?", $S{id};
 
-      print cform;
       my $f = $st->fetchrow_arrayref;
-      print "<table border='0'>\n";
+
+      :>
+        <?cform:>
+        <?checkbox "force_utf8", "1", $S{force_utf8}:>&#160;__"force utf-8 on/off"
+        <table border="0">
+      <:
+
       for my $i (0..$#$f) {
-         my $ft = $S{field}{$i};
+         my $ft = $S{field}[$i];
          my $data = $f->[$i];
+         utf8_on $data if $S{force_utf8} && utf8_valid $data;
          my $name = $ft->{name};
          $name = "<b>$name</b>" if $name eq $S{pri_key};
-         print "<tr><td>",$ft->{type},"&nbsp;<td>$name&nbsp;", "<td>", $edit_field{$ft->{type}}->($ft, $data);
+
+         :>
+           <tr>
+             <td><?$ft->{type}:>&#160;</td>
+             <td><?$name:>&#160;</td>
+             <td><?$edit_field{$ft->{type}}->($ft, $data):></td>
+           </tr>
+         <:
       }
-      print "</table><p>", submit("submit", __"Update");
-      print endform;
+
+      :>
+        </table>
+        <p />
+        <?submit "submit", __"Update":>
+        <?endform:>
+      <:
 
    :>
 

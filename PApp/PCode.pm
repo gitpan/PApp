@@ -28,7 +28,7 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"
@@ -43,8 +43,9 @@ by prefixing the string with "E<lt>:?>".
 
  <:	start verbatim perl section ("perl-mode")
  :>	start plain string section (non-interpolated string)
- <?	start perl expression (single expr, result will echo'd) (eval this!)
- ?>	start interpolated string section (similar to qq[...]>)
+ <?	start perl expression (single expr, result will be interpolated)
+ ?>	start interpolated string section (similar to qq[...]>) DEPRECATED
+        will soon mean the same as :>
 
 Within plain and interpolated string sections you can also use the
 __I<>"string" construct to mark (and map) internationalized text. The
@@ -69,7 +70,7 @@ section (that is, they must follow a linebreak). They are I<completely>
 removed on output (i.e. the linebreak before and after it will not be
 reflected in the output).
 
-White space will be mostly preserved (especially line-numwber and
+White space will be mostly preserved (especially line-number and
 -ordering).
 
 =begin comment
@@ -109,6 +110,7 @@ sub _quote_perl($) {
 # be liberal in what you accept, stylesheet processing might
 # gar|ble our nice line-endings
 sub _unquote_perl($) {
+   use bytes;
    utf8_on
       join "\n",
          map pack("H*", $_),
@@ -186,7 +188,7 @@ sub xml2pcode($) {
 }
 
 sub pcode2perl($) {
-   my $pcode = $dx . shift;
+   my $pcode = $dx . $_[0];
    my ($mode, $src);
    my $res = "";#d#
    for (;;) {
@@ -196,6 +198,14 @@ sub pcode2perl($) {
       $src =~ s/$dq(.)/$1/g;
       if ($src ne "") {
          $mode = $mode eq $dx ? '' : 'qq';
+         if (0&&$mode ne $dx) { #d# warn about deprecated construct ?>xxx
+            $src =~ /\\/
+               and warn "unneccessary quoting in deprecated ?> construct: $src";
+            $src =~ /\$/
+               and warn "probable scalar access in deprecated ?> construct: $src";
+            $src =~ /\@/
+               and warn "probable array access in deprecated ?> construct: $src";
+         }
          $src =~ s/\\/\\\\/g; $src =~ s/'/\\'/g;
          utf8_on $src; #d# #FIXME##5.7.0# bug, see testcase #1
          $res .= "\$PApp::output .= $mode'$src';";
@@ -207,8 +217,9 @@ sub pcode2perl($) {
       $src = _unquote_perl $src;
       if ($src !~ /^[ \t]*$/) {
          if ($mode eq $dy) {
-            $src = "do { $src }" if $src =~ /;/;
-            $res .= "\$PApp::output .= $src;";
+            $src =~ s/;\s*$//; # remove a single trailing ";"
+            $src = "do { $src }" if $src =~ /;/; # wrap multiple statements into do {} blocks
+            $res .= "\$PApp::output .= ($src);";
          } else {
             $res .= "$src;";
          }

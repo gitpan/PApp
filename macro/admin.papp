@@ -36,7 +36,7 @@ my $surl_login_cb = create_callback {
 
 =item loginbox
 
-Display a login box unless the user has athenticitated herself.
+Display a login box unless the user has authenticitated herself.
 
 =cut
 
@@ -45,7 +45,7 @@ Display a login box unless the user has athenticitated herself.
    <?errbox __"Login failed", __"no such user or wrong password":>
 #endif
    <p />
-   <?cform SURL_EXEC, $surl_login_cb:>
+   <?cform SURL_EXEC($surl_login_cb):>
       <table cellpadding="0" cellspacing="0" border="0">
          <tr><td></td><td>
             __"You may log-in now!"
@@ -99,7 +99,7 @@ be executed so you can add page-specific  info.
 
          __"<i>Possible(!)</i> URI (for referencing) of this page:" <?alink ((reference_url 1)x2):><br />
          __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p />
-         <?slink __"Reload page and drop all priviledges", SURL_USER_LOGOUT:>
+         <?slink __"Reload page and drop all priviledges", &PApp::User::SURL_USER_LOGOUT:>
 
          <:@_ and &{$_[0]}:>
       </font></td></tr>
@@ -113,6 +113,8 @@ be executed so you can add page-specific  info.
 - if the user is not logged in, show a loginbox
 - if the user has logged in, display some info about him
 
+*DEPRECATED*
+
 =cut
 
 :>
@@ -122,6 +124,18 @@ be executed so you can add page-specific  info.
    <:loginbox:>
 #endif
 ]]></phtml></macro>
+
+<macro name="force_login*($)" args="$msg"><phtml><![CDATA[<:
+abort_with {
+   PApp::User::user_logout;
+   content_type "text/html";
+   :><html><head><title><?$msg:></title></head><:
+   :><body text="black" link="#1010C0" vlink="#101080" alink="red" bgcolor="white"><:
+   :><h1><?$msg:></h1><:
+   loginbox;
+   :></body></html><:
+}
+:>]]></phtml></macro>
 
 <perl><![CDATA[
 

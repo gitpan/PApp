@@ -27,14 +27,14 @@ use PApp::SQL;
 use PApp::Exception qw(fancydie);
 use PApp::Callback ();
 use PApp::Config qw($DBH);
-use PApp qw(*state $userid);
+use PApp qw(*state $userid getuid);
 
 use base Exporter;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT = qw( 
    authen_p access_p admin_p known_user_p update_username choose_username
-   update_password update_comment username user_login user_logout
+   update_password update_comment username user_login user_logout userid
    SURL_USER_LOGOUT user_delete grant_access revoke_access verify_login
 
    grpid grpname
@@ -78,16 +78,6 @@ Return true when user has the "admin" access right.
 sub admin_p() {
    use bytes;
    vec $state{papp_access}, grpid "admin", 1;
-}
-
-=item userid $username
-
-Return the userid associated with the given user.
-
-=cut
-
-sub userid($) {
-   sql_fetch "select id from user where name like ?", $_[0];
 }
 
 =item known_user_p [access]
@@ -136,7 +126,7 @@ exists, do nothing and return C<undef>. (See C<choose_username>).
 =cut
 
 sub update_username($;$) {
-   my $uid = @_ > 1 ? shift : $userid;
+   my $uid = @_ > 1 ? shift : getuid;
    my $user = $_[0];
    $DBH->do("lock tables user write");
    if (sql_fetch "select count(*) from user where user = ? and id != ?", $user, $uid) {
@@ -187,7 +177,7 @@ sub update_password($) {
               ? crypt $pass, join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64]
               : "";
    my $st = $DBH->prepare("update user set pass = ? where id = ?");
-   $st->execute($pass, $userid);
+   $st->execute($pass, getuid);
 }
 
 =item update_comment $comment
@@ -199,7 +189,7 @@ Change the comment field for the given user by setting it to C<$comment>.
 sub update_comment($) {
    my ($comment) = @_;
    my $st = $DBH->prepare("update user set comment = ? where id = ?");
-   $st->execute($comment, $userid);
+   $st->execute($comment, getuid);
 }
 
 =item username [$userid]
@@ -210,10 +200,17 @@ if no arguments are given.
 =cut
 
 sub username(;$) {
-   my $uid = shift || $userid;
-   my $st = $DBH->prepare("select user from user where id = ?");
-   $st->execute($uid);
-   ($st->fetchrow_array)[0];
+   sql_fetch $DBH, "select user from user where id = ?", @_ ? $_[0] : $userid;
+}
+
+=item userid $username
+
+Return the userid associated with the given user.
+
+=cut
+
+sub userid($) {
+   sql_fetch "select id from user where name like ?", $_[0];
 }
 
 =item user_login $userid
@@ -248,7 +245,6 @@ sub user_logout() {
 
 my $surl_logout_cb = PApp::Callback::create_callback {
    &user_logout;
-   warn "huphup\n";#d#
 } name => "papp_logout";
 
 =item SURL_USER_LOGOUT
@@ -258,18 +254,18 @@ when the link is followed.
 
 =cut
 
-sub SURL_USER_LOGOUT (){ ( PApp::SURL_EXEC, $surl_logout_cb ) }
+sub SURL_USER_LOGOUT (){ PApp::SURL_EXEC($surl_logout_cb) }
 
 =item user_delete $userid
 
-Deletes the givne userid from the system, i.e. the user with the given ID
+Deletes the given userid from the system, i.e. the user with the given ID
 can no longer log-in or do useful things. Other sessions using this userid
 will get errors, so don't use this function lightly.
 
 =cut
 
 sub user_delete(;$) {
-   my $uid = shift || $userid;
+   my $uid = shift || getuid;
    user_login 0 if $userid == $uid;
    sql_exec "delete from usergrp where userid = ?", $uid;
    sql_exec "delete from user where id = ?", $uid;
@@ -284,7 +280,7 @@ Grant the specified access right to the logged-in user.
 sub grant_access($) {
    my $right = shift;
    if (authen_p) {
-      sql_exec "replace into usergrp values (?, ?)", $userid, grpid $right;
+      sql_exec "replace into usergrp values (?, ?)", getuid, grpid $right;
       _fetch_access;
    } else {
       fancydie "Internal error", "grant_access was called but no user was logged in";

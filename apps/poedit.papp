@@ -1,6 +1,8 @@
 <package name="poedit" surlstyle="get">
 <domain name="papp" lang="en">
 
+<import pm="PApp::User">access_p</import>
+
 <description>translation editor frontend</description>
 
 <perl>
@@ -14,10 +16,10 @@
 <module name=""><phtml><![CDATA[
 <html>
 <head>
-<title>__"PApp Administration Desk"</title>
+<title>__"PApp Translation Editor"</title>
 </head>
 <body text="black" link="#1010C0" vlink="#101080" alink="red" bgcolor="white">
-<table width="100%"><tr><td><h1>__"PApp Administration Desk"</h1></td><td align="right">
+<table width="100%"><tr><td><h1>__"PApp Translation Editor"</h1></td><td align="right">
 <:language_selector $papp_translator, $papp_ppkg_table->lang:>
 </td></tr></table>
 
@@ -25,26 +27,7 @@
 __"You need to authentificate yourself first"<p />
 <:loginbox:>
 #else
-
-<h1>__"Administration/Maintainance"</h1>
-<table bgcolor="#f0f0c0" cellspacing="5" cellpading="5"><tr>
-<td><?slink __"General Info", "admin/":></td>
-# if admin_p
-<td><?slink __"Edit Access Rights", "admin/acedit":></td>
-<td><?slink __"Edit Applications", "admin/apps":></td>
-<td><?slink __"Flush Package Cache", SURL_EXEC, $ppkg->refer('flush_cache'):></td>
-#  if (PApp->interface)[0] eq "PApp::Apache"
-<td><?slink __"Restart Apache (USR1)", SURL_EXEC, $ppkg->refer('httpd_restart'):></td>
-#  endif
-# endif
-# if access_p "poedit"
-<td><?slink __"Edit Translations", "admin/poedit":></td>
-# endif
-</tr></table>
-
-<p />
-
-<:$ppkg->embed('poedit'):>
+<:$ppkg->{pkg}{poedit}->embed:>
 #endif
 
 </body>

@@ -1,0 +1,16 @@
+You need to create a database named xcms (or something else). Use the
+xcms.sql file as a template. With mysql:
+
+   mysql <xcms.sql
+
+Then you need to mount the application:
+
+   papp-admin --app xcms \
+              --appset default \
+              --path xcms/xcms.papp \
+              --mount /uri \
+              --config 'database => new PApp::SQL::Database "", "DBI:mysql:xcms", "user", "pass"'
+
+It is easiest to do using the admin web interface. After that, xcms should
+be visible under the /uri-URI on your server, or using the exec.cgi
+script, under /cgi-bin/exec.cgi/xcms.

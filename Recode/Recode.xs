@@ -2,6 +2,7 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#include <string.h>
 #include <iconv.h>
 
 /*
@@ -98,7 +99,7 @@ plain_iconv (iconv_t self, SV *string, SV *fallback)
                 {
                   if (replace)
                     {
-                      ocursor = "pconv: conversion of fallback sequence '%s' failed";
+                      ocursor = "PApp::Recode::PConv: conversion of fallback sequence '%s' failed";
                       goto raiserr;
                     }
                   else
@@ -106,11 +107,16 @@ plain_iconv (iconv_t self, SV *string, SV *fallback)
                       dSP;
                       STRLEN retlen;
                       int count;
-                      UV chr = utf8_to_uv (icursor, ibl, &retlen, UTF8_CHECK_ONLY);
+                      UV chr =
+#ifdef utf8_to_uv
+                        utf8_to_uv (icursor, ibl, &retlen, UTF8_CHECK_ONLY); /* <<DEVEL9916 */
+#else
+                        utf8n_to_uvchr (icursor, ibl, &retlen, UTF8_CHECK_ONLY); /* >=DEVEL9916 */
+#endif
 
                       if (retlen == (STRLEN) -1)
                         {
-                          ocursor = "pconv: non-utf8-character in input detected";
+                          ocursor = "PApp::Recode::PConv: non-utf8-character in input detected";
                           goto raiserr;
                         }
 
@@ -126,7 +132,7 @@ plain_iconv (iconv_t self, SV *string, SV *fallback)
 
                       if (count != 1)
                         {
-                          ocursor = "pconv: fallback function did not return a single value";
+                          ocursor = "PApp::Recode::PConv: fallback function did not return a single value";
                           goto raiserr;
                         }
 
@@ -165,7 +171,7 @@ plain_iconv (iconv_t self, SV *string, SV *fallback)
 
 	    default:
               /* some unknown error */
-              ocursor = "pconv: illegal multibyte character sequence encountered during character conversion";
+              ocursor = "PApp::Recode::PConv: illegal multibyte character sequence encountered during character conversion";
               icursor = strerror (errno);
               goto raiserr;
 	    }
@@ -211,7 +217,7 @@ safe_iconv (const char *tocode, const char *fromcode, SV *string, SV *fallback)
     {
       iconv = iconv_open ("utf-8", fromcode);
       if (!iconv)
-        return Nullsv;
+        croak ("PApp::Recode::Pconv: conversion from %s to utf-8 not available (%s)", fromcode, strerror (errno));
 
       string = plain_iconv (iconv, string, 0);
       iconv_close (iconv); 
@@ -227,7 +233,7 @@ safe_iconv (const char *tocode, const char *fromcode, SV *string, SV *fallback)
   if (!iconv)
     {
       SvREFCNT_dec (string);
-      return Nullsv;
+      croak ("PApp::Recode::Pconv: conversion from utf-8 to %s not available (%s)", tocode, strerror (errno));
     }
 
   /* now we relying on glibc's non-unix behaviour of returning EILSEQ on
@@ -288,10 +294,16 @@ convert(self, string, reset = FALSE)
             }
 
           RETVAL = plain_iconv (self->iconv, string, 0);
+
           if (!RETVAL && self->fallback)
             RETVAL = safe_iconv (SvPV_nolen (self->to),
                                  SvPV_nolen (self->from),
                                  string, self->fallback);
+
+          if (!RETVAL)
+            croak ("PApp::Recode::PConv: character conversion from %s to %s failed (%s)",
+                   SvPV_nolen (self->from), SvPV_nolen (self->to), strerror (errno));
+
 	OUTPUT:
 	RETVAL
 

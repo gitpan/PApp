@@ -1,15 +1,22 @@
 Common Mistakes
 
-Q: I am using SURL_SET_LANG => 'xxx' (or any other SURL cookie) but it
-   doesn't seem to work.
-A: Perl auto-quotes the identifier preceding "=>", so the above just sets
-   the state key "SURL_SET_LANG". Use a normal comma instead:
-   SURL_SET_LANG, 'xxx'.
-
 Q: print "____________"; doesn't work as expected
 A: __"..." marks a translation. If this character pattern shows up
    in your source you might get problems. Try to escape it like this
    print "___________\_";
+
+Q: My application is writen n language XYZ, but this language
+   is not shown in teh language_selector!
+A: All languages used in the source must be declared somewhere. If
+   you use lang="*" then you must declare all possible source languages
+   using the <language> element.
+
+Q: I try to access %A/%S, a database etc. in a callback, but it does not
+   work.
+A: The callback handlers are executed during a very delicate time, before
+   the actual page gets executed. %S etc. are meaningless during this time.
+   If you want to access something you should take a reference to it and
+   pass it to your callback when you refer() to the callback.
 
 Features
 

@@ -46,7 +46,6 @@ EOF
 
 get_value 0, "LIBDIR",  "papp library directory", "$Config{installprefixexp}/lib/papp";
 get_value 0, "I18NDIR", "directory for i18n tables", "$CFG{LIBDIR}/i18n";
-get_value 0, "STATEDB", "papp database", "DBI:mysql:papp";
 
 print <<EOF;
 
@@ -57,21 +56,36 @@ contains "secret" information.
 EOF
 
 do {
+   if (defined getpwuid $CFG{PAPP_UID}) {
+      $CFG{PAPP_UID} = getpwuid ($CFG{PAPP_UID});
+   } 
    get_value 0, "PAPP_UID", "papp user id", "0";
-} until (($CFG{PAPP_UID}!=getpwnam $CFG{PAPP_UID}
-          && getpwnam $CFG{PAPP_UID})
-         || ($CFG{PAPP_UID}!=getpwuid $CFG{PAPP_UID}
-             && getpwuid $CFG{PAPP_UID}));
+} until (($CFG{PAPP_UID} != getpwnam $CFG{PAPP_UID}
+          && defined getpwnam $CFG{PAPP_UID})
+         || ($CFG{PAPP_UID} =~ /^\d+$/));
 
 do {
+   if (defined getgrgid $CFG{PAPP_GID}) {
+      $CFG{PAPP_GID} = getgrgid ($CFG{PAPP_GID});
+   }
    get_value 0, "PAPP_GID", "papp group id", "0";
-} until (($CFG{PAPP_GID}!=getgrnam $CFG{PAPP_GID}
-          && getgrnam $CFG{PAPP_GID})
-         || ($CFG{PAPP_GID}!=getgrgid $CFG{PAPP_GID}
-             && getgrgid $CFG{PAPP_GID}));
+} until (($CFG{PAPP_GID} != getgrnam $CFG{PAPP_GID}
+          && defined getgrnam $CFG{PAPP_GID})
+         || ($CFG{PAPP_GID} =~ /^\d+$/));
 
 $CFG{PAPP_UID} &&= (getpwnam $CFG{PAPP_UID})[2] || $CFG{PAPP_UID};
 $CFG{PAPP_GID} &&= (getgrnam $CFG{PAPP_GID})[2] || $CFG{PAPP_GID};
+
+print <<EOF;
+
+PApp requires a database for it to function properly. The default should
+probably be a MySQL database (which will be created if necessary),
+for other databases you must modify the CREATE statements in the
+"papp-install" script (or create the database manually).
+
+EOF
+
+get_value 0, "STATEDB", "papp database", "DBI:mysql:papp";
 
 get_value 0, "STATEDB_USER", "papp database user", "";
 
@@ -113,7 +127,7 @@ PApp::Config - hold common configuration settings
 
 =cut
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 
 require Exporter;
 
@@ -198,17 +212,6 @@ our @incpath = $PApp::Config{LIBDIR};
 sub search_path {
    push @incpath, @_;
    @incpath;
-}
-
-sub find_file {
-   my $file = shift;
-   my @ext = @_ ? map ".$_", @_ : ".papp";
-   for my $path (substr ($file, 0, 1) eq "/" ? "" : map "$_/", search_path) {
-      for my $ext ("", @ext) {
-         return "$path$file$ext" if -f "$path$file$ext";
-      }
-   }
-   undef;
 }
 
 $PApp::statedb      = $PApp::Config{STATEDB};

@@ -19,16 +19,16 @@ use base Exporter;
 use utf8;
 no bytes;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT = qw(
 
       errbox
 
-      xmltag
+      xmltag tag
 
       alink mailto_url filefield param submit textfield password_field
       textarea escape_html escape_uri escape_attr hidden unixtime2http
-      checkbox radio reset_button submit_image selectbox javascript button
+      checkbox radio reset_button submit_image selectbox optiontag javascript button
 );
 
 =head1 FUNCTIONS
@@ -54,13 +54,13 @@ argument into single quotes, so don't do that yourself).
 
 =cut
 
-use Convert::Scalar ();  # 5.7 bug workaround #d# #FIXME#
+use Convert::Scalar ();  # DEVEL7952 bug workaround #d# #FIXME#
 
 sub escape_html($) {
    local $_ = shift;
    Convert::Scalar::utf8_upgrade($_);
    s/([<>&\x00-\x07\x09\x0b\x0d-\x1f\x7f-\x9f])/sprintf "&#%d;", ord($1)/ge;
-   Convert::Scalar::utf8_on($_); # 5.7 bug workaround #d# #FIXME#
+   Convert::Scalar::utf8_on($_); # DEVEL7952 bug workaround #d# #FIXME#
 }
 
 sub escape_uri($) {
@@ -68,14 +68,14 @@ sub escape_uri($) {
    Convert::Scalar::utf8_upgrade($_);
    use bytes;
    s/([;\/?:@&=+\$,()<>% '"\x00-\x1f\x7f-\xff])/sprintf "%%%02X", ord($1)/ge;
-   #Convert::Scalar::utf8_on($_); # 5.7 bug workaround #d# #FIXME# unnecesasary
+   $_;
 }
 
 sub escape_attr($) {
    local $_ = shift;
    Convert::Scalar::utf8_upgrade($_);
    s/(['<>&\x00-\x1f\x80-\x9f])/sprintf "&#%d;", ord($1)/ge;
-   Convert::Scalar::utf8_on($_); # 5.7 bug workaround #d# #FIXME#
+   Convert::Scalar::utf8_on($_); # DEVEL7952 bug workaround #d# #FIXME#
    "'$_'";
 }
 
@@ -95,7 +95,7 @@ sub unixtime2http {
            $hour, $min, $sec;
 }
 
-=item $ahref = alink contents, url
+=item $ahref = alink contents, url [DEPRECATED]
 
 Create "a link" (a href) with the given contents, pointing at the given
 url. It uses single quotes to delimit the url, so watch out and escape
@@ -108,7 +108,7 @@ sub alink {
    "<a href='$_[1]'>$_[0]</a>";
 }
 
-=item errbox $error, $explanation
+=item errbox $error, $explanation [DEPRECATED]
 
 Render a two-part error-box, very distinctive, very ugly, very visible!
 
@@ -121,9 +121,29 @@ sub errbox {
    ."</table>";
 }
 
-# tag $tag, $attr, $content...
+=back
 
-sub _tag {
+=head2 Convinience Functions to Create XHTML Elements
+
+The following functions are shortcuts to various often-used html tags
+(mostly form elements). All of them allow an initial 
+argument C<attrs> of type hashref which can contain attribute => value
+pairs. Attributes always required for the given element (e.g.
+"name" for form-elements) can usually be specified directly without using
+that hash. C<$value> is usually the initial state/content of the
+input element (e.g. some text for C<textfield> or boolean for C<checkbox>).
+
+=over 4
+
+=item tag $tagname [, \%attr ] [, $content...]
+
+Return an XHTML element with the given tagname, optional attributes
+and content. C<img>, C<br> and C<input> elements are handled specially
+(content model empty).
+
+=cut
+
+sub tag {
    my $tag = shift;
    my $r = "<$tag";
    if (ref $_[0] eq "HASH") {
@@ -141,21 +161,7 @@ sub _tag {
    $r;
 }
 
-*xmltag = \&_tag;
-
-=back
-
-=head2 Convinience Functions to Create XHTML Elements
-
-The following functions are shortcuts to various often-used html tags
-(mostly form elements). All of them allow an initial 
-argument C<attrs> of type hashref which can contain attribute => value
-pairs. Attributes always required for the given element (e.g.
-"name" for form-elements) can usually be specified directly without using
-that hash. C<$value> is usually the initial state/content of the
-input element (e.g. some text for C<textfield> or boolean for C<checkbox>).
-
-=over 4
+*xmltag = \&tag; # DEPRECATED / NYI
 
 =item submit [\%attrs,] $name [, $value]
 
@@ -201,34 +207,48 @@ Creates an input element of type file named C<$name>
 
 =cut
 
-sub submit		{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift || "", type => 'submit' } }
-sub submit_image	{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, src => shift, value => shift || "", type => 'image' } }
-sub reset_button	{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, type => 'reset' } }
-sub password_field	{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'password' } }
-sub textfield		{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'text'     } }
-sub button		{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'button'   } }
-sub hidden		{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'hidden'   } }
-sub checkbox		{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, (shift) ? (checked => "checked") : (), type => 'checkbox' } }
-sub radio		{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, (shift) ? (checked => "checked") : (), type => 'radio'    } }
-sub filefield		{ _tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'file'     } }
+sub submit		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift || "", type => 'submit' } }
+sub submit_image	{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, src => shift, value => shift || "", type => 'image' } }
+sub reset_button	{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, type => 'reset' } }
+sub password_field	{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'password' } }
+sub textfield		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'text'     } }
+sub button		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'button'   } }
+sub hidden		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'hidden'   } }
+sub checkbox		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, (shift) ? (checked => "checked") : (), type => 'checkbox' } }
+sub radio		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, (shift) ? (checked => "checked") : (), type => 'radio'    } }
+sub filefield		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'file'     } }
 
-sub textarea		{ _tag "textarea", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift }, "\n", @_ }
+sub textarea		{ tag "textarea", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift }, "\n", @_ }
 
-=item selectbox name, [], attr => value... NYI
+=item selectbox [\%attrs,] $name, [$selected, [, $key => $text...]]
 
-die! die! die!
+Creates an input element of type select(box) named C<$name>. C<$selected>
+should be the currently selected value (or an arrayref containing all
+selected values). All remaining arguments are trated as name (displayed)
+=> value (submitted) pairs.
 
 =cut
 
-# not yet implemented
 sub selectbox {
-   die;
-   my $option = splice @_, 1, 1, ();
-   input_field("select", @_);
-   while (@$option) {
-      my ($key, $val) = splice @$option, 0, 2, ();
+   my $attrs = ref $_[0] eq "HASH" ? shift : {};
+   my $name = shift;
+   my $selected;
+   if (ref $_[0]) {
+      @selected{@{+shift}}++;
+   } else {
+      $selected{+shift}++;
    }
-   #PApp::echo("</select>");
+   my $contents;
+   while (@_) {
+      my $key = shift;
+      my $val = shift;
+      $contents .= tag "option",
+                       { value => $key,
+                         exists $selected{$key} ? (selected => "selected") : ()
+                       },
+                       $val;
+   }
+   tag "select", { name => $name, %$attrs }, $contents;
 }
 
 =item javascript $code

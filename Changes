@@ -1,6 +1,97 @@
 Revision history for Perl extension PApp
 
-0.12
+0.121 Fri Nov 30 10:53:24 CET 2001
+	- fixed apps/poedit.papp.
+
+0.12  Sat Oct 27 16:55:26 CEST 2001
+	- INCOMPATIBLE CHANGE: $ppkg->insert and embed no longer do the
+          dereferencing for you, i.e. change
+          $ppkg->embed('name') to $ppkg->{pkg}{name}->embed.
+	- INCOMPATIBLE CHANGE: changed the syntax of all SURL_-cookies
+          into functions. This is more natural and gives me more freedom.
+	- added DataRef::invalidate.
+	- changed to using new Compress::LZF::sfreeze functionality.
+	- fixed user/group entry for reconfig AGAIN. how many times did
+          I tell Paul this until I did it myself??
+	- added papp-httpd, a simplistic httpd that mounts an app and
+          starts a webbroser on it.
+	- surl and find_keysv now check wether the ref => xxx assignment
+          really is valid, i.e. ref really is a scalar reference.
+	- PApp::DataRef read in the whole table with mysql + preload=1.
+	- macro/editform: no longer truncate the last two bytes of files.
+	- SIGQUIT can now be used to kill a papp process and get
+          a usable calltrace.
+	- dependencies for stylesheets work again. dumb bug, uh.
+	- ssl.papp now needs "SSLOptions +StdEnvVars +ExportCertData"
+          Table ssluser changed, completely broken.
+	- dbedit now forces utf8 on all fields. have fun.
+        - ef_ functions now return the html instead of outputting it. use
+          something like the following command to convert most uses:
+
+          perl -pi -0777 -e 's%<:(\s*ef_)%<?$1%g' */*.papp
+
+	- fix obscure security glitch with nosession. If your
+          module was secure before it still is ;)
+	- some renames in macro/ssl.papp.
+	- fixed I18n's scan support :( nobody noticed :(:(:(
+	- use Location ~ instead of LocationMatch since mod_perl
+          forgets the "Match" after handling the first entry :(
+	- diehandler no longer tocuhes non-scalar exceptions.
+	- PApp::DataRef now tests autoincrement ids with !! instead of with
+          defined().
+        - apps are now (by default) matched with LocationMatch ^/appname(/|$)
+          which gives them a more directory-like appearance.
+	- exists now works on DataRef::DB_row objects, given they were created
+          using "preload => 1".
+	- translation domain is now inherited by subpackages, fixes the
+          "embedded packages don't get translated"-bug.
+	- PApp::Exception now "optimizes" some exception cases that often lead
+          to perl instability problems.
+	- URI 1.12 is required form now on. 1.09 cost JanMan a day debugging
+          (or fucking, or...).
+	- default module can be set in insert/embed, module might be empty.
+        - implemented http://www.w3.org/TR/xinclude/ in form of
+          PApp::XML::xml_include() that will soon be used throughout papp.
+	- ported PApp/Recode.xs to DEVEL9916, hopefully older versions are
+          still also supported.
+	- PApp.pm: new function setlocale.
+	- SURL_SET_LANG is now SURL_SET_LOCALE.
+	- renamed keys: papp_charset => papp_lcs, papp_lang => papp_locale.
+	- added (parts of) http://iso.plan9.de locale table to I18n/I18n.pm.
+        - removed unnecessary columns from I18n/I18n.pm data section. This
+          saved a lot of space and made it faster.
+	- the module named "*" is called when no other module name matches
+          (wildcard/default module).
+	- allow ".encoding" in language id's.
+	- fix generation bug, some races and unnecessary recompile problem.
+	- PApp::DataRef now dumps destruction errors to stderr (but does not
+          touch $@ in any way).
+	- renamed PApp::DataRef parameter force_utf8 to utf8.
+	- the xs part (surl & friends) did not always honour magic.
+	- ef_submit did not like the value argument.
+	- bugworkaround in escape_uri actually had a neccessary side-effect.
+	- poedit now allows editing of the current display charset.
+	- ef_checkbox now sets the ref correctly to undef or 1.
+	- SURL_POP etc. now work on references again.
+	- implemented ef_radio.
+	- updated PApp::User for the new lazy-uid-allocation scheme.
+	- renamed PApp::userid to getuid, exported PApp::User::userid.
+	- PApp::Application::run did not properly call load_prefs.
+	- properly downgrade to (fake) "iso-8859-1" when sending binary data.
+	- some modifications to allow for lazy allocation of userid
+          and sessionid, as well as hashed stateid allocation.
+	- minor cleanups in PApp/HTML, implemented selectbox, documented tag.
+	- fixed nosession handling (& more), removed some dead cows.
+	- fixing Config.pm.PL for users who use gid 0 with papp.
+	- removing prefix.psql from kis.papp.
+	- <language> now deprecated.
+	- renamed grp.longdesc to grp.comment.
+	- implemented <nosession> element. should be rewritten using namespaces
+	  and xslt ;).
+	- multiline MIME headers in mutlipart/form-data are now supported,
+	  although I've not yet seen a browser use it.
+	- one of the countless bugs in opera actually was useful in finding
+	  a bug in PApp's form-data handling.
 	- marked & moved Pconv && Recode into it's own subdir.
 	- fixed buggy flush logic AGAIN.
 	- enhanced make test a bit. should now do basic sanity checks.

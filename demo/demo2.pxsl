@@ -9,9 +9,9 @@
    <html>
    <title><xsl:value-of select="@module"/></title>
    <body link="#a000000" alink="#a00000" vlink="#a00000" text="#000000" bgcolor="#ffffb4">
-   <?slink "English", "/lang" => 'en':>
+   <?slink "English", SURL_SET_LOCALE('en'):>
    <xsl:text> </xsl:text>
-   <?slink "Deutsch", "/lang" => "de":>
+   <?slink "Deutsch", SURL_SET_LOCALE("de"):>
    <br/>
    <?slink __"Plain", style => 0:>
    <table bgcolor='#ffff00' border="1"><tr>
@@ -37,7 +37,7 @@
 
 <xsl:template match="node()|@*">
    <xsl:copy>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@*|node()"/>
    </xsl:copy>
 </xsl:template>
 

@@ -28,7 +28,7 @@ use PApp::SQL;
 
 use base Exporter;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT = qw(locked);
 
 =item locked BLOCK name, [timeout, [holdtime]]
@@ -42,15 +42,17 @@ meaning of the arguments.
 sub locked(&@) {
    my $block = shift;
    $lock = new PApp::Lock @_;
-   require POSIX;
    eval {
       local $SIG{__DIE__} = \&PApp::Exception::diehandler;
-      $lock->lock or fancydie "unable to aquire lock", $lock->{name},
-                              info => [ breaktime => "The lock expires ".
-                                                     POSIX::strftime("%Y-%m-%d %H:%M:%S %z", localtime $lock->breaktime)],
-                              info => [ timeout  => $lock->{timeout} ],
-                              info => [ holdtime => $lock->{holdtime} ],
-                     ;
+      $lock->lock or do {
+         require POSIX;
+         fancydie "unable to aquire lock", $lock->{name},
+                  info => [ breaktime => "The lock expires ".
+                            POSIX::strftime("%Y-%m-%d %H:%M:%S %z", localtime $lock->breaktime)],
+                  info => [ timeout  => $lock->{timeout} ],
+                  info => [ holdtime => $lock->{holdtime} ],
+                ;
+      };
       &$block;
    };
    {

@@ -245,8 +245,8 @@ Einstellung des Browsers, wobei man zweckmässigerweise ein Menü
 anbietet, in dem der Benutzer dies überschreiben kann:
 
 !block perl
- <?slink "I want English", SURL_SET_LANG => "en":>
- <?slink "Deutsch willich!", SURL_SET_LANG => "de":>
+ <?slink "I want English", SURL_SET_LOCALE("en"):>
+ <?slink "Deutsch willich!", SURL_SET_LOCALE("de"):>
 !endblock
 
 Auch die Spracheinstellung ist eine Preferences-Variable. Im Gegensatz
@@ -772,8 +772,8 @@ anderen embedded-Dialekten):
        __"PApp - demo", <?localtime:>
     </title>
 
-    <?slink "Deutsch", "/lang" => "de":>
-    <?slink "English", SURL_SET_LANG, 'en':>
+    <?slink "Deutsch", "/papp_locale" => "de":>
+    <?slink "English", SURL_SET_LOCALE('en'):>
 
     <p><?slink __"To the editor",  "editor":>
     <p><?slink __"Edit project 1", "editor", projectid => 1:>
@@ -810,7 +810,7 @@ ausgegeben.
 Die nächste Code-Zeile ist interessanter:
 
 !block verbatim
-    <?slink "Deutsch", "/lang" => "de":>
+    <?slink "Deutsch", "/papp_locale" => "de":>
 !endblock
 
 C<slink> ist PApps Art, eine Hypertext-Referenz (C<A>-Element) zu
@@ -819,18 +819,18 @@ erzeugen. C<slink> erwartet als erstes Argument den Inhalt des Verweises
 sogenannten C<surl>-Argumente, die bei vielen PApp-Funktionen angegeben
 werden können. C<surl>-Argumente sind im wesentlich "Name => Wert"-Paare,
 die dem Zielmodul als Argumente übergeben werden können. Im Beispiel
-ist das die Variable C</lang> (der Slash am Anfang markiert eine globale
-Variable), die auf den Wert "de" gesetzt wird. Das Ergebnis ist, dass
-Textmeldungen nun auf Deutsch übersetzt werden.
+ist das die Variable C</papp_locale> (der Slash am Anfang markiert eine
+globale Variable), die auf den Wert "de" gesetzt wird. Das Ergebnis ist,
+dass Textmeldungen nun auf Deutsch übersetzt werden.
 
 !block verbatim
-    <?slink "English", SURL_SET_LANG, 'en':>
+    <?slink "English", SURL_SET_LOCALE('en'):>
 !endblock
 
 Neben Argumenten kann man auch bestimmte "Cookies" in die
-C<surl>-Argumente einbauen. C<SURL_SET_LANG> z.B. setzt die Sprache auf
+C<surl>-Argumente einbauen. C<SURL_SET_LOCALE> z.B. setzt die Sprache auf
 den folgenden Wert und speichert ausserdem die Voreinstellungen ab,
-d.h. die Sprachwahl ist nun permanent. Neben C<SURL_SET_LANG> gibt es
+d.h. die Sprachwahl ist nun permanent. Neben C<SURL_SET_LOCALE> gibt es
 noch eine ganze Reihe weitere "Cookies" wie z.B.  C<SURL_EXEC>, mit dem
 man bei Auswahl des Links eine Unterroutine aufrufen lassen kann oder
 C<SURL_STYLE_GET>, mit dem man den Stil der URL einmalig überschreiben
@@ -1329,9 +1329,9 @@ dessen, was mit XSLT möglich ist.
     <html>
     <title><xsl:value-of select="@module"/></title>
     <body>
-    <?slink "English", "/lang" => 'en':>
+    <?slink "English", SURL_SET_LOCALE('en'):>
     <xsl:text> </xsl:text>
-    <?slink "Deutsch", "/lang" => "de":>
+    <?slink "Deutsch", SURL_SET_LOCALE("de"):>
     <br/>
     <?slink __"Fancy", style => 1:>
 
@@ -1366,9 +1366,9 @@ A1: XSLT-Quelltext "Superbunt und Superhässlich-Layout"
     <html>
     <title><xsl:value-of select="@module"/></title>
     <body link="#a000000" alink="#a00000" vlink="#a00000" text="#000000" bgcolor="#ffffb4">
-    <?slink "English", "/lang" => 'en':>
+    <?slink "English", SURL_SET_LOCALE('en'):>
     <xsl:text> </xsl:text>
-    <?slink "Deutsch", "/lang" => "de":>
+    <?slink "Deutsch", SURL_SET_LOCALE("de"):>
     <br/>
     <?slink __"Plain", style => 0:>
     <table bgcolor='#ffff00' border="1"><tr>

@@ -31,7 +31,7 @@ use PApp::I18n qw(normalize_langid);
 no bytes;
 use utf8;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 
 =item ($ppkg, $name, $code) = parse_file $papp, $path
 
@@ -57,6 +57,7 @@ sub parse_file {
    my $parser;
    my $curcode;
    my @curpath;
+   my @curnosession;
 
    my $root;
    my %code;
@@ -99,13 +100,14 @@ sub parse_file {
 
             if ($ppkg) {
                my $pkg = new PApp::Package;
-               $ppkg->{embed}{$attr{name}} = $pkg;
+               $ppkg->{pkg}{$attr{name}} = $pkg;
                $ppkg = $pkg;
             } else {
                $root and fancydie "$path must only contain a single <package>\n";
                $ppkg = $root = new PApp::Package;
             }
 
+            $ppkg->{domain}    = $curdom[-1][0];
             $ppkg->{name}      = $attr{name};
             $ppkg->{surlstyle} =
                  $attr{surlstyle} eq "get"   ? scalar &PApp::SURL_STYLE_GET
@@ -136,7 +138,7 @@ sub parse_file {
 
             if (defined $attr{src}) {
                # this is merely an include
-               my $src = PApp::Config::find_file $attr{src};
+               my $src = PApp::Util::find_file $attr{src}, ["papp"];
                eval { $load_fragment->($src) };
                $@ and fancydie "file '$attr{src}', included in line ".$self->current_line, $@;
             }
@@ -145,7 +147,7 @@ sub parse_file {
             @curppkg or $self->xpcroak("<$element> found outside any package (not yet supported)");
             push @curdom, [$attr{name} || $ppkg->{name}, normalize_langid($attr{lang} || "*")];
             $ppkg->{domain} = $curdom[-1][0];
-            push @{$ppkg->{langs}}, $curdom[-1][1];
+            push @{$ppkg->{langs}}, split /[ \t\n,]/, $curdom[-1][1];
             $papp->{file}{$path}{domain} = $curdom[-1][0];
             $papp->{file}{$path}{lang}   = $curdom[-1][1];
             $end = sub {
@@ -195,11 +197,12 @@ sub parse_file {
                name => $name, #FIXME#only needed for mark_statekey(local)
             };
             $pmod->{nosession} = $attr{nosession} if defined $attr{nosession};
+	    $pmod->{nosession} = $curnosession[-1] if @curnosession;
             push @curpmod, $pmod;
 
             $end = sub {
                my $data = $_[0];
-               delete $ppkg->{module}{$name};##d#FIXME#really needed?
+               delete $pmod->{name}; #FIXME# maybe name could come handy?
                if ($src) {
                   $self->xpcroak("<module>: no content allowed if src attribute used") if $data !~ /^\s*$/;
                } else {
@@ -232,21 +235,24 @@ sub parse_file {
                undef $pmod;
             };
 
+         } elsif ($element eq "nosession") {
+            defined $attr{target} or $self->xpcroak("<nosession>: required attribute 'target' missing");
+
+	    push @curnosession, $attr{target};
+
+	    $end = sub {
+	       pop @curnosession;
+	    };
+
          } elsif ($element eq "include") {
             $attr{src} or $self->xpcroak("<include>: required attrbiute 'src' missing");
 
-            my $src = PApp::Config::find_file $attr{src};
+            my $src = PApp::Util::find_file $attr{src}, ["papp"];
             $load_fragment->($src);
 
             $end = sub {
                $curchr[-1] .= $_[0];
             };
-
-         } elsif ($element eq "embed") {
-            @curppkg or $self->xpcroak("<$element> found outside any package");
-            $attr{name} or $self->xpcroak("<embed>: required attribute 'name' not specified");
-            $attr{src}  or $self->xpcroak("<embed>: attribute 'src' is currently required!");
-            die "<embed> not yet supported\n";
 
          } elsif ($element eq "import") {
             @curppkg or $self->xpcroak("<$element> found outside any package");
@@ -268,7 +274,7 @@ sub parse_file {
             } else {
                $attr{src} or $self->xpcroak("<import>: required attribute 'src' not specified");
                $attr{export} eq "yes" and $self->xpcroak("<import>: attribute export=yes currently unsupported");#FIXME#NYI
-               my $path = PApp::Config::find_file $attr{src};
+               my $path = PApp::Util::find_file $attr{src}, ["papp"];
                defined $path or $self->xpcroak("<import>: imported file '$attr{src}' not found");
                $ppkg->{import}{$path}++;
             }
@@ -306,10 +312,13 @@ sub parse_file {
             $curwant[-1] = 1;
             $end = sub {
                my $code = shift;
-               no utf8; #d# 5.7.0 bug workaround#FIXME#
-               $code =~ s{(?<!\w)sub (\w+)\*(?=\W)}{
-                  push @{$ppkg->{export}}, $1; "sub $1 "
-               }eg;
+               {
+                  no utf8; # DEVEL7952 workaround
+                  use bytes; # DEVEL9916 workaround && faster
+                  $code =~ s{(?<!\w)sub (\w+)\*(?=\W)}{
+                     push @{$ppkg->{export}}, $1; "sub $1 "
+                  }eg;
+               }
                $curchr[-1] .= $li . perl2pcode $code;
             };
 
@@ -381,25 +390,18 @@ sub parse_file {
          } elsif ($element eq "translate") {
             @curppkg or $self->xpcroak("<$element> found outside any package");
             for (split /\s+/, $attr{fields}) {
+               my $langs = $attr{lang} || $curdom[-1][1];
+               push @{$ppkg->{langs}}, split /[ \t\n,]/, $langs;
                $papp->{translate}{$_} = [
                   $ppkg->{database},
                   $curdom[-1][0],
-                  normalize_langid($attr{lang}) || $curdom[-1][1],
+                  $langs,
                   $attr{style} || "plain"
                ];
             }
 
          } elsif ($element eq "language") {
-            @curppkg or $self->xpcroak("<$element> found outside any package");
-            defined $attr{lang} or $self->xpcroak("<language>: required attribute 'lang' is missing");
-            defined $attr{desc} or $self->xpcroak("<language>: required attribute 'desc' is missing");
-
-            my $lang = $attr{lang};
-
-            $ppkg->{lang}{$lang} = $attr{desc};
-            for (split /\s+/, $attr{aliases}) {
-               $ppkg->{lang}{$_} = \$lang;
-            }
+	    warn("element <language> is deprecated and does no longer server any purpose, while parsing $path\n");
 
          } elsif ($element eq "fragment") {
             # empty semantics
@@ -446,7 +448,7 @@ sub parse_file {
                  "</fragment>";
 
          local $SIG{__DIE__} = \&PApp::Exception::diehandler;
-         $parser->parse($file)
+         $parser->parse($file);
       };
 
       my $error = $@;

@@ -1,4 +1,4 @@
-=head1 NAME;
+=head1 NAME
 
 PApp::Exception - exception handling for PApp
 
@@ -23,7 +23,7 @@ use PApp::HTML;
 
 use utf8;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT = qw(fancydie try catch);
 
 no warnings;
@@ -62,7 +62,12 @@ Example:
 =cut
 
 sub diehandler {
-   unless (UNIVERSAL::isa $_[0], PApp::Exception::) {
+   unless (ref $_[0]) {
+      # the next few lines are a major stability improvement, as well as a nice speedup
+      return if $_[0] =~ m%in use at .*XML/Parser/Expat.pm line \d+\.$%;
+      # better not touch utf8_heavy, since this is called at interesting times....
+      return if $_[0] =~ m%.*at .*/utf8_heavy.pl line \d+\.$%;
+
       # wether compatible is a good idea here is questionable...
       fancydie(__"caught a die", $_[0], compatible => $_[0], skipcallers => 1);
    }
@@ -86,7 +91,7 @@ sub PROPAGATE {
    $_[0];
 }
 
-=item $errobj = new param => value..
+=item $errobj = new PApp::Exception param => value..
 
 Create and return a new exception object. The object is overloaded,
 stringification will call C<as_string>.
@@ -276,7 +281,7 @@ C<$additional_info> can be a multi-line description of the problem.
 The rest of the function call consists of named arguments that are
 transparently passed to the PApp::Exception::new constructor (see above), with the exception of:
 
- skipcallers  the number of calller levels to skip in the backtrace
+ skipcallers  the number of caller levels to skip in the backtrace
 
 =item fancywarn <same arguments as fancydie>
 
@@ -493,7 +498,7 @@ sub errorpage {
 
 sub ep_save {
    my $self = shift;
-   __"[saving is not currently implemented]";
+   __"[saving is not yet implemented]";
 }
 
 sub ep_shortinfo {

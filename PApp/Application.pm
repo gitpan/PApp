@@ -30,18 +30,17 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 
 =item $papp = new PApp::Application args...
 
 =cut
 
-# my standard constructor ;->
 sub new {
    my $class = shift;
    my $self = bless { @_ }, $class;
 
-   my $path = PApp::Config::find_file $self->{path};
+   my $path = PApp::Util::find_file $self->{path}, ["papp"];
 
    -f $path or fancydie "papp-application '$self->{path}' not found\n";
 
@@ -71,11 +70,6 @@ sub mount {
 
 }
 
-sub umount {
-   my $self = shift;
-   die;#FIXME#neccessary???
-}
-
 =item $ppkg->preprocess
 
 Parse the package (includign all subpackages) and store the configuration
@@ -93,6 +87,8 @@ sub preprocess {
 
    if ($pid == 0) {
       close $R;
+
+      #print "gdb /usr/app/sbin/httpd $$\n"; #<STDIN>;
 
       eval {
          PApp::SQL::reinitialize;
@@ -151,17 +147,18 @@ sub load_config {
 
    return if $self->{root};
 
-   my $config = sql_fetch DBH, "select config from pkg where id = ?", $self->{path};
+   my ($ctime, $config) = sql_fetch DBH, "select ctime, config from pkg where id = ?", $self->{path};
 
    unless ($config) {
       $self->preprocess;
-      $config = sql_fetch DBH, "select config from pkg where id = ?", $self->{path};
+      ($ctime, $config) = sql_fetch DBH, "select ctime, config from pkg where id = ?", $self->{path};
    }
 
    $config or fancydie "load_config: unable to compile package", $self->{path};
 
    $config = Storable::thaw $config;
 
+   $self->{ctime} = $ctime;
    while (my ($k, $v) = each %$config) {
       $self->{$k} = $v;
    }
@@ -177,13 +174,14 @@ sub load_code {
    $self->load_config;
 
    $self->{path} or fancydie "can't load_code pathless packages";
-   
-   my $code = sql_fetch DBH, "select code from pkg where id = ?", $self->{path};
 
-   unless ($code) {
+   my $code;
+
+   while() {
+      $code = sql_fetch DBH, "select code from pkg where id = ? and ctime = ?", $self->{path}, $self->{ctime};
+      last if $code;
       $self->unload;
       $self->load_config;
-      $code = sql_fetch DBH, "select code from pkg where id = ?", $self->{path};
    }
 
    $code or fancydie "load_config: unable to compile package", $self->{path};
@@ -236,11 +234,12 @@ sub unload {
    my $self = shift;
 
    # this is most important
-   sql_exec DBH, "delete from pkg where id = ?", $self->{path};
+   sql_exec DBH, "delete from pkg where id = ? and ctime = ?", $self->{path}, $self->{ctime};
 
    delete $self->{cb_src};
    delete $self->{cb};
 
+   delete $self->{ctime};
    delete $self->{compiled};
    delete $self->{translate};
    delete $self->{file};
@@ -349,7 +348,7 @@ sub check_deps($) {
 sub reload {
    my $self = shift;
    my $code = $self->{compiled};
-   warn("reloading application $self->{name}");
+   warn "reloading application $self->{name}";
    $self->unload;
    $self->load_config;
    $self->load_code if $code;
@@ -425,7 +424,7 @@ sub run {
             or fancydie "error connecting to database ".$PApp::SQL::Database->dsn, $DBI::errstr;
    }
 
-   PApp::Package::run ($papp->{root}, \$modules);
+   $papp->{root}->run(\$modules);
 }
 
 =item $papp->new_package(same arguments as PApp::Package->new)

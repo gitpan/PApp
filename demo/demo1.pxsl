@@ -9,15 +9,22 @@
    <html>
    <title><xsl:value-of select="@module"/></title>
    <body>
-   <?slink "English", "/lang" => 'en':>
+   <?slink "English", SURL_SET_LOCALE('en'):>
    <xsl:text> </xsl:text>
-   <?slink "Deutsch", "/lang" => "de":>
+   <?slink "Deutsch", SURL_SET_LOCALE("de"):>
    <br/>
    <?slink __"Fancy", style => 1:>
 
    <hr/>
    <xsl:apply-templates/>
    <hr/>
+   <:ef_begin:>
+   __"Encoding":
+   <:$S{cs} ||= "iso-8859-1":>
+   <:ef_string \$S{cs}:>
+   <:$PApp::output_charset = $S{cs} if PApp::Recode::charset_valid($S{cs}):>
+   <:ef_end:>
+   <:tinychat:>
    <:debugbox:>
    </body>
    </html>
@@ -25,7 +32,7 @@
 
 <xsl:template match="node()|@*">
    <xsl:copy>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@*|node()"/>
    </xsl:copy>
 </xsl:template>
 

@@ -41,7 +41,7 @@ use PApp::Env;
 
 use base Exporter;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT = qw();
 
 =head2 CALLBACKS
@@ -206,9 +206,9 @@ sub expire_db {
                      $keepuser, $keepreguser;
 
    while ($st->fetch) {
-      undef $user if $user eq "";
-      sql_exec "delete from usergrp where userid = ?", $user;
-      sql_exec "delete from user where id = ?", $user;
+      #undef $user if $user eq "";
+      sql_exec "delete from usergrp where userid = ?", $id;
+      sql_exec "delete from user where id = ?", $id;
    }
 }
 

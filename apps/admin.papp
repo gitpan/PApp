@@ -34,7 +34,7 @@ __"Currently Mounted Applications":<br />
 
       ?><tr><td>$k</td><td>$v->{name}</td><td>$v->{path}</td><td align="right">$config</td><td align="right">$code</td><:
 #if admin_p
-      ?><td><?eval { $v->slink(__"[try to enter]") } || "$@"?></td><: <!-- aus sicherheitsgruenden disabled -->
+      ?><td><?eval { $v->slink(__"[try to enter]") } || "$@"?></td><:
 #endif
       ?></tr><:
    }
@@ -45,11 +45,11 @@ __"Currently Mounted Applications":<br />
 
 <module name="acedit"><phtml><![CDATA[
 <h2>__"Edit Access Rights"</h2>
-<:$ppkg->embed('acedit'):>
+<:$ppkg->{pkg}{acedit}->embed:>
 ]]></phtml></module>
 
 <module name="poedit"><phtml><![CDATA[
-<:$ppkg->embed('poedit'):>
+<:$ppkg->{pkg}{poedit}->embed:>
 ]]></phtml></module>
 
 <module name="apps"><phtml><![CDATA[
@@ -88,38 +88,38 @@ __"Currently Mounted Applications":<br />
    my $row = $S{appref} ||= new PApp::DataRef 'DB_row',
       table => "app", where => [id => $A{appid}];
 
-   $row->{mountconfig} ||= "\$Location{'/$row->{name}'} = \\%papp_handler," if defined $row->{name};
+   $row->{mountconfig} ||= "\$Location{'~ ^/$row->{name}(/|\$)'} = \\%papp_handler," if defined $row->{name};
 ?>
 
 <h2>__"Edit Application:" $row->{name}</h2>
 
 <?slink __"[BACK]", "apps":>
 
-<:ef_begin:>
+<?ef_begin:>
 <table>
 
-<tr><td>__"app. set"</td><td><:ef_relation \$row->{appset}, ["id, name from appset"], 0 => __"[DISABLED]":></td></tr>
-<tr><td>__"app. name"</td><td><:ef_string \$row->{name}, 60:></td>
+<tr><td>__"app. set"</td><td><?ef_relation \$row->{appset}, ["id, name from appset"], 0 => __"[DISABLED]":></td></tr>
+<tr><td>__"app. name"</td><td><?ef_string \$row->{name}, 60:></td>
 <td>e.g. <tt>testapp</tt></td>
 </tr>
-<tr><td>__"source path"</td><td><:ef_string \$row->{path}, 60:></td>
+<tr><td>__"source path"</td><td><?ef_string \$row->{path}, 60:></td>
 <td>e.g. <tt>apps/test</tt></td>
 </tr>
-<tr><td>__"mount config"</td><td><:ef_text { nowrap => nowrap }, \$row->{mountconfig}, 60,8:></td>
+<tr><td>__"mount config"</td><td><?ef_text { nowrap => nowrap }, \$row->{mountconfig}, 60,8:></td>
 <td>e.g.<pre>
-$Location{'/'.$papp->{name}} = \%papp_handler;
+$Location{"~ ^/$papp->{name}(/|\$)"} = \%papp_handler;
 </pre></td>
 </tr>
-<tr><td>__"app. config"</td><td><:ef_text { nowrap => nowrap }, \$row->{config}, 60,8:></td>
+<tr><td>__"app. config"</td><td><?ef_text { nowrap => nowrap }, \$row->{config}, 60,8:></td>
 <td>e.g.<pre>
 database => (new PApp::SQL::Database "", "DBI:mysql:<em>mydb</em>", '<em>user</em>', '<em>pass</em>'),
 delayed  => 0,
 </pre></td>
 </tr>
-<tr><td>&#160;</td><td><:ef_submit __"Save Changes", "apps":></td></tr>
+<tr><td>&#160;</td><td><?ef_submit __"Save Changes", "apps":></td></tr>
 
 </table>
-<:ef_end:>
+<?ef_end:>
 
 ]]></phtml></module>
 
@@ -178,9 +178,9 @@ __"You need to authentificate yourself first"<p />
 # if admin_p
 <td><?slink __"Edit Access Rights", "admin/acedit,admin/acedit/":></td>
 <td><?slink __"Edit Applications", "admin/apps":></td>
-<td><?slink __"Flush Package Cache", SURL_EXEC, $ppkg->refer('flush_cache'):></td>
+<td><?slink __"Flush Package Cache", SURL_EXEC($ppkg->refer('flush_cache')):></td>
 #  if (PApp->interface)[0] eq "PApp::Apache"
-<td><?slink __"Restart Apache (USR1)", SURL_EXEC, $ppkg->refer('httpd_restart'):></td>
+<td><?slink __"Restart Apache (USR1)", SURL_EXEC($ppkg->refer('httpd_restart')):></td>
 #  endif
 # endif
 # if access_p "poedit"
@@ -196,7 +196,7 @@ __"You need to authentificate yourself first"<p />
 
 <p />
 
-<:$ppkg->embed('admin'):>
+<:$ppkg->{pkg}{admin}->embed:>
 #endif
 
 <:tinychat_bot:>

@@ -17,6 +17,13 @@
    sub langs   { join ",", grep $S{langs}{$_} && $S{lang} ne $_, keys %{$S{langs}} }
 ]]></perl>
 
+<state keys="encoding" preferences="yes"/>
+
+<macro name="encoding"><phtml><![CDATA[
+   <?ef_sbegin:>__"Encoding:" <?ef_string \$S{encoding}, 12:><?ef_end:>
+   <:$S{encoding} && content_type "text/html", $S{encoding}:>
+]]></phtml></macro>
+
 <module name="">
 <state keys="domains langs lang appset" preferences="yes"/>
 <phtml><![CDATA[
@@ -29,6 +36,11 @@
 <:
    my %domain;
 
+   sub is_mul($) {
+      # should be done inside PApp::I18n
+      $_[0] =~ /[ \t\n,]/ ? "*" : $_[0];
+   }
+
    for my $papp (values %PApp::papp) {
       # a) files
       my %files = $papp->files(1);
@@ -38,9 +50,9 @@
 
       # b) database
       while (my($k,$v) = each %{$papp->{translate}}) {
-         my ($database, $domain, $lang, $style) = @$v;
+         my ($database, $domain, $langs, $style) = @$v;
          $database ||= $papp->{database}; # should be properly fixed
-         $domain{$domain}{table}{$k} = [$database, $lang, $style];
+         $domain{$domain}{table}{$k} = [$database, $langs, $style];
       }
    }
 
@@ -50,12 +62,12 @@
       locked {
          echo "scanning domain $domain\n";
          scan_init $domain;
-            while (my($path, $lang) = each %{$v->{file}}) {
-               scan_file $path, $lang;
+            while (my($path, $langs) = each %{$v->{file}}) {
+               scan_file $path, is_mul $langs;
             }
             while (my($field, $v) = each %{$v->{table}}) {
-               my ($database, $lang, $style) = @$v;
-               scan_field $database, $field, $style, $lang;
+               my ($database, $langs, $style) = @$v;
+               scan_field $database, $field, $style, is_mul $langs;
             }
          scan_end;
       } "papp_poedit_scan_$domain", 60, 60*15;
@@ -84,14 +96,13 @@
 <tr><td>
    <h2>__"Translation Editor"</h2>
 </td><td>
-   <:
-      ef_begin;
-      :>__"Application Set"&#160;<:
-      ef_relation \$S{appset}, ["id, name from appset order by name"],
-                  "%" => __"[ALL]", 0 => __"[DISABLED]";
-      ef_submit __"Set";
-      ef_end;
-   :>
+   <?ef_begin:>
+   __"Application Set"&#160;
+   <?ef_relation \$S{appset}, ["id, name from appset order by name"],
+                  "%" => __"[ALL]", 0 => __"[DISABLED]":>
+   <?ef_submit __"Set/Refresh":>
+   <?ef_end:>
+   <:encoding:>
 </td></tr>
 
    <:
@@ -183,19 +194,19 @@ __"<small>
       <:$S{lang} ||= (keys %lang)[0]:>
       <:$lang{$S{lang}} ||= 4:>
 
-      <:ef_sbegin SURL_SAVE_PREFS:>
-         <td><:ef_selectbox \$S{lang},
+      <?ef_sbegin SURL_SAVE_PREFS:>
+         <td><?ef_selectbox \$S{lang},
                   map {
                          ($_, "$_ [".translate_langid($_, $papp_ppkg_table->lang)."]")
-                      } grep $_ ne "*", keys %lang
+                      } grep $_ ne "*", sort keys %lang
              :></td>
-         <td><:ef_submit __"Set":></td>
-      <:ef_end:>
+         <td><?ef_submit __"Set":></td>
+      <?ef_end:>
 
-      <:ef_sbegin SURL_SAVE_PREFS:>
-         <td><:ef_string \$S{lang}, 10:></td>
-         <td><:ef_submit __"Set":></td>
-      <:ef_end:>
+      <?ef_sbegin SURL_SAVE_PREFS:>
+         <td><?ef_string \$S{lang}, 10:></td>
+         <td><?ef_submit __"Set":></td>
+      <?ef_end:>
 
    </tr></table>
 </td>
@@ -271,15 +282,22 @@ __"<small>
 
 <table cellpadding="0" cellspacing="0" border="0" bgcolor="black"   width="100%"><tr><td>
 <table cellpadding='4' cellspacing="1" border="0" bgcolor='#e0e0e0' width='100%'>
-   <tr><td><h2>__"Translation Entries"</h2></td></tr>
+   <tr><td>
+      <table width="100%"><tr><td>
+         <h2>__"Translation Entries"</h2>
+      </td><td align="right">
+         <:encoding:>
+      </td></tr>
+      </table>
+   </td></tr>
    <tr><td><?slink __"Back to the translation menu", "":></td></tr>
 </table>
 </td></tr></table>
 <br />
-<:ef_sbegin:>
+<?ef_sbegin:>
 <table cellpadding="0" cellspacing="0" border="0" bgcolor="black"   width="100%"><tr><td>
 <table cellpadding='4' cellspacing="1" border="0" bgcolor='#e0e0e0' width='100%'>
-   <tr><td>__"Limit view to entries containing"&#160;<:ef_string \$S{search}:></td></tr>
+<tr><td>__"Limit view to entries containing"&#160;<?ef_string \$S{search}:></td></tr>
 <tr><td>
 
    <: $S{begin}  ||=  0 :>
@@ -331,7 +349,7 @@ __"<small>
 </td></tr>
 </table>
 </td></tr></table>
-<:ef_end:>
+<?ef_end:>
 
 ]]></phtml></module>
 
@@ -340,15 +358,22 @@ __"<small>
 <state keys="msgstr msgid" local="yes"/>
 <state keys="width" preferences="yes"/>
 <phtml><![CDATA[
-<?cform?>
 <table cellpadding="0" cellspacing="0" border="0" bgcolor="black"   width="100%"><tr><td>
 <table cellpadding='4' cellspacing="1" border="0" bgcolor='#e0e0e0' width='100%'>
-   <tr><td colspan="2"><h2>__"Edit a translation entry"</h2></td></tr>
+   <tr><td colspan="2">
+      <table width="100%"><tr><td>
+         <h2>__"Edit a translation entry"</h2>
+      </td><td align="right">
+         <:encoding:>
+      </td></tr>
+      </table>
+   </td></tr>
    <tr><td colspan="2"><?slink __"Back to the translation menu", "":></td></tr>
    <tr><td colspan="2"><?slink __"Return to the directory view", "view":></td></tr>
 </table>
 </td></tr></table>
 <br />
+<?cform?>
 <table cellpadding="0" cellspacing="0" border="0" bgcolor="black"   width="100%"><tr><td>
 <table cellpadding='4' cellspacing="1" border="0" bgcolor='#e0e0e0' width='100%'>
    <:
@@ -457,9 +482,13 @@ __"<small>
       <:}
    ?>
 
-   <tr><th width="48%"><?sprintf __"Message (in language '%s')", $idlang:></th><th width="48%">
+   <tr><th width="48%"><?
+                         Convert::Scalar::utf8_on #d# DEVEL7952, DEVEL9021
+                         sprintf __"Message (in language '%s')", $idlang:></th><th width="48%">
           <?submit "decwidth", "<<<<<"?>
-          <?sprintf __"Translation (to language '%s')", $S{lang}:>
+          <?
+            Convert::Scalar::utf8_on #d# DEVEL7952, DEVEL9021, DEVEL9916
+            sprintf __"Translation (to language '%s')", $S{lang}:>
           <?submit "incwidth", ">>>>>"?>
        </th></tr>
    <tr><td>
@@ -483,9 +512,9 @@ __"<small>
        </td>
    </tr>
 </table>
+<?endform:>
 </td></tr></table>
 
-<?endform:>
 ]]></phtml></module>
 
 </domain>

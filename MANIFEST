@@ -14,6 +14,7 @@ PApp/Admin.pm
 PApp/FormBuffer.pm
 PApp/Exception.pm
 PApp/Application.pm
+PApp/ECMAScript.pm
 PApp/Package.pm
 PApp/Util.pm
 PApp/Parser.pm
@@ -25,6 +26,8 @@ PApp/CGI.pm
 PApp/Apache.pm
 PApp/XML.pm
 PApp/XSLT.pm
+PApp/XSLT/Sablotron.pm
+PApp/XSLT/LibXSLT.pm
 PApp/Env.pm
 PApp/Callback.pm
 PApp/DataRef.pm
@@ -58,6 +61,7 @@ apps/bench.papp		benchmark
 apps/sbench.papp	benchmarks using redirects, written by Stefan Traby <stefan@sime.com>
 
 demo/demo.papp
+demo/README
 demo/demo1.pxsl
 demo/demo2.pxsl
 
@@ -71,6 +75,9 @@ widget/acedit.papp	simple user & access rights editor
 
 style/simple.xsl	simple stylesheet for developing new stylesheets
 style/html.xsl		not-so-simple stylesheet that allows html-in-html
+style/embed.xsl		the workhorse for html.xsl, ready to be used
+style/copy.xsl		the "copy everything else" rule used often
+style/normalize-text.xsl	reduce the amount of whitespace in the result
 
 t/00_load.t
 
@@ -83,6 +90,7 @@ i18n/iso3166.po
 
 bin/papp-env
 bin/papp-admin
+bin/papp-httpd
 
 papp-install
 i18n-upgradeutf8
@@ -96,3 +104,9 @@ eg/exec.cgi		mount an appset using cgi/CGI::SpeedyCGI
 doc/intro.sdf		lame english introduction (no tutorial)
 doc/pws2001.sdf		the perl-workshop-2001 introduction/tutorial (german)
 
+xcms/xcms.papp		The eXtensible Content Management System
+xcms/xcms.sql
+xcms/README
+
+simple-edit/x-papp-edit	a very very simple system to do client-side editing
+simple-edit/simple-edit.papp

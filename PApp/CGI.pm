@@ -40,7 +40,7 @@ use Exporter;
 BEGIN {
    @ISA = (PApp::Base::);
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.12;
+   $VERSION = 0.121;
 }
 
 =head2 FUNCTIONS
@@ -83,7 +83,7 @@ This class only contains one user-visible-method: C<init>.
 
 *PApp::OK     = sub () { 99 };
 
-=item $first = init PApp::CGI
+=item $first = init PApp::CGI [@args]
 
 This method should be called once for each request, to initialize the
 request structure. It also checks wether this is the first request served
@@ -95,7 +95,8 @@ false. This can be used to configure PApp once.
 my $once;
 
 sub init {
-   $PApp::request = new PApp::CGI::Request;
+   shift; # $class
+   $PApp::request = new PApp::CGI::Request @_;
    !$once++;
 }
 
@@ -139,7 +140,7 @@ sub mount_appset {
          $$routput =
             "<html><head><title>PApp::Appset $appset</title></head><body>" .
             (join "", map {
-               "<a href=".(escape_attr "$location/$_").">$_</a><br />"
+               "<a href=".(PApp::HTML::escape_attr("$location/$_")).">$_</a><br />"
             } sort keys %app).
             "</body></html>";
          PApp::flush_cvt;
@@ -192,7 +193,7 @@ sub warn {
 }
 
 sub new {
-   my $class = $_[0];
+   my $class = shift;
 
    if ($ENV{GATEWAY_INTERFACE} =~ /^CGI\//) {
       $class = bless {
@@ -230,10 +231,11 @@ sub new {
             auth_type		=> $ENV{AUTH_TYPE},
             user		=> $ENV{REMOTE_USER},
          }, PApp::CGI::Connection),
+         @_,
       }, $class;
    } else {
       die "cgi environment currently required\n";
-   }  
+   }
 
    $class;
 }
@@ -333,13 +335,20 @@ sub as_string {
 
 sub send_http_header {
    my $self = shift;
-   while (my ($h, $v) = each %{$self->{headers_out}}) {
-      print "$h: $v\r\n";
+
+   if ($self->{nph}) {
+      # nph scripts are often a bad idea
+      my $status = delete $self->{headers_out}{Status} || 200;
+      print "HTTP/1.0 $status Status $status\015\012Connection: close\015\012";
    }
-   print "\r\n";
+   while (my ($h, $v) = each %{$self->{headers_out}}) {
+      print "$h: $v\015\012";
+   }
+   print "\015\012";
 }
 
 sub print {
+   use bytes;
    my $self = shift;
    print @_;
 }

@@ -1,13 +1,14 @@
 <package name="demo"> <domain lang="en">
 
 <!-- out default database -->
-<database dsn="DBI:mysql:demodb"/>
+<database dsn="DBI:mysql:demodb" username="xxx" password="xxx"/>
 
 <translate fields="project.name place.name" lang="en"/>
 <translate fields="project.description" lang="*" style="auto"/>
 
 <import src="macro/util"/>
 <import src="macro/editform"/>
+<import src="macro/tinychat"/>
 
 <perl><![CDATA[
    $stylesheet[0] = $ppkg->load_stylesheet("demo/demo1");
@@ -31,20 +32,21 @@
 <phtml><![CDATA[
 
 #if defined $S{projectid}
-<:ef_begin:>
+<?ef_begin:>
 
 <:my $row = new PApp::DataRef 'DB_row',
         table => "project",
         where => [id => $S{projectid}]:>
 
 <table>
-<tr><td>__"Name":</td><td><:ef_string \$row->{name}, 40:></td></tr>
-<tr><td>__"Budget"</td><td><:ef_string \$row->{budget}, 8:></td></tr>
-<tr><td>__"Description":</td><td><:ef_text \$row->{description}, 60, 10:></td></tr>
-<tr><td><:ef_submit __"Update":></td></tr>
+<tr><td>__"Name":</td><td><?ef_string \$row->{name}, 40:></td></tr>
+<tr><td>__"Place":</td><td><?ef_relation \$row->{place}, ["id, name from place"]:></td></tr>
+<tr><td>__"Budget"</td><td><?ef_string \$row->{budget}, 8:></td></tr>
+<tr><td>__"Description":</td><td><?ef_text \$row->{description}, 60, 10:></td></tr>
+<tr><td><?ef_submit __"Update":></td></tr>
 </table>
 
-<:ef_end:>
+<?ef_end:>
 #else
 <table><tr><th>__"Project"</th><th>__"Budget"</th></tr>
 <:

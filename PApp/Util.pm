@@ -15,10 +15,17 @@ PApp::Util - various utility functions that didn't fit anywhere else
 package PApp::Util;
 
 use Carp;
+use URI;
+
 use base 'Exporter';
 
-$VERSION = 0.12;
-@EXPORT_OK = qw(format_source dumpval digest append_string_hash uniq);
+$VERSION = 0.121;
+@EXPORT_OK = qw(
+      format_source dumpval sv_peek
+      digest
+      append_string_hash uniq
+      find_file fetch_uri load_file
+);
 
 =item format_source $source
 
@@ -125,6 +132,84 @@ sub uniq {
       push @res, $_;
    }
    @res;
+}
+
+=item sv_peek $sv
+
+Returns a very verbose dump of the internals of the given sv. Calls the
+C<sv_peek> core function. If you don't know what I am talking then this
+function is not for you.
+
+=cut
+
+# in PApp.xs currently ;(
+
+=item fetch_uri $uri
+
+Tries to fetch the document specified by C<$uri>, returning C<undef>
+on error. As a special "goody", uri's of the form "data:,body" will
+immediately return the body part.
+
+=cut
+
+sub fetch_uri {
+   my ($uri, $head) = @_;
+   if ($uri =~ m%^/|^file:///%i) {
+      # simple file URI
+      $uri = URI->new($uri, "file")->file;
+      return -f $uri if $head;
+      local($/,*FILE);
+      open FILE, "<", $uri or return ();
+      return <FILE>;
+   } elsif ($uri =~ s/^data:,//i) {
+      return 1 if $head;
+      return $uri;
+   } else {
+      require LWP::Simple;
+      return LWP::Simple::head($uri) if $head;
+      return LWP::Simple::get($uri);
+   }
+}
+
+=item find_file $uri [, \@extensions] [, @bases]
+
+Try to locate the specified document. If the uri is a relative uri (or a
+simple unix path) it will use the URIs in C<@bases> and PApp's search path
+to locate the file. If bases contain an arrayref than this arrayref should
+contain a list of extensions (without a leading dot) to append to the URI
+while searching the file.
+
+=cut
+
+sub find_file {
+   my $file = shift;
+   my @ext;
+   my %seen;
+   for my $path (@_, PApp::Config::search_path) {
+      if (ref $path eq "ARRAY") {
+         @ext = map ".$_", @$path;
+      } else {
+         for my $ext ("", @ext) {
+            my $uri = URI->new_abs("$file$ext", "$path/");
+            next if $seen{"$uri"}++; # optimization, probably not worth the effort
+            return $uri if fetch_uri $uri, 1;
+         }
+      }
+   }
+   ();
+}
+
+=item load_file $uri [, @extensions]
+
+Locate the document specified by the given uri using C<find_file>, then
+fetch and return it's contents using C<fetch_uri>.
+
+=cut
+
+sub load_file {
+   my $path = &find_file
+      or return;
+   return fetch_uri $path;
 }
 
 1;

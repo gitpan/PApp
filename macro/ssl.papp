@@ -27,14 +27,14 @@ uses $request->hostname, which may give unexpected results.
 If you only define url_prefix_ssl (say to "https://secure.w3.org"),
 the following can happen if the plain request goes to http://seppl.org:
 
-normal sections     http://seppl.org
-<:ssl_needed:>      https://secure.w3.org
-<:ssl_user_needed:> https://secure.w3.org:444
+normal sections      http://seppl.org
+<:require_ssl:>      https://secure.w3.org
+<:require_ssl_user:> https://secure.w3.org:444
 
 if you switch directly from normal to auth:
 
-normal sections     http://seppl.org
-<:ssl_user_needed:> https://seppl.org:444 
+normal sections      http://seppl.org
+<:require_ssl_user:> https://seppl.org:444 
 
 So PLEASE override all three settings (url_prefix_nossl, url_prefix_ssl
 and url_prefix_sslauth) to get a consistent behavior...
@@ -81,11 +81,11 @@ redirection.
 
 To enforce SSL you can use:
 
-<:ssl_needed:>
+<:require_ssl:>
 
 and if you require strict client authentification you can use:
 
-<:ssl_user_needed:>
+<:require_ssl_user:>
 
 =head1 Apache Sample Configuration
 
@@ -125,12 +125,12 @@ Returns the user name of the client certificate or C<undef>
 if there is no SSL-session at all or if the SSL-session is
 anonymous (without a client certificate)
 
-=item ssl_needed
+=item require_ssl
 
 Redirects the current request to a secure non-user authentificated
 SSL connection if insecure http protocol is used.
 
-=item ssl_user_needed
+=item require_ssl_user
 
 Like C<ssl_needed> but requires user authentification.
 
@@ -145,28 +145,71 @@ This can be used to drop SSL security.
 
 ]]></perl>
 
-<import pm="PApp::User"/>
 
-<macro name="_sslrealautologin($)"><perl><![CDATA[
-# we don't check if the Cert is valid and
-# not expired, Apache does this; place revokes there :)
-   user_login $_[0];
-]]></perl></macro>
+<perl><![CDATA[
+
+use PApp qw(*state $userid getuid);
+use PApp::User;
+
+sub _compress_cert($) {
+ my ($ret) = '';
+ ($ret = $_[0]) =~ s/^-----.*\n//mg;
+ $ret =~ s/\n//mgs;
+ $ret
+}
+
+sub _decompress_cert($) {
+      my ($ret);
+      ($ret .= $_[0]) =~ s/(.{1,64})/$1\n/sg;
+      "-----BEGIN CERTIFICATE-----\n" . $ret . "-----END CERTIFICATE-----\n"
+}
+
+sub update_cert($;$)
+{
+   my ($ccrt, $id) = (_compress_cert($_[0]), $_[1]);
+   $id ||= 0;
+   # replace does not work with blob, because blob can't be unique...
+   sql_exec $PApp::Config::DBH,
+   	'delete from ssluser where cert = ?', $ccrt;
+   sql_exec $PApp::Config::DBH,
+   	'insert into ssluser (userid,cert) values (?,?)', $id, $ccrt;
+}
+
+# 0 = already in DB unassigned;banned , -1 = never seen before.
+sub get_uid_by_cert($)
+{
+    my ($id) = sql_fetch $PApp::Config::DBH,
+       'select userid from ssluser where cert = ?', _compress_cert($_[0]);
+       $id || -1;
+}
+
+sub get_cert_by_uid($)
+{
+   return undef unless $_[0];
+   my ($crt) = sql_fetch $PApp::Config::DBH,
+      'select cert from ssluser where userid = ?', $_[0];
+   $crt ? _decompress_cert($crt) : undef;
+}
+
+sub get_unassigned_certs()
+{
+   map(_decompress_cert $_, sql_fetchall $PApp::Config::DBH,
+         'select cert from ssluser where userid = 0')
+}
+
+]]></perl>
 
 <macro name="_sslautologin()"><perl><![CDATA[
- $su = $ENV{SSL_CLIENT_S_DN_CN};
- $tmp = sql_fetch $PApp::Config::DBH,
-       "select id from ssluser where cert = ?", $su;
- return _sslrealautologin $tmp if $tmp;
- # ok new SSL user.
- # special case: Same cookie for two Certificates
- # if two certs are installed for a single user...
- user_login 0;
- sql_exec $PApp::Config::DBH, 
- 	"insert into ssluser values (?,?)",
-        $userid, $su;
- # set the user-name (simple version)
- $username = $su;
+ $xuid = get_uid_by_cert $ENV{SSL_CLIENT_CERT};
+ if($xuid > 0) {
+    user_login($xuid);
+    return;
+ }
+ # huch.
+ die "Banned user" unless $xuid;
+
+ user_login(0);
+ $username =  $ENV{SSL_CLIENT_S_DN_CN};
  $username =~ s/[ \t]/_/g;
  # Avoid overwriting existing users.
  while(! update_username $username)  {
@@ -174,7 +217,7 @@ This can be used to drop SSL security.
  }
  update_password undef; # no "normal" password login allowed, SSL only.
  update_comment "SSL Cert Account $ENV{SSL_CLIENT_S_DN}";
- _sslrealautologin $userid;
+ update_cert $ENV{SSL_CLIENT_CERT}, getuid();
 ]]></perl></macro>
 
 <perl><![CDATA[
@@ -202,12 +245,12 @@ sub _url_prefix_sslauth_host() {
    $ENV{SSL_CLIENT_S_DN_CN};
 ]]></perl></macro>
 
-<macro name="ssl_needed*()"><perl><![CDATA[
+<macro name="require_ssl*()"><perl><![CDATA[
    return if defined $ENV{SSL_PROTOCOL};
    redirect _url_prefix_ssl_host . surl map { -$_, $A{$_} } keys %A;
 ]]></perl></macro>
 
-<macro name="ssl_user_needed*()"><perl><![CDATA[
+<macro name="require_ssl_user*()"><perl><![CDATA[
    if ($ENV{SSL_CLIENT_VERIFY} eq 'SUCCESS') {
    	_sslautologin unless authen_p;
    	return;
@@ -219,6 +262,8 @@ sub _url_prefix_sslauth_host() {
    return unless defined $ENV{SSL_PROTOCOL};
    redirect _url_prefix_nossl . surl map { -$_, $A{$_} } keys %A;
 ]]></perl></macro>
+
+<!-- todo SSLClientEmail => ssl_clientinfo->{email} etc. -->
 
 <macro name="SSLClientEmail*()"><perl><![CDATA[
  $ENV{SSL_CLIENT_S_DN_Email}
@@ -247,7 +292,6 @@ sub _url_prefix_sslauth_host() {
 <macro name="SSLClientName*()"><perl><![CDATA[
  $ENV{SSL_CLIENT_S_DN_CN}
 ]]></perl></macro>
-
 
 <perl><![CDATA[
 

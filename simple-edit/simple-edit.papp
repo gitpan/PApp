@@ -1,0 +1,39 @@
+<package name="simple-edit">
+<domain name="papp" lang="en">
+
+<macro name="remote_edit*" args="$data $extension @surlargs"><pxml><![CDATA[<:
+
+   content_type "application/x-papp-edit", "utf-8";
+
+   my $url;
+   $url = "http://" . $request->hostname;
+   $url .= ":" . $request->get_server_port if $request->get_server_port != 80;
+   $url .= surl @surlargs;
+
+   :><?"$url\012$extension\012__END__\012$data":><:
+
+:>]]></pxml></macro>
+
+<macro name="remote_edit_parse*"><perl><![CDATA[
+   my $buf;
+   $request->read($buf, $request->header_in("Content-Length"));
+   Convert::Scalar::utf8_on $buf;
+]]></perl></macro>
+
+<perl><![CDATA[
+=head1 SEE ALSO
+
+L<PApp>
+
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
+
+=cut
+
+]]></perl>
+
+</domain>
+</package>
+

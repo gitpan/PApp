@@ -3,6 +3,9 @@
 
 #line 5 "(PApp.pm)"
 
+# DEVEL-9021 regexec/utf8_alnum=0 workaround
+{ use utf8; local $x = "_"; $x =~ /\w|\d|\S|\p{IsPrint}/; }
+
 =head1 NAME
 
 PApp - multi-page-state-preserving web applications
@@ -91,12 +94,12 @@ rare circumstances... I don't want to backport this to older versions ;)"
 
 =back
 
-Be advised that, IF YOU WANT TO USE THIS MODULE, PELASE DROP THE AUTHOR
-(Marc Lehmann <pcg@goof.com>) A MAIL. HE WILL HELP YOU GETTING STARTED.
-
 To get a quick start, read the bench.papp module, the dbedit.papp module,
 the cluster.papp module and the papp.dtd description of the papp file
 format.
+
+Also, have a look at the doc/ subdirectory of the distribution, which will
+have some tutorials in sdf and html format.
 
 =cut
 
@@ -121,7 +124,7 @@ use PApp::Config qw($DBH DBH);
 use PApp::FormBuffer;
 use PApp::Exception;
 use PApp::I18n;
-use PApp::HTML;
+use PApp::HTML qw(escape_uri escape_html tag alink unixtime2http);
 use PApp::SQL;
 use PApp::Callback;
 use PApp::Application;
@@ -143,7 +146,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 0.12;
+   $VERSION = 0.121;
 
    use base Exporter;
 
@@ -152,20 +155,21 @@ BEGIN {
 
          surl slink sform cform suburl sublink retlink_p returl retlink
          current_locals reference_url multipart_form parse_multipart_form
-         endform redirect internal_redirect abort_to content_type abort_with
+         endform redirect internal_redirect abort_to content_type
+         abort_with setlocale
 
          SURL_PUSH SURL_UNSHIFT SURL_POP SURL_SHIFT
-         SURL_EXEC SURL_SAVE_PREFS SURL_SET_LANG SURL_SUFFIX
+         SURL_EXEC SURL_SAVE_PREFS SURL_SET_LOCALE SURL_SUFFIX
 
          surl_style
          SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
 
          $request $NOW *ppkg $papp *state %P *A *S *L *T
-         $userid $sessionid reload_p switch_userid save_prefs
+         $userid $sessionid reload_p switch_userid save_prefs getuid
 
          dprintf dprint echo capture $request 
          
-         N_ language_selector
+         N_ language_selector preferences_url preferences_link
    );
    @EXPORT_OK = qw(config_eval abort_with_file);
 
@@ -174,6 +178,8 @@ BEGIN {
 
    unshift @ISA, PApp::Base;
 }
+
+sub getuid(); # prototype needed
 
 #   globals
 #   due to what I call bugs in mod_perl, my variables do not survive
@@ -259,8 +265,7 @@ our $logfile = undef;
 
 %preferences = (  # system default preferences
    '' => [qw(
-      lang
-      papp_visits
+      papp_locale
       papp_last_cookie
    )],
 );
@@ -275,32 +280,32 @@ if ($restart_flag) {
    $restart_flag = 1;
 }
 
-my $save_prefs_cb = create_callback {
+our $save_prefs_cb = create_callback {
    &save_prefs if $userid;
 } name => "papp_save_prefs";
 
-sub SURL_PUSH         (){ ( "\x00\x01", undef ) }
-sub SURL_UNSHIFT      (){ ( "\x00\x02", undef ) }
-sub SURL_POP          (){ ( "\x00\x81" ) }
-sub SURL_SHIFT        (){ ( "\x00\x82" ) }
-sub SURL_EXEC         (){ ( SURL_PUSH, "/papp_execonce" ) }
-sub SURL_SAVE_PREFS   (){ ( SURL_EXEC, $save_prefs_cb ) }
-sub SURL_SET_LANG     (){ ( SURL_SAVE_PREFS, "/lang" ) }
+sub SURL_PUSH         ($$){ ( "\x00\x01", undef, @_ ) }
+sub SURL_UNSHIFT      ($$){ ( "\x00\x02", undef, @_ ) }
+sub SURL_POP          ($) { ( "\x00\x81", @_ ) }
+sub SURL_SHIFT        ($) { ( "\x00\x82", @_ ) }
+sub SURL_EXEC         ($) { SURL_PUSH("/papp_execonce" => $_[0]) }
+sub SURL_SAVE_PREFS   ()  { SURL_EXEC($save_prefs_cb) }
+sub SURL_SET_LOCALE   ($) { ( SURL_SAVE_PREFS, "/papp_locale" => $_[0] ) }
 
-sub SURL_STYLE        (){ "\x00\x41" }
-sub _SURL_STYLE_URL   (){ 1 }
-sub _SURL_STYLE_GET   (){ 2 }
-sub _SURL_STYLE_STATIC(){ 3 }
+sub SURL_STYLE        ($) { ("\x00\x41", @_) }
+sub _SURL_STYLE_URL   ()  { 1 }
+sub _SURL_STYLE_GET   ()  { 2 }
+sub _SURL_STYLE_STATIC()  { 3 }
 
-sub SURL_STYLE_URL    (){ ( SURL_STYLE, _SURL_STYLE_URL    ) }
-sub SURL_STYLE_GET    (){ ( SURL_STYLE, _SURL_STYLE_GET    ) }
-sub SURL_STYLE_STATIC (){ ( SURL_STYLE, _SURL_STYLE_STATIC ) }
+sub SURL_STYLE_URL    ()  { SURL_STYLE(_SURL_STYLE_URL    ) }
+sub SURL_STYLE_GET    ()  { SURL_STYLE(_SURL_STYLE_GET    ) }
+sub SURL_STYLE_STATIC ()  { SURL_STYLE(_SURL_STYLE_STATIC ) }
 
-sub SURL_SUFFIX      (){ "\x00\x42" }
+sub SURL_SUFFIX       ($) { ("\x00\x42", @_) }
 
 sub CHARSET (){ "utf-8" } # the charset used internally by PApp
 
-# we might be slow, but we are rarely called ;)
+# we might be slow, but we are rarely being called ;)
 sub __($) {
    $translator
       ? $translator->get_table($langs)->gettext($_[0])
@@ -369,14 +374,18 @@ must use something like this:
 
 =item $userid [read-only]
 
-The current userid. User-Id's are automatically assigned to every incoming
-connection, you are encouraged to use them for your own user-databases,
-but you mustn't trust them.
+The current userid. User-Id's are automatically assigned, you are
+encouraged to use them for your own user-databases, but you mustn't trust
+them. C<$userid> is zero in case no userid has been assigned yet. In this
+case you can force a userid by calling the function C<getuid>, which
+allocated one if necessary,
 
 =item $sessionid [read-only]
 
 A unique number identifying the current session (not page). You could use
-this for transactions or similar purposes.
+this for transactions or similar purposes. This variable might or might
+not be zero indicating that no session has been allocated yet (similar to
+C<$userid> == 0).
 
 =item $PApp::papp (a hash-ref) [read-only] [not exported] [might get replaced by a function call]
 
@@ -633,12 +642,12 @@ sub dprint(@) {
 Sets the output content type to C<$type>. The content-type should be a
 registered MIME type (see RFC 2046) like C<text/html> or C<image/png>. The
 optional argument C<$charset> can be either "*", which selects a suitable
-output encoding dynamically or the name of a registered character set (STD
-2). The special value C<undef> suppresses output character conversion
-entirely. If not given, the previous value will be unchanged (the default;
-is currently "*").
+output encoding dynamically (e.g. according to C<$state{papp_locale}>)
+or the name of a registered character set (STD 2). The special value
+C<undef> suppresses output character conversion entirely. If not given,
+the previous value will be unchanged (the default; currently "*").
 
-The following is not yet implemented:
+The following is not yet implemented and will probably never be:
 
 The charset argument might also be an array-reference giving charsets that
 should be tried in order (similar to the language preferences). The last
@@ -653,7 +662,33 @@ non-microsoft browsers that actually generate this header ;)
 
 sub content_type($;$) {
    $content_type = shift;
-   $output_charset = shift if @_;
+   $output_charset = lc shift if @_;
+}
+
+=item setlocale [$locale]
+
+Sets the locale used by perl to the given (PApp-style) locale string. This
+might involve multiple calls to the "real" setlocale which in turn might
+be very slow (C<setlocale> is very slow on glibc based systems for
+example). If no argument is given it sets the locale to the current user's
+default locale (see C<SURL_SET_LOCALE>). NOTE: Remember that PApp (and
+Perl) requires iso-8859-1 or utf-8, so be prepared to do any conversion
+yourself. In future versions PApp might help you doing this (e.g. by
+setting LC_CTYPE to utf-8, but this is not supported on many systems).
+
+At the moment, PApp does not automatically set the (Perl) locale on each
+request, so you need to call setlocale before using any locale-based
+functions.
+
+Please note that PApp-style locale strings might not be compatible to your
+system's locale strings (this function does the conversion).
+
+=cut
+
+sub setlocale(;$) {
+   my $locale = @_ ? $_[0] : $state{papp_locale};
+   require POSIX;
+   POSIX::setlocale(LC_ALL, $locale);
 }
 
 =item reference_url $fullurl
@@ -679,7 +714,7 @@ sub reference_url {
       $url .= ":" . $request->get_server_port if $request->get_server_port != 80;
    }
    my $get = join "&amp;", (map {
-                escape_uri($_) . (defined $S{$_} ? "=" . escape_uri $S{$_} : "");
+               escape_uri($_) . (defined $S{$_} ? "=" . escape_uri $S{$_} : "");
              } grep {
                 exists $S{$_}
                    and exists $pmod->{state}{import}{$_}
@@ -725,23 +760,23 @@ them. Examples:
 
 (most of the following hasn't been implemented yet)
 
- /lang         $state{lang}
+ /papp_locale  $state{papp_locale}
  /tt/var       $state{'/tt'}{var} -OR- $S{var} in application /tt
  /tt/mod1/var  $state{'/tt'}{'/mod1'}{var}
  ../var        the "var" statekey of the module above in the stack
 
 The following (symbolic) modifiers can also be used:
 
- SURL_PUSH, <path>
- SURL_UNSHIFT, <path>
+ SURL_PUSH(<path> => <value>)
+ SURL_UNSHIFT(<path> => <value>)
    treat the following state key as an arrayref and push or unshift the
    argument onto it.
  
- SURL_POP, <path-or-ref>
- SURL_SHIFT, <path-or-ref>
+ SURL_POP(<path-or-ref>)
+ SURL_SHIFT(<path-or-ref>)
    treat the following state key as arrayref and pop/shift it.
 
- SURL_EXEC, <coderef>
+ SURL_EXEC(<coderef>)
    treat the following parameter as code-reference and execute it
    after all other assignments have been done.
 
@@ -753,17 +788,17 @@ The following (symbolic) modifiers can also be used:
  SURL_STYLE_STATIC
    set various url styles, see C<surl_style>.
  
- SURL_SUFFIX, $file
+ SURL_SUFFIX(<file>)
    sets the filename in the generated url to the given string. The
    filename is the last component of the url commonly used by browsers as
    the default name to save files. Works only with SURL_STYLE_GET only.
 
 Examples:
 
- SURL_PUSH, "stack" => 5    push 5 onto @{$S{stack}}
- SURL_SHIFT, "stack"        shift @{$S{stack}}
- SURL_SAVE_PREFS            save the preferences on click
- SURL_EXEC, $cref->refer    execute the PApp::Callback object
+ SURL_PUSH("stack" => 5)   push 5 onto @{$S{stack}}
+ SURL_SHIFT("stack")       shift @{$S{stack}}
+ SURL_SAVE_PREFS           save the preferences on click
+ SURL_EXEC($cref->refer)   execute the PApp::Callback object
 
 =item surl_style [newstyle]
 
@@ -842,7 +877,7 @@ sub suburl {
    } else {
       unshift @$chain, \modpath_freeze $modules;
    }
-   surl @_, SURL_PUSH, \$state{papp_return}, $chain;
+   surl @_, SURL_PUSH(\$state{papp_return}, $chain);
 }
 
 # some kind of subroutine call
@@ -858,7 +893,7 @@ sub retlink_p() {
 }
 
 sub returl(;@) {
-   surl @{$state{papp_return}[-1]}, @_, SURL_POP, \$state{papp_return};
+   surl @{$state{papp_return}[-1]}, @_, SURL_POP(\$state{papp_return});
 }
 
 sub retlink {
@@ -915,15 +950,15 @@ created via C<sform>/C<cform>/C<multipart_form>.
 
 sub sform(@) {
    local $surlstyle = _SURL_STYLE_PLAIN;
-   PApp::HTML::_tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'GET', action => &surl };
+   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'GET', action => &surl };
 }
 
 sub cform(@) {
-   PApp::HTML::_tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'POST', action => &surl };
+   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'POST', action => &surl };
 }
 
 sub multipart_form(@) {
-   PApp::HTML::_tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'POST', action => &surl, enctype => "multipart/form-data" };
+   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'POST', action => &surl, enctype => "multipart/form-data" };
 }
 
 sub endform {
@@ -960,7 +995,7 @@ not allow you to read more data than you are supposed to. Also, remember
 that the C<READ>-Method will return a trailing CRLF even for data-files.
 
 HINT: All strings (pathnames etc..) are probably in the charset specified
-by C<$state{papp_charset}>, but maybe not. In any case, they are octet
+by C<$state{papp_lcs}>, but maybe not. In any case, they are octet
 strings so watch out!
 
 =cut
@@ -968,16 +1003,15 @@ strings so watch out!
 # parse a single mime-header (e.g. form-data; directory="pub"; charset=utf-8)
 sub parse_mime_header {
    my $line = $_[0];
-   $line =~ /([^ ()<>@,;:\\".[\]]+)/g;
+   $line =~ /([^ ()<>@,;:\\"\/.[\]=]+)/g; # the tspecials from rfc1521
    my @r = $1;
    no utf8; # devel7 has no polymorphic regexes
    use bytes; # these are octets!
-   warn "$line\n";#d#
    while ($line =~ /
             \G\s*;\s*
             (\w+)=
             (?:
-             \"( (?:[^\\\r"]+|\\.)* )\"
+             \"( (?:[^\\\015"]+|\\.)* )\"
              |
              ([^ ()<>@,;:\\".[\]]+)
             )
@@ -986,7 +1020,7 @@ sub parse_mime_header {
       # we dequote only the three characters that MUST be quoted, since
       # microsoft is obviously unable to correctly implement even mime headers:
       # filename="c:\xxx". *sigh*
-      $value =~ s/\\([\r"\\])/$1/g;
+      $value =~ s/\\([\015"\\])/$1/g;
       push @r, lc $1, $value;
    }
    @r;
@@ -1010,18 +1044,26 @@ sub parse_multipart_form(&) {
 
    while ($fh->skip_boundary) {
       my ($ct, %ct);
-      while ("" ne (my $line = $fh->READLINE)) {
-         if ($line =~ /^Content-Type:\s+(.*)$/i) {
-            ($ct, %ct) = parse_mime_header $1;
-         } elsif ($line =~ /^Content-Disposition:\s+(.*)/i) {
-            (undef, %cd) = parse_mime_header $1;
-            # ^^^ eq "form-data" or die ";-[";
-         }
-      }
+      my $hdr = "";
+      my $line;
+      do {
+	 $line = $fh->READLINE;
+	 if ($line =~ /^\s/) {
+	    $hdr .= $line;
+	 } else {
+	    if ($hdr =~ /^Content-Type:\s+(.*)$/i) {
+	       ($ct, %ct) = parse_mime_header $1;
+	    } elsif ($hdr =~ /^Content-Disposition:\s+(.*)/i) {
+	       (undef, %cd) = parse_mime_header $1;
+	       # ^^^ eq "form-data" or die ";-[";
+	    }
+	    $hdr = $line;
+	 }
+      } while ($line ne "");
       my $name = delete $cd{name};
       if (defined $name) {
          $ct ||= "text/plain";
-         $ct{charset} ||= $state{papp_charset} || "iso-8859-1";
+         $ct{charset} ||= $state{papp_lcs} || "iso-8859-1";
          unless ($cb->($fh, $name, $ct, \%ct, \%cd)) {
             my $buf;
             while ($fh->read($buf, 16384, length $$buf) > 0)
@@ -1039,10 +1081,18 @@ Send generated output to the client and flush the output buffer. There is
 no need to call this function unless you have a long-running operation
 and want to partially output the page. Please note, however, that, as
 headers have to be output on the first call, no headers (this includes the
-content-type and character set) can be changed after this call.
+content-type and character set) can be changed after this call. Also, you
+must not change any state variables or any related info afetr this call,
+as the result might not get saved in the database, so you better commit
+everything before flushing and then just continue output (use GET or POST
+to create new links after this).
 
 Flushing does not yet harmonize with output stylesheet processing, for the
 semi-obvious reason that PApp::XSLT does not support streaming operation.
+
+BUGS: No links that have been output so far can be followed until the
+document is finished, because the neccessary information will not reach
+the disk until the document.... is finished ;)
 
 =cut
 
@@ -1070,9 +1120,11 @@ sub flush_cvt {
             $$routput = PApp::Recode::Pconv::convert($pconv, $$routput);
          } # else utf-8 == transparent
       } # else iso-8859-1 == transparent
+   } else {
+      utf8_downgrade $$routput;
    }
 
-   $state{papp_charset} = $output_charset;
+   $state{papp_lcs} = $output_charset;
    $request->content_type($output_charset
                           ? "$content_type; charset=$output_charset"
                           : $content_type);
@@ -1243,7 +1295,7 @@ sub set_cookie {
    $request->header_out(
       'Set-Cookie',
       "PAPP_1984="
-      . (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, 0, 0, rand(1<<30)))
+      . (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, 0, 0, $state{papp_last_cookie}))
       . "; PATH=/; EXPIRES="
       . unixtime2http($NOW + $cookie_expires, "cookie")
    );
@@ -1322,6 +1374,28 @@ Create (and output) html code that allows the user to select one of the
 languages reachable through the $translator. This function might move
 elsewhere, as it is clearly out-of-place here ;)
 
+Usually used like this:
+
+   <:language_selector $papp_translator, $papp_ppkg_table->lang:>
+
+If you want to build your own language selector, here's how:
+
+   # iterate over all languages supported by this translator
+   for my $lang ($translator->langs) {
+
+      # translate the language id into the vernacular language name
+      my $name = PApp::I18n::translate_langid($lang, $lang);
+
+      if ($lang eq $current) {
+         # this is the currently selected language...
+         echo "[$name]";
+      } else {
+         # or a language we could switch to
+         echo slink "[$name]", SURL_SET_LOCALE($lang);
+      }
+
+   }
+
 =cut
 
 sub language_selector {
@@ -1330,12 +1404,32 @@ sub language_selector {
    for my $lang ($translator->langs) {
       my $name = PApp::I18n::translate_langid($lang, $lang);
       if ($lang ne $current) {
-         echo slink "[$name]", SURL_SET_LANG, $lang;
+         echo slink "[$name]", SURL_SET_LOCALE($lang);
       } else {
-         echo "[$name]";
+         echo "<b>[$name]</b>";
       }
    }
    
+}
+
+=item preferences_url
+
+Returns the url which, when selected, will guide the user to the papp
+preferences editor.
+
+=item preferences_link
+
+Creates an html-button (actually just A HREF at the moment) which guides
+the user to the papp preferences editor.
+
+=cut
+
+sub preferences_url {
+   $papp_main->surl("pref_edit");
+}
+
+sub preferences_link {
+   alink __"[Preferences]", &preferences_url;
 }
 
 #############################################################################
@@ -1390,27 +1484,29 @@ sub reload_p {
 # reads all user-preferences (no args) or only the preferences
 # for the given path (arguments is given)
 sub load_prefs(@) {
-   $st_fetchprefs->execute($userid);
+   if ($userid) {
+      $st_fetchprefs->execute($userid);
 
-   if (defined (my $prefs = $st_fetchprefs->fetchrow_array)) {
-      $prefs &&= Storable::thaw decompress $prefs;
+      if (defined (my $prefs = $st_fetchprefs->fetchrow_array)) {
+         $prefs &&= Storable::thaw decompress $prefs;
 
-      my @keys;
-      for my $path (@_ ? @_ : keys %preferences) {
-         if ($path && !exists $state{$path}) {
-            return if @_ == 1;
-         } else {
-            my $h = $path ? $state{$path} : \%state;
-            while (my ($k, $v) = each %{$prefs->{$path}}) {
-               $h->{$k} = $v;
+         my @keys;
+         for my $path (@_ ? @_ : keys %preferences) {
+            if ($path && !exists $state{$path}) {
+               return if @_ == 1;
+            } else {
+               my $h = $path ? $state{$path} : \%state;
+               while (my ($k, $v) = each %{$prefs->{$path}}) {
+                  $h->{$k} = $v;
+               }
             }
          }
-      }
 
-      1;
-   } else {
-      undef $userid;
+         return 1;
+      }
    }
+
+   undef $userid;
 }
 
 =item save_prefs
@@ -1421,6 +1517,7 @@ Save the preferences for all currently loaded applications.
 
 sub save_prefs {
    my $prefs;
+   my $userid = getuid;
 
    $st_fetchprefs->execute($userid);
 
@@ -1445,23 +1542,36 @@ sub save_prefs {
 Switch the current session to a new userid. This is useful, for example,
 when you do your own user accounting and want a user to log-in. The new
 userid must exist, or bad things will happen, with the exception of userid
-zero, which creates a new userid (and sets C<$userid>).
+zero, which sets the current user to the anonymous user (userid zero)
+without changing anything else.
 
 =cut
 
 sub switch_userid {
-   my $oldid = $userid;
-   $userid = shift;
-   unless ($userid) {
-      $st_newuserid->execute;
-      $userid = sql_insertid($st_newuserid);
-      $papp->event("newuser");
-   } else {
-      load_prefs "", keys %preferences;
-   }
-   if ($userid != $oldid) {
-      $state{papp_switch_newuserid} = $userid;
+   if ($userid != $_[0]) {
+      $state{papp_switch_newuserid} = $_[0];
       $state{papp_last_cookie} = 0; # unconditionally re-set the cookie
+
+      $userid = $_[0];
+
+      load_prefs "", keys %preferences if $userid;
+   }
+}
+
+=item $userid = getuid
+
+Return a user id, allocating it if necessary (i.e. if the user has no
+unique id so far). This can be used to force usertracking, just call
+C<userid> in your C<newuser>-callback. See also C<$userid> to get the
+current userid (which might be zero).
+
+=cut
+
+sub getuid() {
+   $userid ||= do {
+      $st_newuserid->execute;
+      switch_userid sql_insertid($st_newuserid);
+      $userid;
    }
 }
 
@@ -1481,8 +1591,7 @@ sub flush_pkg_cache  {
 
 $SIG{__WARN__} = sub {
    my $msg = $_[0];
-   $msg =~ s/^/Warning: /gm;
-   PApp->warn($msg);
+   PApp->warn("Warning: $msg");
 };
 
 sub PApp::Base::warn {
@@ -1627,6 +1736,22 @@ sub handle_error($) {
    }
 }
 
+#sub bench($) {
+#   use Time::HiRes 'time';
+#   @_ ? push @bench, time, $_[0] : @bench = (time, "BEGIN");
+#}
+#
+#sub benchlog {
+#   my $log;
+#   push @bench, time;
+#   my $time = shift @bench;
+#   while (@bench) {
+#      $log .= sprintf "%s - %.3f - ", shift @bench, $bench[0]-$time;
+#      $time = shift @bench;
+#   }
+#   warn sprintf "%.3f: %s\n",(time-$NOW),$log;
+#}
+
 ################################################################################################
 #
 #   the PApp request handler
@@ -1636,6 +1761,9 @@ sub handle_error($) {
 sub _handler {
    my $state;
    my $filename;
+
+   # for debugging only, maybe?
+   local $SIG{QUIT} = sub { die "SIGQUIT" };
 
    $NOW = time;
 
@@ -1707,21 +1835,18 @@ sub _handler {
          $prevstateid = 0;
 
          if ($request->header_in('Cookie') =~ /PAPP_1984=([0-9a-zA-Z.-]{22,22})/) {
-            ($userid, undef, undef, undef) = unpack "VVVxxxx", $cipher_d->decrypt(PApp::X64::dec $1);
+            ($userid, undef, undef, $state{papp_last_cookie}) = unpack "VVVV", $cipher_d->decrypt(PApp::X64::dec $1);
          } else {
             undef $userid;
          }
 
          if ($userid) {
-            if (load_prefs "") {
-               $state{papp_visits}++;
-               push @{$state{papp_execonce}}, $save_prefs_cb;
-            }
+            load_prefs ""; #d# and save_prefs because papp_visits increased
          }
       }
       $state{papp_alternative} = [];
 
-      $langs = lc $state{papp_charset};
+      $langs = delete $state{papp_lcs};
       if ($langs eq "utf-8") {
          # force utf8 on
          for (keys %P) {
@@ -1735,7 +1860,7 @@ sub _handler {
          }
       }
 
-      $langs = "$state{lang},".$request->header_in("Content-Language").",de,en";
+      $langs = "$state{papp_locale},".$request->header_in("Content-Language").",de,en";
 
       $papp->check_deps if $checkdeps;
 
@@ -1746,21 +1871,17 @@ sub _handler {
       }
 
       # do not use for, as papp_execonce might actually grow during
-      # execution of these callbacks
+      # execution of these callbacks.
       &{shift @{$state{papp_execonce}}} while @{$state{papp_execonce}};
       delete $state{papp_execonce};
 
-      if ($userid) {
-         if ($state{papp_last_cookie} < $NOW - $cookie_reset) {
-            set_cookie;
-            $state{papp_last_cookie} = $NOW;
-            push @{$state{papp_execonce}}, $save_prefs_cb;
-         }
-      } else {
-         switch_userid 0;
+      if ($state{papp_last_cookie} < $NOW - $cookie_reset
+          or $state{papp_last_cookie} > $NOW) { #d# NUKE this branch in a few weeks
+         $state{papp_last_cookie} = $NOW;
+         set_cookie;
       }
 
-      PApp::Application::run($papp);
+      $papp->run;
 
       flush_cvt;
 
@@ -1789,6 +1910,8 @@ sub _handler {
 
    undef $request; # preserve memory
 
+   #benchlog;
+   
    return &OK;
 }
 

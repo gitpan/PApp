@@ -13,16 +13,10 @@ PApp::Recode - convert bytes from one charset to another
 =head1 DESCRIPTION
 
 This module creates conversion functions that enable you to convert text
-data from one character set to another.
+data from one character set (and/or encoding) to another.
 
 #FIXME# this module is certainly NOT finished yet, as PApp itself
 currently uses PApp::Recode::Pconv internaly ;->
-
-=head2 THE PApp::Recode CLASS
-
-This class has never been tested, so don't expect it to work.
-
-=over 4
 
 =cut
 
@@ -31,11 +25,47 @@ package PApp::Recode;
 use Convert::Scalar ();
 
 BEGIN {
-   $VERSION = 0.12;
+   $VERSION = 0.121;
 
    require XSLoader;
    XSLoader::load 'PApp::Recode', $VERSION;
 }
+
+=head2 FUNCTIONS
+
+=over 4
+
+=item charset_valid $charset
+
+Returns a boolean indicating wether the named charset is valid on this
+system (i.e. can be converted from/to UTF-8).
+
+Currently this function always returns 1. #FIXME#
+
+=cut
+
+my %charset_valid = ( "iso-8859-1" => 1, "utf-8" => 1 );
+
+sub charset_valid {
+   unless (exists $charset_valid{$_[0]}) {
+      $charset_valid{$cs} = eval {
+         PApp::Recode::Pconv::open($cs, "utf-8");
+         PApp::Recode::Pconv::open("utf-8", $cs);
+         1;
+      };
+   }
+   $charset_valid{$cs};
+}
+
+=back
+
+=cut
+
+=head2 THE PApp::Recode CLASS
+
+This class has never been tested, so don't expect it to work.
+
+=over 4
 
 =item $converter = new PApp::Recode "destination-charset", "source-charset" [, \&fallback]
 

@@ -8,6 +8,18 @@
 #include <string.h>
 
 /*
+ * return wether the given sv really is a "scalar value" (i.e. something
+ * we can cann setsv on without getting a headache.
+ */
+#define sv_is_scalar_type(sv)	\
+	(SvTYPE (sv) != SVt_PVAV \
+	&& SvTYPE (sv) != SVt_PVHV \
+	&& SvTYPE (sv) != SVt_PVCV \
+	&& SvTYPE (sv) != SVt_PVIO)
+
+/*****************************************************************************/
+
+/*
  * the expectation that perl strings have an appended zero is spread all over this file, yet
  * it breaks it itself almost everywhere.
  */
@@ -114,7 +126,6 @@ append_modpath(SV *r, HV *hv)
 static SV *
 modpath_freeze (SV *modules)
 {
-  HV *hv;
   SV *r = newSVpvn ("", 0);
 
   if (!SvROK (modules) || SvTYPE (SvRV (modules)) != SVt_PVHV)
@@ -238,7 +249,7 @@ rv2av(SV *sv)
       SV *rv;
       av = newAV ();
       rv = newRV_noinc ((SV *)av);
-      sv_setsv (sv, rv);
+      sv_setsv_mg (sv, rv);
       SvREFCNT_dec (rv);
     }
 
@@ -256,7 +267,11 @@ find_keysv (SV *arg, int may_delete)
   char *elem;
 
   if (SvROK (arg))
-    sv = SvRV (arg);
+    {
+      sv = SvRV (arg);
+      if (!sv_is_scalar_type (sv))
+        croak ("find_keysv: tried to assign scalar to non-scalar reference (2)");
+    }
   else if (may_delete)
     {
       elem = find_path (arg, &hash);
@@ -295,13 +310,6 @@ expand_path(char *path, STRLEN pathlen, char *cwd, STRLEN cwdlen)
 
   sv_catpvn (res, path, pathlen);
 
-  /*
-   * the following is insane (??) or am I, because I wrotwe it originally (??)
-  if (SvCUR (r) > 1 && SvEND(r)[-1] == '/')
-    SvCUR_set (r, SvCUR (r) - 1);
-  */
-
-  /*fprintf (stderr, "expanding %s (%s) into %s\n", SvPV_nolen(path), cwd, SvPV_nolen (r)); /*D*/
   return res;
 }
           
@@ -318,7 +326,6 @@ eval_path_ (char *path, char *end)
     {
       SV *modpath;
       SV **ent;
-      SV *module;
       SV *dest;
       STRLEN cwdlen;
       char *cwd = SvPV (GvSV (curpath), cwdlen);
@@ -483,6 +490,9 @@ surl(...)
 
             if (SvROK (arg))
               {
+                if (!sv_is_scalar_type (SvRV (arg)))
+                  croak ("surl: tried to assign scalar to non-scalar reference");
+
                 arg = newSVsv (arg);
                 val = newSVsv (val);
               }
@@ -501,7 +511,8 @@ surl(...)
                     path = val;
                     continue;
                   }
-                else if (surlmod == SURL_POP || surlmod == SURL_SHIFT)
+                else if ((surlmod == SURL_POP || surlmod == SURL_SHIFT)
+                         && !SvROK (val))
                   {
                     svp = SvPV (val, svl);
                     val = expand_path (svp, svl, xcurprfx, lcurprfx);
@@ -519,8 +530,6 @@ surl(...)
                 arg = expand_path (svp, svl, xcurprfx, lcurprfx);
                 val = newSVsv (val);
               }
-
-            /*fprintf (stderr, "prefixing %s gives %s\n", SvPV_nolen(ST(i)), SvPV_nolen(arg));/*D*/
 
             av_push (args, arg);
             av_push (args, val);
@@ -695,7 +704,7 @@ set_alternative(array)
                               croak ("illegal arrayop in set_alternative");
                           }
                         else
-                          sv_setsv (sv, val);
+                          sv_setsv_mg (sv, val);
                       }
 
                     flags = 0;
@@ -792,6 +801,15 @@ _exit(code=0)
 #else
         exit (code);
 #endif
+
+char *
+sv_peek(sv)
+	SV *	sv
+        PROTOTYPE: $
+        CODE:
+        RETVAL = sv_peek (sv);
+	OUTPUT:
+	RETVAL
 
 MODULE = PApp		PACKAGE = PApp::X64
 

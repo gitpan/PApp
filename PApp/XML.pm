@@ -27,10 +27,16 @@ package PApp::XML;
 
 use Convert::Scalar ':utf8';
 
+use PApp::Util;
+use PApp::Exception qw(fancydie);
+
 use base 'Exporter';
 
-$VERSION = 0.12;
-@EXPORT_OK = qw(xml_quote xml_unquote xml_check xml_encoding xml2utf8);
+$VERSION = 0.121;
+@EXPORT_OK = qw(
+      xml_quote xml_unquote xml_check xml_encoding xml2utf8
+      xml_include
+);
 
 =item xml_quote $string
 
@@ -47,7 +53,7 @@ character constants are resolved. Everything else is silently ignored.
 
 sub xml_quote {
    local $_ = shift;
-   s/]]>/]]>]]&gt;<![CDATA[/g;
+   s/]]>/]]]]>><![CDATA[/g;
    "<![CDATA[$_]]>";
 }
 
@@ -84,8 +90,8 @@ C<$epilog> is appended (i.e. the document is "$prolog$string$epilog"). The
 trick is that the epilog/prolog strings are not counted in the error
 position (and yes, they should be free of any errors!).
 
-(TIP: Remember to utf8_upgrade before calling this function or make sure
-that a encoding is given in the xml declaration).
+(Hint: Remember to utf8_upgrade before calling this function or make sure
+that an encoding is given in the xml declaration).
 
 =cut
 
@@ -95,7 +101,6 @@ sub xml_check {
    require XML::Parser::Expat;
 
    my $parser = new XML::Parser::Expat;
-   #$parser->finish;
 
    $prolog =~ s/\n//;
    $epilog =~ s/\n//;
@@ -109,6 +114,7 @@ sub xml_check {
    my $err = $@;
 
    $parser->release;
+
    return () unless $err;
 
    $err =~ /^\n(.*?) at line (\d+), column (\d+), byte (\d+)/
@@ -119,10 +125,10 @@ sub xml_check {
 =item xml_encoding xml-string [deprecated]
 
 Convinience function to detect the encoding used by the given xml
-string. I uses a variety of heuristics (mainly as given in appendix F
+string. It uses a variety of heuristics (mainly as given in appendix F
 of the XML specification). UCS4 and UTF-16 are ignored, mainly because
 I don't want to get into the byte-swapping business (maybe write an
-interface module for giconv?). The XML declaration itself is being
+interface module for gconv?). The XML declaration itself is being
 ignored.
 
 =cut
@@ -204,6 +210,160 @@ sub xml2utf8($;$) {
    }
 
    ($version, "utf-8", $standalone);
+}
+
+=item xml_include $document, $base [, $uri_handler($uri, $base) ]
+
+Expand any xinclude:include elements in the given C<$document> by handing
+the href attribute and the current base URI to the C<$uri_handler> with
+this URI (-object).  The C<$uri_handler> should fetch the document and
+return it (or C<undef> on error).
+
+Example (see http://www.w3.org/TR/xinclude/ for the preliminary definition
+of xinclude):
+
+   <document xmlns:xinclude="http://www.w3.org/1999/XML/xinclude">
+      <xinclude:include href="http://some.host/otherdoc.xml"/>
+      <xinclude:include href="/etc/passwd" parse="text"/>
+   </document>
+
+The result of running xml_xinclude on this document will have the first
+include element replaced by the document element (and it's contents) of
+C<http://some.host/otherdoc.xml> and the second include element replaced
+by a (correctly quoted) copy of your C</etc/passwd> file.
+
+Another common example is embedding stylesheet fragments into larger
+stylesheets. Using xinclude for these cases is faster than xsl's
+include/import machanism since xinclude expansion can be done after file
+loading while, while xsl's include mechanism is evaluated on every parse.
+
+   <include xmlns="http://www.w3.org/1999/XML/xinclude"
+            href="style/xtable.xsl"
+            parse="verbatim"/>
+
+At the moment this function always returns utf-8 documents, regardless of
+the input encoding used (included text is inserted as is, any converson
+must be done in the uri handler).
+
+This function does not conform to C<http://www.w3.org/TR/xmlbase/>.
+
+In addition to C<parse="xml"> and C<parse="text">, this function also
+supports C<parse="verbatim"> (insert text verbatim, i.e. like xslt's
+C<disable-output-escaping="yes">) and C<parse="pxml"> (parse xml file
+as pxml). The types C<xml-fragment> and C<pxml-fragment> are also under
+consideration.
+
+=cut
+
+my $xmlns_xinclude = "http://www.w3.org/1999/XML/xinclude";
+
+sub xml_include {
+   require XML::Parser::Expat;
+
+   my $base = $_[1];
+   my $get = $_[2] || \&PApp::Util::load_file;
+   my $nested = $_[3];
+   my $ignore = $nested;
+   my ($self, $xinclude, $doc, $prefix, @context);
+
+   my $qualify = sub {
+      $prefix{$self->namespace($_[0])}.$_[0];
+   };
+
+   $self = new XML::Parser::Expat Namespaces => 1;
+   $self->setHandlers(
+      Start => sub {
+         $ignore = 0;
+         if ($self->eq_name($_[1], $xinclude)) {
+            my (undef, undef, %attr) = @_;
+            my $parse = $attr{parse} || "xml";
+            my $href = $attr{href};
+            #$href->fragment eq "" or die "xml_include: fragment identifiers not supported";
+            my $file = $get->($href, $base);
+            defined $file or die "$href: unable to fetch document\n";
+            if (defined $file) {
+               if ($parse eq "pxml") {
+                  require PApp::PCode;
+                  $file = PApp::PCode::pxml2pcode($file);
+                  $file = xml_include($file, $href, $get, $nested + 1);
+                  $file = PApp::PCode::pcode2pxml($file);
+               } elsif ($parse eq "xml") {
+                  $file = xml_include($file, $href, $get, $nested + 1);
+               } elsif ($parse eq "text") {
+                  $file = $self->xml_escape($file);
+               } elsif ($parse eq "verbatim") {
+                  #
+               } else {
+                  $self->xpcroak("parse method $parse not supported by this implementation");
+               }
+            }
+            defined $file or die "$href: unable to fetch document";
+            $doc .= $file;
+         } elsif ($nested) {
+            # must use the slow way... resolve entities &c.
+            push @context, {};
+            my $xmlns;
+            for ($self->new_ns_prefixes) {
+               $context[-1]{$_} = delete $prefix{$_};
+               my $uri = $self->expand_ns_prefix($_);
+               # the values of $_ before and after this
+               # comment do not need to be the same
+               $prefix{$uri} = $_.":";
+               $xmlns .= " xmlns:$_='$uri'";
+            }
+            my $tag = $qualify->($_[1]);
+            $context[-1]{"\0"} = $tag;
+            $doc .= "<".$qualify->($_[1]).$xmlns;
+            for (my $i = 2; $i < @_; $i += 2) {
+               $doc .= " ".
+                       $qualify->($_[$i]).
+                       "='".
+                       $self->xml_escape($_[$i+1], "'").
+                       "'";
+            }
+            $doc .= ">";
+         } else {
+            $doc .= $self->recognized_string;
+         }
+      },
+      End => sub {
+         unless ($self->eq_name($_[1], $xinclude)) {
+            if ($nested) {
+               my $ctx = pop @context;
+               $doc .= "</".(delete $ctx->{"\0"}).">";
+               $prefix{$k} = $v while my($k, $v) = each %$doc;
+            } else {
+               $doc .= $self->recognized_string;
+            }
+         }
+         $ignore = 1 if $nested && !$self->depth;
+      },
+      XMLDecl => sub {
+         unless ($ignore) {
+            $doc .= "<?xml version='$_[1]'";
+            # encoding is utf-8
+            $doc .= "standalone='$_[3]'" if $_[3];
+            $doc .= "?>";
+         }
+      },
+      Proc => sub {
+         $doc .= "<?$_[1] $_[2]?>";
+      },
+      Comment => sub {
+         $doc .= "<!--$_[1]-->";
+      },
+      Default => sub {
+         $doc .= $_[1] unless $ignore;
+      },
+   );
+   $xinclude = $self->generate_ns_name("include", $xmlns_xinclude);
+   eval {
+      $self->parse($_[0]);
+   };
+   $@ and fancydie "xml_include expansion failed", $@,
+                   info => [source => PApp::Util::format_source $_[0]];
+   { local $@; $self->release }
+   $doc;
 }
 
 =back
@@ -345,7 +505,7 @@ function evaluates certain XML Elements (please note that I consider the
 
 =begin comment
 
- attr           a hasref with attribute => value pairs. These attributes can
+ attr           a hashref with attribute => value pairs. These attributes can
                 later be quieried and set using the C<attr> method.
 
 =end comment
@@ -374,7 +534,7 @@ sub dom2template($$;%) {
 
 =item $err = $pappxml->error
 
-Return infortmation about an error as an C<PApp::Exception> object
+Return information about an error as an C<PApp::Exception> object
 (L<PApp::Exception>).
 
 =cut

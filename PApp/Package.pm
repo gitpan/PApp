@@ -14,7 +14,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 
 package PApp::Package;
 
@@ -70,27 +70,6 @@ sub config {
    @_ ? $PApp::curconf->{$_[0]} : $PApp::curconf;
 }
 
-=item $ppkg->for_all_modules (callback<pmod,path,name>, initial-path)
-
-Run a sub for all modules of a ppkg.
-
-=cut
-
-# run a sub for all submodules of a pmod
-sub for_all_modules($&;$) {
-   my ($ppkg, $cb, $path, $name) = @_;
-
-   die;
-   $cb->($ppkg, $path, $name);
-
-   $path .= $name;
-
-   while (my ($ppkg, $pmod) = each %$pmod) {
-      next unless $name =~ /^\//;
-      $pmod->for_all_modules($cb, $path, $name);
-   }
-}
-
 =item $ppkg->for_all_packages (callback<papp,path,name>, initial-path)
 
 Run a sub for all packages in a papp.
@@ -107,7 +86,7 @@ sub for_all_packages($&;$$) {
 
    $path .= "/$name";
 
-   while (my ($name, $ppkg) = each %{$ppkg->{embed}}) {
+   while (my ($name, $ppkg) = each %{$ppkg->{pkg}}) {
       $ppkg->for_all_packages($cb, $path, $name);
    }
 }
@@ -124,24 +103,29 @@ sub load_stylesheet {
    my ($self, $path, $type, $domain, $lang) = @_;
 
    require PApp::XML;
-   require PApp::PCode;
 
-   my $xsl = PApp::Config::find_file $path, qw(pxslt xslt pxsl xsl pxml xml)
+   my $uri = PApp::Util::find_file $path, [qw(pxslt xslt pxsl xsl pxml xml)]
       or fancydie "stylesheet file not found", $path;
 
-   $type ||= "xml" if $xsl =~ /\.x[ms]lt?$/;
+   $type ||= "xml" if $uri =~ /\.x[ms]lt?$/i;
 
    if ($PApp::papp) {
       # register this file in the current application
-      $PApp::papp->register_file($xsl,
-           mtime  => (stat $xsl)[9],
+      $PApp::papp->register_file($uri,
+           mtime  => (stat $uri)[9],
            domain => $domain,
            lang   => $lang,
       );
    }
 
-   $xsl = do { local (*X, $/); open X, "<", $xsl or fancydie "$xsl: $!"; <X> };
+   my $xsl = PApp::Util::fetch_uri($uri);
+
    PApp::XML::xml2utf8($xsl);
+
+   require PApp::PCode;
+   $xsl = PApp::PCode::pxml2pcode($xsl) if $type ne "xml";
+   $xsl = PApp::XML::xml_include($xsl, $uri) if $xsl =~ m%http://www.w3.org/1999/XML/xinclude%;
+   $xsl = PApp::PCode::pcode2pxml($xsl) if $type ne "xml";
 
    require PApp::XSLT;
    my $xslt = PApp::XSLT->new(stylesheet => "data:,$xsl");
@@ -240,15 +224,16 @@ sub _eval : locked {
    
    # be careful not to use "my" for global variables -> my vars
    # are visible within the subs we create!
-   $data = "#".(join ":", caller)."\n".
+   $data = "#line 1 \"(compile preamble)\"\n".
+           "#".(join ":", caller)."\n".
            "package $ppkg->{package}; use utf8; no bytes;\n".
            "{\n$ppkg->{header};\n$data\n}\n";
    local $SIG{__DIE__};
    $sub = eval $data;
 
-   $@ and
-      PApp::Exception::fancydie "Error while compiling into $ppkg->{package}:",
-                                $@, info => [source => PApp::Util::format_source($data)];
+   # DEVEL9916: the ref in the next line should certainly not be neccessary
+   $@ and PApp::Exception::fancydie "error while compiling into $ppkg->{package}:",
+                                    (ref $@ ? $@ : "$@"), info => [source => PApp::Util::format_source($data)];
 
    $sub;
 }
@@ -285,6 +270,7 @@ package $ppkg->{package};
 ";
 
    my $body = "
+#line 1 \"(module preamble '$ppkg->{name}')\"
 # every module starts like this (lots of goodies pre-imported)
 use PApp;
 use PApp::Config ();
@@ -313,7 +299,11 @@ use PApp::Util (); # nothing yet
    }
    delete $ppkg->{import} unless $PApp::checkdeps;
 
-   $ppkg->_eval($body . "# body '$ppkg->{name}'\n" . $code->{body});
+   $ppkg->_eval(
+      $body .
+      "# body '$ppkg->{name}'\n" . $code->{body} .
+      "\n#line 1 \"(module postamble '$ppkg->{name}')\""
+   );
 
    for my $type (qw(request cleanup newuser newsession)) {
       my $cb = join ";\n", PApp::Util::uniq $code->{cb}{$type};
@@ -332,42 +322,71 @@ sub mark_statekey {
    $ppkg->{local}{$key}{$extra} = 1 if $attr eq "local";
 }
 
-sub insert($$;$) {
+=item $ppkg->insert($name, $module, $conf)
+
+Insert the given package at the current position, optionally setting the
+default module to C<$module> and C<$PApp::curconf> to C<$conf>. If no name
+is given (or $name is undeF), the package will be embedded under it's
+"natural" name, otherwise the given name is used to differentiate between
+different instances of the same package.
+
+The PApp namespace (i.e. <%S> and <%A>) will be shared with the inserted
+package.
+
+You can (currently) access packages embedded in another module using the
+$ppkg->{pkg}{packagename} syntax.
+
+This API might not be stable.
+
+=cut
+
+sub insert($;$$$) {
    package PApp;
 
    my $ppkg = shift;
-   my $name = shift;
+   my $name = shift || $ppkg->{name};
+   my $module = shift;
    my $conf = shift;
 
-   $ppkg = $ppkg->{embed}{$name}
-      or fancydie "embed: no such package in $ppkg->{name}", $name;
-   
    local (%S, %A);
 
    local $curconf = $conf;
    #ocal $curprfx = $curprfx;
    local $curpath = "$curpath/$name";
 
-   PApp::Package::run($ppkg, \($$curmod->{$name} ||= { "\x00" => "" }) );
+   $$curmod->{$name}{"\x00"} ||= $module;
+   PApp::Package::run($ppkg, \$$curmod->{$name});
 }
 
-sub embed($$;$) {
+=item $ppkg->embed($name, $module, $conf)
+
+Embed the given package. This function is identical to the insert method
+above with the exception of the namespace (eg. %S) , which will NOT be
+shared with the embedding package.
+
+You can (currently) access packages embedded in another module using the
+$ppkg->{pkg}{packagename} syntax.
+
+This API might not be stable.
+
+=cut
+
+sub embed($;$$$) {
    package PApp;
 
    my $ppkg = shift;
-   my $name = shift;
+   my $name = shift || $ppkg->{name};
+   my $module = shift;
    my $conf = shift;
 
-   $ppkg = $ppkg->{embed}{$name}
-      or fancydie "embed: no such package in $ppkg->{name}", $name;
-   
    local (%S, %A);
 
    local $curconf = $conf;
    local $curprfx = "$curprfx/$name";
    local $curpath = "$curpath/$name";
 
-   PApp::Package::run($ppkg, \($$curmod->{$name} ||= { "\x00" => "" }) );
+   $$curmod->{$name}{"\x00"} ||= $module;
+   PApp::Package::run($ppkg, \$$curmod->{$name});
 }
 
 sub run($$) {
@@ -377,12 +396,12 @@ sub run($$) {
    local $curmod = shift;
 
    local $module = $$curmod->{"\x00"};
-   local $pmod = $ppkg->{module}{$module};
+   local $pmod = $ppkg->{module}{$module} || $ppkg->{module}{"*"};
 
-   $pmod->{cb} or fancydie "no such module", "'$module'",
-                           info => [curpath => $curpath],
-                           info => ["valid modules include" => join "\n", keys %{$ppkg->{module}}],
-                          ;
+   $pmod or fancydie "no such module", "'$module'",
+                     info => [curpath => $curpath],
+                     info => ["valid modules include" => join "\n", keys %{$ppkg->{module}}],
+                     ;
 
    local $PApp::surlstyle     = $ppkg->{surlstyle};
 
@@ -407,15 +426,16 @@ sub run($$) {
       *T = $arguments{$curprfx} = {};
 
       while (defined $pmod->{nosession}) {
-         $pmod = $ppkg->{module}{$pmod->{nosession}};
+         $module = $$curmod->{"\x00"} = $pmod->{nosession};
+         $pmod = $ppkg->{module}{$module};
       }
 
-      $ppkg->{cb}{newsession}();
-
-      unless (PApp::load_prefs($curprfx)) {
+      unless (load_prefs($curprfx)) {
          push @{$state{papp_execonce}}, $save_prefs_cb;
          $ppkg->{cb}{newuser}();
       }
+
+      $ppkg->{cb}{newsession}();
    }
 
    # nuke local variables that are not defined locally...
@@ -423,17 +443,17 @@ sub run($$) {
       delete $S{$k} unless exists $v->{$module};
    }
 
+   # enter any parameters deemed safe (import parameters);
    for (keys %{$ppkg->{import_key}}) {
       $S{$_} = delete $P{$_} if exists $P{$_};
    }
 
-   # enter any parameters deemed safe (import parameters);
-   while (my ($k, $v) = each %P) {
-      $S{$k} = $v if $submod->{import_key}{$k};
-   }
+   #while (my ($k, $v) = each %P) {
+   #   $S{$k} = $v if $submod->{import_key}{$k};
+   #}
 
    # WE ARE INITIALIZED
-      
+
    $ppkg->{cb}{request}();
    $pmod->{cb}();
    $ppkg->{cb}{cleanup}();

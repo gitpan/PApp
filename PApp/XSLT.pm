@@ -4,15 +4,15 @@ PApp::XSLT - wrapper for an XSLT implementation
 
 =head1 SYNOPSIS
 
- use PApp::XSLT;
+ use PApp::XSLT::Sablotron;
+ use PApp::XSLT::LibXSLT;
  # to be written
 
 =head1 DESCRIPTION
 
 The PApp::XSLT module is more or less a wrapper around an unnamed XSLT
-implementation (currently XML::Sablotron, but that might change).
-
-# to be written
+implementation (currently XML::Sablotron or XML::LibXSLT, should be
+moderately easy to add XML::Transformiix or XML::XSLT).
 
 =over 4
 
@@ -20,7 +20,7 @@ implementation (currently XML::Sablotron, but that might change).
 
 package PApp::XSLT;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 
 no bytes;
 
@@ -43,26 +43,30 @@ parameters are optional.
 =cut
 
 sub new($;%) {
-   my $class = shift,
-   my %args = @_;
-   my $self = bless {}, $class;
+   my $class = shift;
 
-   while (my ($k, $v) = each %args) {
-      $self->scheme_handler($1, $v) if $k =~ /^get_(.*)$/;
+   if ($class eq PApp::XSLT) {
+      # give Sablotron higher priority. Yes.
+      if (eval { require PApp::XSLT::Sablotron; 1 }) {
+         return new PApp::XSLT::Sablotron @_;
+      } elsif (eval { require PApp::XSLT::LibXSLT; 1 }) {
+         return new PApp::XSLT::LibXSLT @_;
+      } else {
+         die "PApp::XSLT could neither find PApp::XSLT::Sablotron nor PApp::XSLT::LibXSLT";
+      }
+   } else {
+      # called by subclass
+      my %args = @_;
+      my $self = bless {}, $class;
+
+      while (my ($k, $v) = each %args) {
+         $self->scheme_handler($1, $v) if $k =~ /^get_(.*)$/;
+      }
+
+      $self->stylesheet($args{stylesheet}) if defined $args{stylesheet};
+
+      return $self;
    }
-
-   $self->stylesheet($args{stylesheet}) if defined $args{stylesheet};
-
-   unless ($sablo) { # a singleton object
-      local $curobj = $self;
-      my $proxyobj = bless [], PApp::XSLT::Handler::;
-      require XML::Sablotron;
-      $sablo = XML::Sablotron->new;
-      $sablo->RegHandler(0, $proxyobj);
-      $sablo->RegHandler(1, $proxyobj);
-   }
-
-   $self;
 }
 
 =item $old = $xslt->stylesheet([stylesheet-uri])
@@ -86,11 +90,10 @@ sub stylesheet($;$) {
       $self->{ss} = $ss;
    } elsif (defined $ss) {
       my ($scheme, $rest) = split /:/, $ss, 2;
-      $self->{ss} = $self->SHGetAll(undef, $scheme, $rest);
+      $self->{ss} = $self->getdoc($scheme, $rest);
    }
    $self->{ss};
 }
-
 
 =item $old = $xslt->scheme_handler($scheme[, $handler])
 
@@ -105,6 +108,8 @@ to return the whole document, e.g.
 
 might be called with (<obj>, "http", "www.plan9.de/").  Hint: this
 function can easily be abused to feed data into a stylesheet dynamically.
+
+Not all implementations support this method.
 
 When the $handler argument is C<undef>, the current handler will be
 deleted. If it is missing, nothing happens (only the old handler is
@@ -123,110 +128,30 @@ sub scheme_handler($$;$) {
    $old;
 }
 
-for my $method (qw(SHGetAll MHError SHOpen)) {
-   *{"PApp::XSLT::Handler::$method"} = sub {
-      shift;
-      $curobj->$method(@_);
-   };
-}
-
-# for speed, these two methods get shortcutted
-sub PApp::XSLT::Handler::MHLog {}
-sub PApp::XSLT::Handler::MHMakeCode { $_[4] }
-
-#sub MHLog($$$$;@) {
-#   my ($self, $processor, $code, $level, @fields) = @_;
-#   warn "PApp::XSLT<$code,$level> @fields\n";
-#}
-#
-#sub MHMakeCode {
-#   my ($self, $processor, $severity, $facility, $code) = @_;
-#   warn "MHMake @_\n";#d#
-#   $code;
-#}
-
-sub MHError($$$$;@) {
-   my ($self, $processor, $code, $level, @fields) = @_;
-   unless ($curerr) {
-      my $msgtype = "error";
-      my $uri;
-      my $line;
-      my $msg = "unknown error";
-      my @other;
-      for (@fields) {
-         if (my ($k, $v) = split /:/, $_, 2) {
-            if ($k eq "msgtype") {
-               $msgtype = $v;
-            } elsif ($k eq "URI") {
-               $uri = $v;
-            } elsif ($k eq "msg") {
-               $msg = $v;
-            } elsif ($k eq "line") {
-               $line = $v;
-            } elsif ($k eq "module") {
-               # always Sablotron
-            } elsif ($k !~ /^(?:code)$/) {
-               push @other, "$k=$v";
-            }
-         }
-      }
-      $curerr = [ $uri,
-         "$msgtype: ".
-         ($uri ? $uri : "").
-         ($line ? " line $line" : "").
-         ": $msg".
-         (@other ? " (@other)" : ""),
-      ];
+sub error($$$) {
+   my ($self, $uri, $msg) = @_;
+   unless ($self->{curerr}) {
+      $self->{curerr} = [$uri, $msg];
    }
 }
 
-sub SHOpen {
-   my ($self, $processor, $scheme, $rest) = @_;
-   $self->MHError($processor, 1, 3,
-         "msgtype:error",
-         "code:1",
-         "module:PApp::XSLT",
-         "URI:$scheme:$rest",
-         "msg:SHOpen unsupported",
-   );
-   undef;
-}
-
-sub SHGet {
-   return "]]>\"'<<&&"; # certainly cause a parse error ;->
-}
-
-sub SHPut { }
-sub SHClose { }
-
-sub SHGetAll($$$$) {
-   my ($self, $processor, $scheme, $rest) = @_;
+sub getdoc($$) {
+   my ($self, $scheme, $rest) = @_;
    if ($self->{get}{$scheme}) {
-      my $dok = eval { $self->{get}{$scheme}($self, $scheme, $rest) }
-                || ""; # do not try SHOpen, _pleeease_
+      my $dok = eval { $self->{get}{$scheme}($self, $scheme, $rest) };
       if ($@) {
-         $self->MHError($processor, 1, 3,
-               "msgtype:error",
-               "code:1",
-               "module:PApp::XSLT",
-               "URI:$scheme:$rest",
-               "msg:scheme handler evaluation error '$@'",
-         );
+         $self->error("$scheme:$rest",
+                      "error: $scheme:$rest: scheme handler evaluation error '$@'");
       } else {
          return $dok;
       }
    } elsif ($scheme eq "data") {
       return substr $rest, 1;
    } else {
-      $self->MHError($processor, 1, 3,
-            "msgtype:error",
-            "code:1",
-            "module:PApp::XSLT",
-            "URI:$scheme:$rest",
-            "msg:unsupported uri scheme",
-      );
+      $self->error("$scheme:$rest",
+                   "error: $scheme:$rest: unsupported uri scheme");
    }
-   return "]]>\"'<<&&"; # certainly cause a parse error ;->
+   ();
 }
 
 =item $xslt->apply(document-uri[, param => value...])
@@ -239,44 +164,35 @@ a string. Optional arguments set the named global stylesheet parameters.
 sub apply($$;@) {
    my $self = shift;
    my ($scheme, $rest) = split /:/, shift, 2;
-   $self->apply_string($self->SHGetAll(undef, $scheme, $rest), @_);
+   $self->apply_string($self->getdoc($scheme, $rest), @_);
 }
 
 =item $xslt->apply_string(xml-doc[, param => value...])
 
-The same as calling the C<apply>-method with the uri C<data:,xml-doc>, i.e.
-this method applies the stylesheet to the string.
+The same as calling the C<apply>-method with the uri C<data:,xml-doc>,
+i.e. this method applies the stylesheet to the string.
 
 =cut
 
 sub apply_string($$;@) {
-   local $curobj = shift;
-   local $curerr;
+   my $self = shift;
    my $source = shift;
-   $sablo->ClearError;
-   my $ss = ref $curobj->{ss} ? $curobj->{ss}->() : $curobj->{ss};
-   Convert::Scalar::utf8_off($ss);
-   $sablo->RunProcessor(
-                        "arg:/template",
-                        "arg:/data",
-                        "arg:/result",
-                        \@_,
-                        [
-                           template => $ss,
-                           data => $source,
-                        ],
-                       );
-   if ($curerr || $@) {
+   delete $self->{curerr};
+   my $result = $self->_apply($source, @_);
+   if ($self->{curerr}) {
       require PApp::Util;
-      fancydie "error during stylesheet processing", $curerr->[1] || $@,
-               $curerr->[0] ne "arg:/template" ? (info => ["arg:/data"     => PApp::Util::format_source($source)]) : (),
-               $curerr->[0] ne "arg:/data"     ? (info => ["arg:/template" => PApp::Util::format_source($ss    )]) : (),
+      my $ss = ref $self->{ss} ? $self->{ss}->() : $self->{ss};
+      fancydie "error during stylesheet processing", $self->{curerr}[1],
+               $self->{curerr}[0] ne "arg:/template" ? (info => ["arg:/data"     => PApp::Util::format_source($source)]) : (),
+               $self->{curerr}[0] ne "arg:/data"     ? (info => ["arg:/template" => PApp::Util::format_source($ss    )]) : (),
               ;
-   } else {
-      $source = $sablo->GetResultArg("result");
    }
-   $sablo->FreeResultArgs;
-   Convert::Scalar::utf8_on($source); # yes, perl, it's already unicode
+   Convert::Scalar::utf8_on($result);
+}
+
+# this method must be overwritten
+sub _apply($$;@) {
+   die "PApp::XSLT default semantics for _apply_string not available";
 }
 
 1;

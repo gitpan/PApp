@@ -7,8 +7,9 @@ PApp::I18n - internationalization support for PApp
 =head1 SYNOPSIS
 
    use PApp::I18n;
+   # nothing expoted by default
 
-   my $translator = open_translator "/libdir/i18n/myapp", "de";
+   my $translator = PApp::I18n::open_translator("/libdir/i18n/myapp", "de");
    my $table = $translator->get_table("uk,de,en"); # will return de translator
    print $table->gettext("yeah"); # better define __ and N_ functions
 
@@ -17,18 +18,21 @@ PApp::I18n - internationalization support for PApp
 This module provides basic translation services, .po-reader and writer
 support and text and database scanners to identify tagged strings.
 
-=head2 ANATOMY OF A LANGUAGE ID
+=head2 ANATOMY OF A LANGUAGE/LOCALE ID
 
 A "language" can be designated by either a free-form-string (that doesn't
 match the following formal definition) or a language-region code that must match the
 following regex:
 
- /^ ([a-z][a-z][a-z]?) (?:[-_] ([a-z][a-z][a-z]?))? $/ix
+ /^ ([a-z][a-z][a-z]?) (?:[-_] ([a-z][a-z][a-z]?))? (?:\.(\S+))? $/ix
      ^                  ^  ^    ^
     "two or three letter code"
                        "optionally followed by"
                           "- or _ as seperator"
                                "two or three letter code"
+                                                    "optionally followed by"
+                                                       ". as seperator"
+                                                         "character encoding"
 
 There is no charset indicator, as only utf-8 is supported currently. The
 first part must be a two or three letter code from iso639-2/t (alpha2 or
@@ -52,30 +56,33 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 0.12;
-   @EXPORT = qw(
-         open_translator
-   );
+   $VERSION = 0.121;
+   @EXPORT = qw();
    @EXPORT_OK = qw(
+         open_translator
          scan_file scan_init scan_end scan_field 
          export_po export_dpo
-         normalize_langid translate_langid
+         normalize_langid translate_langid locale_charsets
    );
 
    require XSLoader;
    XSLoader::load PApp::I18n, $VERSION;
 }
 
-my ($iso3166, $iso639) = do {
+my ($iso3166, $iso639, $locale)= do {
    local $/;
    split /^__SPLIT__/m, utf8_on <DATA>;
 };
 
-sub iso639_a2_a3    { $iso639 =~ /^(...)\t[^\t]*\t$_[0]\t/m ? $1 : $_[0] }
-sub iso639_a3_name  { $iso639 =~ /^$_[0]\t[^\t]*\t[^\t]*\t([^\t]*)/m and $1 }
+{
+   sub iso639_a2_a3    { $iso639 =~ /^(...)\t\Q$_[0]\E\t/m ? $1 : $_[0] }
+   sub iso639_a3_name  { $iso639 =~ /^\Q$_[0]\E\t[^\t]*\t(.*)$/m and $1 }
 
-sub iso3166_a2_a3   { $iso3166 =~ /^(...)\t$_[0]\t/m ? $1 : $_[0] }
-sub iso3166_a3_name { $iso3166 =~ /^$_[0]\t[^\t]*\t(.*)$/m and $1 }
+   sub iso3166_a2_a3   { $iso3166 =~ /^(...)\t\Q$_[0]\E\t/m ? $1 : $_[0] }
+   sub iso3166_a3_name { $iso3166 =~ /^\Q$_[0]\E\t[^\t]*\t(.*)$/m and $1 }
+
+   sub locale2charsets { $locale =~ /^\Q$_[0]\E\t(.*)$/m and $1 }
+}
 
 our $i18ndir;
 
@@ -94,27 +101,40 @@ sub set_base($) {
 
 =item normalize_langid $langid
 
-Normalize the language id into it's three-letter form, if possible. This
-requires a grep through a few kb of text but the result is cached. The
-special language code "*" is translated to "mul".
+Normalize the language and country id into it's three-letter form, if
+possible. This requires a grep through a few kb of text but the result is
+cached. The special language code "*" is translated to "mul".
 
 =cut
 
 our %nlid_cache = ();
 
+my $locale_regex = qr/^
+           ([a-z][a-z][a-z]?)
+   (?:[-_] ([a-z][a-z][a-z]?))?
+   (?:\.   (\S+))?
+$/ix;
+
 sub normalize_langid($) {
+   use bytes;
    $nlid_cache{$_[0]} ||= do {
       local $_ = lc $_[0];
-      if (/^ ([a-z][a-z][a-z]?) (?:[-_] ([a-z][a-z][a-z]?))? $/ix) {
-         my ($l, $c) = ($1, $2);
+      if ($_ =~ $locale_regex) {
+         my ($l, $c, $e) = (lc $1, lc $2, lc $3);
          $l = "mul" if $l eq "*";
          $l = iso639_a2_a3  $l if 3 > length $l;
+         $l = "heb" if $l eq "iw"; # "iw" is the old code, which has not been reused so far
+         $l = "yid" if $l eq "ji"; # "ji" is the old code, which has not been reused so far
          if ($c ne "") {
             $c = iso3166_a2_a3 $c if 3 > length $c;
-            "$l\_$c";
-         } else {
-            $l;
+            $l .= "_$c";
          }
+         $l = "zha" if $l eq "zho_twn"; # new code "Zhuang" for "Chinese Traditional"
+         $l = "zho" if $l eq "zho_chn"; # old code "Chinese" here means "Chinese Simplified"
+         if ($e ne "") {
+            $l .= ".$e";
+         }
+         $l;
       } else {
          $_;
       }
@@ -133,21 +153,34 @@ our %tlid_cache = ();
 our $tlid_iso3166;
 our $tlid_iso639;
 
+# perl does STRANGE things to characters when using
+# ucfirst unarmed (like duplicating han characters etc...)
+sub _ucfirst {
+   local $_ = shift;
+   substr($_,0,1) =~ y[abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþ]
+                      [ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ];
+   $_;
+}
+
 sub translate_langid($;$) {
    $tlid_cache{"$_[0]\x00$_[1]"} ||= do {
-      my ($langid, $dest) = normalize_langid(shift);
-      if ($langid =~ /^ ([a-z][a-z][a-z]) (?:[-_] ([a-z][a-z][a-z]))? $/ix) {
+      my $langid = normalize_langid $_[0];
+      my $dest = $_[1];
+      use bytes;
+      if ($langid =~ $locale_regex) {
+         no bytes;
          my ($l, $c) = ($1, $2);
          $l = iso639_a3_name $l;
          if (@_) {
             $tlid_iso639 ||= open_translator("iso639", "en");
-            $l = ucfirst $tlid_iso639->get_table($_[0])->gettext($l);
+            $l = _ucfirst $tlid_iso639->get_table($_[0])->gettext($l);
          }
          if ($c) {
             $c = iso3166_a3_name $c;
             if (@_) {
+               no bytes;
                $tlid_iso3166 ||= open_translator("iso3166", "en");
-               $c = ucfirst $tlid_iso3166->get_table($_[0])->gettext($c);
+               $c = _ucfirst $tlid_iso3166->get_table($_[0])->gettext($c);
             }
             return "$l ($c)" if $c;
          } elsif ($l) {
@@ -156,6 +189,47 @@ sub translate_langid($;$) {
       }
       undef;
    }
+}
+
+=item locale_charsets $locale
+
+Returns a list of character sets that might be good to use for this
+locale. This definition is necessarily inprecise ;)
+
+The charsets returned should be considered to be in priority order, i.e.
+the first charset is the best. The intention of this function is to
+provide a list of character sets to try when outputting html text (you can
+output any html text in any encoding supporting html's active characters,
+so this is indeed a matter of taste).
+
+If the locale contains a character set it will be the first in the
+returned list. The other charsets are taken from a list (see the source of
+this module for details).
+
+Here are some examples of what you might expect:
+
+   de          => iso-8859-1 iso-8859-15 cp1252 utf-8
+   rus_ukr     => koi8-u iso-8859-5 cp1251 iso-ir-111 cp866 koi8-r iso-8859-5
+                  cp1251 iso-ir-111 cp866 koi8-u utf-8
+   ja_JP.UTF-8 => utf-8 euc-jp sjis iso-2022-jp jis7 utf-8
+
+This function can be slow and does NOT cache any results.
+
+=cut
+
+sub locale_charsets($) {
+   my $locale = normalize_langid $_[0];
+   my @charsets;
+   use bytes; # DEVEL9021 workaround against segfaults on regex match
+   if ($locale =~ $locale_regex) {
+      my ($lang, $country, $charset) = (lc $1, lc $2, lc $3);
+      push @charsets, $charset if $charset ne "";
+      push @charsets, split /,/, locale2charsets "$1_$2";
+      push @charsets, split /,/, locale2charsets $1;
+   } else {
+      push @charsets, split /,/, locale2charsets $_[0];
+   }
+   (@charsets, "utf-8");
 }
 
 our @table_registry;
@@ -331,9 +405,9 @@ As of yet undocumented
 
 =cut
 
-sub quote {
+sub quote($) {
    local $_ = shift;
-   utf8_upgrade $_; #d# 5.7.0 fix
+   utf8_upgrade $_; #d# DEVEL7952
    s/\\/\\\\/g;
    s/\"/\\"/g;
    s/\n/\\n/g;
@@ -344,20 +418,21 @@ sub quote {
    $_;
 }
 
-sub unquote {
+sub unquote($) {
    local $_ = shift;
-   my $r;
-   utf8_upgrade $_; #d# 5.7.0 fix
+   utf8_upgrade $_; #d# DEVEL7952
    s{\\(?:
-      "                     (?{ $r = "\"" })
-    | n                     (?{ $r = "\n" })
-    | r                     (?{ $r = "\r" })
-    | t                     (?{ $r = "\t" })
-    | x ([0-9a-fA-F]{2,2})  (?{ $r = chr hex $1 })
-    | x \{([0-9a-fA-F]+)\}  (?{ $r = chr hex $2 })
-    | \\                    (?{ $r = "\\" })
-    | (.)                   (?{ $r = "<unknown escape $3>" })
-   )}{ $r }gex;
+      "                     (?{ "\"" })
+    | n                     (?{ "\n" })
+    | r                     (?{ "\r" })
+    | t                     (?{ "\t" })
+    | x ([0-9a-fA-F]{2,2})  (?{ chr hex $1 })
+    | x \{([0-9a-fA-F]+)\}  (?{ chr hex $2 })
+    | \\                    (?{ "\\" })
+    | (.)                   (?{ "<unknown escape $3>" })
+   )}{
+      $^R
+   }gex;
    $_;
 }
 
@@ -448,6 +523,12 @@ sub scan_init {
    sql_exec "update msgid set context = '' where domain = ?", $scan_app;
 }
 
+sub scan_add {
+   my ($lang, $id, $context) = @_;
+   utf8_off $id; # DEVEL9916, to keep perl from killing characters without use unicode::strict
+   push @{$scan_msg{$lang}{$id}}, $context;
+}
+
 =item scan_str $prefix, $string, $lang
 
 =cut
@@ -455,16 +536,22 @@ sub scan_init {
 sub scan_str($$$) {
    my ($prefix, $string, $lang) = @_;
    my $line = 1;
+   utf8_upgrade $string; # DEVEL7952
    # macintoshes not supported, but who cares ;-<
-   utf8_upgrade $string; # for devel7 compatibility only
    while() {
-      if ($string =~ m/\G([^\012_]*[N_]_\(?"((?:[^"\\]+|\\.)+)"\)?[^\012_]*)/sgc) {
+      if ($string =~ m/\G
+         (
+            (?: [^\012N_]+ | [N_][^_] | [N_]_[^"] )*
+            [N_]_ \(? "( (?:[^"\\]+ | \\.)+ )" \)?
+            (?: [^\012N_]+ | [N_][^_] | [N_]_[^"] )*
+         )
+      /sgcx) {
          my ($context, $id) = ($1, $2);
-         push @{$scan_msg{$lang}{PApp::I18n::unquote $id}}, "$prefix:$line $context";
+         scan_add $lang, PApp::I18n::unquote $id, "$prefix:$line $context";
          $line += $context =~ y%\012%%;
       } elsif ($string =~ m/\G\012/sgc) {
          $line++;
-      } elsif ($string =~ m/\G(.)/sgc) {
+      } elsif ($string =~ m/\G./sgc) {
          # if you think this is slow then consider the first pattern
       } else {
          last;
@@ -483,7 +570,7 @@ sub scan_file($$) {
    open FILE, "<", $path or fancydie "unable to open file for scanning", "$path: $!";
    local $/;
    my $file = <FILE>;
-   utf8_on $file; #d# FIXME
+   utf8_on $file; #d# DEVEL7952
    scan_str($path, $file, $lang);
 }
 
@@ -504,20 +591,21 @@ sub scan_field {
    $st->finish;
    if ($type =~ /^(set|enum)\('(.*)'\)$/) {
       for (split /','/, $2) {
-         push @{$scan_msg{$lang}{$_}}, "DB:$dsn->[0]:$table:$field:$1";
+         scan_add $lang, $_, "DB:".$dsn->dsn.":$table:$field:$1";
       }
    } else {
-      my $st = $db->prepare("select $field from $table"); $st->execute;
-      $st->bind_columns(\my($msgid));
+      my $row;
+      my $st = sql_exec $db, \my($msgid), "select $field from $table";
       my $prefix = $dsn->dsn."/$table.$field";
       while ($st->fetch) {
          utf8_on $msgid;
+         $row++;
          if ($style eq "code"
              or ($style eq "auto"
                  and $msgid =~ /[_]_"(?:[^"\\]+|\\.)+"/s)) {
-            scan_str "$prefix $msgid", $msgid, $lang;
+            scan_str "$prefix:$row $msgid", $msgid, $lang;
          } else {
-            push @{$scan_msg{$lang}{$msgid}}, $prefix;
+            scan_add $lang, $msgid, "$prefix:$row";
          }
       }
    }
@@ -562,7 +650,7 @@ sub scan_end {
    ($scan_app, $scan_lang, %scan_msg) = ();
 }
 
-=item export_dpo $domain, $path
+=item export_dpo $domain, $path, [$userid, $groupid, $attr]
 
 Export translation domain C<$domain> in binary hash format to directory
 C<$path>, creating it if necessary.
@@ -570,9 +658,9 @@ C<$path>, creating it if necessary.
 =cut
 
 sub export_dpo($$;$$) {
-   my ($domain, $path, $uid, $gid) = @_;
+   my ($domain, $path, $uid, $gid, $attr) = @_;
    local $PApp::SQL::DBH = PApp::Config::DBH;
-   mkdir $path;
+   mkdir $path, defined $attr ? $attr | 0111 : 0755;
    chown $uid, $gid, $path if defined $uid;
    unlink for glob "$path/*.dpo";
    for my $lang (sql_fetchall "select distinct s.lang
@@ -587,7 +675,6 @@ sub export_dpo($$;$$) {
                                and s.flags & 1 and msg != ''",
                         $domain, $lang;
       my $rows = $st->rows;
-      print "$pofile: $rows\n";#d#
       if ($rows) {
          my $prime = int ($rows * 4 / 3) | 1;
          {
@@ -608,6 +695,7 @@ sub export_dpo($$;$$) {
          }
          undef $dpo;
          chown $uid, $gid, "$pofile~" if defined $uid;
+         chmod $attr, "$pofile~" if defined $attr;
          rename "$pofile~", $pofile;
          push @files, $pofile;
       } else {
@@ -655,6 +743,7 @@ Read the next entry. Returns nothing on end-of-file.
 =cut
 
 sub peek {
+   use bytes;
    my $self = shift;
    unless ($self->{line}) {
       do {
@@ -677,6 +766,7 @@ sub perr {
 }
 
 sub next {
+   use bytes;
    my $self = shift;
    my ($id, $str, @c);
 
@@ -686,11 +776,17 @@ sub next {
    }
    if ($self->peek =~ /^\s*msgid/) {
       while ($self->peek =~ /^\s*(?:msgid\s+)?\"(.*)\"\s*$/) {
+         $self->{line} =~ /^\s*(?:msgid\s+)?\"(.*)\"\s*$/; #d# DEVEL9021, redo regex on var
          $id .= PApp::I18n::unquote $1;
          $self->line;
       }
       if ($self->peek =~ /^\s*msgstr/) {
          while ($self->peek =~ /^\s*(?:msgstr\s+)?\"(.*)\"\s*$/) {
+               use Devel::Peek;
+            Dump($self->{line});
+            $self->{line} =~ /^\s*(?:msgstr\s+)?\"(.*)\"\s*$/; #d# DEVEL9021, redo regex on var
+            Dump($1);
+            Dump("$1");
             $str .= PApp::I18n::unquote $1;
             $self->line;
          }
@@ -754,13 +850,13 @@ sub splitstr {
 sub add {
    my $self = shift;
    my ($id, $str, @c) = @_;
-   Convert::Scalar::utf8_upgrade $id; #d# 5.7.0 fix
-   Convert::Scalar::utf8_upgrade $str; #d# 5.7.0 fix
+   Convert::Scalar::utf8_upgrade $id;  #d# DEVEL7952
+   Convert::Scalar::utf8_upgrade $str; #d# DEVEL7952
 
    $self->{fh}->print(
       (map "#$_\n", @c),
-      "msgid ", splitstr($id),
-      "msgstr ", splitstr($str),
+      "msgid " , (Convert::Scalar::utf8_off splitstr $id),
+      "msgstr ", (Convert::Scalar::utf8_off splitstr $str),
       "\n"
    );
 }
@@ -780,706 +876,735 @@ package PApp::I18n;
 
 # the following data tables are originally from http://iso.plan9.de/
 __DATA__
-		Africa
-		Eastern Africa
-		Middle Africa
-		Northern Africa
-		Southern Africa
-		Western Africa
-		Americas
-		Latin America and the Caribbean
-		Caribbean
-		Central America
-		South America
-		Northern America
-		Asia
-		Eastern Asia
-		South-central Asia
-		South-eastern Asia
-		Western Asia
-		Europe
-		Eastern Europe
-		Northern Europe
-		Southern Europe
-		Western Europe
-		Oceania
-		Australia and New Zealand
-		Melanesia
-		Micronesia
-		Polynesia
-bdi	bi	Burundi
-com	km	Comoros
-dji	dj	Djibouti
-eri	er	Eritrea
-eth	et	Ethiopia
-ken	ke	Kenya
-mdg	mg	Madagascar
-mwi	mw	Malawi
-mus	mu	Mauritius
-moz	mz	Mozambique
-reu	re	Réunion
-rwa	rw	Rwanda
-syc	sc	Seychelles
-som	so	Somalia
-uga	ug	Uganda
-tza	tz	Tanzania
-zmb	zm	Zambia
-zwe	zw	Zimbabwe
-ago	ao	Angola
-cmr	cm	Cameroon
-caf	cf	Central African Republic
-tcd	td	Chad
-cog	cg	Congo
-cod	cd	Congo
-gnq	gq	Equatorial Guinea
-gab	ga	Gabon
-stp	st	Sao Tome and Principe
-dza	dz	Algeria
-egy	eg	Egypt
-lby	ly	Jamahiriya
-mar	ma	Morocco
-sdn	sd	Sudan
-tun	tn	Tunisia
-esh	eh	Western Sahara
-bwa	bw	Botswana
-lso	ls	Lesotho
-nam	na	Namibia
-zaf	za	South Africa
-swz	sz	Swaziland
-ben	bj	Benin
-bfa	bf	Burkina Faso
-cpv	cv	Cape Verde
-civ	ci	Cote d'Ivoire
-gmb	gm	Gambia
-gha	gh	Ghana
-gin	gn	Guinea
-gnb	gw	Guinea-Bissau
-lbr	lr	Liberia
-mli	ml	Mali
-mrt	mr	Mauritania
-ner	ne	Niger
-nga	ng	Nigeria
-shn	sh	Saint Helena
-sen	sn	Senegal
-sle	sl	Sierra Leone
-tgo	tg	Togo
-aia	ai	Anguilla
-atg	ag	Antigua and Barbuda
 abw	aw	Aruba
-bhs	bs	Bahamas
-brb	bb	Barbados
-vgb	vg	British Virgin Islands
-cym	ky	Cayman Islands
-cub	cu	Cuba
-dma	dm	Dominica
-dom	do	Dominican Republic
-grd	gd	Grenada
-glp	gp	Guadeloupe
-hti	ht	Haiti
-jam	jm	Jamaica
-mtq	mq	Martinique
-msr	ms	Montserrat
-ant	an	Netherlands Antilles
-pri	pr	Puerto Rico
-kna	kn	Saint Kitts and Nevis
-lca	lc	Saint Lucia
-vct	vc	Saint Vincent and the Grenadines
-tto	tt	Trinidad and Tobago
-tca	tc	Turks and Caicos Islands
-vir	vi	Virgin Islands
-blz	bz	Belize
-cri	cr	Costa Rica
-slv	sv	El Salvador
-gtm	gt	Guatemala
-hnd	hn	Honduras
-mex	mx	Mexico
-nic	ni	Nicaragua
-pan	pa	Panama
-arg	ar	Argentina
-bol	bo	Bolivia
-bra	br	Brazil
-chl	cl	Chile
-col	co	Colombia
-ecu	ec	Ecuador
-flk	fk	Malvinas
-guf	gf	French Guiana
-guy	gy	Guyana
-pry	py	Paraguay
-per	pe	Peru
-sur	sr	Suriname
-ury	uy	Uruguay
-ven	ve	Venezuela
-bmu	bm	Bermuda
-can	ca	Canada
-grl	gl	Greenland
-spm	pm	Saint Pierre and Miquelon
-usa	us	United States
-chn	cn	China
-hkg	hk	Hong Kong
-mac	mo	Macao
-prk	kp	Korea
-jpn	jp	Japan
-mng	mn	Mongolia
-kor	kr	Republic of Korea
 afg	af	Afghanistan
-bgd	bd	Bangladesh
-btn	bt	Bhutan
-ind	in	India
-irn	ir	Iran
-kaz	kz	Kazakhstan
-kgz	kg	Kyrgyzstan
-mdv	mv	Maldives
-npl	np	Nepal
-pak	pk	Pakistan
-lka	lk	Sri Lanka
-tjk	tj	Tajikistan
-tkm	tm	Turkmenistan
-uzb	uz	Uzbekistan
-brn	bn	Brunei
-khm	kh	Cambodia
-tmp	tp	East Timor
-idn	id	Indonesia
-lao	la	Lao
-mys	my	Malaysia
-mmr	mm	Myanmar
-phl	ph	Philippines
-sgp	sg	Singapore
-tha	th	Thailand
-vnm	vn	Viet Nam
-arm	am	Armenia
-aze	az	Azerbaijan
-bhr	bh	Bahrain
-cyp	cy	Cyprus
-geo	ge	Georgia
-irq	iq	Iraq
-isr	il	Israel
-jor	jo	Jordan
-kwt	kw	Kuwait
-lbn	lb	Lebanon
-pse	ps	Palestine
-omn	om	Oman
-qat	qa	Qatar
-sau	sa	Saudi Arabia
-syr	sy	Syria
-tur	tr	Turkey
-are	ae	Arab Emirates
-yem	ye	Yemen
-blr	by	Belarus
-bgr	bg	Bulgaria
-cze	cz	Czech Republic
-hun	hu	Hungary
-pol	pl	Poland
-mda	md	Moldova
-rom	ro	Romania
-rus	ru	Russia
-svk	sk	Slovakia
-ukr	ua	Ukraine
-		Channel Islands
-dnk	dk	Denmark
-est	ee	Estonia
-fro	fo	Faeroe Islands
-fin	fi	Finland
-isl	is	Iceland
-irl	ie	Ireland
-		Isle of Man
-lva	lv	Latvia
-ltu	lt	Lithuania
-nor	no	Norway
-sjm	sj	Svalbard and Jan Mayen Islands
-swe	se	Sweden
-gbr	gb	United Kingdom
+ago	ao	Angola
+aia	ai	Anguilla
 alb	al	Albania
 and	ad	Andorra
-bih	ba	Bosnia and Herzegovina
-hrv	hr	Croatia
-gib	gi	Gibraltar
-grc	gr	Greece
-vat	va	Holy See
-ita	it	Italy
-mlt	mt	Malta
-prt	pt	Portugal
-smr	sm	San Marino
-svn	si	Slovenia
-esp	es	Spain
-mkd	mk	Macedonia
-yug	yu	Yugoslavia
-aut	at	Austria
-bel	be	Belgium
-fra	fr	France
-deu	de	Germany
-lie	li	Liechtenstein
-lux	lu	Luxembourg
-mco	mc	Monaco
-nld	nl	Netherlands
-che	ch	Switzerland
-aus	au	Australia
-nzl	nz	New Zealand
-nfk	nf	Norfolk Island
-fji	fj	Fiji
-ncl	nc	New Caledonia
-png	pg	Papua New Guinea
-slb	sb	Solomon Islands
-vut	vu	Vanuatu
-gum	gu	Guam
-kir	ki	Kiribati
-mhl	mh	Marshall Islands
-fsm	fm	Micronesia
-nru	nr	Nauru
-mnp	mp	Mariana Islands
-plw	pw	Palau
+ant	an	Netherlands Antilles
+are	ae	Arab Emirates
+arg	ar	Argentina
+arm	am	Armenia
 asm	as	American Samoa
+atg	ag	Antigua and Barbuda
+aus	au	Australia
+aut	at	Austria
+aze	az	Azerbaijan
+bdi	bi	Burundi
+bel	be	Belgium
+ben	bj	Benin
+bfa	bf	Burkina Faso
+bgd	bd	Bangladesh
+bgr	bg	Bulgaria
+bhr	bh	Bahrain
+bhs	bs	Bahamas
+bih	ba	Bosnia and Herzegovina
+blr	by	Belarus
+blz	bz	Belize
+bmu	bm	Bermuda
+bol	bo	Bolivia
+bra	br	Brazil
+brb	bb	Barbados
+brn	bn	Brunei
+btn	bt	Bhutan
+bwa	bw	Botswana
+caf	cf	Central African Republic
+can	ca	Canada
+che	ch	Switzerland
+chl	cl	Chile
+chn	cn	China
+civ	ci	Côte d'Ivoire
+cmr	cm	Cameroon
+cod	cd	Congo
+cog	cg	Congo
 cok	ck	Cook Islands
-pyf	pf	French Polynesia
+col	co	Colombia
+com	km	Comoros
+cpv	cv	Cape Verde
+cri	cr	Costa Rica
+cub	cu	Cuba
+cym	ky	Cayman Islands
+cyp	cy	Cyprus
+cze	cz	Czech Republic
+deu	de	Germany
+dji	dj	Djibouti
+dma	dm	Dominica
+dnk	dk	Denmark
+dom	do	Dominican Republic
+dza	dz	Algeria
+ecu	ec	Ecuador
+egy	eg	Egypt
+eri	er	Eritrea
+esh	eh	Western Sahara
+esp	es	Spain
+est	ee	Estonia
+eth	et	Ethiopia
+fin	fi	Finland
+fji	fj	Fiji
+flk	fk	Malvinas
+fra	fr	France
+fro	fo	Faeroe Islands
+fsm	fm	Micronesia
+gab	ga	Gabon
+gbr	gb	United Kingdom
+geo	ge	Georgia
+gha	gh	Ghana
+gib	gi	Gibraltar
+gin	gn	Guinea
+glp	gp	Guadeloupe
+gmb	gm	Gambia
+gnb	gw	Guinea-Bissau
+gnq	gq	Equatorial Guinea
+grc	gr	Greece
+grd	gd	Grenada
+grl	gl	Greenland
+gtm	gt	Guatemala
+guf	gf	French Guiana
+gum	gu	Guam
+guy	gy	Guyana
+hkg	hk	Hong Kong
+hnd	hn	Honduras
+hrv	hr	Croatia
+hti	ht	Haiti
+hun	hu	Hungary
+idn	id	Indonesia
+ind	in	India
+irl	ie	Ireland
+irn	ir	Iran
+irq	iq	Iraq
+isl	is	Iceland
+isr	il	Israel
+ita	it	Italy
+jam	jm	Jamaica
+jor	jo	Jordan
+jpn	jp	Japan
+kaz	kz	Kazakhstan
+ken	ke	Kenya
+kgz	kg	Kyrgyzstan
+khm	kh	Cambodia
+kir	ki	Kiribati
+kna	kn	Saint Kitts and Nevis
+kor	kr	Republic of Korea
+kwt	kw	Kuwait
+lao	la	Lao
+lbn	lb	Lebanon
+lbr	lr	Liberia
+lby	ly	Jamahiriya
+lca	lc	Saint Lucia
+lie	li	Liechtenstein
+lka	lk	Sri Lanka
+lso	ls	Lesotho
+ltu	lt	Lithuania
+lux	lu	Luxembourg
+lva	lv	Latvia
+mac	mo	Macao
+mar	ma	Morocco
+mco	mc	Monaco
+mda	md	Moldova
+mdg	mg	Madagascar
+mdv	mv	Maldives
+mex	mx	Mexico
+mhl	mh	Marshall Islands
+mkd	mk	Macedonia
+mli	ml	Mali
+mlt	mt	Malta
+mmr	mm	Myanmar
+mng	mn	Mongolia
+mnp	mp	Mariana Islands
+moz	mz	Mozambique
+mrt	mr	Mauritania
+msr	ms	Montserrat
+mtq	mq	Martinique
+mus	mu	Mauritius
+mwi	mw	Malawi
+mys	my	Malaysia
+nam	na	Namibia
+ncl	nc	New Caledonia
+ner	ne	Niger
+nfk	nf	Norfolk Island
+nga	ng	Nigeria
+nic	ni	Nicaragua
 niu	nu	Niue
+nld	nl	Netherlands
+nor	no	Norway
+npl	np	Nepal
+nru	nr	Nauru
+nzl	nz	New Zealand
+omn	om	Oman
+pak	pk	Pakistan
+pan	pa	Panama
 pcn	pn	Pitcairn
-wsm	ws	Samoa
+per	pe	Peru
+phl	ph	Philippines
+plw	pw	Palau
+png	pg	Papua New Guinea
+pol	pl	Poland
+pri	pr	Puerto Rico
+prk	kp	Korea
+prt	pt	Portugal
+pry	py	Paraguay
+pse	ps	Palestine
+pyf	pf	French Polynesia
+qat	qa	Qatar
+reu	re	Réunion
+rom	ro	Romania
+rus	ru	Russia
+rwa	rw	Rwanda
+sau	sa	Saudi Arabia
+sdn	sd	Sudan
+sen	sn	Senegal
+sgp	sg	Singapore
+shn	sh	Saint Helena
+sjm	sj	Svalbard and Jan Mayen Islands
+slb	sb	Solomon Islands
+sle	sl	Sierra Leone
+slv	sv	El Salvador
+smr	sm	San Marino
+som	so	Somalia
+spm	pm	Saint Pierre and Miquelon
+stp	st	São Tome and Principe
+sur	sr	Suriname
+svk	sk	Slovakia
+svn	si	Slovenia
+swe	se	Sweden
+swz	sz	Swaziland
+syc	sc	Seychelles
+syr	sy	Syria
+tca	tc	Turks and Caicos Islands
+tcd	td	Chad
+tgo	tg	Togo
+tha	th	Thailand
+tjk	tj	Tajikistan
 tkl	tk	Tokelau
+tkm	tm	Turkmenistan
+tmp	tp	East Timor
 ton	to	Tonga
+tto	tt	Trinidad and Tobago
+tun	tn	Tunisia
+tur	tr	Turkey
 tuv	tv	Tuvalu
-wlf	wf	Wallis and Futuna Islands
-		Commonwealth
 twn	tw	Taiwan
-	aq	Antarctica
-	bv	Bouvet island
-	io	British indian ocean territory
-	cx	Christmas island
-	cc	Cocos islands
-	tf	French southern territories
-	hm	Heard and McDonald islands
-	yt	Mayotte
-	gs	South georgia
-	um	United states minor outlying islands
+tza	tz	Tanzania
+uga	ug	Uganda
+ukr	ua	Ukraine
+ury	uy	Uruguay
+usa	us	United States
+uzb	uz	Uzbekistan
+vat	va	Holy See
+vct	vc	Saint Vincent and the Grenadines
+ven	ve	Venezuela
+vgb	vg	British Virgin Islands
+vir	vi	Virgin Islands
+vnm	vn	Viet Nam
+vut	vu	Vanuatu
+wlf	wf	Wallis and Futuna Islands
+wsm	ws	Samoa
+yem	ye	Yemen
+yug	yu	Yugoslavia
+zaf	za	South Africa
+zmb	zm	Zambia
+zwe	zw	Zimbabwe
 __SPLIT__
-aar	aar	aa	Afar	Hamitic
-abk	abk	ab	Abkhazian	Ibero-caucasian
-ace	ace		Achinese	
-ach	ach		Acoli	
-ada	ada		Adangme	
-afa	afa		Afro-Asiatic (Other)	
-afh	afh		Afrihili	
-afr	afr	af	Afrikaans	Germanic
-aka	aka		Akan	
-akk	akk		Akkadian	
-ale	ale		Aleut	
-alg	alg		Algonquian languages	
-amh	amh	am	Amharic	Semitic
-ang	ang		English, Old (ca. 450-1100)	
-apa	apa		Apache languages	
-ara	ara	ar	Arabic	Semitic
-arc	arc		Aramaic	
-arn	arn		Araucanian	
-arp	arp		Arapaho	
-art	art		Artificial (Other)	
-arw	arw		Arawak	
-asm	asm	as	Assamese	Indian
-ath	ath		Athapascan languages	
-aus	aus		Australian languages	
-ava	ava		Avaric	
-ave	ave	ae	Avestan	
-awa	awa		Awadhi	
-aym	aym	ay	Aymara	Amerindian
-aze	aze	az	Azerbaijani	Turkic/altaic
-bad	bad		Banda	
-bai	bai		Bamileke languages	
-bak	bak	ba	Bashkir	Turkic/altaic
-bal	bal		Baluchi	
-bam	bam		Bambara	
-ban	ban		Balinese	
-bas	bas		Basa	
-bat	bat		Baltic (Other)	
-bej	bej		Beja	
-bel	bel	be	Belarusian	Slavic
-bem	bem		Bemba	
-ben	ben	bn	Bengali	Indian
-ber	ber		Berber (Other)	
-bho	bho		Bhojpuri	
-bih	bih	bh	Bihari	Indian
-bik	bik		Bikol	
-bin	bin		Bini	
-bis	bis	bi	Bislama	
-bla	bla		Siksika	
-bnt	bnt		Bantu (Other)	
-bod	tib	bo	Tibetan	Asian
-bos	bos	bs	Bosnian	
-bra	bra		Braj	
-bre	bre	br	Breton	Celtic
-btk	btk		Batak (Indonesia)	
-bua	bua		Buriat	
-bug	bug		Buginese	
-bul	bul	bg	Bulgarian	Slavic
-cad	cad		Caddo	
-cai	cai		Central American Indian (Other)	
-car	car		Carib	
-cat	cat	ca	Catalan	Romance
-cau	cau		Caucasian (Other)	
-ceb	ceb		Cebuano	
-cel	cel		Celtic (Other)	
-ces	cze	cs	Czech	Slavic
-cha	cha	ch	Chamorro	
-chb	chb		Chibcha	
-che	che	ce	Chechen	
-chg	chg		Chagatai	
-chk	chk		Chuukese	
-chm	chm		Mari	
-chn	chn		Chinook jargon	
-cho	cho		Choctaw	
-chp	chp		Chipewyan	
-chr	chr		Cherokee	
-chu	chu	cu	Church Slavic	
-chv	chv	cv	Chuvash	
-chy	chy		Cheyenne	
-cmc	cmc		Chamic languages	
-cop	cop		Coptic	
-cor	cor	kw	Cornish	
-cos	cos	co	Corsican	Romance
-cpe	cpe		Creoles and pidgins, English based (Other)	
-cpf	cpf		Creoles and pidgins, French-based (Other)	
-cpp	cpp		Creoles and pidgins, Portuguese-based (Other)	
-cre	cre		Cree	
-crp	crp		Creoles and pidgins (Other)	
-cus	cus		Cushitic (Other)	
-cym	wel	cy	Welsh	Celtic
-dak	dak		Dakota	
-dan	dan	da	Danish	Germanic
-day	day		Dayak	
-del	del		Delaware	
-den	den		Slave (Athapascan)	
-deu	ger	de	German	Germanic
-dgr	dgr		Dogrib	
-din	din		Dinka	
-div	div		Divehi	
-doi	doi		Dogri	
-dra	dra		Dravidian (Other)	
-dua	dua		Duala	
-dum	dum		Dutch, Middle (ca. 1050-1350)	
-dyu	dyu		Dyula	
-dzo	dzo	dz	Dzongkha	Asian
-efi	efi		Efik	
-egy	egy		Egyptian (Ancient)	
-eka	eka		Ekajuk	
-ell	gre	el	Greek, Modern (1453-)	Latin/greek
-elx	elx		Elamite	
-eng	eng	en	English	Germanic
-enm	enm		English, Middle (1100-1500)	
-epo	epo	eo	Esperanto	International aux.
-est	est	et	Estonian	Finno-ugric
-eus	baq	eu	Basque	Basque
-ewe	ewe		Ewe	
-ewo	ewo		Ewondo	
-fan	fan		Fang	
-fao	fao	fo	Faroese	Germanic
-fas	per	fa	Persian	
-fat	fat		Fanti	
-fij	fij	fj	Fijian	Oceanic/indonesian
-fin	fin	fi	Finnish	Finno-ugric
-fiu	fiu		Finno-Ugrian (Other)	
-fon	fon		Fon	
-fra	fre	fr	French	Romance
-frm	frm		French, Middle (ca. 1400-1600)	
-fro	fro		French, Old (842-ca. 1400)	
-fry	fry	fy	Frisian	Germanic
-ful	ful		Fulah	
-fur	fur		Friulian	
-gaa	gaa		Ga	
-gay	gay		Gayo	
-gba	gba		Gbaya	
-gem	gem		Germanic (Other)	
-gez	gez		Geez	
-gil	gil		Gilbertese	
-gla	gla	gd	Gaelic (Scots)	Celtic
-gle	gle	ga	Irish	Celtic
-glg	glg	gl	Gallegan	Romance
-glv	glv	gv	Manx	
-gmh	gmh		German, Middle High (ca. 1050-1500)	
-goh	goh		German, Old High (ca. 750-1050)	
-gon	gon		Gondi	
-gor	gor		Gorontalo	
-got	got		Gothic	
-grb	grb		Grebo	
-grc	grc		Greek, Ancient (to 1453)	
-grn	grn	gn	Guarani	Amerindian
-guj	guj	gu	Gujarati	Indian
-gwi	gwi		Gwich´in	
-hai	hai		Haida	
-hau	hau	ha	Hausa	Negro-african
-haw	haw		Hawaiian	
-heb	heb	he	Hebrew	
-her	her	hz	Herero	
-hil	hil		Hiligaynon	
-him	him		Himachali	
-hin	hin	hi	Hindi	Indian
-hit	hit		Hittite	
-hmn	hmn		Hmong	
-hmo	hmo	ho	Hiri Motu	
-hrv	scr	hr	Croatian	Slavic
-hun	hun	hu	Hungarian	Finno-ugric
-hup	hup		Hupa	
-hye	arm	hy	Armenian	Indo-european (other)
-iba	iba		Iban	
-ibo	ibo		Igbo	
-ijo	ijo		Ijo	
-iku	iku	iu	Inuktitut	
-ile	ile	ie	Interlingue	International aux.
-ilo	ilo		Iloko	
-ina	ina	ia	Interlingua (International Auxiliary Language Association)	International aux.
-inc	inc		Indic (Other)	
-ind	ind	id	Indonesian	
-ine	ine		Indo-European (Other)	
-ipk	ipk	ik	Inupiaq	Eskimo
-ira	ira		Iranian (Other)	
-iro	iro		Iroquoian languages	
-isl	ice	is	Icelandic	Germanic
-ita	ita	it	Italian	Romance
-jaw	jav	jw	Javanese	
-jpn	jpn	ja	Japanese	Asian
-jpr	jpr		Judeo-Persian	
-kaa	kaa		Kara-Kalpak	
-kab	kab		Kabyle	
-kac	kac		Kachin	
-kal	kal	kl	Kalaallisut	Eskimo
-kam	kam		Kamba	
-kan	kan	kn	Kannada	Dravidian
-kar	kar		Karen	
-kas	kas	ks	Kashmiri	Indian
-kat	geo	ka	Georgian	Ibero-caucasian
-kau	kau		Kanuri	
-kaw	kaw		Kawi	
-kaz	kaz	kk	Kazakh	Turkic/altaic
-kha	kha		Khasi	
-khi	khi		Khoisan (Other)	
-khm	khm	km	Khmer	Asian
-kho	kho		Khotanese	
-kik	kik	ki	Kikuyu	
-kin	kin	rw	Kinyarwanda	Negro-african
-kir	kir	ky	Kirghiz	Turkic/altaic
-kmb	kmb		Kimbundu	
-kok	kok		Konkani	
-kom	kom	kv	Komi	
-kon	kon		Kongo	
-kor	kor	ko	Korean	Asian
-kos	kos		Kosraean	
-kpe	kpe		Kpelle	
-kro	kro		Kru	
-kru	kru		Kurukh	
-kum	kum		Kumyk	
-kur	kur	ku	Kurdish	Iranian
-kut	kut		Kutenai	
-lad	lad		Ladino	
-lah	lah		Lahnda	
-lam	lam		Lamba	
-lao	lao	lo	Lao	Asian
-lat	lat	la	Latin	Latin/greek
-lav	lav	lv	Latvian	Baltic
-lez	lez		Lezghian	
-lin	lin	ln	Lingala	Negro-african
-lit	lit	lt	Lithuanian	Baltic
-lol	lol		Mongo	
-loz	loz		Lozi	
-ltz	ltz	lb	Letzeburgesch	
-lua	lua		Luba-Lulua	
-lub	lub		Luba-Katanga	
-lug	lug		Ganda	
-lui	lui		Luiseno	
-lun	lun		Lunda	
-luo	luo		Luo (Kenya and Tanzania)	
-lus	lus		lushai	
-mad	mad		Madurese	
-mag	mag		Magahi	
-mah	mah	mh	Marshall	
-mai	mai		Maithili	
-mak	mak		Makasar	
-mal	mal	ml	Malayalam	Dravidian
-man	man		Mandingo	
-map	map		Austronesian (Other)	
-mar	mar	mr	Marathi	Indian
-mas	mas		Masai	
-mdr	mdr		Mandar	
-men	men		Mende	
-mga	mga		Irish, Middle (900-1200)	
-mic	mic		Micmac	
-min	min		Minangkabau	
-mis	mis		Miscellaneous languages	
-mkd	mac	mk	Macedonian	Slavic
-mkh	mkh		Mon-Khmer (Other)	
-mlg	mlg	mg	Malagasy	Oceanic/indonesian
-mlt	mlt	mt	Maltese	Semitic
-mnc	mnc		Manchu	
-mni	mni		Manipuri	
-mno	mno		Manobo languages	
-moh	moh		Mohawk	
-mol	mol	mo	Moldavian	Romance
-mon	mon	mn	Mongolian	
-mos	mos		Mossi	
-mri	mao	mi	Maori	Oceanic/indonesian
-msa	may	ms	Malay	Oceanic/indonesian
-mul	mul		Multiple languages	
-mun	mun		Munda languages	
-mus	mus		Creek	
-mwr	mwr		Marwari	
-mya	bur	my	Burmese	Asian
-myn	myn		Mayan languages	
-nah	nah		Nahuatl	
-nai	nai		North American Indian	
-nau	nau	na	Nauru	
-nav	nav	nv	Navajo	
-nbl	nbl	nr	Ndebele, South	
-nde	nde	nd	Ndebele, North	
-ndo	ndo	ng	Ndonga	
-nds	nds		Low German; Low Saxon; German, Low; Saxon, Low	
-nep	nep	ne	Nepali	Indian
-new	new		Newari	
-nia	nia		Nias	
-nic	nic		Niger-Kordofanian (Other)	
-niu	niu		Niuean	
-nld	dut	nl	Dutch	Germanic
-nno	nno	nn	Norwegian Nynorsk	
-nob	nob	nb	Norwegian Bokmål	
-non	non		Norse, Old	
-nor	nor	no	Norwegian	Germanic
-nso	nso		Sotho, Northern	
-nub	nub		Nubian languages	
-nya	nya	ny	Chichewa; Nyanja	
-nym	nym		Nyamwezi	
-nyn	nyn		Nyankole	
-nyo	nyo		Nyoro	
-nzi	nzi		Nzima	
-oci	oci	oc	Occitan (post 1500); Provençal	Romance
-oji	oji		Ojibwa	
-ori	ori	or	Oriya	Indian
-orm	orm	om	Oromo	Hamitic
-osa	osa		Osage	
-oss	oss	os	Ossetian; Ossetic	
-ota	ota		Turkish, Ottoman (1500-1928)	
-oto	oto		Otomian languages	
-paa	paa		Papuan (Other)	
-pag	pag		Pangasinan	
-pal	pal		Pahlavi	
-pam	pam		Pampanga	
-pan	pan	pa	Panjabi	Indian
-pap	pap		Papiamento	
-pau	pau		Palauan	
-peo	peo		Persian, Old (ca. 600-400 b.c.)	
-phi	phi		Philippine (Other)	
-pli	pli	pi	Pali	
-pol	pol	pl	Polish	Slavic
-pon	pon		Pohnpeian	
-por	por	pt	Portuguese	Romance
-pra	pra		Prakrit languages	
-pro	pro		Provençal, Old (to 1500)	
-pus	pus	ps	Pushto	Iranian
-que	que	qu	Quechua	Amerindian
-raj	raj		Rajasthani	
-rap	rap		Rapanui	
-rar	rar		Rarotongan	
-roa	roa		Romance (Other)	
-rom	rom		Romany	
-ron	rum	ro	Romanian	Romance
-run	run	rn	Rundi	Negro-african
-rus	rus	ru	Russian	Slavic
-sad	sad		Sandawe	
-sag	sag	sg	Sango	Negro-african
-sah	sah		Yakut	
-sai	sai		South American Indian (Other)	
-sal	sal		Salishan languages	
-sam	sam		Samaritan Aramaic	
-san	san	sa	Sanskrit	Indian
-sas	sas		Sasak	
-sat	sat		Santali	
-sco	sco		Scots	
-sel	sel		Selkup	
-sem	sem		Semitic (Other)	
-sga	sga		Irish, Old (to 900)	
-sgn	sgn		Sign Languages	
-shn	shn		Shan	
-sid	sid		Sidamo	
-sin	sin	si	Sinhalese	Indian
-sio	sio		Siouan languages	
-sit	sit		Sino-Tibetan (Other)	
-sla	sla		Slavic (Other)	
-slk	slo	sk	Slovak	Slavic
-slv	slv	sl	Slovenian	Slavic
-sme	sme	se	Northern Sami	
-smi	smi		Sami languages (Other)	
-smo	smo	sm	Samoan	Oceanic/indonesian
-sna	sna	sn	Shona	Negro-african
-snd	snd	sd	Sindhi	Indian
-snk	snk		Soninke	
-sog	sog		Sogdian	
-som	som	so	Somali	Hamitic
-son	son		Songhai	
-sot	sot	st	Sotho, Southern	Negro-african
-spa	spa	es	Spanish	Romance
-sqi	alb	sq	Albanian	Indo-european (other)
-srd	srd	sc	Sardinian	
-srp	scc	sr	Serbian	Slavic
-srr	srr		Serer	
-ssa	ssa		Nilo-Saharan (Other)	
-ssw	ssw	ss	Swati	Negro-african
-suk	suk		Sukuma	
-sun	sun	su	Sundanese	Oceanic/indonesian
-sus	sus		Susu	
-sux	sux		Sumerian	
-swa	swa	sw	Swahili	Negro-african
-swe	swe	sv	Swedish	Germanic
-syr	syr		Syriac	
-tah	tah	ty	Tahitian	
-tai	tai		Tai (Other)	
-tam	tam	ta	Tamil	Dravidian
-tat	tat	tt	Tatar	Turkic/altaic
-tel	tel	te	Telugu	Dravidian
-tem	tem		Timne	
-ter	ter		Tereno	
-tet	tet		Tetum	
-tgk	tgk	tg	Tajik	Iranian
-tgl	tgl	tl	Tagalog	Oceanic/indonesian
-tha	tha	th	Thai	Asian
-tig	tig		Tigre	
-tir	tir	ti	Tigrinya	Semitic
-tiv	tiv		Tiv	
-tkl	tkl		Tokelau	
-tli	tli		Tlingit	
-tmh	tmh		Tamashek	
-tog	tog		Tonga (Nyasa)	
-ton	ton	to	Tonga (Tonga Islands)	Oceanic/indonesian
-tpi	tpi		Tok Pisin	
-tsi	tsi		Tsimshian	
-tsn	tsn	tn	Tswana	Negro-african
-tso	tso	ts	Tsonga	Negro-african
-tuk	tuk	tk	Turkmen	Turkic/altaic
-tum	tum		Tumbuka	
-tur	tur	tr	Turkish	Turkic/altaic
-tut	tut		Altaic (Other)	
-tvl	tvl		Tuvalu	
-twi	twi	tw	Twi	Negro-african
-tyv	tyv		Tuvinian	
-uga	uga		Ugaritic	
-uig	uig	ug	Uighur	
-ukr	ukr	uk	Ukrainian	Slavic
-umb	umb		Umbundu	
-und	und		Undetermined	
-urd	urd	ur	Urdu	Indian
-uzb	uzb	uz	Uzbek	Turkic/altaic
-vai	vai		Vai	
-ven	ven		Venda	
-vie	vie	vi	Vietnamese	Asian
-vol	vol	vo	Volapük	International aux.
-vot	vot		Votic	
-wak	wak		Wakashan languages	
-wal	wal		Walamo	
-war	war		Waray	
-was	was		Washo	
-wen	wen		Sorbian languages	
-wol	wol	wo	Wolof	Negro-african
-xho	xho	xh	Xhosa	Negro-african
-yao	yao		Yao	
-yap	yap		Yapese	
-yid	yid	yi	Yiddish	
-yor	yor	yo	Yoruba	Negro-african
-ypk	ypk		Yupik languages	
-zap	zap		Zapotec	
-zen	zen		Zenaga	
-zha	zha	za	Zhuang	
-zho	chi	zh	Chinese	Asian
-znd	znd		Zande	
-zul	zul	zu	Zulu	Negro-african
-zun	zun		Zuni	
+aar	aa	Afar
+abk	ab	Abkhazian
+ace		Achinese
+ach		Acoli
+ada		Adangme
+afa		Afro-Asiatic (Other)
+afh		Afrihili
+afr	af	Afrikaans
+aka		Akan
+akk		Akkadian
+ale		Aleut
+alg		Algonquian languages
+amh	am	Amharic
+ang		English, Old (ca. 450-1100)
+apa		Apache languages
+ara	ar	Arabic
+arc		Aramaic
+arn		Araucanian
+arp		Arapaho
+art		Artificial (Other)
+arw		Arawak
+asm	as	Assamese
+ath		Athapascan languages
+aus		Australian languages
+ava		Avaric
+ave	ae	Avestan
+awa		Awadhi
+aym	ay	Aymara
+aze	az	Azerbaijani
+bad		Banda
+bai		Bamileke languages
+bak	ba	Bashkir
+bal		Baluchi
+bam		Bambara
+ban		Balinese
+bas		Basa
+bat		Baltic (Other)
+bej		Beja
+bel	be	Belarusian
+bem		Bemba
+ben	bn	Bengali
+ber		Berber (Other)
+bho		Bhojpuri
+bih	bh	Bihari
+bik		Bikol
+bin		Bini
+bis	bi	Bislama
+bla		Siksika
+bnt		Bantu (Other)
+bod	bo	Tibetan
+bos	bs	Bosnian
+bra		Braj
+bre	br	Breton
+btk		Batak (Indonesia)
+bua		Buriat
+bug		Buginese
+bul	bg	Bulgarian
+cad		Caddo
+cai		Central American Indian (Other)
+car		Carib
+cat	ca	Catalan
+cau		Caucasian (Other)
+ceb		Cebuano
+cel		Celtic (Other)
+ces	cs	Czech
+cha	ch	Chamorro
+chb		Chibcha
+che	ce	Chechen
+chg		Chagatai
+chk		Chuukese
+chm		Mari
+chn		Chinook jargon
+cho		Choctaw
+chp		Chipewyan
+chr		Cherokee
+chu	cu	Church Slavic
+chv	cv	Chuvash
+chy		Cheyenne
+cmc		Chamic languages
+cop		Coptic
+cor	kw	Cornish
+cos	co	Corsican
+cpe		Creoles and pidgins, English based (Other)
+cpf		Creoles and pidgins, French-based (Other)
+cpp		Creoles and pidgins, Portuguese-based (Other)
+cre		Cree
+crp		Creoles and pidgins (Other)
+cus		Cushitic (Other)
+cym	cy	Welsh
+dak		Dakota
+dan	da	Danish
+day		Dayak
+del		Delaware
+den		Slave (Athapascan)
+deu	de	German
+dgr		Dogrib
+din		Dinka
+div		Divehi
+doi		Dogri
+dra		Dravidian (Other)
+dua		Duala
+dum		Dutch, Middle (ca. 1050-1350)
+dyu		Dyula
+dzo	dz	Dzongkha
+efi		Efik
+egy		Egyptian (Ancient)
+eka		Ekajuk
+ell	el	Greek, Modern (1453-)
+elx		Elamite
+eng	en	English
+enm		English, Middle (1100-1500)
+epo	eo	Esperanto
+est	et	Estonian
+eus	eu	Basque
+ewe		Ewe
+ewo		Ewondo
+fan		Fang
+fao	fo	Faroese
+fas	fa	Persian
+fat		Fanti
+fij	fj	Fijian
+fin	fi	Finnish
+fiu		Finno-Ugrian (Other)
+fon		Fon
+fra	fr	French
+frm		French, Middle (ca. 1400-1600)
+fro		French, Old (842-ca. 1400)
+fry	fy	Frisian
+ful		Fulah
+fur		Friulian
+gaa		Ga
+gay		Gayo
+gba		Gbaya
+gem		Germanic (Other)
+gez		Geez
+gil		Gilbertese
+gla	gd	Gaelic (Scots)
+gle	ga	Irish
+glg	gl	Gallegan
+glv	gv	Manx
+gmh		German, Middle High (ca. 1050-1500)
+goh		German, Old High (ca. 750-1050)
+gon		Gondi
+gor		Gorontalo
+got		Gothic
+grb		Grebo
+grc		Greek, Ancient (to 1453)
+grn	gn	Guarani
+guj	gu	Gujarati
+gwi		Gwich´in
+hai		Haida
+hau	ha	Hausa
+haw		Hawaiian
+heb	he	Hebrew
+her	hz	Herero
+hil		Hiligaynon
+him		Himachali
+hin	hi	Hindi
+hit		Hittite
+hmn		Hmong
+hmo	ho	Hiri Motu
+hrv	hr	Croatian
+hun	hu	Hungarian
+hup		Hupa
+hye	hy	Armenian
+iba		Iban
+ibo		Igbo
+ijo		Ijo
+iku	iu	Inuktitut
+ile	ie	Interlingue
+ilo		Iloko
+ina	ia	Interlingua (International Auxiliary Language Association)
+inc		Indic (Other)
+ind	id	Indonesian
+ine		Indo-European (Other)
+ipk	ik	Inupiaq
+ira		Iranian (Other)
+iro		Iroquoian languages
+isl	is	Icelandic
+ita	it	Italian
+jaw	jw	Javanese
+jpn	ja	Japanese
+jpr		Judeo-Persian
+kaa		Kara-Kalpak
+kab		Kabyle
+kac		Kachin
+kal	kl	Kalaallisut
+kam		Kamba
+kan	kn	Kannada
+kar		Karen
+kas	ks	Kashmiri
+kat	ka	Georgian
+kau		Kanuri
+kaw		Kawi
+kaz	kk	Kazakh
+kha		Khasi
+khi		Khoisan (Other)
+khm	km	Khmer
+kho		Khotanese
+kik	ki	Kikuyu
+kin	rw	Kinyarwanda
+kir	ky	Kirghiz
+kmb		Kimbundu
+kok		Konkani
+kom	kv	Komi
+kon		Kongo
+kor	ko	Korean
+kos		Kosraean
+kpe		Kpelle
+kro		Kru
+kru		Kurukh
+kum		Kumyk
+kur	ku	Kurdish
+kut		Kutenai
+lad		Ladino
+lah		Lahnda
+lam		Lamba
+lao	lo	Lao
+lat	la	Latin
+lav	lv	Latvian
+lez		Lezghian
+lin	ln	Lingala
+lit	lt	Lithuanian
+lol		Mongo
+loz		Lozi
+ltz	lb	Letzeburgesch
+lua		Luba-Lulua
+lub		Luba-Katanga
+lug		Ganda
+lui		Luiseno
+lun		Lunda
+luo		Luo (Kenya and Tanzania)
+lus		lushai
+mad		Madurese
+mag		Magahi
+mah	mh	Marshall
+mai		Maithili
+mak		Makasar
+mal	ml	Malayalam
+man		Mandingo
+map		Austronesian (Other)
+mar	mr	Marathi
+mas		Masai
+mdr		Mandar
+men		Mende
+mga		Irish, Middle (900-1200)
+mic		Micmac
+min		Minangkabau
+mis		Miscellaneous languages
+mkd	mk	Macedonian
+mkh		Mon-Khmer (Other)
+mlg	mg	Malagasy
+mlt	mt	Maltese
+mnc		Manchu
+mni		Manipuri
+mno		Manobo languages
+moh		Mohawk
+mol	mo	Moldavian
+mon	mn	Mongolian
+mos		Mossi
+mri	mi	Maori
+msa	ms	Malay
+mul		Multiple languages
+mun		Munda languages
+mus		Creek
+mwr		Marwari
+mya	my	Burmese
+myn		Mayan languages
+nah		Nahuatl
+nai		North American Indian
+nau	na	Nauru
+nav	nv	Navajo
+nbl	nr	Ndebele, South
+nde	nd	Ndebele, North
+ndo	ng	Ndonga
+nds		Low German; Low Saxon; German, Low; Saxon, Low
+nep	ne	Nepali
+new		Newari
+nia		Nias
+nic		Niger-Kordofanian (Other)
+niu		Niuean
+nld	nl	Dutch
+nno	nn	Norwegian Nynorsk
+nob	nb	Norwegian Bokmål
+non		Norse, Old
+nor	no	Norwegian
+nso		Sotho, Northern
+nub		Nubian languages
+nya	ny	Chichewa; Nyanja
+nym		Nyamwezi
+nyn		Nyankole
+nyo		Nyoro
+nzi		Nzima
+oci	oc	Occitan (post 1500); Provençal
+oji		Ojibwa
+ori	or	Oriya
+orm	om	Oromo
+osa		Osage
+oss	os	Ossetian; Ossetic
+ota		Turkish, Ottoman (1500-1928)
+oto		Otomian languages
+paa		Papuan (Other)
+pag		Pangasinan
+pal		Pahlavi
+pam		Pampanga
+pan	pa	Panjabi
+pap		Papiamento
+pau		Palauan
+peo		Persian, Old (ca. 600-400 b.c.)
+phi		Philippine (Other)
+pli	pi	Pali
+pol	pl	Polish
+pon		Pohnpeian
+por	pt	Portuguese
+pra		Prakrit languages
+pro		Provençal, Old (to 1500)
+pus	ps	Pushto
+que	qu	Quechua
+raj		Rajasthani
+rap		Rapanui
+rar		Rarotongan
+roa		Romance (Other)
+rom		Romany
+ron	ro	Romanian
+run	rn	Rundi
+rus	ru	Russian
+sad		Sandawe
+sag	sg	Sango
+sah		Yakut
+sai		South American Indian (Other)
+sal		Salishan languages
+sam		Samaritan Aramaic
+san	sa	Sanskrit
+sas		Sasak
+sat		Santali
+sco		Scots
+sel		Selkup
+sem		Semitic (Other)
+sga		Irish, Old (to 900)
+sgn		Sign Languages
+shn		Shan
+sid		Sidamo
+sin	si	Sinhalese
+sio		Siouan languages
+sit		Sino-Tibetan (Other)
+sla		Slavic (Other)
+slk	sk	Slovak
+slv	sl	Slovenian
+sme	se	Northern Sami
+smi		Sami languages (Other)
+smo	sm	Samoan
+sna	sn	Shona
+snd	sd	Sindhi
+snk		Soninke
+sog		Sogdian
+som	so	Somali
+son		Songhai
+sot	st	Sotho, Southern
+spa	es	Spanish
+sqi	sq	Albanian
+srd	sc	Sardinian
+srp	sr	Serbian
+srr		Serer
+ssa		Nilo-Saharan (Other)
+ssw	ss	Swati
+suk		Sukuma
+sun	su	Sundanese
+sus		Susu
+sux		Sumerian
+swa	sw	Swahili
+swe	sv	Swedish
+syr		Syriac
+tah	ty	Tahitian
+tai		Tai (Other)
+tam	ta	Tamil
+tat	tt	Tatar
+tel	te	Telugu
+tem		Timne
+ter		Tereno
+tet		Tetum
+tgk	tg	Tajik
+tgl	tl	Tagalog
+tha	th	Thai
+tig		Tigre
+tir	ti	Tigrinya
+tiv		Tiv
+tkl		Tokelau
+tli		Tlingit
+tmh		Tamashek
+tog		Tonga (Nyasa)
+ton	to	Tonga (Tonga Islands)
+tpi		Tok Pisin
+tsi		Tsimshian
+tsn	tn	Tswana
+tso	ts	Tsonga
+tuk	tk	Turkmen
+tum		Tumbuka
+tur	tr	Turkish
+tut		Altaic (Other)
+tvl		Tuvalu
+twi	tw	Twi
+tyv		Tuvinian
+uga		Ugaritic
+uig	ug	Uighur
+ukr	uk	Ukrainian
+umb		Umbundu
+und		Undetermined
+urd	ur	Urdu
+uzb	uz	Uzbek
+vai		Vai
+ven		Venda
+vie	vi	Vietnamese
+vol	vo	Volapük
+vot		Votic
+wak		Wakashan languages
+wal		Walamo
+war		Waray
+was		Washo
+wen		Sorbian languages
+wol	wo	Wolof
+xho	xh	Xhosa
+yao		Yao
+yap		Yapese
+yid	yi	Yiddish
+yor	yo	Yoruba
+ypk		Yupik languages
+zap		Zapotec
+zen		Zenaga
+zha	za	Zhuang
+zho	zh	Chinese
+znd		Zande
+zul	zu	Zulu
+zun		Zuni
+__SPLIT__
+afr	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+ara	iso-8859-6,iso-ir-127,cp1256
+bel	iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866
+bre	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-8859-14
+bul	iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866
+cat	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+ces	iso-8859-2,cp1250,iso-ir-101
+cor	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-8859-14
+cym	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-8859-14
+dan	cp1252,iso-8859-9,iso-8859-1,iso-8859-15,cp819,iso-ir-100
+dan_dnk	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-646-dk
+deu	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+ell	iso-8859-7,cp1253,iso-ir-126
+eng	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+eng_usa	us-ascii,iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,cp367
+epo	iso-8859-3,iso-ir-109
+est	iso-8859-4,iso-8859-10,cp1257,iso-ir-110,iso-8859-15
+eus	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+fao	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+fas	iso-8859-6,iso-ir-127
+fin	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+fra	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+gla	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-8859-14
+gle	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-8859-14
+glg	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+glv	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-8859-14
+heb	iso-8859-8,cp1255
+hrv	iso-8859-2,cp1250,iso-ir-101
+hun	iso-8859-2,cp1250,iso-ir-101,iso-ir-87
+hye	armscii-8
+iku	nunacom-8
+ind	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+ipk	iso-8859-10
+isl	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+ita	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+jpn	euc-jp,sjis,iso-2022-jp,jis7
+kal	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+kor	euc-kr,uhc,johab,iso-2022-kr,iso-646-kr,ksc5636
+lao	mulelao-1,ibm-cp1133
+lav	iso-8859-4,iso-8859-10,cp1257,iso-ir-110,iso-8859-13
+lit	iso-8859-4,iso-8859-10,cp1257,iso-ir-110,iso-8859-13
+mkd	iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866
+mkd_mkd	iso-ir-147,iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866
+mlt	iso-8859-3,iso-ir-109
+nld	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+nno	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+nob	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+nor	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+oci	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+pol	iso-8859-2,cp1250,iso-ir-101
+por	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+ron	iso-8859-2,cp1250,iso-ir-101
+rus	koi8-r,iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866,koi8-u
+rus_ukr	koi8-u,iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866
+slk	iso-8859-2,cp1250,iso-ir-101
+slv	iso-8859-2,cp1250,iso-ir-101
+sme	iso-8859-10
+spa	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+sqi	iso-8859-2,cp1250,iso-ir-101,iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100,iso-8859-9
+srp	iso-8859-2,cp1250,iso-ir-101,iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866,iso-ir-146
+swa	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+swe	iso-8859-1,iso-8859-15,cp1252,cp819,iso-ir-100
+tha	cp874,tis-620,iso-8859-11
+tur	iso-8859-9,iso-8859-3,iso-ir-109,cp1254
+ukr	iso-8859-5,cp1251,iso-ir-111,iso-ir-144,cp866,koi8-u
+vie	cp1258,viscii,tcvn5712,vps
+zho	euc-tw,big5
+zha	euc-cn,gbk,iso-2022-cn,iso-ir-58

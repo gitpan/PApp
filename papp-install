@@ -54,7 +54,7 @@ sub install($$) {
 crdir $lib;
 crdir $CFG{I18NDIR};
 
-for my $dir (qw(macro widget apps demo style)) {
+for my $dir (qw(macro widget apps demo style eg)) {
    crdir "$lib/$dir";
 
    for my $app (bsd_glob "$dir/*.{papp,xsl,pxsl}",
@@ -95,7 +95,7 @@ if (!$DBH) {
    $drh = DBI->install_driver($driver) or die "unable to find DBI driver $driver\n";
    $drh->func("createdb", $db, "localhost", $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, "admin");
 
-   $DBH = DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, { RaiseError => 1 });
+   $DBH = DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, { RaiseError => 0, PrintError => 1 });
    $DBH or die "unable to create database $CFG{STATEDB}, please create it manually and re-run papp-install\n";
 
    print "seems to have worked\n";
@@ -116,139 +116,139 @@ version you have to drop the database manually.
 EOF
 
 $DBH->do(<<SQL);
-   CREATE TABLE env (
+   create table env (
      name varchar(255) binary not null,
      value longblob not null,
-     PRIMARY KEY (name)
+     primary key (name)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE msgid (
-     nr mediumint(6) unsigned NOT NULL auto_increment,
-     id mediumtext NOT NULL,
-     domain varchar(30) NOT NULL,
-     lang varchar(16) NOT NULL,
-     context text NOT NULL,
-     PRIMARY KEY (nr),
-     INDEX (id(64))
+   create table msgid (
+     nr mediumint(6) unsigned not null auto_increment,
+     id mediumtext not null,
+     domain varchar(30) not null,
+     lang varchar(16) not null,
+     context text not null,
+     primary key (nr),
+     index (id(64))
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE msgstr (
-     nr mediumint(6) unsigned DEFAULT '0' NOT NULL,
-     lang varchar(16) NOT NULL,
+   create table msgstr (
+     nr mediumint(6) unsigned default '0' not null,
+     lang varchar(16) not null,
      flags set('valid','fuzzy','unused') not null,
-     msg mediumtext NOT NULL,
-     UNIQUE nr (nr,lang)
+     msg mediumtext not null,
+     unique nr (nr,lang)
    )
 SQL
 
-$DBH->do("DROP TABLE state") if $installed_version < 0.12;
-
+$DBH->do("drop table state") if $installed_version < 0.12;
 $DBH->do(<<SQL);
-   CREATE TABLE state (
-     id int(10) unsigned NOT NULL auto_increment,
+   create table state (
+     id int(10) unsigned not null auto_increment,
      ctime timestamp(14),
-     previd int(10) unsigned DEFAULT '0' NOT NULL,
-     alternative mediumint(8) unsigned DEFAULT '0' NOT NULL,
-     userid int(10) unsigned DEFAULT '0' NOT NULL,
-     sessid int(10) unsigned DEFAULT '0' not null,
-     state mediumblob DEFAULT '' NOT NULL,
-     PRIMARY KEY (id),
-     KEY (alternative, previd)
+     previd int(10) unsigned default '0' not null,
+     alternative mediumint(8) unsigned default '0' not null,
+     userid int(10) unsigned default '0' not null,
+     sessid int(10) unsigned default '0' not null,
+     state mediumblob default '' not null,
+     primary key (id),
+     key (alternative, previd)
    ) delay_key_write=1
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE user (
-     id int(10) unsigned NOT NULL auto_increment,
+   create table user (
+     id int(10) unsigned not null auto_increment,
      ctime timestamp(14),
-     prefs blob NOT NULL,
-     user varchar(100) NOT NULL,
-     pass varchar(14) NOT NULL,
-     comment text NOT NULL,
-     PRIMARY KEY (id),
-     KEY user (user)
+     prefs blob not null,
+     user varchar(100) not null,
+     pass varchar(14) not null,
+     comment text not null,
+     primary key (id),
+     key user (user)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE grp (
-     id int(10) unsigned NOT NULL auto_increment,
-     name varchar(100) NOT NULL,
-     longdesc text NOT NULL,
-     PRIMARY KEY (id)
+   create table grp (
+     id int(10) unsigned not null auto_increment,
+     name varchar(100) not null,
+     comment text not null,
+     primary key (id)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE usergrp (
-     userid int(10) unsigned DEFAULT '0' NOT NULL,
-     grpid int(8) unsigned DEFAULT '0' NOT NULL,
-     PRIMARY KEY (userid,grpid)
+   create table usergrp (
+     userid int(10) unsigned default '0' not null,
+     grpid int(8) unsigned default '0' not null,
+     primary key (userid,grpid)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE app (
-     id smallint(6) unsigned NOT NULL auto_increment,
-     name varchar(255) binary DEFAULT '' NOT NULL,
-     appset smallint(5) unsigned DEFAULT '0' NOT NULL,
-     path varchar(255) binary DEFAULT '' NOT NULL,
-     mountconfig mediumtext DEFAULT '' NOT NULL,
-     config mediumtext DEFAULT '' NOT NULL,
-     PRIMARY KEY (id),
-     UNIQUE (name)
+   create table app (
+     id smallint(6) unsigned not null auto_increment,
+     name varchar(255) binary default '' not null,
+     appset smallint(5) unsigned default '0' not null,
+     path varchar(255) binary default '' not null,
+     mountconfig mediumtext default '' not null,
+     config mediumtext default '' not null,
+     primary key (id),
+     unique (name)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE appset (
-     id smallint(5) unsigned NOT NULL auto_increment,
-     name varchar(255) DEFAULT '' NOT NULL,
-     PRIMARY KEY (id),
-     UNIQUE (name)
+   create table appset (
+     id smallint(5) unsigned not null auto_increment,
+     name varchar(255) default '' not null,
+     primary key (id),
+     unique (name)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE pkg (
-     id varchar(255) DEFAULT '' NOT NULL,
+   create table pkg (
+     id varchar(255) default '' not null,
      ctime timestamp(14),
-     config mediumblob DEFAULT '' NOT NULL,
-     code longblob DEFAULT '' NOT NULL,
-     PRIMARY KEY (id)
+     config mediumblob default '' not null,
+     code longblob default '' not null,
+     primary key (id)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE locks (
-     id varchar(255) binary DEFAULT '' NOT NULL,
-     breaktime int(10) unsigned DEFAULT '0' NOT NULL,
-     data varchar(255) binary DEFAULT '' NOT NULL,
-     PRIMARY KEY (id)
+   create table locks (
+     id varchar(255) binary default '' not null,
+     breaktime int(10) unsigned default '0' not null,
+     data varchar(255) binary default '' not null,
+     primary key (id)
    )
 SQL
 
+$DBH->do("drop table error") if $installed_version < 0.13;
 $DBH->do(<<SQL);
-   CREATE TABLE error (
-     id mediumint(6) unsigned NOT NULL auto_increment,
+   create table error (
+     id mediumint(6) unsigned not null auto_increment,
      ctime timestamp(14),
-     data blob DEFAULT '' NOT NULL,
-     comment text DEFAULT '' NOT NULL,
-     PRIMARY KEY (id)
+     data blob default '' not null,
+     comment text default '' not null,
+     primary key (id)
    )
 SQL
 
 $DBH->do(<<SQL);
-   CREATE TABLE ssluser (
-     id int(10) unsigned NOT NULL default '0',
-     cert varchar(255) NOT NULL default '',
-     PRIMARY KEY (id),
-     UNIQUE KEY cert(cert)
-   )
+  CREATE TABLE ssluser (
+    userid int(10) unsigned NOT NULL default '0',
+    cert blob NOT NULL,
+    KEY idx_userid (userid),
+    KEY idx_cert (cert(20))
+  )
 SQL
 
 
@@ -261,6 +261,11 @@ Now populating tables (that hopefully do exist now). Any errors in this
 section are supposedly fatal(!!).
 
 EOF
+
+eval {
+   $DBH->do("insert into appset values (1, 'default')")
+   or die;
+};
 
 print "creating admin user and admin group... ";
 eval {
@@ -277,9 +282,10 @@ eval {
    print <<EOF;
 ok
 
-********* the admin user is named 'admin'       *********
-********* and has the initial password 'public' *********
-********* Please change this ASAP !!!           *********
+********* the admin user is named 'admin'           *********
+********* and has the initial password 'public'     *********
+********* please change this ASAP using             *********
+********* papp-admin -u admin --password <password> *********
 
 EOF
 };

@@ -25,6 +25,7 @@ Usage: $self [opts...]
             --list-apps        list applications
             --list-appsets     list application sets
             --list-users       list (registered) users
+            --list-groups      list groups / access rights
 
        -a | --app <name>       select/create application <name>
             --appset <name>    set application set <name>
@@ -32,9 +33,14 @@ Usage: $self [opts...]
             --mount <cfg>      set <cfg> as mountconfig (or location)
             --config <cfg>     set <cfg> as application config
 
+       -g | --group <name>     select/create group <name>
+            --comment <text>   set the group comment string
+
        -u | --user <name>      select/create user <name>
             --password <pw>    set new password (dangerous!)
             --comment <text>   set the user comment string
+	    --grant <group>    add user to <group>
+	    --revoke <group>   remove user from <group>
 
        -d | --delete           delete selected object
        -s | --show             show currently selected object
@@ -85,7 +91,7 @@ $keepuser    = parsetime($PApp::Config{KEEPUSER}    || getenv "PAPP_KEEPUSER"   
 $keepreguser = parsetime($PApp::Config{KEEPREGUSER} || getenv "PAPP_KEEPREGUSER" || "1y");
 $keepstate   = parsetime($PApp::Config{KEEPSTATE}   || getenv "PAPP_KEEPSTATE"   || "14d");
 
-Getopt::Long::Configure ("bundling", "no_auto_abbrev", "no_ignore_case");
+Getopt::Long::Configure ("bundling", "no_ignore_case");
 {
    my($obj, $class);
    GetOptions(
@@ -110,6 +116,9 @@ Getopt::Long::Configure ("bundling", "no_auto_abbrev", "no_ignore_case");
       "list-appsets" => sub {
          call { list_appsets() };
       },
+      "list-groups:s" => sub {
+         call { list_groups(shift) } $_[1] ne "" ? $_[1] : "_%";
+      },
       "list-users:s" => sub {
          call { list_users(shift) } $_[1] ne "" ? $_[1] : "_%";
       },
@@ -130,6 +139,21 @@ Getopt::Long::Configure ("bundling", "no_auto_abbrev", "no_ignore_case");
          call { shift->show(shift) } $class, $obj;
       },
 
+      "group|g=s" => sub {
+         $class = Group;
+         $obj = new PApp::DataRef 'DB_row',
+                    table => "grp",
+                    where => [id => sql_fetch "select id from grp where name = ?", $_[1]],
+                    delay => 1;
+         $obj->{name} = $_[1];
+         clean {
+            my $obj = shift;
+            if ($obj->dirty) {
+               $obj->flush;
+            }
+         } $obj;
+      },
+
       "app|a=s" => sub {
          $class = App;
          $obj = new PApp::DataRef 'DB_row',
@@ -141,7 +165,7 @@ Getopt::Long::Configure ("bundling", "no_auto_abbrev", "no_ignore_case");
          clean {
             my $obj = shift;
             if ($obj->dirty) {
-               $obj->{mountconfig} ||= "\$Location{'/$obj->{name}'} = \\%papp_handler";
+               $obj->{mountconfig} ||= "\$Location{'~ ^/$obj->{name}(/|\$)'} = \\%papp_handler";
                if ($obj->{path} eq "") {
                   warn "path not set, not creating application\n";
                } else {
@@ -169,7 +193,7 @@ Getopt::Long::Configure ("bundling", "no_auto_abbrev", "no_ignore_case");
          call {
             $obj->{mountconfig} = shift
          } substr ($_[1], 0, 1) eq "/"
-           ? "\$Location{'$_[1]'} = \\%papp_handler"
+           ? "\$Location{'~ ^$_[1](/|\$)'} = \\%papp_handler"
            : $_[1];
       },
 
@@ -189,14 +213,35 @@ Getopt::Long::Configure ("bundling", "no_auto_abbrev", "no_ignore_case");
       },
       "password=s" => sub {
          $class and $obj or die "--password called without a selected user\n";
-         call { $obj->{pass} = crypt shift,
-                    join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64];
-              } $_[1];
+         call {
+            srand;
+            $obj->{pass} = crypt shift,
+               join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64];
+         } $_[1];
       },
       "comment=s" => sub {
-         $class and $obj or die "--comment called without a selected user\n";
+         $class and $obj or die "--comment called without a selected user/group\n";
          call { $obj->{comment} = shift } $_[1];
       },
+      "grant=s" => sub {
+         $class and $obj or die "--grant called without a selected user\n";
+	 my $grp = sql_fetch "select id from grp where name like ?", $_[1];
+	 $grp or die "--grant called with nonexistant group\n";
+         clean {
+	    $_[0]->flush;
+	    sql_exec "insert into usergrp (userid, grpid) values (?, ?)", $_[0]{id}, $_[1];
+	 } $obj, $grp;
+      },
+      "revoke=s" => sub {
+         $class and $obj or die "--revoke called without a selected user\n";
+	 my $grp = sql_fetch "select id from grp where name like ?", $_[1];
+	 $grp or die "--revoke called with nonexistant group\n";
+         clean {
+	    $_[0]->flush;
+	    sql_exec "delete from usergrp where userid = ? and grpid = ?", $_[0]{id}, $_[1];
+	 } $obj, $grp;
+      },
+
 
       "keepuser=s" => sub {
          $keepuser = parsetime($_[1]);
@@ -286,6 +331,21 @@ sub list_appsets {
    while ($st->fetch) {
       printf "%-5s %s\n",
          $id, $name;
+   }
+}
+
+sub list_groups {
+   my $st = sql_exec 
+               \my($id, $name, $desc),
+               "select id, name, comment
+                from grp
+                where id = ? or name like ?
+                order by 2",
+               $_[0], $_[0];
+
+   printf "%4s %-15s %-59.59s\n", "GID", "NAME", "COMMENT";
+   while ($st->fetch) {
+      printf "%4s %-15s %-59.59s\n", $id, $name, $desc;
    }
 }
 

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if [ "$1" = "--slave" ]; then
+   POSTURL="$2"
+   END="$3"
+   TMP="$4"
+   if [ "$END" = "__END__" ]; then
+      vi "$TMP"
+      echo "uploading..."
+      echo
+      POST -s -c application/x-papp-edit -- "$POSTURL" <"$TMP"
+      rm -f "$TMP"
+      echo
+      echo
+      echo "press enter to close this window..."
+      read
+   fi
+else
+   exec <"$1"
+   read POSTURL
+   read EXTENSION
+   read END
+   TMP="$1~$$$EXTENSION"
+   cat >"$TMP"
+   rxvt -e "$0" --slave "$POSTURL" "$END" "$TMP"
+   rm -f "$TMP" # just to be sure...
+fi
+

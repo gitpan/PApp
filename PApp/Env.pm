@@ -31,14 +31,15 @@ currently true in all cases.
 
 package PApp::Env;
 
-use Storable;
 use PApp::Config;
 use PApp::SQL;
 use PApp::Exception;
 
+use Compress::LZF ();
+
 use base Exporter;
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT = qw(setenv getenv unsetenv modifyenv lockenv listenv);
 
 =item setenv key => value
@@ -48,12 +49,9 @@ Sets a single environment variable to the specified value. (mysql-specific ;)
 =cut
 
 sub setenv($$) {
-   my ($key, $val) = @_;
-
-   $val = "\x00".Storable::nfreeze($val)
-      if ref $val || !defined $val || substr($val, 0, 1) eq "\x00";
-
-   sql_exec PApp::Config::DBH, "replace into env (name, value) values (?, ?)", $key, $val;
+   sql_exec PApp::Config::DBH,
+            "replace into env (name, value) values (?, ?)",
+            $_[0], Compress::LZF::sfreeze_cr $_[1];
 }
 
 =item unsetenv key
@@ -74,13 +72,10 @@ Return the value of the specified environment value
 =cut
 
 sub getenv($) {
-   my $key = shift;
-   my $st = sql_exec PApp::Config::DBH, \my($val), "select value from env where name = ?", $key;
-   if ($st->fetch) {
-      substr ($val, 0, 1) eq "\x00" ? Storable::thaw(substr $val, 1) : $val;
-   } else {
-      ();
-   }
+   Compress::LZF::sthaw
+      sql_fetch PApp::Config::DBH,
+                "select value from env where name = ?",
+                $_[0];
 }
 
 =item lockenv BLOCK

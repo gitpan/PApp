@@ -15,7 +15,7 @@
 <!ENTITY % modulebody "(module|import|callback|macro|description|%perlcode;)*">
 
 <!-- a distinct package (application) -->
-<!ELEMENT package (%modulebody;|database|language|description)+>
+<!ELEMENT package (%modulebody;|database|description|style|nosession)+>
 <!ATTLIST package
     name      CDATA #REQUIRED
     src       CDATA #IMPLIED -- optional source file to load --
@@ -26,7 +26,7 @@
 <!ELEMENT domain     ANY>
 <!ATTLIST domain
     name  CDATA #IMPLIED -- default is application name --
-    lang  CDATA #IMPLIED
+    lang  CDATA #IMPLIED -- might be a list --
 >
 
 <!--
@@ -69,8 +69,18 @@
 -->
 <!ELEMENT module   (%modulebody;)>
 <!ATTLIST module
-    name NMTOKEN      #REQUIRED
+    name NMTOKEN      #REQUIRED	-- might be "*", designating the wildcard module --
     nosession NMTOKEN #IMPLIED
+>
+
+<!--
+   modules wrapped in a nosession-element will not accept new sessions.
+   instead, when a new session begins with sich a module it will be
+   redirected to the target page.
+-->
+<!ELEMENT nosession ANY>
+<!ATTLIST nosession
+    target NMTOKEN #REQUIRED
 >
 
 <!-- the standard include mechanism -->
@@ -166,16 +176,8 @@
 <!ELEMENT translate  EMPTY>
 <!ATTLIST translate
     fields   CDATA #REQUIRED
-    lang     CDATA #IMPLIED
+    lang     CDATA #IMPLIED -- might be a list --
     style    (plain|code|auto) "plain"
->
-
-<!-- define a supported language, together with aliases -->
-<!ELEMENT language EMPTY>
-<!ATTLIST language
-    lang    CDATA #REQUIRED
-    desc    CDATA #REQUIRED
-    aliases CDATA #IMPLIED   <!-- deprecated: should no longer be used -->
 >
 
 <!--

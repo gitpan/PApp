@@ -1,0 +1,20 @@
+You need to create a database named demodb (or something else). Use the
+demodb.sql file as a template. With mysql:
+
+   mysql <demodb.sql
+
+Then you need to mount the application:
+
+   papp-admin --app demo \
+              --appset default \
+              --path demo/demo \
+              --mount /uri
+
+You also need to modify a line in demo/demo.papp to reflect your database
+setup:
+
+   <database dsn="DBI:mysql:demodb" username="xxx" password="xxx"/>
+
+It is easiest to do using the admin web interface. After that, demo should
+be visible under the /uri-URI on your server, or using the exec.cgi
+script, under /cgi-bin/exec.cgi/demo.

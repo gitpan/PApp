@@ -27,7 +27,7 @@ package PApp::DataRef;
 
 use Convert::Scalar ();
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 
 =item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...;
 
@@ -63,7 +63,7 @@ Parameters
                  fields are being cached.
    database      the PApp::SQL::Database object to use. If not specified,
                  the default database at the time of the new call is used.
-   force_utf8    can be set to a boolean, an arrayref or hashref that decides
+   utf8          can be set to a boolean, an arrayref or hashref that decides
                  wether to force the utf8 bit on or off for the selected fields.
                  [THIS IS AN EXPERIMENTAL EXTENSION]
 
@@ -173,37 +173,41 @@ sub dbh {
 
 sub TIEHASH {
    my $class = shift;
-   my %a = @_;
+   my $self = bless { @_ }, $class;
 
-   exists $a{autocommit} or $a{autocommit} = 1;
-   exists $a{database}   or $a{database}   = $PApp::SQL::Database
+   exists $self->{autocommit} or $self->{autocommit} = 1;
+   exists $self->{database}   or $self->{database}   = $PApp::SQL::Database
       or die "no database given and no default database found";
 
-   exists $a{table} or Carp::croak("mandatory parameter table missing");
-   exists $a{where} or Carp::croak("mandatory parameter where missing");
+   exists $self->{table} or Carp::croak("mandatory parameter table missing");
+   exists $self->{where} or Carp::croak("mandatory parameter where missing");
 
-   if (exists $a{force_utf8}) {
-      if (ref $a{force_utf8} eq "ARRAY") {
-         my %a; @a{@{$a{force_utf8}}} = (1) x @{$a{force_utf8}};
-         $a{force_utf8} = \%a;
+   if (exists $self->{utf8}) {
+      if (ref $self->{utf8} eq "ARRAY") {
+         $self->{utf8}{$_} = 1 for @{$self->{utf8}};
       }
    }
 
-   if (my $preload = delete $a{preload} and defined $a{where}[1]) {
-      # try to preload, enabled caching
+   if (my $preload = delete $self->{preload} and $self->{where}[1]) {
+      # try to preload, enable caching
       $preload = ref $preload ? join ",", @$preload : "*";
-      my $st = sql_exec $a{database}->dbh, "select $preload from $a{table}";
+      my $st = sql_exec $self->{database}->dbh,
+                        "select $preload from $self->{table} where $self->{where}[0] = ?",
+                        $self->{where}[1];
       my $hash = $st->fetchrow_hashref;
-      $a{_cache}{$field} = $value while my ($field, $value) = each %$hash;
+      while (my ($field, $value) = each %$hash) {
+         Convert::Scalar::utf8_on $value if $self->{utf8} && (!ref $self->{utf8} || $self->{utf8}{$field});
+         $self->{_cache}{$field} = $value;
+      }
       $st->finish;
    }
 
-   bless \%a, $class;
+   $self;
 }
 
 =item $hd->{fieldname} or $hd->{[fieldname, extra-args]}
 
-Return a reference to the given field of the row. The optional arguments
+Return a lvalue to the given field of the row. The optional arguments
 C<fetch> and C<store> can be given code-references that are called at
 every fetch and store, and should return their first argument (possibly
 modified), e.g. to fetch and store a crypt'ed password field:
@@ -265,7 +269,7 @@ sub filter_password (){ ( fetch => $sql_pass_fetch, store => $sql_pass_store ) }
 sub _sequence {
    my $self = shift;
 
-   unless (defined $self->{where}[1]) {
+   unless ($self->{where}[1]) {
       # create a new ID
       $self->{where}[1] = sql_insertid
          sql_exec $self->dbh,
@@ -282,7 +286,7 @@ sub FETCH {
    } else {
       if ($self->{where}[1]) {
          $value = sql_fetch $self->dbh, "select $field from $self->{table} where $self->{where}[0] = ?",  $self->{where}[1];
-         Convert::Scalar::utf8_on $value if $self->{force_utf8} && (!ref $self->{force_utf8} || $self->{force_utf8}{$field});
+         Convert::Scalar::utf8_on $value if $self->{utf8} && (!ref $self->{utf8} || $self->{utf8}{$field});
          $self->{_cache}{$field} = $value if $self->{cache};
       } else {
          $value = ();
@@ -297,17 +301,17 @@ sub STORE {
    my @value = ref $args{store} ? $args{store}->($self, shift) : shift;
    return unless @value;
 
-   Convert::Scalar::utf8_upgrade $value[0] if $self->{force_utf8} && (!ref $self->{force_utf8} || $self->{force_utf8}{$field});
+   Convert::Scalar::utf8_upgrade $value[0] if $self->{utf8} && (!ref $self->{utf8} || $self->{utf8}{$field});
 
    if ($self->{delay}) {
       $self->{_store}{$field} = \($self->{_cache}{$field} = $value[0]);
    } else {
-      $self->_sequence unless defined $self->{where}[1];
+      $self->_sequence unless $self->{where}[1];
       sql_exec $self->dbh, "update $self->{table} set $field = ? where $self->{where}[0] = ?",  $value[0], $self->{where}[1];
    }
 }
 
-# we do not support iterators yet, but define them so we can display this object
+# we do not officially support iterators yet, but define them so we can display this object
 sub FIRSTKEY {
    my $self = shift;
    keys %{$self->{_cache}};
@@ -317,6 +321,19 @@ sub FIRSTKEY {
 sub NEXTKEY {
    my $self = shift;
    each %{$self->{_cache}};
+}
+
+sub EXISTS {
+   my $self = shift;
+   my $field = shift;
+   exists $self->{_cache}{$field} or do {
+      # do it the slow way. not sure wether the limit 0 is portable or not
+      my $st = sql_exec $self->{database}->dbh,
+                        "select * from $self->{table} limit 0";
+      my %f; @f{@{$st->{NAME_lc}}} = ();
+      $st->finish;
+      exists $f{lc $field};
+   };
 }
 
 =item $key = $hd->id
@@ -345,7 +362,7 @@ sub flush {
    my $store = delete $self->{_store};
 
    if (%$store) {
-      if (defined $self->{where}[1]) {
+      if ($self->{where}[1]) {
          sql_exec $self->dbh,
                   "update $self->{table} set" .
                      (join ",", map " $_ = ?", keys %$store) .
@@ -374,6 +391,19 @@ C<flush> to execute these.
 sub dirty {
    my $self = shift;
    !!%{$self->{_store}};
+}
+
+=item $hd->invalidate
+
+Empties any internal caches. The next access will reload the values
+from the database again. Any dirty values will be discarded.
+
+=cut
+
+sub invalidate {
+   my $self = shift;
+   delete $self->{_cache};
+   delete $self->{_store};
 }
 
 =item $hd->discard
@@ -408,7 +438,11 @@ sub delete {
 sub DESTROY {
    my $self = shift;
 
-   $self->flush if $self->{autocommit};
+   if ($self->{autocommit}) {
+      local $@; # do not erase valuable error information (like upcalls ;)
+      eval { $self->flush };
+      warn "$@, during PApp::DataRef object destruction" if $@;
+   }
 }
 
 package PApp::DataRef::DB_row::Proxy;

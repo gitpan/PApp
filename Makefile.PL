@@ -20,7 +20,7 @@ WriteMakefile(
     'LIBS'	=> [''],
     'DEFINE'	=> '',
     'INC'	=> '',
-    'EXE_FILES'	=> ['bin/papp-env', 'bin/papp-admin'],
+    'EXE_FILES'	=> [qw(bin/papp-env bin/papp-admin bin/papp-httpd)],
     'PM'	=> {
 		    'PApp.pm'		=> '$(INST_LIBDIR)/PApp.pm',
 		    'PApp/Apache.pm'	=> '$(INST_LIBDIR)/PApp/Apache.pm',
@@ -36,28 +36,35 @@ WriteMakefile(
 		    'PApp/Log.pm'	=> '$(INST_LIBDIR)/PApp/Log.pm',
 		    'PApp/Lock.pm'	=> '$(INST_LIBDIR)/PApp/Lock.pm',
 		    'PApp/Application.pm'=> '$(INST_LIBDIR)/PApp/Application.pm',
+		    'PApp/ECMAScript.pm'=> '$(INST_LIBDIR)/PApp/ECMAScript.pm',
 		    'PApp/Util.pm'	=> '$(INST_LIBDIR)/PApp/Util.pm',
 		    'PApp/PCode.pm'	=> '$(INST_LIBDIR)/PApp/PCode.pm',
 		    'PApp/Package.pm'	=> '$(INST_LIBDIR)/PApp/Package.pm',
 		    'PApp/XML.pm'	=> '$(INST_LIBDIR)/PApp/XML.pm',
 		    'PApp/XSLT.pm'	=> '$(INST_LIBDIR)/PApp/XSLT.pm',
+		    'PApp/XSLT/Sablotron.pm'	=> '$(INST_LIBDIR)/PApp/XSLT/Sablotron.pm',
+		    'PApp/XSLT/LibXSLT.pm'	=> '$(INST_LIBDIR)/PApp/XSLT/LibXSLT.pm',
 		    'PApp/Admin.pm'	=> '$(INST_LIBDIR)/PApp/Admin.pm',
 		    'PApp/User.pm'	=> '$(INST_LIBDIR)/PApp/User.pm',
                    },
     'PREREQ_PM'	=> {
 		    PApp::SQL		=> 0.121,
+                    Compress::LZF	=> 0.1,
+                    String::Similarity	=> 0.02,
+                    Convert::Scalar	=> 0.06,
+                    Crypt::Twofish2	=> 0.01,
+
+                    URI			=> 1.12,
                     XML::Parser		=> 2.27,
                     #mod_perl		=> 1.21, # not necessarily required anymore
-                    CGI::SpeedyCGI	=> 1.8,  # speedycgi uses a broken numbering scheme
                     Storable		=> 0.702,
                     DBI			=> 1.13,
-                    DBD::mysql		=> 2.04,
                     Digest::SHA1	=> 1.01,
-                    Compress::LZF	=> 0.05,
-                    String::Similarity	=> 0.02,
-                    Crypt::Twofish2	=> 0.01,
-                    Convert::Scalar	=> 0.06,
-                    XML::Sablotron	=> 0.43, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
+
+                    DBD::mysql		=> 2.04,
+                    CGI::SpeedyCGI	=> 1.8,  # speedycgi uses a broken numbering scheme
+                    #XML::Sablotron	=> 0.43, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
+                    #XML::LibXSLT	=> 0.0,  # gnome-xml, libxslt
 		   },
 );
 
@@ -76,7 +83,7 @@ reconfig: force
 	\$(PERL) PApp/Config.pm.PL
 
 i18n: force
-	./bin/papp-admin `for domain in papp bench dbedit demo iso639 iso3166; do \\
+	./bin/papp-admin `for domain in papp bench dbedit demo iso639 iso3166 iso3166full; do \\
 	  echo --domain \$\$domain --export i18n/\$\$domain.po; \\
 	done`
 
@@ -90,7 +97,10 @@ predist: setver i18n
 	\$(MAKE) tardist
 
 install :: config.pl all
-	\$(PERL) ./papp-install
+	echo
+	echo Please run ./papp-install now to initialize any databases.
+	echo
+	#\$(PERL) ./papp-install
 
 ";
 

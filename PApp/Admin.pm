@@ -22,7 +22,7 @@ use Convert::Scalar ':utf8';
 
 use base 'Exporter';
 
-$VERSION = 0.12;
+$VERSION = 0.121;
 @EXPORT = qw();
 
 our $verbose = 1;
@@ -153,6 +153,7 @@ sub import_po {
       my $lang;
 
       while (my ($id, $msg, @comments) = $po->next) {
+         warn "$id|$msg|\n";#d#
          my $comment = "";
          my %val;
          for (@comments) {
@@ -177,28 +178,28 @@ sub import_po {
             print STDERR "format error, skipped\n";
             next outer;
          } else {
-            sql_fetch \my($nr),
+            sql_ufetch \my($nr),
                       "select nr from msgid where id = ? and lang = ? and domain = ?",
                       $id, $val{lang}, $domain;
             unless ($nr) {
-               $nr = sql_insertid sql_exec "insert into msgid values (NULL, ?, ?, ?, ?)",
+               $nr = sql_insertid sql_uexec "insert into msgid values (NULL, ?, ?, ?, ?)",
                         $id, $domain, $val{lang}, $comment;
             } else {
-               sql_exec "update msgid set context = ? where nr = ?", $comment, $nr;
+               sql_uexec "update msgid set context = ? where nr = ?", $comment, $nr;
             }
 
             $val{flags} = 1 unless exists $val{flags};
 
-            unless (sql_exists "msgstr where nr = ? and lang = ?", $nr, $lang) {
-               sql_exec "insert into msgstr values (?, ?, ?, ?)", $nr, $lang, $val{flags}, $msg;
+            unless (sql_uexists "msgstr where nr = ? and lang = ?", $nr, $lang) {
+               sql_uexec "insert into msgstr values (?, ?, ?, ?)", $nr, $lang, $val{flags}, $msg;
                $mod++;
-            } elsif (!$overwrite and $val{flags} & 1) {
-               my $st = sql_exec "update msgstr set flags = ? and msg = ? where nr = ? and lang = ?",
-                           $val{flags}, $msg, $nr, $val{lang};
+            } elsif ($overwrite or $val{flags} & 1) {
+               my $st = sql_uexec "update msgstr set flags = ?, msg = ? where nr = ? and lang = ?",
+                           $val{flags}, $msg, $nr, $lang;
                $mod += $st->rows;
             } else {
-               my $st = sql_exec "update msgstr set flags = ? and msg = ? where nr = ? and lang = ? and flags & 1 = 0",
-                           $val{flags}, $msg, $nr, $val{lang};
+               my $st = sql_uexec "update msgstr set flags = ?, msg = ? where nr = ? and lang = ? and flags & 1 = 0",
+                           $val{flags}, $msg, $nr, $lang;
                $mod += $st->rows;
             }
 

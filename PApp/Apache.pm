@@ -53,7 +53,7 @@ use PApp::Package;
 BEGIN {
    @ISA = PApp::Base::;
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.12;
+   $VERSION = 0.121;
 }
 
 *PApp::OK = \&Apache::Constants::OK;
@@ -129,13 +129,14 @@ sub mount {
    if ($mountconfig !~ /%papp_handler/) {
       # INSECURE, should check for empty string instead (TYPOE!)#FIXME#d#
       warn "$papp->{path} [appid=$appid]: mountconfig does not contain '%papp_handler', mounting on '/$papp->{name}'\n";
-      $mountconfig = "\$Location{'/$papp->{name}'} = \\%papp_handler";
+      $mountconfig = "\$Location{'~ ^/$papp->{name}(/|\$)'} = \\%papp_handler";
    };
 
    my $package = apache_config_package;
 
    eval "package $package; $mountconfig";
-   $@ and fancydie "error while evaluating mountconfig", "$papp->{path} [appid=$appid]",
+   $@ and fancydie "error while evaluating mountconfig", "$@",
+                   info => [app => "$papp->{path} [appid=$appid]"],
                    info => [mountconfig => $mountconfig];
 
    $papp;
