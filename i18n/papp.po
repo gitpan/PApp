@@ -309,9 +309,8 @@ msgstr "Login fehlgeschlagen"
 
 # /root/src/PApp/apps/admin.papp:189 <td><?slink __"Memory Usage", "admin/memory":></td>
 #$lang=eng
-#$flags=2
 msgid "Memory Usage"
-msgstr "Meldungen"
+msgstr "Speicherbenutzung"
 
 # /root/src/PApp/widget/poedit.papp:313       <th align="left" width="40%">__"message"</th>
 #$lang=eng

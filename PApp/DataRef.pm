@@ -27,9 +27,9 @@ package PApp::DataRef;
 
 use Convert::Scalar ();
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 
-=item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...;
+=item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...
 
 Create a new handle to a table in a SQL database. C<table> is the name
 (view) of the database table. The handle will act like a reference to a
@@ -49,38 +49,66 @@ STORE operation. This currently only works for mysql ;*)
 
 Parameters
 
-   table         the database table to use
-   where         a array-ref with the primary key fieldname and primary key
-                 value
+   table         the database table to use.
+   key           a string or arrayref containing the (primary) key fields.
+   id            a scalar or araryref giving the values for the key.
+
+   where         [deprecated but supported] a array-ref with the primary key
+                 fieldname and primary key value.
 
    autocommit    if set to one (default) automatically store the contents
-                 when necessary or when the object gets destroyed
-   delay         if set, do not write the table for each update
+                 when necessary or when the object gets destroyed.
+   delay         if set, do not write the table for each update.
                  (delay implies caching of stored values(!))
-   cache         if set, cache values that were read
+   cache         if set, cache values that were read.
    preload       if set to a true value, preloads the values from the table on
                  object creation. If set to an array reference, only the mentioned
-                 fields are being cached.
+                 fields are being cached. Implies C<cache => 1>.
    database      the PApp::SQL::Database object to use. If not specified,
                  the default database at the time of the new call is used.
+   insertid      when set to true, makes this object allocate sequences using
+                 sql_insertid.
+   sequence      (use insertid) when set to one and the (single) key id is C<undef>
+                 or C<zero>, use sql_insertid to allocate a new one (will be extended
+                 to handle the case where no id is given, in which case this parameter
+                 describes how to allocate a new id).
    utf8          can be set to a boolean, an arrayref or hashref that decides
                  wether to force the utf8 bit on or off for the selected fields.
                  [THIS IS AN EXPERIMENTAL EXTENSION]
 
-=item $hd = new PApp::DataRef 'File', path => ..., perm => ...;
+=item $hd = new $dataref arg => value, ...
+
+Instead of specifying all the same parameters again and again, you can
+create a I<partial> DataRef object (e.g. one without an id) with default
+parameters and use this form of the method invocation to "specialise", e.g.
+
+   my $template = new PApp::DataRef 'DB_row', table => "message", key => "id";
+
+   for (1,2,3) {
+      my $row = $template->new(id => $_);
+      ...
+   }
+
+=item $hd = new PApp::DataRef 'File', path => ..., perm => ...
 
 Create a new handle that fetches and stores a file. [NYI]
 
-=item $hd = new PApp::DataRef 'Scalar', fetch => ..., ...;
+=item $hd = new PApp::DataRef 'Scalar', fetch => ..., ...
 
 Create a scalar reference that calls your callbacks when accessed. Valid arguments are:
 
   fetch => coderef
-    a coderef which is to be called for every read access
+    A coderef which is to be called for every read access
+
   value => constant
-    as an alternative to fetch, always return a constant on read accesses
+    As an alternative to fetch, always return a constant on read accesses
+
   store => coderef
-    a coderef which is to be called with the new value for every write access
+    A coderef which is to be called with the new value for every write access
+
+  ref => scalar-ref
+    When present, this references the scalar that is passed to the fetch
+    method or overwritten by the store method.
 
 Either C<fetch> or C<value> must be present. If C<store> is missing,
 stored values get thrown away.
@@ -97,6 +125,21 @@ sub new {
    }
 
    $type->new(@_);
+}
+
+sub new_locked {
+   my $class = shift;
+
+   use Carp ();
+   Carp::cluck "PApp::DataRef::new_locked is deprecated, use autocommit => 0, delay => 1, preload => 1, cache => 1";
+   
+   my $type = "PApp::DataRef::".shift;
+
+   unless (defined &{"${type}::new"}) {
+      eval "use $type"; die if $@;
+   }
+
+   $type->new_locked(@_);
 }
 
 package PApp::DataRef::Base;
@@ -122,7 +165,7 @@ sub new {
    my $class = shift;
 
    my $handle;
-   tie $handle, $class, @_;
+   tie $handle, (ref $class ? (ref $class, %$class) : $class), @_;
    \$handle;
 }
 
@@ -134,9 +177,11 @@ sub TIESCALAR {
 sub FETCH {
    my $self = $_[0];
    if ($self->{fetch}) {
-      return $self->{fetch}();
+      return $self->{fetch}($self, $self->{ref} ? ${$self->{ref}} : ());
    } elsif (exists $self->{value}) {
       return $self->{value};
+   } elsif (exists $self->{ref}) {
+      return ${$self->{ref}};
    } else {
       # might become a warning or fatal error
       return undef;
@@ -146,7 +191,12 @@ sub FETCH {
 sub STORE {
    my $self = $_[0];
    if ($self->{store}) {
-      $self->{store}($_[1]);
+      if ($self->{ref}) {
+         my @data = $self->{store}($self, $_[1]);
+         ${$self->{ref}} = $data[0] if @data;
+      } else {
+         $self->{store}($_[1]);
+      }
    } else {
       # might become a warning or fatal error
       ();
@@ -156,14 +206,30 @@ sub STORE {
 package PApp::DataRef::DB_row;
 
 use PApp::SQL;
+use PApp::Callback ();
 
 use Carp ();
+
+my $sql_insertid = PApp::Callback::register_callback {
+   sql_insertid sql_exec $_[0]->dbh, "insert into $_[0]{table} values ()";
+} name => "papp_dataref_insertid";
 
 sub new {
    my $class = shift;
    my %handle;
 
-   tie %handle, $class, @_;
+   tie %handle, ref $class ? ref $class : $class,
+                autocommit => 1,
+                ref $class ? %$class : (),
+                @_;
+   bless \%handle, PApp::DataRef::DB_row::Proxy;
+}
+
+sub new_locked {
+   my $class = shift;
+   my %handle;
+
+   tie %handle, $class, autocommit => 0, delay => 1, preload => 1, cache => 1, @_;
    bless \%handle, PApp::DataRef::DB_row::Proxy;
 }
 
@@ -175,31 +241,71 @@ sub TIEHASH {
    my $class = shift;
    my $self = bless { @_ }, $class;
 
-   exists $self->{autocommit} or $self->{autocommit} = 1;
-   exists $self->{database}   or $self->{database}   = $PApp::SQL::Database
-      or die "no database given and no default database found";
+   $self->{database} ||= $PApp::SQL::Database;
 
-   exists $self->{table} or Carp::croak("mandatory parameter table missing");
-   exists $self->{where} or Carp::croak("mandatory parameter where missing");
-
-   if (exists $self->{utf8}) {
-      if (ref $self->{utf8} eq "ARRAY") {
-         $self->{utf8}{$_} = 1 for @{$self->{utf8}};
+   if (my $where = delete $self->{where}) {
+      $self->{key} = $where->[0];
+      $self->{id}  = $where->[1];
+      if ((!ref $self->{key} || @{$self->{key}} == 1) && !$self->{id} && !$self->{insertid}) {
+         use Carp ();
+         Carp::cluck "PApp::DataRef automatic auto_increment behaviour is deprecated, specify insertid => 1";
+         $self->{insertid} = 1;
       }
    }
 
-   if (my $preload = delete $self->{preload} and $self->{where}[1]) {
-      # try to preload, enable caching
-      $preload = ref $preload ? join ",", @$preload : "*";
-      my $st = sql_exec $self->{database}->dbh,
-                        "select $preload from $self->{table} where $self->{where}[0] = ?",
-                        $self->{where}[1];
-      my $hash = $st->fetchrow_hashref;
-      while (my ($field, $value) = each %$hash) {
-         Convert::Scalar::utf8_on $value if $self->{utf8} && (!ref $self->{utf8} || $self->{utf8}{$field});
-         $self->{_cache}{$field} = $value;
+   exists $self->{table} or Carp::croak("mandatory parameter table missing");
+   exists $self->{key}   or Carp::croak("mandatory parameter key missing");
+
+   $self->{key} = [$self->{key}] if defined $self->{key} && !ref $self->{key};
+   $self->{id}  = [$self->{id}]  if defined $self->{id}  && !ref $self->{id};
+
+   if (delete $self->{insertid}) {
+      $self->{sequence} = $sql_insertid->refer();
+
+      #d# 0 => undef with insertid (should we really?)
+      if ($self->{id} && !$self->{id}[0]) {
+         delete $self->{id};
       }
-      $st->finish;
+   }
+
+   if ($self->{id} && !defined $self->{id}[0]) {
+      delete $self->{id};
+   }
+
+   $self->{key_expr} = "(".(join " and ", map "$_ = ?", @{$self->{key}}).")";
+
+   if (exists $self->{utf8}) {
+      if (ref $self->{utf8} eq "ARRAY") {
+         my %utf8;
+         $utf8{$_} = 1 for @{$self->{utf8}};
+         $self->{utf8} = \%utf8;
+      }
+   }
+
+   if ($self->{id}) {
+      $self->{database} or
+         Carp::croak("no database given and no default database found");
+
+      if (my $preload = $self->{preload}) {
+         $self->{cache} = 1;
+
+         # try to preload, enable caching
+         $preload = ref $preload ? join ",", @$preload : "*";
+         my $st = eval {
+            sql_exec $self->{database}->dbh,
+                     "select $preload from $self->{table} where $self->{key_expr}",
+                     @{$self->{id}};
+         };
+         if ($st) {
+            my $hash = $st->fetchrow_hashref;
+            while (my ($field, $value) = each %$hash) {
+               Convert::Scalar::utf8_on $value if $self->{utf8} && (!ref $self->{utf8} || $self->{utf8}{$field});
+               $self->{_cache}{$field} = $value;
+            }
+            $st->finish;
+         }
+      }
+      # ...
    }
 
    $self;
@@ -220,7 +326,7 @@ modified), e.g. to fetch and store a crypt'ed password field:
 Additional named parameters are:
 
   fetch => $fetch_cb,
-  sore => $store_cb,
+  store => $store_cb,
      
      Functions that should be called with the fetched/to-be-stored value
      as second argument that should be returned, probably after some
@@ -228,13 +334,13 @@ Additional named parameters are:
      sql-sets or password fields from/to their internal database format.
 
      If the store function returns nothing (an empty 'list', as it is
-     called in lsit context), the update is being skipped.
+     called in list context), the update is being skipped.
 
      L<PApp::Callback> for a way to create serializable code references.
 
      PApp::DataRef::DB_row predefines some filter types (these functions
      return four elements, i.e. fetch => xxx, store => xxx, so that you
-     cna just cut & paste them).
+     can just cut & paste them).
 
         PApp::DataRef::DB_row::filter_sql_set
                   converts strings of the form a,b,c into array-refs and
@@ -242,6 +348,9 @@ Additional named parameters are:
 
         PApp::DataRef::DB_row::filter_password
                   returns the empty string and crypt's the value if nonempty.
+
+        PApp::DataRef::DB_row::filter_sfreeze_cr
+                  filters the data through Compress::LZF's sfreeze_cr and sthaw.
 
 =cut
 
@@ -263,17 +372,26 @@ my $sql_pass_store = create_callback {
    $_[1] ne "" ? crypt $_[1], join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64] : ();
 } name => "papp_dataref_pass_store";
 
-sub filter_sql_set  (){ ( fetch => $sql_set_fetch,  store => $sql_set_store  ) }
-sub filter_password (){ ( fetch => $sql_pass_fetch, store => $sql_pass_store ) }
+my $sql_sfreeze_cr_fetch = create_callback {
+   require Compress::LZF;
+   Compress::LZF::sthaw(Convert::Scalar::utf8_on $_[1]);
+} name => "papp_dataref_sfreeze_cr_fetch";
+
+my $sql_sfreeze_cr_store = create_callback {
+   require Compress::LZF;
+   Compress::LZF::sfreeze_cr(Convert::Scalar::utf8_upgrade $_[1]);
+} name => "papp_dataref_sfreeze_cr_store";
+
+sub filter_sql_set  (){ ( fetch => $sql_set_fetch,        store => $sql_set_store        ) }
+sub filter_password (){ ( fetch => $sql_pass_fetch,       store => $sql_pass_store       ) }
+sub filter_sfree_cr (){ ( fetch => $sql_sfreeze_cr_fetch, store => $sql_sfreeze_cr_store ) }
 
 sub _sequence {
    my $self = shift;
 
-   unless ($self->{where}[1]) {
+   unless (defined $self->{id}) {
       # create a new ID
-      $self->{where}[1] = sql_insertid
-         sql_exec $self->dbh,
-            "insert into $self->{table} values ()";
+      $self->{id} = [$self->{sequence}->($self)];
    }
 }
 
@@ -284,8 +402,8 @@ sub FETCH {
    if (exists $self->{_cache}{$field}) {
       $value = $self->{_cache}{$field};
    } else {
-      if ($self->{where}[1]) {
-         $value = sql_fetch $self->dbh, "select $field from $self->{table} where $self->{where}[0] = ?",  $self->{where}[1];
+      if ($self->{id}) {
+         $value = sql_fetch $self->dbh, "select $field from $self->{table} where $self->{key_expr}",  @{$self->{id}};
          Convert::Scalar::utf8_on $value if $self->{utf8} && (!ref $self->{utf8} || $self->{utf8}{$field});
          $self->{_cache}{$field} = $value if $self->{cache};
       } else {
@@ -306,8 +424,21 @@ sub STORE {
    if ($self->{delay}) {
       $self->{_store}{$field} = \($self->{_cache}{$field} = $value[0]);
    } else {
-      $self->_sequence unless $self->{where}[1];
-      sql_exec $self->dbh, "update $self->{table} set $field = ? where $self->{where}[0] = ?",  $value[0], $self->{where}[1];
+      $self->{_cache}{$field} = $value[0] if $self->{cache};
+
+      $self->_sequence unless defined $self->{id};
+      sql_exec $self->dbh,
+               "update $self->{table} set $field = ? where $self->{key_expr}",
+               $value[0], @{$self->{id}};
+      $sql_exec > 0
+         or sql_exec $self->dbh,
+            "insert into $self->{table} (" .
+               (join ",", $field, @{$self->{key}}) .
+            ") values (" .
+               (join ",", ("?") x (1 + @{$self->{key}})) .
+            ")",
+            $value[0],
+            @{$self->{id}};
    }
 }
 
@@ -336,25 +467,24 @@ sub EXISTS {
    };
 }
 
-=item $key = $hd->id
+=item @key = $hd->id
 
-Returns the key for the selected row, creating it if necessary.
+Returns the key value(s) for the selected row, creating it if necessary.
 
 =cut
 
 sub id($) {
    my $self = shift;
    $self->_sequence;
-   $self->{where}[1];
+   wantarray ? @{$self->{id}} : $self->{id}[0];
 }
 
 =item $hd->flush
 
-Flush all pending store operations.
+Flush all pending store operations. See HOW FLUSHES ARE IMPLEMENTED below
+to see how, well, flushes are implemented on the SQL-level.
 
 =cut
-
-# should be optimized into one sql statement
 
 sub flush {
    my $self = shift;
@@ -362,21 +492,40 @@ sub flush {
    my $store = delete $self->{_store};
 
    if (%$store) {
-      if ($self->{where}[1]) {
-         sql_exec $self->dbh,
+      my $dbh = $self->dbh;
+
+      my $insrep = sub {
+         sql_exec $dbh,
+               "$_[0] into $self->{table} (" .
+                  (join ",", @{$self->{key}}, keys %$store) .
+               ") values (" .
+                  (join ",", ("?") x (@{$self->{key}} + keys %$store)) .
+               ")",
+               @{$self->{id}},
+               (map $$_, values %$store);
+      };
+
+      my $update = sub {
+         sql_exec $dbh,
                   "update $self->{table} set" .
                      (join ",", map " $_ = ?", keys %$store) .
-                  " where $self->{where}[0] = ?",
-                  (map $$_, values %$store), $self->{where}[1];
+                  " where $self->{key_expr}",
+                  (map $$_, values %$store), @{$self->{id}};
+      };
+
+      $self->_sequence unless $self->{id};
+
+      if (0 && $self->{preload} && !ref $self->{preload}
+          && $dbh->{Driver}{Name} eq "mysql"
+        ) {
+         # disabled because $store doesn't contain all values, and _cache might contain
+         # the id field twice. reenable when id is a normal member of _cache
+         $insrep->("replace");
+         delete $self->{preload}; # preload also acts as a "we know all columns" flag
       } else {
-         $self->{where}[1] = sql_insertid
-            sql_exec $self->dbh,
-                  "insert into $self->{table} (" .
-                     (join ",", keys %$store) .
-                  ") values (" .
-                     (join ",", map "?", keys %$store) .
-                  ")",
-                  (map $$_, values %$store);
+         &$update;
+         $sql_exec > 0 or eval { $insrep->("insert") };
+         $sql_exec > 0 or &$update;
       }
    }
 }
@@ -390,7 +539,7 @@ C<flush> to execute these.
 
 sub dirty {
    my $self = shift;
-   !!%{$self->{_store}};
+   ! ! %{$self->{_store}}; # !! Isnogood for vim
 }
 
 =item $hd->invalidate
@@ -426,13 +575,13 @@ Delete the row from the database
 sub delete {
    my $self = shift;
 
-   $self->discard;
-   if (defined $self->{where}[1]) {
+   if ($self->{id}) {
       sql_exec $self->dbh,
-               "delete from $self->{table} where $self->{where}[0] = ?",
-               delete $self->{where}[1];
+               "delete from $self->{table} where $self->{key_expr}",
+               @{$self->{id}};
    }
-   $self->dirty;
+
+   $self->discard;
 }
 
 sub DESTROY {
@@ -440,7 +589,10 @@ sub DESTROY {
 
    if ($self->{autocommit}) {
       local $@; # do not erase valuable error information (like upcalls ;)
-      eval { $self->flush };
+      eval {
+         local $SIG{__DIE__} = \&PApp::Exception::diehandler;
+         $self->flush;
+      };
       warn "$@, during PApp::DataRef object destruction" if $@;
    }
 }
@@ -462,6 +614,35 @@ sub AUTOLOAD {
 sub DESTROY { }
 
 =back
+
+=head1 HOW FLUSHES ARE IMPLEMENTED
+
+When a single value (delay => 0) is being read or written, DataRef creates
+a single access:
+
+   SELECT column FROM table WHERE id = ?
+   UPDATE table SET column = ? where id = ?
+
+In other cases, DataRef reads and writes full rows:
+
+   SELECT * FROM table WHERE id = ?
+
+When a row is being written and the id is C<undef> or zero, DataRef uses
+an INSERT followed by C<sql_insertid>, so your id volumn should better
+be defined as auto increment in your database. If the id is defined, the
+update is driver specific:
+
+for mysql:
+
+   REPLACE INTO table (...) VALUES (...)
+
+and for other databases:
+
+   INSERT INTO table (...) VALUES (...)
+   and, if the above commend fails,
+   UPDATE table SET ? = ?, ? = ?, ... WHERE id = ?
+
+no checking wether the UPDATE succeeded is done (yet).
 
 =head1 SEE ALSO
 

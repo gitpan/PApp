@@ -50,7 +50,7 @@ Use it like this:
 
 ]]></perl>
 
-<import pm="PApp::User">access_p</import>
+<import pm="PApp::UserObs">access_p</import>
 <import src="macro/admin"/>
 
 <macro name="plain_header*(;$)" args="$head"><phtml><![CDATA[
@@ -59,8 +59,8 @@ Use it like this:
 #endif
 <html>
  <head>
- <title><?$head->{title}?></title>
- <?$head->{head}?>
+ <title><?$head->{title}:></title>
+ <?$head->{head}:>
  </head>
  <body link="#a000000" alink="#a00000" vlink="#a00000" text="#000000" bgcolor="#ffffb4">
 ]]></phtml></macro>

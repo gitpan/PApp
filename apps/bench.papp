@@ -8,10 +8,15 @@
 <module name="">
 <phtml><![CDATA[
    <html><body>
-   <: print $S{x} :>
-   <br>
-   
-   <?slink __"This is a real test", x => $S{x}+1?>
+   recursion count: <?$S{x}:><br />
+   reload_p: <?0&&reload_p:><br />
+#if 0
+<:
+$request->header_out("Set-Cookie" => "TEST=".time."; PATH=/");
+:>
+cookie: <?$request->header_in(Cookie):><br/>
+#endif
+   <?slink __"This is a real test", x => $S{x}+1:>
    </body></html>
 ]]></phtml>
 </module>

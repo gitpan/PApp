@@ -30,7 +30,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 
 =item $papp = new PApp::Application args...
 
@@ -51,7 +51,7 @@ sub new {
 
 =item $papp->mount
 
-Do neccessary bookkeeping to mount an application.
+Do necessary bookkeeping to mount an application.
 
 =cut
 
@@ -62,6 +62,8 @@ sub mount {
    $self->load_config;
 
    delete $self->{cb_src}; # not needed for mounted applications
+
+   local $self->{root}{name} = $self->{name}; # bad hack, but not a design error
 
    $self->for_all_packages(sub {
       my ($ppkg, $path, $name) = @_;
@@ -187,7 +189,9 @@ sub load_code {
    $code or fancydie "load_config: unable to compile package", $self->{path};
    $code = Storable::thaw $code;
 
-   local $PApp::papp = $self;
+   local $PApp::papp          = $self;
+   local $PApp::SQL::Database = $self->{database};
+   local $PApp::SQL::DBH      = $self->{database} && $self->{database}->checked_dbh;
 
    $self->for_all_packages(sub {
       my ($ppkg, $path, $name) = @_;

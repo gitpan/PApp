@@ -41,7 +41,7 @@ use PApp::Env;
 
 use base Exporter;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT = qw();
 
 =head2 CALLBACKS

@@ -12,8 +12,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabies"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaars"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalaans"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Sjinees (eenvoudige)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroasies"
 
 #$lang=eng
 msgid "Czech"
@@ -64,6 +80,10 @@ msgid "Icelandic"
 msgstr "Yslands"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonesies"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italiaans"
 
@@ -104,6 +124,18 @@ msgid "Russian"
 msgstr "Russies"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serwies"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slowaaks"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Sloweens"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Spaans"
 
@@ -112,16 +144,504 @@ msgid "Swedish"
 msgstr "Sweeds"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "Turks"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Sjinees (tradisioneel)"
+
+#$lang=ara
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "العربية"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "البلغارية"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "القطلونية"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "الصينية (المبسطة)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "الكرواتية"
+
+#$lang=eng
+msgid "Czech"
+msgstr "التشيكية"
+
+#$lang=eng
+msgid "Danish"
+msgstr "الدانمركية"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "الهولندية"
+
+#$lang=eng
+msgid "English"
+msgstr "الإنكليزية"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "الإستونية"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "الفنلندية"
+
+#$lang=eng
+msgid "French"
+msgstr "الفرنسية"
+
+#$lang=eng
+msgid "German"
+msgstr "الألمانية"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "اليونانية"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "العبرية"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "الهنغارية"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "الآيسلندية"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "الإندونيسية"
+
+#$lang=eng
+msgid "Italian"
+msgstr "الإيطالية"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "اليابانية"
+
+#$lang=eng
+msgid "Korean"
+msgstr "الكورية"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "اللاتفية"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "الليتوانية"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "النرويجية"
+
+#$lang=eng
+msgid "Polish"
+msgstr "البولندية"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "البرتغالية"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "الرومانية"
+
+#$lang=eng
+msgid "Russian"
+msgstr "الروسية"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "الصربية"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "السلوفاكية"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "السلوفينية"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "الإسبانية"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "السويدية"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "التركية"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "الصينية (التقليدية)"
+
+#$lang=bel
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Арабскай"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Баўгарскай"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Каталёнскай"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Кітайскай (Спрошчанай)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Харвацкай"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Чэскай"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Дацкай"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Галяндзкай"
+
+#$lang=eng
+msgid "English"
+msgstr "Ангельскай"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Эстонскай"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Фінскай"
+
+#$lang=eng
+msgid "French"
+msgstr "Францускай"
+
+#$lang=eng
+msgid "German"
+msgstr "Нямецкай"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Грэцкай"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Габрэйскай"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Вугорскай"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Ісьляндзкай"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Італьянскай"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Японскай"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Карэйскай"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Латвійскай"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Летувіскай"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Нарвэскай"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Польскай"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Партугальскай"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Румынскай"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Расейскай"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Сербскай"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Славацкай"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Славенскай"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Гішпанскай"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Швэдзкай"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Турэцкай"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Кітайскай (Традыцыйнай)"
+
+#$lang=ben
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arbi"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgariyo"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Chin (shohojkrito)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croatio"
+
+#$lang=eng
+msgid "English"
+msgstr "Ingreji"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estoniyo"
+
+#$lang=eng
+msgid "French"
+msgstr "Forashi"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Ihudi"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hungariyo"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Icelandiyo"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indoneshiyo"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italio"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japani"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latviyo"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithuaniyo"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norwegiyo"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romaniyo"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Roosh"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbio"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Sloveniyo"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turoshk"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Chin (Purano)"
+
+#$lang=bih
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arabi"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaria ke"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catal Ke"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Chini (Aasaan)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Krotia ke"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Chek"
+
+#$lang=eng
+msgid "English"
+msgstr "Angrezi"
+
+#$lang=eng
+msgid "French"
+msgstr "Fransisi"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Unaani"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hibru"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Icelandi"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesia ke"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japani"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithauni"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Purtgaali"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romainan"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Roosi"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbia ke"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovakee"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovenee"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turky ke"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Chini (puranowala)"
 
 #$lang=bul
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Арабски"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "български"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "каталонски"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Китайски (Опростен)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "хърватски"
 
 #$lang=eng
 msgid "Czech"
@@ -129,7 +649,7 @@ msgstr "Чешки"
 
 #$lang=eng
 msgid "Danish"
-msgstr "Дания"
+msgstr "датски"
 
 #$lang=eng
 msgid "Dutch"
@@ -172,6 +692,10 @@ msgid "Icelandic"
 msgstr "Исландски"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Индонезийски"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Италиански"
 
@@ -212,12 +736,28 @@ msgid "Russian"
 msgstr "Руски"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "сръбски"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Словашки"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Словенски"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Испански"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Шведски"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "турски"
 
 #$lang=eng
 msgid "Zhuang"
@@ -228,8 +768,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Àrab"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Búlgar"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "català"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Xinès (simplificat)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croat"
 
 #$lang=eng
 msgid "Czech"
@@ -280,6 +836,10 @@ msgid "Icelandic"
 msgstr "Islandès"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonesi"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italià"
 
@@ -320,12 +880,28 @@ msgid "Russian"
 msgstr "Rus"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbi"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Eslovac"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Eslovè"
+
+#$lang=eng
 msgid "Spanish"
-msgstr "Espanyol"
+msgstr "Castellà"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Suec"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turc"
 
 #$lang=eng
 msgid "Zhuang"
@@ -336,8 +912,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "arabština"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulharsky"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalánsky"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "čínsky (zjednodušeně)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "chorvatsky"
 
 #$lang=eng
 msgid "Czech"
@@ -345,11 +937,11 @@ msgstr "česky"
 
 #$lang=eng
 msgid "Danish"
-msgstr "dánątině"
+msgstr "dánsky"
 
 #$lang=eng
 msgid "Dutch"
-msgstr "holandątině"
+msgstr "holandsky"
 
 #$lang=eng
 msgid "English"
@@ -361,15 +953,15 @@ msgstr "estonsky"
 
 #$lang=eng
 msgid "Finnish"
-msgstr "fin?tině"
+msgstr "finsky"
 
 #$lang=eng
 msgid "French"
-msgstr "francouzątině"
+msgstr "francouzsky"
 
 #$lang=eng
 msgid "German"
-msgstr "němčině"
+msgstr "německy"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
@@ -388,8 +980,12 @@ msgid "Icelandic"
 msgstr "islandsky"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "indonézsky"
+
+#$lang=eng
 msgid "Italian"
-msgstr "italątině"
+msgstr "italsky"
 
 #$lang=eng
 msgid "Japanese"
@@ -409,7 +1005,7 @@ msgstr "litevsky"
 
 #$lang=eng
 msgid "Norwegian"
-msgstr "norątině"
+msgstr "norsky"
 
 #$lang=eng
 msgid "Polish"
@@ -417,7 +1013,7 @@ msgstr "polsky"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "portugalątině"
+msgstr "portugalsky"
 
 #$lang=eng
 msgid "Romanian"
@@ -428,12 +1024,28 @@ msgid "Russian"
 msgstr "rusky"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "srbsky"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovenština"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovinština"
+
+#$lang=eng
 msgid "Spanish"
-msgstr "ąpanělątině"
+msgstr "španělsky"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "švédsky"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "turecky"
 
 #$lang=eng
 msgid "Zhuang"
@@ -444,16 +1056,168 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabeg"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bwlgaraidd"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalaneg"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Tsieineeg (Wedi symleiddio)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croataidd"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Tsieceg"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Daneg"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Iseldireg"
+
+#$lang=eng
+msgid "English"
+msgstr "Saesneg"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estoneg"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Ffineg"
+
+#$lang=eng
+msgid "French"
+msgstr "Ffrangeg"
+
+#$lang=eng
+msgid "German"
+msgstr "Almaeneg"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Groeg"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebraeg"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hwngareg"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandeg"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesieg"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Eidaleg"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japanaeg"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Iaith Corea"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latfieg"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithwaneg"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norwyeg"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Pwyleg"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portiwgaleg"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Rwmaneg"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Rwsieg"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbaidd"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slofac"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slofenia"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Sbaeneg"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Swedeg"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Twrceg"
+
+#$lang=eng
 msgid "Welsh"
 msgstr "cymraeg"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Tsieineeg (Traddodiadol)"
 
 #$lang=dan
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabisk"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgarsk"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Kinesisk (simplificeret)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroatisk"
 
 #$lang=eng
 msgid "Czech"
@@ -504,6 +1268,10 @@ msgid "Icelandic"
 msgstr "Islandsk"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonesisk"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italiensk"
 
@@ -544,12 +1312,28 @@ msgid "Russian"
 msgstr "Russisk"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbisk"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovakisk"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovensk"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Spansk"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Svensk"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Tyrkisk"
 
 #$lang=eng
 msgid "Zhuang"
@@ -841,7 +1625,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Chinese"
-msgstr "Chinesisch (Vereinfacht)"
+msgstr "Chinesisch (vereinfacht)"
 
 #$lang=eng
 msgid "Church Slavic"
@@ -882,6 +1666,10 @@ msgstr "Sonstige Kreol- und Pidginsprachen (französischbasierend)"
 #$lang=eng
 msgid "Creoles and pidgins, Portuguese-based (Other)"
 msgstr "Sonstige Kreol- und Pidginsprachen (portugiesischbasierend)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroatisch"
 
 #$lang=eng
 msgid "Cushitic (Other)"
@@ -1088,6 +1876,10 @@ msgid "Indo-European (Other)"
 msgstr "Sonstige indoeuropäische Sprachen"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonesisch"
+
+#$lang=eng
 msgid "Interlingua (International Auxiliary Language Association)"
 msgstr "Interlingua (IALA)"
 
@@ -1228,6 +2020,10 @@ msgid "Semitic (Other)"
 msgstr "Sonstige semitische Sprachen"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbisch"
+
+#$lang=eng
 msgid "Siksika"
 msgstr ""
 
@@ -1238,6 +2034,14 @@ msgstr "Sonstige sino-tibetische Sprachen"
 #$lang=eng
 msgid "Slavic (Other)"
 msgstr "Sonstige slawische Sprachen"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slowakisch"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slowenisch"
 
 #$lang=eng
 msgid "South American Indian (Other)"
@@ -1260,20 +2064,40 @@ msgid "Tibetan"
 msgstr "Tibetisch"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "Türkisch"
+
+#$lang=eng
 msgid "Welsh"
 msgstr "Walisisch"
 
 #$lang=eng
 msgid "Zhuang"
-msgstr "Chinesisch (Traditionell)"
+msgstr "Chinesisch (traditionell)"
 
 #$lang=ell
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Aραβικά"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Βουλγάρικα"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Καταλανικά"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Κινέζικα (απλοποιημένα)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Κροάτικα"
 
 #$lang=eng
 msgid "Czech"
@@ -1289,7 +2113,7 @@ msgstr "Ολλανδικά"
 
 #$lang=eng
 msgid "English"
-msgstr "Αγγλικά"
+msgstr "Αγγλική"
 
 #$lang=eng
 msgid "Estonian"
@@ -1305,7 +2129,7 @@ msgstr "Γαλλικά"
 
 #$lang=eng
 msgid "German"
-msgstr "Γερμανικά"
+msgstr "Γερμανική"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
@@ -1322,6 +2146,10 @@ msgstr "Ουγκρικά"
 #$lang=eng
 msgid "Icelandic"
 msgstr "Ισλανδικά"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Ινδονισιακά"
 
 #$lang=eng
 msgid "Italian"
@@ -1364,12 +2192,28 @@ msgid "Russian"
 msgstr "Ρώσικα"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Σέρβικα"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Σλοβακικά"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Σλοβενικά"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Ισπανικά"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Σουηδικά"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Τουρκικά"
 
 #$lang=eng
 msgid "Zhuang"
@@ -1380,72 +2224,88 @@ msgid ""
 msgstr ""
 
 #$lang=eng
-msgid "Esperanto"
-msgstr "esperanto"
+msgid "Arabic"
+msgstr "Araba"
 
-#$lang=est
-msgid ""
-msgstr ""
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgara"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Kataluna"
 
 #$lang=eng
 msgid "Chinese"
-msgstr "Hiina (Lihtsustatud)"
+msgstr "China (Simpligita)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroata"
 
 #$lang=eng
 msgid "Czech"
-msgstr "Tšehhi"
+msgstr "Cxehxa"
 
 #$lang=eng
 msgid "Danish"
-msgstr "Taani"
+msgstr "Dana"
 
 #$lang=eng
 msgid "Dutch"
-msgstr "Hollandi"
+msgstr "Nederlanda"
 
 #$lang=eng
 msgid "English"
-msgstr "Inglise"
+msgstr "Angla"
+
+#$lang=eng
+msgid "Esperanto"
+msgstr "esperanto"
 
 #$lang=eng
 msgid "Estonian"
-msgstr "Eesti"
+msgstr "Estona"
 
 #$lang=eng
 msgid "Finnish"
-msgstr "Soome"
+msgstr "Finna"
 
 #$lang=eng
 msgid "French"
-msgstr "Prantsuse"
+msgstr "Franca"
 
 #$lang=eng
 msgid "German"
-msgstr "Saksa"
+msgstr "Germana"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Kreeka"
+msgstr "Greka"
 
 #$lang=eng
 msgid "Hebrew"
-msgstr "Heebrea"
+msgstr "Hebrea"
 
 #$lang=eng
 msgid "Hungarian"
-msgstr "Hungari"
+msgstr "Hungara"
 
 #$lang=eng
 msgid "Icelandic"
-msgstr "Islandi"
+msgstr "Islanda"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonezia"
 
 #$lang=eng
 msgid "Italian"
-msgstr "Itaalia"
+msgstr "Itala"
 
 #$lang=eng
 msgid "Japanese"
-msgstr "Jaapani"
+msgstr "Japana"
 
 #$lang=eng
 msgid "Korean"
@@ -1453,59 +2313,375 @@ msgstr "Korea"
 
 #$lang=eng
 msgid "Latvian"
-msgstr "Läti"
+msgstr "Latva"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Leedu"
+msgstr "Litova"
 
 #$lang=eng
 msgid "Norwegian"
-msgstr "Norra"
+msgstr "Norvega"
 
 #$lang=eng
 msgid "Polish"
-msgstr "Poola"
+msgstr "Pola"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "Portugali"
+msgstr "Portugala"
 
 #$lang=eng
 msgid "Romanian"
-msgstr "Romaania"
+msgstr "Rumana"
 
 #$lang=eng
 msgid "Russian"
-msgstr "Vene"
+msgstr "Rusa"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serba"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovaka"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovena"
 
 #$lang=eng
 msgid "Spanish"
-msgstr "Hispaania"
+msgstr "Hispana"
 
 #$lang=eng
 msgid "Swedish"
-msgstr "Rootsi"
+msgstr "Sveda"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turka"
 
 #$lang=eng
 msgid "Zhuang"
-msgstr "Hiina (Traditsiooniline)"
+msgstr "China (Tradicia)"
+
+#$lang=est
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "araabia"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgaaria"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalaani"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "lihtsustatud hiina"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "kroaatia"
+
+#$lang=eng
+msgid "Czech"
+msgstr "tšehhi"
+
+#$lang=eng
+msgid "Danish"
+msgstr "taani"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "hollandi"
+
+#$lang=eng
+msgid "English"
+msgstr "inglise"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "eesti"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "soome"
+
+#$lang=eng
+msgid "French"
+msgstr "prantsuse"
+
+#$lang=eng
+msgid "German"
+msgstr "saksa"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "kreeka"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "heebrea"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "ungari"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "islandi"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indoneesia"
+
+#$lang=eng
+msgid "Italian"
+msgstr "itaalia"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "jaapani"
+
+#$lang=eng
+msgid "Korean"
+msgstr "korea"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "läti"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "leedu"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "norra"
+
+#$lang=eng
+msgid "Polish"
+msgstr "poola"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "portugali"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "rumeenia"
+
+#$lang=eng
+msgid "Russian"
+msgstr "vene"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "serbia"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovaki"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slovenia"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "hispaania"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "rootsi"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "türgi"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "traditsioonilises hiina"
 
 #$lang=eus
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabiarra"
+
+#$lang=eng
 msgid "Basque"
 msgstr "euskaraz"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgariera"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalaniera"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Txinera (sinplifikatua)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroaziera"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Txekera"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Danieraz"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Nederlandera"
+
+#$lang=eng
+msgid "English"
+msgstr "Ingelesa"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estoniera"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Suomiera"
+
+#$lang=eng
+msgid "French"
+msgstr "Frantsesa"
+
+#$lang=eng
+msgid "German"
+msgstr "Alemanez"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Grekera"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebraiera"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hungariera"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandiera"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesiera"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italiera"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japoniera"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Koreera"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Letoniera"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lituaniera"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norvegiera"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Poloniera"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugesa"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Errumaniera"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Errusiera"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbiera"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Eslovakiera"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Esloveniera"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Gaztelaniaz"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Suediera"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turkiera"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Txinera (tradizionala )"
 
 #$lang=fin
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "arabia"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgaria"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalaani"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "kiina (yksinkertaistettu)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "kroatia"
 
 #$lang=eng
 msgid "Czech"
@@ -1556,6 +2732,10 @@ msgid "Icelandic"
 msgstr "islanti"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "indonesia"
+
+#$lang=eng
 msgid "Italian"
 msgstr "italia"
 
@@ -1596,12 +2776,28 @@ msgid "Russian"
 msgstr "venäjä"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "serbia"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovakia"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slvenia"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "espanja"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "ruotsi"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "turkki"
 
 #$lang=eng
 msgid "Zhuang"
@@ -1677,7 +2873,7 @@ msgstr "apache"
 
 #$lang=eng
 msgid "Arabic"
-msgstr "arabe"
+msgstr "Arabe"
 
 #$lang=eng
 msgid "Aramaic"
@@ -1841,7 +3037,7 @@ msgstr "bugi"
 
 #$lang=eng
 msgid "Bulgarian"
-msgstr "bulgare"
+msgstr "Bulgare"
 
 #$lang=eng
 msgid "Buriat"
@@ -1977,7 +3173,7 @@ msgstr "créoles et pidgins portugais, autres"
 
 #$lang=eng
 msgid "Croatian"
-msgstr "croate"
+msgstr "Croate"
 
 #$lang=eng
 msgid "Cushitic (Other)"
@@ -2305,7 +3501,7 @@ msgstr "indo-européennes, autres langues"
 
 #$lang=eng
 msgid "Indonesian"
-msgstr "indonésien"
+msgstr "Indonésien"
 
 #$lang=eng
 msgid "Interlingua (International Auxiliary Language Association)"
@@ -2517,7 +3713,7 @@ msgstr "lingala"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Lithuanien"
+msgstr "Lituanien"
 
 #$lang=eng
 msgid "Low German; Low Saxon; German, Low; Saxon, Low"
@@ -2963,7 +4159,7 @@ msgstr "sémitiques, autres langues"
 
 #$lang=eng
 msgid "Serbian"
-msgstr "serbe"
+msgstr "Serbe"
 
 #$lang=eng
 msgid "Serer"
@@ -3015,11 +4211,11 @@ msgstr "slaves, autres langues"
 
 #$lang=eng
 msgid "Slovak"
-msgstr "slovaque"
+msgstr "Slovaque"
 
 #$lang=eng
 msgid "Slovenian"
-msgstr "slovène"
+msgstr "Slovène"
 
 #$lang=eng
 msgid "Sogdian"
@@ -3191,7 +4387,7 @@ msgstr "tumbuka"
 
 #$lang=eng
 msgid "Turkish"
-msgstr "turc"
+msgstr "Turc"
 
 #$lang=eng
 msgid "Turkish, Ottoman (1500-1928)"
@@ -3333,21 +4529,321 @@ msgstr "zoulou"
 msgid "Zuni"
 msgstr "zuni"
 
+#$lang=fry
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arabysk"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaarsk"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalaansk"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Sineesk (ferienfâldige)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroätysk"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Tsjechysk"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Deensk"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Hollânsk"
+
+#$lang=eng
+msgid "English"
+msgstr "Ingelsk"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estsk"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finsk"
+
+#$lang=eng
+msgid "French"
+msgstr "Frânsk"
+
+#$lang=eng
+msgid "German"
+msgstr "Dútsk"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Gryksk"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebrieusk"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hongaarsk"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Iislânsk"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Yndonesysk"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italjaansk"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japansk"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Koreaansk"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Letsk"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Litousk"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Noarsk"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Poalsk"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugeesk"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Rûmeensk"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Russysk"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Servysk"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slowaaksk"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Sloweensk"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Spaansk"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Sweedsk"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turksk"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Sineesk (tradisjoneel)"
+
 #$lang=gla
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabais"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgàrais"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalanais"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Sìonais (sìmplichte)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croàisis"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Seicis"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Danmhairgis"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Duitsis"
+
+#$lang=eng
+msgid "English"
+msgstr "Beurla"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Eastoinis"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Suòmais"
+
+#$lang=eng
+msgid "French"
+msgstr "Fraingis"
+
+#$lang=eng
 msgid "Gaelic (Scots)"
 msgstr "gaeilge"
+
+#$lang=eng
+msgid "German"
+msgstr "Gearmailtis"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Gréigis"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Eabhra"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Ungairis"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Innis-Tìlis"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Ìnd-innsis"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Eadailtis"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Seapanais"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Coireanais"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Laitbheis"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Liotuànais"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Nirribhis"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Pòlainnis"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portagailis"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Rumànais"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Rùisis"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Sèarbais"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slobhacais"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slobhainis"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Spàinnis"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Suainis"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turcais"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Sìonais (seann-nòsach)"
 
 #$lang=gle
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Araibis"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgáiris"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalóinis"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Sínis (Simplithe)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Cróitis"
 
 #$lang=eng
 msgid "Czech"
@@ -3398,6 +4894,10 @@ msgid "Icelandic"
 msgstr "Íoslannais"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indinéisis"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Iodáilis"
 
@@ -3438,12 +4938,28 @@ msgid "Russian"
 msgstr "Rúisis"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Seirbis"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slóvaicis"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slóivéinis"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Spáinnis"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Sualainnis"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Tuircis"
 
 #$lang=eng
 msgid "Zhuang"
@@ -3454,8 +4970,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Árabe"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Búlgaro"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalán"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Chinés (simplificado)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croata"
 
 #$lang=eng
 msgid "Czech"
@@ -3506,6 +5038,10 @@ msgid "Icelandic"
 msgstr "Islandés"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonesio"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italiano"
 
@@ -3546,6 +5082,18 @@ msgid "Russian"
 msgstr "Ruso"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbio"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Eslovaco"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Esloveno"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Español"
 
@@ -3554,16 +5102,204 @@ msgid "Swedish"
 msgstr "Sueco"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "Turco"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Chinés (tradicional)"
+
+#$lang=guj
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arabic"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Chinese (saral)"
+
+#$lang=eng
+msgid "English"
+msgstr "Angreji"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japani"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugese"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Chinese (paramparagat)"
+
+#$lang=heb
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "ערבית"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "בולגרית"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "קטלונית"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "סינית (קלה)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "קרואטית"
+
+#$lang=eng
+msgid "Czech"
+msgstr "צ'כית"
+
+#$lang=eng
+msgid "Danish"
+msgstr "דנית"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "הולנדית"
+
+#$lang=eng
+msgid "English"
+msgstr "אנגלית"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "אסטונית"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "פינית"
+
+#$lang=eng
+msgid "French"
+msgstr "צרפתית"
+
+#$lang=eng
+msgid "German"
+msgstr "גרמנית"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "יוונית"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "עברית"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "הונגרית"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "איסלנדית"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "אינדונזית"
+
+#$lang=eng
+msgid "Italian"
+msgstr "אטלקית"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "יפנית"
+
+#$lang=eng
+msgid "Korean"
+msgstr "קוראנית"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "לטבית"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "ליטואנית"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "נורוגית"
+
+#$lang=eng
+msgid "Polish"
+msgstr "פולנית"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "פורטוגזית"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "רומנית"
+
+#$lang=eng
+msgid "Russian"
+msgstr "רוסית"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "סרבית"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "סלובקית"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "סלובנית"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "ספרדית"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "שוודית"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "טורקית"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "סינית (מסורתית)"
 
 #$lang=hin
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "ArabBhaasha"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgariaee"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Chini (Saral)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croatiaee"
 
 #$lang=eng
 msgid "English"
@@ -3579,7 +5315,7 @@ msgstr "Fransisi"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "greek"
+msgstr "Yunaani"
 
 #$lang=eng
 msgid "Hungarian"
@@ -3592,6 +5328,10 @@ msgstr "Italvi"
 #$lang=eng
 msgid "Japanese"
 msgstr "Japani"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Koriyaaee"
 
 #$lang=eng
 msgid "Latvian"
@@ -3618,6 +5358,14 @@ msgid "Russian"
 msgstr "Roosi"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbiaee"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Toork"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Chini (Paramparagat)"
 
@@ -3626,8 +5374,20 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "arapski"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bugarski"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalonski"
+
+#$lang=eng
 msgid "Chinese"
-msgstr "Kineski (pojednostavljen)"
+msgstr "kineski (pojednostavljen)"
 
 #$lang=eng
 msgid "Croatian"
@@ -3635,11 +5395,11 @@ msgstr "hrvatski"
 
 #$lang=eng
 msgid "Czech"
-msgstr "Češki"
+msgstr "čeąki"
 
 #$lang=eng
 msgid "Danish"
-msgstr "Danski"
+msgstr "danski"
 
 #$lang=eng
 msgid "Dutch"
@@ -3651,7 +5411,7 @@ msgstr "Engleski"
 
 #$lang=eng
 msgid "Estonian"
-msgstr "Estonski"
+msgstr "estonski"
 
 #$lang=eng
 msgid "Finnish"
@@ -3667,19 +5427,23 @@ msgstr "Njemački"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Grčki"
+msgstr "grčki"
 
 #$lang=eng
 msgid "Hebrew"
-msgstr "Hebrejski"
+msgstr "hebrejski"
 
 #$lang=eng
 msgid "Hungarian"
-msgstr "Mađarski"
+msgstr "mađarski"
 
 #$lang=eng
 msgid "Icelandic"
-msgstr "Islandski"
+msgstr "islandski"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonezijski"
 
 #$lang=eng
 msgid "Italian"
@@ -3687,7 +5451,7 @@ msgstr "Talijanski"
 
 #$lang=eng
 msgid "Japanese"
-msgstr "Japanski"
+msgstr "japanski"
 
 #$lang=eng
 msgid "Korean"
@@ -3695,11 +5459,11 @@ msgstr "Korejski"
 
 #$lang=eng
 msgid "Latvian"
-msgstr "Latvijski"
+msgstr "latvijski"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Litavski"
+msgstr "litavski"
 
 #$lang=eng
 msgid "Norwegian"
@@ -3707,19 +5471,31 @@ msgstr "Norveški"
 
 #$lang=eng
 msgid "Polish"
-msgstr "Poljski"
+msgstr "poljski"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "Portugalski"
+msgstr "portugalski"
 
 #$lang=eng
 msgid "Romanian"
-msgstr "Rumunjski"
+msgstr "rumunjski"
 
 #$lang=eng
 msgid "Russian"
-msgstr "Ruski"
+msgstr "ruski"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "srpski"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovački"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slovenski"
 
 #$lang=eng
 msgid "Spanish"
@@ -3727,19 +5503,467 @@ msgstr "Španjolski"
 
 #$lang=eng
 msgid "Swedish"
-msgstr "Švedski"
+msgstr "ąvedski"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "turski"
 
 #$lang=eng
 msgid "Zhuang"
-msgstr "Kineski (tradicionalni)"
+msgstr "kineski (tradicionalni)"
+
+#$lang=hun
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arab"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bolgár"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalán"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "kínai (egyszerűsített)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "horvát"
+
+#$lang=eng
+msgid "Czech"
+msgstr "cseh"
+
+#$lang=eng
+msgid "Danish"
+msgstr "dán"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "holland"
+
+#$lang=eng
+msgid "English"
+msgstr "angol"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "észt"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "finn"
+
+#$lang=eng
+msgid "French"
+msgstr "francia"
+
+#$lang=eng
+msgid "German"
+msgstr "német"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "görög"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "héber"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "magyar"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "izlandi"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonéz"
+
+#$lang=eng
+msgid "Italian"
+msgstr "olasz"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "japán"
+
+#$lang=eng
+msgid "Korean"
+msgstr "koreai"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "lett"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "litván"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "norvég"
+
+#$lang=eng
+msgid "Polish"
+msgstr "lengyel"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "portugál"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "román"
+
+#$lang=eng
+msgid "Russian"
+msgstr "orosz"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "szerb"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "szlovák"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "szlovén"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "spanyol"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "svéd"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Török"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "kínai (hagyományos)"
+
+#$lang=ina
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arabe"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgaro"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "catalano"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "chinese (simplificate)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "croato"
+
+#$lang=eng
+msgid "Czech"
+msgstr "checo"
+
+#$lang=eng
+msgid "Danish"
+msgstr "danese"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "nederlandese"
+
+#$lang=eng
+msgid "English"
+msgstr "anglese"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "estoniano"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "finnese"
+
+#$lang=eng
+msgid "French"
+msgstr "francese"
+
+#$lang=eng
+msgid "German"
+msgstr "germano"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "greco"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "hebreo"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "hungaro"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "islandese"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonesiano"
+
+#$lang=eng
+msgid "Italian"
+msgstr "italiano"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "japonese"
+
+#$lang=eng
+msgid "Korean"
+msgstr "coreano"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "letton"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "lithuano"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "norvegiano"
+
+#$lang=eng
+msgid "Polish"
+msgstr "polonese"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "portugese"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "romaniano"
+
+#$lang=eng
+msgid "Russian"
+msgstr "russo"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "serbo"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovaco"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "sloveno"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "espaniol"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "svedese"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "turco"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "chinese (traditional)"
+
+#$lang=ind
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaria"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalan"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Cina (yang Disederhanakan)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroasia"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Ceko"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Denmark"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Belanda"
+
+#$lang=eng
+msgid "English"
+msgstr "Inggris"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estonia"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finlandia"
+
+#$lang=eng
+msgid "French"
+msgstr "Perancis"
+
+#$lang=eng
+msgid "German"
+msgstr "Jerman"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Yunani"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Yahudi"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hungaria"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandia"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Bahasa Indonesia"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italia"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Jepang"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Korea"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latvia"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithuania"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norwegia"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Polandia"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugis"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Rumania"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Rusia"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbia"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Bahasa Slovakia"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Bahasa Slovenia"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Spanyol"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Swedia"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turki"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Cina (Tradisional)"
 
 #$lang=isl
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "arabísku"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "búlgversku"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalónsku"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "kínversku (einfaldaðri)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "króatísku"
 
 #$lang=eng
 msgid "Czech"
@@ -3787,7 +6011,11 @@ msgstr "ungversku"
 
 #$lang=eng
 msgid "Icelandic"
-msgstr "íslensku"
+msgstr "íslenska"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indónesísku"
 
 #$lang=eng
 msgid "Italian"
@@ -3807,7 +6035,7 @@ msgstr "lettnesku"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "lithásku"
+msgstr "litháísku"
 
 #$lang=eng
 msgid "Norwegian"
@@ -3830,12 +6058,28 @@ msgid "Russian"
 msgstr "rússnesku"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "serbnesku"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slóvösku"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slóvensku"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "spænsku"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "sænsku"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "tyrknesku"
 
 #$lang=eng
 msgid "Zhuang"
@@ -3846,8 +6090,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabo"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaro"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalano"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Cinese (semplificato)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croato"
 
 #$lang=eng
 msgid "Czech"
@@ -3898,6 +6158,10 @@ msgid "Icelandic"
 msgstr "Islandese"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonesiano"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italiano"
 
@@ -3938,6 +6202,18 @@ msgid "Russian"
 msgstr "Russo"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbo"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovacco"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Sloveno"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Spagnolo"
 
@@ -3946,8 +6222,156 @@ msgid "Swedish"
 msgstr "Svedese"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "Turco"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Cinese (tradizionale)"
+
+#$lang=jaw
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Boso arab"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Boso Bulgaria"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Boso Katal"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Boso Cina"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Boso Kroasia"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Boso Cechnya"
+
+#$lang=eng
+msgid "Danish"
+msgstr "boso dani"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Boso Londo"
+
+#$lang=eng
+msgid "English"
+msgstr "Boso Inggris"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Boso Estonia"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Boso Finlandia"
+
+#$lang=eng
+msgid "French"
+msgstr "Boso Prancis"
+
+#$lang=eng
+msgid "German"
+msgstr "Jerman"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Boso Yunani"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Boso Hebron"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Boso Hunggaria"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Boso Irlandia"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Boso Indonesia"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Boso Itali"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Boso Jepang"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Boso Korea"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Boso Latvia"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Boso Lituania"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Boso Norwegia"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Boso Polandia"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Boso Portugis"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Boso Romawi"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Boso Rusia"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Boso serbia"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "boso Slovakia"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "boso Slovenia"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Boso Spanyol"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Boso Swedia"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Boso Turki"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Boso Cina tradisional"
 
 #$lang=jpn
 msgid ""
@@ -3956,6 +6380,10 @@ msgstr ""
 #$lang=eng
 msgid "Afrikaans"
 msgstr "アフリカーンス語"
+
+#$lang=eng
+msgid "Arabic"
+msgstr "アラビア語"
 
 #$lang=eng
 msgid "Bulgarian"
@@ -4030,6 +6458,10 @@ msgid "Icelandic"
 msgstr "アイスランド語"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "インドネシア語"
+
+#$lang=eng
 msgid "Irish"
 msgstr "アイルランド語"
 
@@ -4082,6 +6514,14 @@ msgid "Serbian"
 msgstr "セルビア語"
 
 #$lang=eng
+msgid "Slovak"
+msgstr "スロバキア語"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "スロベニア語"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "スペイン語"
 
@@ -4105,13 +6545,57 @@ msgstr "ウクライナ語"
 msgid "Zhuang"
 msgstr "中国語 (繁体)"
 
+#$lang=kan
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arabi"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Chinese (Sarala)"
+
+#$lang=eng
+msgid "English"
+msgstr "Angla"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesiadhallina"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slovenian"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Chinese (Saampradaayika)"
+
 #$lang=kor
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "아라비아어"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "불가리아어"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "카탈로니아어"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "중국어 (간체)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "크로아티아어"
 
 #$lang=eng
 msgid "Czech"
@@ -4162,6 +6646,10 @@ msgid "Icelandic"
 msgstr "아이슬란드어"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "인도네시아어"
+
+#$lang=eng
 msgid "Italian"
 msgstr "이탈리아어"
 
@@ -4171,7 +6659,7 @@ msgstr "일본어"
 
 #$lang=eng
 msgid "Korean"
-msgstr "한국어"
+msgstr "한글"
 
 #$lang=eng
 msgid "Latvian"
@@ -4202,6 +6690,18 @@ msgid "Russian"
 msgstr "러시아어"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "세르비아어"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "슬로바키아어"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "슬로베니아어"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "스페인어"
 
@@ -4210,24 +6710,324 @@ msgid "Swedish"
 msgstr "스웨덴어"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "터키어"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "중국어 (번체)"
+
+#$lang=lat
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arabica"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgariana"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Cataluniana"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Serica (Faciliorem redita)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croata"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Ceca"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Danica"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Batava"
+
+#$lang=eng
+msgid "English"
+msgstr "Anglica"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estoniana"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finnica"
+
+#$lang=eng
+msgid "French"
+msgstr "Gallica"
+
+#$lang=eng
+msgid "German"
+msgstr "Germanica"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Graeca"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebrea"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hungariana"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandica"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesica"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italica"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Iaponica"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Coreanica"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latviana"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithuaniana"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norvegiana"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Polonica"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Lusitana"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romaniana"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Russica"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbiana"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovaka"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovenica"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Hispanica"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Suecica"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Galata"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Serica (A maioribus tradita)"
 
 #$lang=lav
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "arābu"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgāru"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "kataloniešu"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "ķīniešu (vienkāršotā)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "horvātu"
+
+#$lang=eng
+msgid "Czech"
+msgstr "čehu"
+
+#$lang=eng
+msgid "Danish"
+msgstr "dāņu"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "holandiešu"
+
+#$lang=eng
+msgid "English"
+msgstr "angļu"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "igauņu"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "somu"
+
+#$lang=eng
+msgid "French"
+msgstr "franču"
+
+#$lang=eng
+msgid "German"
+msgstr "vācu"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "grieķu"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "ebreju"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "ungāru"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "islandiešu"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonēziešu"
+
+#$lang=eng
+msgid "Italian"
+msgstr "itāļu"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "japāņu"
+
+#$lang=eng
+msgid "Korean"
+msgstr "korejiešu"
+
+#$lang=eng
 msgid "Latvian"
-msgstr "latvieski"
+msgstr "latviešu"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "lietuviešu"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "norvēģu"
+
+#$lang=eng
+msgid "Polish"
+msgstr "poļu"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "portugāļu"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "rumāņu"
+
+#$lang=eng
+msgid "Russian"
+msgstr "krievu"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "serbu"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovāku"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slovēņu"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "spāņu"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "zviedru"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "turku"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "ķīniešu (tradicionālā)"
 
 #$lang=lit
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabų"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgarų"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalonų"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Kinų (Supaprastinta)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroatų"
 
 #$lang=eng
 msgid "Czech"
@@ -4239,7 +7039,7 @@ msgstr "Danų"
 
 #$lang=eng
 msgid "Dutch"
-msgstr "Danų"
+msgstr "Olandų"
 
 #$lang=eng
 msgid "English"
@@ -4276,6 +7076,10 @@ msgstr "Vengrų"
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandų"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indoneziečių"
 
 #$lang=eng
 msgid "Italian"
@@ -4318,6 +7122,18 @@ msgid "Russian"
 msgstr "Rusų"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbų"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovakų"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovėnų"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Ispanų"
 
@@ -4326,16 +7142,100 @@ msgid "Swedish"
 msgstr "Švedų"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "Turkų"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Kinų (Tradicinė)"
+
+#$lang=mal
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arabi"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "chinese (Lakhuvaakkiyathu)"
+
+#$lang=eng
+msgid "Korean"
+msgstr "korean"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Parangi"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Chinese (Yadhasthithikamaayathu)"
+
+#$lang=mar
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bugaree"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalee"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "चीनी भाषा (सोपी)"
+
+#$lang=eng
+msgid "English"
+msgstr "engraji"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesia Deshacha"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "japaani"
+
+#$lang=eng
+msgid "Korean"
+msgstr "कोरीयन (Korean)"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turkee"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "चीनी भाषा (जुनी)"
 
 #$lang=mkd
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "°аРЯбЪШ"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Р±СѓРіР°СЂСЃРєРё"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "РєР°С‚Р°Р»РѕРЅСЃРєРё"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Кинески (Упростено)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "hrvatski"
 
 #$lang=eng
 msgid "Czech"
@@ -4386,6 +7286,10 @@ msgid "Icelandic"
 msgstr "Исландски"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "ёЭФЮЭХЧШбЪШ"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Италијански"
 
@@ -4426,6 +7330,18 @@ msgid "Russian"
 msgstr "Руски"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "srpski"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "БЫЮТРзЪШ"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "БЫЮТХЭХзЪШ"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Шпански"
 
@@ -4434,16 +7350,412 @@ msgid "Swedish"
 msgstr "Шведски"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "turski"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Кинески (Традиционален)"
+
+#$lang=mlt
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Gharbi"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaru"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalan"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Ciniz (Simplifikat)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroat"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Cek"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Daniz"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Olandiz"
+
+#$lang=eng
+msgid "English"
+msgstr "Ingliz"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estoniz"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finlandiz"
+
+#$lang=eng
+msgid "French"
+msgstr "Franciz"
+
+#$lang=eng
+msgid "German"
+msgstr "Germaniz"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Grieg"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Ebrajk"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Ungeriz"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Izlandiz"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonezjan"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Taljan"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Gappuniz"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Korejan"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latvjan"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Litwanjan"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norvegiz"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Pollakk"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugiz"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Rumen"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Russu"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serb"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Sloven"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Spanjol"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Svediz"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Tork"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Ciniz (Tradizzjonali)"
+
+#$lang=msa
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Bahasa Arab"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaria"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catala"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Tulisan Cina (Dimudahkan)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Bahasa Croat"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Bahasa Czech"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Denmark"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Belanda"
+
+#$lang=eng
+msgid "English"
+msgstr "Bahasa Inggeris"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Bahasa Estonia"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finland"
+
+#$lang=eng
+msgid "French"
+msgstr "Perancis"
+
+#$lang=eng
+msgid "German"
+msgstr "Jerman"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Bahasa Greek"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Bahasa Yahudi"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Bahasa Hungary"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Bahasa Iceland"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Bahasa Indonesia"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Itali"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Jepun"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Korea"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Bahasa Latvian"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Bahasa Lithuanian"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norway"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Bahasa Poland"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugis"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Bahasa Romania"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Bahasa Rusia"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbia"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Bahasa Slovak"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Bahasa Slovenia"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Sepanyol"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Sweden"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turki"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Tulisan Cina (Tradisional)"
+
+#$lang=nep
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arabi"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgariali"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Cataliyali"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Sadharan Chiniya"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croatiali"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Chekoslabhakiyali"
+
+#$lang=eng
+msgid "English"
+msgstr "Angreji (English)"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estoniali"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hungariali"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesiali"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japani"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Koriali"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latviali"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithuaniali"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norwegiali"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Polandeli"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugali"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romaniali"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Rusi"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbiali"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turki"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Paramparik Chiniya"
 
 #$lang=nld
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabisch"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgaars"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalaans"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Chinees (Vereenvoudigd)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroatisch"
 
 #$lang=eng
 msgid "Czech"
@@ -4463,7 +7775,7 @@ msgstr "Engels"
 
 #$lang=eng
 msgid "Estonian"
-msgstr "Estlands"
+msgstr "Ests"
 
 #$lang=eng
 msgid "Finnish"
@@ -4491,7 +7803,11 @@ msgstr "Hongaars"
 
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ijslands"
+msgstr "IJslands"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonesisch"
 
 #$lang=eng
 msgid "Italian"
@@ -4507,7 +7823,7 @@ msgstr "Koreaans"
 
 #$lang=eng
 msgid "Latvian"
-msgstr "Letlands"
+msgstr "Lets"
 
 #$lang=eng
 msgid "Lithuanian"
@@ -4534,12 +7850,28 @@ msgid "Russian"
 msgstr "Russisch"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Servisch"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovaaks"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Sloveens"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Spaans"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Zweeds"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turks"
 
 #$lang=eng
 msgid "Zhuang"
@@ -4576,8 +7908,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "arabisk"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgarsk"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalansk"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "kinesisk (forenklet)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "kroatisk"
 
 #$lang=eng
 msgid "Czech"
@@ -4628,6 +7976,10 @@ msgid "Icelandic"
 msgstr "islandsk"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "indonesisk"
+
+#$lang=eng
 msgid "Italian"
 msgstr "italiensk"
 
@@ -4673,6 +8025,18 @@ msgid "Russian"
 msgstr "russisk"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "serbisk"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovakisk"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slovensk"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "spansk"
 
@@ -4681,16 +8045,208 @@ msgid "Swedish"
 msgstr "svensk"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "tyrkisk"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "kinesisk (tradisjonell)"
+
+#$lang=oci
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arab"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgar"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Chinès (Simplificat)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croat"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Chèc"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Danès"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Neerlandès"
+
+#$lang=eng
+msgid "English"
+msgstr "Anglès"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finès"
+
+#$lang=eng
+msgid "French"
+msgstr "Francès"
+
+#$lang=eng
+msgid "German"
+msgstr "Aleman"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Grec"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Ebreu"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hongarès"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandès"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japonès"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Corean"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Leton"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lituan"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Noruec"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Polonès"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portuguès"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romanès"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Rus"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbi"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Eslovac"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Esloven"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Castelhan"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Suec"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turc"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Chinès (Tradicional)"
+
+#$lang=pan
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arbi"
+
+#$lang=eng
+msgid "Danish"
+msgstr "danish"
+
+#$lang=eng
+msgid "English"
+msgstr "Angrezi"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finni"
+
+#$lang=eng
+msgid "French"
+msgstr "Fransisi"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italvi"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japani"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norvi"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Purtgaali"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Chinese (porani)"
 
 #$lang=pol
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabski"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bułgarski"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Kataloński"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Chiński (prosty)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Chorwacki"
 
 #$lang=eng
 msgid "Czech"
@@ -4741,6 +8297,10 @@ msgid "Icelandic"
 msgstr "Islandzki"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonezyjski"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Włoski"
 
@@ -4781,12 +8341,28 @@ msgid "Russian"
 msgstr "Rosyjski"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbski"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Słowacki"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Słoweński"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Hiszpański"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Szwedzki"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turecki"
 
 #$lang=eng
 msgid "Zhuang"
@@ -4797,8 +8373,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Árabe"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Búlgaro"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalão"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Chinês (simplificado)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croata"
 
 #$lang=eng
 msgid "Czech"
@@ -4849,6 +8441,10 @@ msgid "Icelandic"
 msgstr "Islandês"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indonésio"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italiano"
 
@@ -4889,12 +8485,28 @@ msgid "Russian"
 msgstr "Russo"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Sérvio"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Eslovaco"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Esloveno"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Espanhol"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "Sueco"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turco"
 
 #$lang=eng
 msgid "Zhuang"
@@ -4905,8 +8517,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Araba"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgara"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalana"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Chineza (Simplificata)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croata"
 
 #$lang=eng
 msgid "Czech"
@@ -4957,6 +8585,10 @@ msgid "Icelandic"
 msgstr "Islandeza"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indoneza"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italiana"
 
@@ -4990,11 +8622,23 @@ msgstr "Portugheza"
 
 #$lang=eng
 msgid "Romanian"
-msgstr "Romana"
+msgstr "Română"
 
 #$lang=eng
 msgid "Russian"
 msgstr "Rusa"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Sarba"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovaca"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovena"
 
 #$lang=eng
 msgid "Spanish"
@@ -5005,6 +8649,10 @@ msgid "Swedish"
 msgstr "Suedeza"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "Turca"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Chineza (Traditionala)"
 
@@ -5013,8 +8661,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Арабский"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "болгарском"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "каталанском"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "китайском (упрощенном)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "хорватском"
 
 #$lang=eng
 msgid "Czech"
@@ -5065,6 +8729,10 @@ msgid "Icelandic"
 msgstr "исландском"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "индонезийском"
+
+#$lang=eng
 msgid "Italian"
 msgstr "итальянском"
 
@@ -5105,6 +8773,18 @@ msgid "Russian"
 msgstr "русском"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "сербском"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Словацкий"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Словенский"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "испанском"
 
@@ -5113,16 +8793,324 @@ msgid "Swedish"
 msgstr "шведском"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "турецком"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "китайском (традиционное письмо)"
+
+#$lang=slk
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arabsky"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulharsky"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalánsky"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "čínsky (zjednodušene)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Chorvátsky"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Česky"
+
+#$lang=eng
+msgid "Danish"
+msgstr "dánsky"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "holandsky"
+
+#$lang=eng
+msgid "English"
+msgstr "anglicky"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estónsky"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "fínsky"
+
+#$lang=eng
+msgid "French"
+msgstr "francúzsky"
+
+#$lang=eng
+msgid "German"
+msgstr "nemecky"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Grécky"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebrejsky"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Maďarsky"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandsky"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonézsky"
+
+#$lang=eng
+msgid "Italian"
+msgstr "taliansky"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "japonsky"
+
+#$lang=eng
+msgid "Korean"
+msgstr "kórejsky"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Lotyšsky"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Litovsky"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "nórsky"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Polsky"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "portugalsky"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Rumunsky"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Rusky"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Srbsky"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovensky"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovinsky"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "španielsky"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "švédsky"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turecky"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "čínsky (tradične)"
+
+#$lang=slv
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arabščina"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bolgarščina"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalonščina"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Kitajščina (poenostavljena)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "hrvaščina"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Češčina"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Danščina"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Nizozemščina"
+
+#$lang=eng
+msgid "English"
+msgstr "Angleščina"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estonščina"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finščina"
+
+#$lang=eng
+msgid "French"
+msgstr "Francoščina"
+
+#$lang=eng
+msgid "German"
+msgstr "Nemščina"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Grščina"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebrejščina"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Madžarščina"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandščina"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonezijščina"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italijanščina"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japonščina"
+
+#$lang=eng
+msgid "Korean"
+msgstr "korejščina"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latvijščina"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Litvanščina"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norveščina"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Poljščina"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugalščina"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romunščina"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Ruščina"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "srbščina"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovaščina"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "slovenščina"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Španščina"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Švedščina"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "turščina"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Kitajščina (tradicionalna)"
 
 #$lang=spa
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "árabe"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "búlgaro"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "catalán"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "chino (simplificado)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "croata"
 
 #$lang=eng
 msgid "Czech"
@@ -5130,7 +9118,7 @@ msgstr "checo"
 
 #$lang=eng
 msgid "Danish"
-msgstr "danés"
+msgstr "Danés"
 
 #$lang=eng
 msgid "Dutch"
@@ -5146,7 +9134,7 @@ msgstr "estonio"
 
 #$lang=eng
 msgid "Finnish"
-msgstr "finés"
+msgstr "finlandés"
 
 #$lang=eng
 msgid "French"
@@ -5158,7 +9146,7 @@ msgstr "alemán"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "grieco"
+msgstr "griego"
 
 #$lang=eng
 msgid "Hebrew"
@@ -5171,6 +9159,10 @@ msgstr "húngaro"
 #$lang=eng
 msgid "Icelandic"
 msgstr "islandés"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonesio"
 
 #$lang=eng
 msgid "Italian"
@@ -5213,6 +9205,18 @@ msgid "Russian"
 msgstr "ruso"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "serbio"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "eslovaco"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "esloveno"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "español"
 
@@ -5221,20 +9225,180 @@ msgid "Swedish"
 msgstr "sueco"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "turco"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "chino (tradicional)"
+
+#$lang=sqi
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arabisht"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bullgarisht"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalonisht"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Kineze (E thjeshtuar)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kroatisht"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Gjuhe Ceke"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Danisht"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Hollandisht"
+
+#$lang=eng
+msgid "English"
+msgstr "Anglisht"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estonisht"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finlandisht"
+
+#$lang=eng
+msgid "French"
+msgstr "Frëngjisht"
+
+#$lang=eng
+msgid "German"
+msgstr "Gjermanisht"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Greqisht"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Hebraisht"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hungarisht"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Islandisht"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonezian"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Italisht"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japonisht"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Letonisht"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lituanisht"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norvegjisht"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Polonisht"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugalisht"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Rumanisht"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Rusisht"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Serbisht"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Sllovaki"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slloven"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Spanjisht"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Suedisht"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turqisht"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Kineze (Tradicionale)"
 
 #$lang=srp
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arapski"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bugarski"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalonski"
+
+#$lang=eng
 msgid "Chinese"
-msgstr "Kineski (Uproscen)"
+msgstr "Kineski (uprošćen)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Hrvatski"
 
 #$lang=eng
 msgid "Czech"
-msgstr "Ceski"
+msgstr "Češki"
 
 #$lang=eng
 msgid "Danish"
@@ -5262,11 +9426,11 @@ msgstr "Francuski"
 
 #$lang=eng
 msgid "German"
-msgstr "Nemacki"
+msgstr "Nemački"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Grcki"
+msgstr "Grčki"
 
 #$lang=eng
 msgid "Hebrew"
@@ -5274,11 +9438,15 @@ msgstr "Hebrejski"
 
 #$lang=eng
 msgid "Hungarian"
-msgstr "Madjarski"
+msgstr "Mađarski"
 
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandski"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Indonežanski"
 
 #$lang=eng
 msgid "Italian"
@@ -5294,7 +9462,7 @@ msgstr "Korejski"
 
 #$lang=eng
 msgid "Latvian"
-msgstr "Latvijski"
+msgstr "Letonski"
 
 #$lang=eng
 msgid "Lithuanian"
@@ -5302,7 +9470,7 @@ msgstr "Litvanski"
 
 #$lang=eng
 msgid "Norwegian"
-msgstr "Norveski"
+msgstr "Norveški"
 
 #$lang=eng
 msgid "Polish"
@@ -5322,27 +9490,199 @@ msgstr "Ruski"
 
 #$lang=eng
 msgid "Serbian"
-msgstr "srpsko"
+msgstr "Srpski"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovački"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovenački"
 
 #$lang=eng
 msgid "Spanish"
-msgstr "Spanski"
+msgstr "Španski"
 
 #$lang=eng
 msgid "Swedish"
-msgstr "Svedski"
+msgstr "Švedski"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turski"
 
 #$lang=eng
 msgid "Zhuang"
-msgstr "Kineski (Tradicionalni)"
+msgstr "Kineski (tradicionalan)"
+
+#$lang=swa
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Kiarabu"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Kibulgaria"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Kikatalan"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Kichina (Kilichorahisishwa)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Kikroatia"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Kicheki"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Kidenmarki"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Kiholanzi"
+
+#$lang=eng
+msgid "English"
+msgstr "Kiingereza"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Kiestonia"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Kifinlandi"
+
+#$lang=eng
+msgid "French"
+msgstr "Kifaransa"
+
+#$lang=eng
+msgid "German"
+msgstr "Kijerumani"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Kigiriki"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Kiyahudi"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Kihungari"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Kiaislandi"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Kiindonesia"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Kiitaliano"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Kijapani"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Kikorea"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Kilatvia"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Kilithuania"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Kinorwei"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Kipolandi"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Kireno"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Kiromania"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Kirusi"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Kiserbia"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Kislovakia"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Kislovenia"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Kihispania"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Kisweden"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Kituruki"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Kichina (cha Jadi)"
 
 #$lang=swe
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arabiska"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgarisk"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "katalanska"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "kinesiska (förenklad)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "kroatisk"
 
 #$lang=eng
 msgid "Czech"
@@ -5393,6 +9733,10 @@ msgid "Icelandic"
 msgstr "isländska"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "indonesiska"
+
+#$lang=eng
 msgid "Italian"
 msgstr "italienska"
 
@@ -5433,6 +9777,18 @@ msgid "Russian"
 msgstr "ryska"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "serbisk"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovakiska"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovenska"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "spanska"
 
@@ -5441,12 +9797,168 @@ msgid "Swedish"
 msgstr "svenska"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "turkisk"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "kinesiska (traditionell)"
+
+#$lang=tam
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "arabia"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Chinese (Saatharana)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "kurosiyan"
+
+#$lang=eng
+msgid "English"
+msgstr "Aangilam"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Greka"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japaniya"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "serpiyan"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "slovak"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "thurukki"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Cheenamozhi (Pazhamaiyaana)"
+
+#$lang=tel
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgarian Bhaasha"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Catalan Bhaasha"
+
+#$lang=eng
+msgid "Chinese"
+msgstr " (Saamanya) Chineesu"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Danishu"
+
+#$lang=eng
+msgid "English"
+msgstr "Englishu"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estonianu"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Finnishu"
+
+#$lang=eng
+msgid "French"
+msgstr "Frenchi"
+
+#$lang=eng
+msgid "German"
+msgstr "Germanu"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Greeku"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hungarianu"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Icelandu"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "indonesia pourudu"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japanesu"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latvianu"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithuanianu"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norwegianu"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portugeesu"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romanianu"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Russianu"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Spanishu"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Swedishu"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr " (Praacheena) Chineesu"
 
 #$lang=tgl
 msgid ""
 msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arabo"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "bulgarian"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "catalan"
 
 #$lang=eng
 msgid "Chinese"
@@ -5473,6 +9985,10 @@ msgid "Hebrew"
 msgstr "Hebreo"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Indones"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Italyano"
 
@@ -5493,6 +10009,18 @@ msgid "Russian"
 msgstr "Ruso"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Serbiran"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Eslobak"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Eslobenyan"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "Espanyol"
 
@@ -5501,16 +10029,180 @@ msgid "Swedish"
 msgstr "Suwiso"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "turko"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Tsino (Tradisyunal)"
+
+#$lang=tha
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "ภาษาอาหรับ"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "บัลกาเรียน"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "ภาษาคาตาลัน"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "ภาษาจีน (ประยุกต์)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "ภาษาโครเอเชียน"
+
+#$lang=eng
+msgid "Czech"
+msgstr "ภาษาเซ็คโกฯ"
+
+#$lang=eng
+msgid "Danish"
+msgstr "ภาษาเดนมาร์ก"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "ภาษาฮอลันดา"
+
+#$lang=eng
+msgid "English"
+msgstr "ภาษาอังกฤษ"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "ภาษาเอสโทเนีย"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "ภาษาฟินนิช"
+
+#$lang=eng
+msgid "French"
+msgstr "ภาษาฝรั่งเศส"
+
+#$lang=eng
+msgid "German"
+msgstr "ภาษาเยอรมัน"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "ภาษากรีก"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "ภาษายิว"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "ภาษาฮังการี"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "ภาษาไอ๊ซ์แลนด์"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "ภาษาอินโดนีเซีย"
+
+#$lang=eng
+msgid "Italian"
+msgstr "ภาษาอิตาลี"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "ภาษาญี่ปุ่น"
+
+#$lang=eng
+msgid "Korean"
+msgstr "ภาษาเกาหลี"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "ภาษาลัทเวีย"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "ภาษาลิทัวเนีย"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "ภาษานอร์เวย์"
+
+#$lang=eng
+msgid "Polish"
+msgstr "ภาษาโปแลนด์"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "ภาษาโปรตุเกส"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "ภาษาโรมาเนีย"
+
+#$lang=eng
+msgid "Russian"
+msgstr "ภาษารัสเซีย"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "ภาษาเซอร์เบียน"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "ภาษาสโลวะเกีย"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "ภาษาสโลเวเนี่ยน"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "ภาษาสเปน"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "ภาษาสวีเดน"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "ตุรกี"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "ภาษาจีน (แบบดั้งเดิม)"
 
 #$lang=tur
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "Arapça"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bulgarca"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "Katalanca"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Çince (Basit)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Hırvatça"
 
 #$lang=eng
 msgid "Czech"
@@ -5530,7 +10222,7 @@ msgstr "İngilizce"
 
 #$lang=eng
 msgid "Estonian"
-msgstr "Estonyaca"
+msgstr "Estonca"
 
 #$lang=eng
 msgid "Finnish"
@@ -5559,6 +10251,10 @@ msgstr "Macarca"
 #$lang=eng
 msgid "Icelandic"
 msgstr "İzlandaca"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Endonezce"
 
 #$lang=eng
 msgid "Italian"
@@ -5601,6 +10297,18 @@ msgid "Russian"
 msgstr "Rusca"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "Sırpça"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slovakça"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slovence"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "İspanyolca"
 
@@ -5610,7 +10318,7 @@ msgstr "İsveçce"
 
 #$lang=eng
 msgid "Turkish"
-msgstr "türkçe"
+msgstr "Türkçe"
 
 #$lang=eng
 msgid "Zhuang"
@@ -5621,8 +10329,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "РаРСбмЪц"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "±ЮЫУРабмЪР ЬЮТР"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "єРвРЫРЭбмЪР ЬЮТР"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "Китайська (спрощена)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "ЕЮаТРвбмЪР ЬЮТР"
 
 #$lang=eng
 msgid "Czech"
@@ -5673,6 +10397,10 @@ msgid "Icelandic"
 msgstr "Ісландська"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "Індонезійська"
+
+#$lang=eng
 msgid "Italian"
 msgstr "Італійська"
 
@@ -5710,7 +10438,19 @@ msgstr "Румунська"
 
 #$lang=eng
 msgid "Russian"
-msgstr "Расєйська"
+msgstr "Російська"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "БХаСбмЪР (БХаСЮ-ЕЮаТРвбмЪР) ЬЮТР"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "словацька"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "словенська"
 
 #$lang=eng
 msgid "Spanish"
@@ -5721,16 +10461,240 @@ msgid "Swedish"
 msgstr "Шведська"
 
 #$lang=eng
+msgid "Turkish"
+msgstr "ВгаХжмЪР ЬЮТР"
+
+#$lang=eng
 msgid "Zhuang"
 msgstr "Китайська (традиційна)"
+
+#$lang=urd
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "Arbi"
+
+#$lang=eng
+msgid "Chinese"
+msgstr " (Chini (Farishtah"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "Croation"
+
+#$lang=eng
+msgid "English"
+msgstr "Angrezi"
+
+#$lang=eng
+msgid "Estonian"
+msgstr "Estoni"
+
+#$lang=eng
+msgid "French"
+msgstr "Fransisi"
+
+#$lang=eng
+msgid "German"
+msgstr "Alemaan"
+
+#$lang=eng
+msgid "Icelandic"
+msgstr "Barafstani"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "Eindonesean"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Itaalvi"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Japaani"
+
+#$lang=eng
+msgid "Latvian"
+msgstr "Latviyai"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lithuaniyai"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Norwegiyaai"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Portgali"
+
+#$lang=eng
+msgid "Romanian"
+msgstr "Romani"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Roosi"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "Slavaaki"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "Slaveni"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Ispanish"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Turkey"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr " (Chini (Riwayaati"
+
+#$lang=vie
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Arabic"
+msgstr "A-rập"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "Bun-ga-ri"
+
+#$lang=eng
+msgid "Chinese"
+msgstr "Tàu/Trung hoa (giản)"
+
+#$lang=eng
+msgid "Czech"
+msgstr "Séc (Czech)"
+
+#$lang=eng
+msgid "Danish"
+msgstr "Ðan Mạch"
+
+#$lang=eng
+msgid "Dutch"
+msgstr "Hà-Lan"
+
+#$lang=eng
+msgid "English"
+msgstr "Anh"
+
+#$lang=eng
+msgid "Finnish"
+msgstr "Phần-lan"
+
+#$lang=eng
+msgid "French"
+msgstr "Pháp"
+
+#$lang=eng
+msgid "German"
+msgstr "Ðức"
+
+#$lang=eng
+msgid "Greek, Modern (1453-)"
+msgstr "Hy-lạp"
+
+#$lang=eng
+msgid "Hebrew"
+msgstr "Do thái"
+
+#$lang=eng
+msgid "Hungarian"
+msgstr "Hung-ga-ri"
+
+#$lang=eng
+msgid "Indonesian"
+msgstr "In-ðô-nê-xi-a"
+
+#$lang=eng
+msgid "Italian"
+msgstr "Ý"
+
+#$lang=eng
+msgid "Japanese"
+msgstr "Nhật"
+
+#$lang=eng
+msgid "Korean"
+msgstr "Triều tiên/Ðại hàn"
+
+#$lang=eng
+msgid "Lithuanian"
+msgstr "Lát-vi (Lithuanian)"
+
+#$lang=eng
+msgid "Norwegian"
+msgstr "Na-uy"
+
+#$lang=eng
+msgid "Polish"
+msgstr "Ba lan"
+
+#$lang=eng
+msgid "Portuguese"
+msgstr "Bồ-dào-nha"
+
+#$lang=eng
+msgid "Russian"
+msgstr "Nga"
+
+#$lang=eng
+msgid "Serbian"
+msgstr "Xéc-bi (Serbian)"
+
+#$lang=eng
+msgid "Spanish"
+msgstr "Tây ban nha"
+
+#$lang=eng
+msgid "Swedish"
+msgstr "Thuỵ ðiển"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "Thổ nhĩ kỳ"
+
+#$lang=eng
+msgid "Zhuang"
+msgstr "Tàu/Trung hoa (Truyền thống)"
 
 #$lang=zha
 msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "阿拉伯文"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "保加利亞文"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "西班牙加泰羅尼亞文"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "中文 (簡體)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "克羅地亞文"
 
 #$lang=eng
 msgid "Czech"
@@ -5781,6 +10745,10 @@ msgid "Icelandic"
 msgstr "冰島文"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "印尼文"
+
+#$lang=eng
 msgid "Italian"
 msgstr "義大利文"
 
@@ -5821,12 +10789,28 @@ msgid "Russian"
 msgstr "俄文"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "塞爾維亞文"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "斯洛伐克文"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "斯拉維尼亞文"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "西班牙文"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "瑞典文"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "土耳其文"
 
 #$lang=eng
 msgid "Zhuang"
@@ -5837,8 +10821,24 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Arabic"
+msgstr "阿拉伯文"
+
+#$lang=eng
+msgid "Bulgarian"
+msgstr "保加利亚文"
+
+#$lang=eng
+msgid "Catalan"
+msgstr "加泰罗尼亚文（西班牙）"
+
+#$lang=eng
 msgid "Chinese"
 msgstr "中文 (简体)"
+
+#$lang=eng
+msgid "Croatian"
+msgstr "克罗地亚文"
 
 #$lang=eng
 msgid "Czech"
@@ -5889,6 +10889,10 @@ msgid "Icelandic"
 msgstr "冰岛语"
 
 #$lang=eng
+msgid "Indonesian"
+msgstr "印尼文"
+
+#$lang=eng
 msgid "Italian"
 msgstr "意大利语"
 
@@ -5929,12 +10933,28 @@ msgid "Russian"
 msgstr "俄语"
 
 #$lang=eng
+msgid "Serbian"
+msgstr "塞尔维亚文"
+
+#$lang=eng
+msgid "Slovak"
+msgstr "斯洛伐克文"
+
+#$lang=eng
+msgid "Slovenian"
+msgstr "斯拉维尼亚文"
+
+#$lang=eng
 msgid "Spanish"
 msgstr "西班牙语"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "瑞典语"
+
+#$lang=eng
+msgid "Turkish"
+msgstr "土耳其文"
 
 #$lang=eng
 msgid "Zhuang"

@@ -1,0 +1,68 @@
+<faq title="PApp Frequently Asked Questions &amp; Tips and Tricks">
+
+<section title="Common Mistakes">
+
+<qa q='print "____________"; doesn&apos;t work as expected'>
+
+<c>__"..."</c> marks a translation. If this character pattern shows up
+in your source you might get problems. Try to escape it like this
+<c>print "___________\_";</c>
+
+</qa>
+
+<qa q='My application is written in language XYZ, but this language is not shown in the language_selector!'>
+
+All languages used in the source must be declared somewhere. If you use
+<c>lang="*"</c> then you must declare all possible source languages using the
+<c>&lt;language></c> element.
+
+</qa>
+
+<qa q='I try to access %A/%S, a database etc. in a callback, but it does not work.'>
+
+The callback handlers are executed during a very delicate time, before
+the actual page gets executed. <c>%S</c> etc. are meaningless during this
+time.  If you want to access something you should take a reference to it
+and pass it to your callback when you refer() to the callback.
+
+</qa>
+
+</section>
+
+<section title='Features'>
+
+<qa q='How do I get the currently selected language?'>
+
+<c>my $langid = $papp_ppkg_table->lang</c>
+
+</qa>
+
+<qa q='How can I quickly get a language selector for all supported languages?'>
+
+<c>&lt;:language_selector $papp_translator, $papp_ppkg_table->lang:></c>
+
+</qa>
+
+<qa q='How do I include a filename in a surl (e.g. for a nice Save As preset)'>
+
+Use the GET surlstyle together with SURL_SUFFIX, e.g: surl "download",
+SURL_STYLE_GET, SURL_SUFFIX, "doc.ps";
+
+</qa>
+
+</section>
+
+<section title='Unexplainable Errors'>
+
+<qa q='I get an error like "self is not of type PApp::I18n::Table" while my application gets compiled. What gives?'>
+
+You are calling <c>__</c> or <c>gettext</c> in your module initialization
+code. This is too early since there is no user and thus no selected
+language at that point.
+
+</qa>
+
+</section>
+
+</faq>
+

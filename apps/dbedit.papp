@@ -6,7 +6,7 @@
 <import src="macro/tinychat"/>
 <import src="macro/admin"/>
 
-<import pm="PApp::User">access_p authen_p</import>
+<import pm="PApp::UserObs">access_p authen_p</import>
 
 <package name="db" src="widget/dbedit"/>
 

@@ -23,7 +23,7 @@ use PApp::HTML;
 
 use utf8;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT = qw(fancydie try catch);
 
 no warnings;
@@ -234,7 +234,7 @@ EOF
          my $info = $_;
          my $desc;
 
-         if (ref $info) {
+         if ("ARRAY" eq ref $info) {
             $desc = " ($info->[0])";
             $info = $info->[1];
          }
@@ -344,6 +344,14 @@ sub _fancyerr {
    my @arg;
    my $skipcallers = 2;
 
+   my $class = PApp::Exception::;
+
+   ($class, $error)    = ($error,     undef) if UNIVERSAL::isa $error,    PApp::Exception::;
+   ($class, $category) = ($category,  undef) if UNIVERSAL::isa $category, PApp::Exception::;
+
+   # fancydie is sometimes called with "foreign" exception objects (e.g. upcalls ;)
+   die $error if ref $error;
+
    while (@_) {
       my $arg = shift;
       my $val = shift;
@@ -364,11 +372,6 @@ sub _fancyerr {
    }
 
    s/\n+$//g for @$info;
-
-   my $class = PApp::Exception::;
-
-   ($class, $error)    = ($error,     undef) if UNIVERSAL::isa $error,    PApp::Exception::;
-   ($class, $category) = ($category,  undef) if UNIVERSAL::isa $category, PApp::Exception::;
 
    $class->new(
       backtrace => $backtrace,

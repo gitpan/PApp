@@ -40,7 +40,7 @@ use Exporter;
 BEGIN {
    @ISA = (PApp::Base::);
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.122;
+   $VERSION = 0.142;
 }
 
 =head2 FUNCTIONS
@@ -286,9 +286,13 @@ sub content_type {
    goto &header_out;
 }
 
-sub status {
+sub status_line {
    my $self = shift;
    $self->{headers_out}{Status} = $_[0];
+}
+
+sub status {
+   &status_line;
 }
 
 sub args {
@@ -368,7 +372,7 @@ sub internal_redirect {
       $uri = "https://" .
              ($self->{headers_in}{Host}
               || $self->{server_hostname} .
-                    ($self->{connection}{server_port} != 443
+                    ($self->{connection}{local_port} != 443
                         ? ":$self->{connection}{local_port}"
                         : "")).
              $uri;
@@ -376,7 +380,7 @@ sub internal_redirect {
       $uri = "http://" .
              ($self->{headers_in}{Host}
               || $self->{server_hostname} .
-                    ($self->{connection}{server_port} != 80
+                    ($self->{connection}{local_port} != 80
                         ? ":$self->{connection}{local_port}"
                         : "")).
              $uri;

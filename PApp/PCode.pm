@@ -28,7 +28,7 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"
@@ -44,8 +44,7 @@ by prefixing the string with "E<lt>:?>".
  <:	start verbatim perl section ("perl-mode")
  :>	start plain string section (non-interpolated string)
  <?	start perl expression (single expr, result will be interpolated)
- ?>	start interpolated string section (similar to qq[...]>) DEPRECATED
-        will soon mean the same as :>
+ ?>	illegal(!) (was deprecated before)
 
 Within plain and interpolated string sections you can also use the
 __I<>"string" construct to mark (and map) internationalized text. The
@@ -125,9 +124,9 @@ BEGIN {
    # we use some characters in the compatibility zone,
    # namely the character block 0xfce0-0xfcef
    ($dx, $dy, $dq) = (
-	"\x{fce0}",
-	"\x{fce1}",
-	"\x{fce2}",
+	"\x{fce0}",   # usually means start of non-interpolated string/code
+	"\x{fce1}",   # usually means start of interpolated code (formerly string, too)
+	"\x{fce2}",   # usually used as a quoting character (similar to \ in strings)
    );
 }
 
@@ -138,29 +137,27 @@ BEGIN {
 
 sub pxml2pcode($) {
    my $data = ":>" . shift;
-   my $mode;
    my $res = "";#d#
-
-   $data =~ s/^:><:\?>/?>/;
 
    utf8_upgrade $data; # force utf-8-encoding
 
    for(;;) {
       # STRING
       $res .= $dx;
-      $data =~ /\G([:?])>((?:[^<]+|<[^:?])*)/gcs or last;
-      $mode = $1 eq ":" ? $dx : $dy;
+      $data =~ /\G([:?])>((?:[^<]+|<[^:?])*)/xgcs or last;
+      $mode = $1 eq ":" ? $dx : $dy; # for ?>
+      warn "?> is not a legal pxml modifier anymore, will treat it as :>" if $1 eq "?";
 
-      # do preprocessor commands, __-string-processing and quoting
+      # do preprocessor commands, __""-processing and quoting
       for (my $src = $2) {
          for (;;) {
-            m/\G\n#\s*if\s(.*)(\n(?=[^#])|$)/gcm	and ($res .= "$dx\n" . (_quote_perl "if ($1) {") . "$2$dx"), redo;
-            m/\G\n#\s*els?if\s(.*)(\n(?=[^#])|$)/gcm	and ($res .= "$dx\n" . (_quote_perl "} elsif ($1) {") . "$2$dx"), redo;
-            m/\G\n#\s*else\s*(\n(?=[^#])|$)/gcm		and ($res .= "$dx\n" . (_quote_perl "} else {") . "$1$dx"), redo;
-            m/\G\n#\s*endif\s*(\n(?=[^#])|$)/gcm	and ($res .= "$dx\n" . (_quote_perl "}") . "$1$dx"), redo;
-            m/\G(\x5f\x5f"(?:(?:[^"\\]+|\\.)*)")/gcs	and ($res .= $dy . (_quote_perl $1) . $dx), redo; # __
+            m/\G(?:\n|\A)#\s*if[\t\ ]+([^\n]*)/gcm	and ($res .= "$dx\n" . (_quote_perl "if ($1) {") . "$2$dx"), redo;
+            m/\G\n#\s*els?if[\t\ ]+([^\n]*)/gcm		and ($res .= "$dx\n" . (_quote_perl "} elsif ($1) {") . "$2$dx"), redo;
+            m/\G\n#\s*else[\t\ ]*/gcm			and ($res .= "$dx\n" . (_quote_perl "} else {") . "$1$dx"), redo;
+            m/\G\n#\s*endif[\t\ ]*/gcm			and ($res .= "$dx\n" . (_quote_perl "}") . "$1$dx"), redo;
+            m/\G\x5f\x5f"((?:(?:[^"\\]+|\\.)*))"/gcs	and ($res .= $dy . (_quote_perl "gettext q\"$1\"") . $dx), redo; # __
             m/\G([$dx$dy$dq])/gco			and ($res .= "$dq$1"), redo;
-            $mode eq $dy && m/\G([\$\@])/gcs		and ($res .= "$dx$dy$1"), redo;
+            $mode eq $dy && m/\G([\$\@])/gcs		and ($res .= "$dx$dy$1"), redo; #d#
             m/\G(.[^_$dx$dy$dq\$\@\n]*)/gcso		and ($res .= $1), redo;
             last;
          }
@@ -168,8 +165,7 @@ sub pxml2pcode($) {
 
       # CODE
       $data =~ /\G<([:?])((?:[^:?]+|[:?][^>])*)/gcs or last;
-      $mode = $1 eq ":" ? $dx : $dy;
-      $res .= $mode;
+      $res .= $1 eq ":" ? $dx : $dy;
       $res .= _quote_perl $2;
 
    }
@@ -197,18 +193,10 @@ sub pcode2perl($) {
       ($mode, $src) = ($1, $2);
       $src =~ s/$dq(.)/$1/g;
       if ($src ne "") {
-         $mode = $mode eq $dx ? '' : 'qq';
-         if (0&&$mode ne $dx) { #d# warn about deprecated construct ?>xxx
-            $src =~ /\\/
-               and warn "unneccessary quoting in deprecated ?> construct: $src";
-            $src =~ /\$/
-               and warn "probable scalar access in deprecated ?> construct: $src";
-            $src =~ /\@/
-               and warn "probable array access in deprecated ?> construct: $src";
-         }
+         #$mode = $mode eq $dx ? '' : 'qq'; # allow ?>
          $src =~ s/\\/\\\\/g; $src =~ s/'/\\'/g;
          utf8_on $src; #d# #FIXME##5.7.0# bug, see testcase #1
-         $res .= "\$PApp::output .= $mode'$src';";
+         $res .= "\$PApp::output .= '$src';";
       }
 
       # CODE
@@ -251,7 +239,7 @@ sub pcode2pxml($) {
    }
    $pcode !~ /\G(.{1,20})/gcs or die "internal error: trailing characters in pcode-string ($1)";
    $res = substr $res, 2;
-   $res =~ s/:><://g;
+   #$res =~ s/:><://g; # illegal(!)#d#
    $res;
 }
 

@@ -3,7 +3,7 @@
 <description>simple editor for translation strings</description>
 
 <import src="macro/editform"/>
-<import pm="PApp::User">access_p</import>
+<import pm="PApp::UserObs">access_p</import>
 
 <perl><![CDATA[
    $ppkg->set_database(PApp::Config::Database);
@@ -14,7 +14,7 @@
                      export_dpo);
 
    sub domains { join ",", grep $S{domains}{$_}, keys %{$S{domains}} }
-   sub langs   { join ",", grep $S{langs}{$_} && $S{lang} ne $_, keys %{$S{langs}} }
+   sub langs   { join ",", "mul", grep $S{langs}{$_} && $S{lang} ne $_, keys %{$S{langs}} }
 ]]></perl>
 
 <state keys="encoding" preferences="yes"/>
@@ -79,7 +79,7 @@
       print "exporting domain $domain to $PApp::i18ndir/$domain\n";
       export_dpo $domain, "$PApp::i18ndir/$domain";
    }
-   print "\nRemember to restart your server\n";
+   PApp::Event::broadcast papp_i18n_flush => undef;
 :>
 #elsif $A{delete_unused} && !reload_p
 <:
@@ -235,10 +235,10 @@ __"<small>
 <tr><td valign='top'>
    <h2>__"Domain Management"</h2>
 </td><td>
-   <?slink __"Scan selected domains", -scan_apps => 1?> __"(can take a long time!)"<br />
-   <?slink __"Write selected translation domains", -export_dpo => 1?><br />
+   <?slink __"Scan selected domains", -scan_apps => 1:> __"(can take a long time!)"<br />
+   <?slink __"Write selected translation domains", -export_dpo => 1:><br />
    __"Unused messages": <?$unu:><br />
-   <?slink __"Delete unused messages and reorganize database", -delete_unused => 1?><br />
+   <?slink __"Delete unused messages and reorganize database", -delete_unused => 1:><br />
 </td></tr>
 
 <tr><td valign='top'>
@@ -266,7 +266,7 @@ __"<small>
 </td></tr>
 #if $log
 <tr><td colspan='2'>
-<small><pre><:?>$log</pre></small>
+<small><pre><?$log:></pre></small>
 </td></tr>
 #endif
 </table>
@@ -338,7 +338,7 @@ __"<small>
             $_ = (substr $_, 0, 38)."..." if length($_) > 40;
             #s/([\x00-\x1f])/"\\c{".ord($1)."}"/ge;
          }
-         ?><td>$domain</td><:
+         :><td><?$domain:></td><:
          echo "<td>", (slink escape_html($_) || "&#160;", "edit", nr => $nr), "</td>\n" for ($ok, $idlang, $msgid, $msgstr);
          echo "</tr>";
       }
@@ -373,7 +373,7 @@ __"<small>
 </table>
 </td></tr></table>
 <br />
-<?cform?>
+<?cform:>
 <table cellpadding="0" cellspacing="0" border="0" bgcolor="black"   width="100%"><tr><td>
 <table cellpadding='4' cellspacing="1" border="0" bgcolor='#e0e0e0' width='100%'>
    <:
@@ -480,33 +480,33 @@ __"<small>
           <?submit "next", __"Next":>
           <br />
       <:}
-   ?>
+   :>
 
    <tr><th width="48%"><?
                          Convert::Scalar::utf8_on #d# DEVEL7952, DEVEL9021
                          sprintf __"Message (in language '%s')", $idlang:></th><th width="48%">
-          <?submit "decwidth", "<<<<<"?>
+          <?submit "decwidth", "<<<<<":>
           <?
             Convert::Scalar::utf8_on #d# DEVEL7952, DEVEL9021, DEVEL9916
             sprintf __"Translation (to language '%s')", $S{lang}:>
-          <?submit "incwidth", ">>>>>"?>
+          <?submit "incwidth", ">>>>>":>
        </th></tr>
    <tr><td>
           <font size="+1">
-          __"domain" $domain<br />
+          __"domain" <?$domain:><br />
           </font>
        </td><td>
-          $menu
-          <?checkbox "ok", "ok", 1?> __"Valid?"
-          <?submit "already", __"Skip message (already in the correct language)"?>
+          <?$menu:>
+          <?checkbox "ok", "ok", 1:> __"Valid?"
+          <?submit "already", __"Skip message (already in the correct language)":>
        </td></tr>
    <tr><td valign="top">
-          <table cellpadding="6"><tr><td><tt>$msgid</tt></td></tr></table>
+          <table cellpadding="6"><tr><td><tt><?$msgid:></tt></td></tr></table>
        </td><td valign="top" cellpadding="0" cellspacing="0">
-          <textarea name="msgstr" rows="<?$lines:>" cols="<?$S{width}:>" wrap="wrap"><?$msgstr?></textarea>
+          <textarea name="msgstr" rows="<?$lines:>" cols="<?$S{width}:>" wrap="wrap"><?$msgstr:></textarea>
        </td></tr>
    <tr><td>&#160;</td>
-          <td>$menu</td></tr>
+          <td><?$menu:></td></tr>
    <tr><td valign="top" colspan="2">
           <tt><?$context:></tt>
        </td>

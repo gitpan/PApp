@@ -15,7 +15,7 @@
 <!ENTITY % modulebody "(module|import|callback|macro|description|%perlcode;)*">
 
 <!-- a distinct package (application) -->
-<!ELEMENT package (%modulebody;|database|description|style|nosession)+>
+<!ELEMENT package (%modulebody;|define-group|database|description|style|nosession)+>
 <!ATTLIST package
     name      CDATA #REQUIRED
     src       CDATA #IMPLIED -- optional source file to load --
@@ -154,6 +154,13 @@
     name  CDATA #REQUIRED
     args  CDATA #IMPLIED
     attrs CDATA #IMPLIED
+>
+
+<!-- define a group access right used in this applikation
+-->
+<!ELEMENT define-group  EMPTY>
+<!ATTLIST define-group
+    name     CDATA #REQUIRED
 >
 
 <!-- set default database for the sql_* family of commands -->

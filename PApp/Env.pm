@@ -31,7 +31,7 @@ currently true in all cases.
 
 package PApp::Env;
 
-use PApp::Config;
+use PApp::Config qw($DBH DBH);
 use PApp::SQL;
 use PApp::Exception;
 
@@ -39,8 +39,10 @@ use Compress::LZF ();
 
 use base Exporter;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT = qw(setenv getenv unsetenv modifyenv lockenv listenv);
+
+DBH;
 
 =item setenv key => value
 
@@ -49,8 +51,7 @@ Sets a single environment variable to the specified value. (mysql-specific ;)
 =cut
 
 sub setenv($$) {
-   sql_exec PApp::Config::DBH,
-            "replace into env (name, value) values (?, ?)",
+   sql_exec $DBH, "replace into env (name, value) values (?, ?)",
             $_[0], Compress::LZF::sfreeze_cr $_[1];
 }
 
@@ -62,7 +63,7 @@ Unsets (removes) the specified environment variable.
 
 sub unsetenv($) {
    my $key = shift;
-   sql_exec PApp::Config::DBH, "delete from env where name = ?", $key;
+   sql_exec $DBH, "delete from env where name = ?", $key;
 }
 
 =item getenv key
@@ -73,8 +74,7 @@ Return the value of the specified environment value
 
 sub getenv($) {
    Compress::LZF::sthaw
-      sql_fetch PApp::Config::DBH,
-                "select value from env where name = ?",
+      sql_fetch $DBH, "select value from env where name = ?",
                 $_[0];
 }
 
@@ -85,24 +85,18 @@ only implemented for mysql so far), while executing the specified
 block. Returns the return value of BLOCK (which is called in scalar
 context).
 
-Calls to lockenv can be nested.
-
 =cut
 
-our $locklevel;
-
 sub lockenv(&) {
-   local $DBH = PApp::Config::DBH;
-   sql_fetch "select get_lock('PAPP_ENV_LOCK_ENV', 60)"
+   sql_fetch $DBH, "select get_lock('PAPP_ENV_LOCK_ENV', 60)"
       or fancydie "PApp::Env::lockenv: unable to aquire database lock";
    my $res = eval {
       local $SIG{__DIE__};
-      local $locklevel=$locklevel+1;
       $_[0]->();
    };
    {
       local $@;
-      sql_exec "select release_lock('PAPP_ENV_LOCK_ENV')";
+      sql_exec $DBH, "do release_lock('PAPP_ENV_LOCK_ENV')";
    }
    die if $@;
    $res;
@@ -139,8 +133,7 @@ Returns a list of all environment variables (names).
 =cut
 
 sub listenv {
-   local $DBH = PApp::Config::DBH;
-   sql_fetchall "select name from env";
+   sql_fetchall $DBH, "select name from env";
 }
 
 1;

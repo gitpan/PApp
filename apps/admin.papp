@@ -8,7 +8,7 @@
 </perl>
 
 <import src="macro/admin"/>
-<import pm="PApp::User">access_p authen_p</import>
+<import pm="PApp::UserObs">access_p authen_p</import>
 
 <package name="admin">
 
@@ -16,12 +16,11 @@
 <package name="poedit" src="widget/poedit"/>
 
 <import src="macro/editform"/>
-<import pm="PApp::User">access_p</import>
 
 <module name=""><phtml><![CDATA[
 
 <h2>__"General Info"</h2>
-__"Version": <em><:?>$PApp::VERSION</em><br />
+__"Version": <em><?$PApp::VERSION:></em><br />
 __"Interface": <em><?join " ", PApp->interface:></em><br />
 __"Currently Mounted Applications":<br />
 <table border="1" color-even="#f0f0f0" color-odd="#c0c0c0">
@@ -32,11 +31,11 @@ __"Currently Mounted Applications":<br />
       sql_fetch \my($config, $code),
          "select length(config), length(code) from pkg where id = ?", $v->{path};
 
-      ?><tr><td>$k</td><td>$v->{name}</td><td>$v->{path}</td><td align="right">$config</td><td align="right">$code</td><:
+      :><tr><td><?$k:></td><td><?$v->{name}:></td><td><?$v->{path}:></td><td align="right"><?$config:></td><td align="right"><?$code:></td><:
 #if admin_p
-      ?><td><?eval { $v->slink(__"[try to enter]") } || "$@"?></td><:
+      :><td><?eval { $v->slink(__"[try to enter]") } || "$@":></td><:
 #endif
-      ?></tr><:
+      :></tr><:
    }
 :>
 </table>
@@ -71,9 +70,9 @@ __"Currently Mounted Applications":<br />
 
    while ($st->fetch) {
       $appset ||= __"[DISABLED]";
-      ?><tr><td>$appset</td><td>$name</td><td>$path</td>
-            <td><?slink "[EDIT]", "app_edit", -appid => $id?></td>
-            <td><?slink "[D]", -delete => $id?>ELETE</td>
+      :><tr><td><?$appset:></td><td><?$name:></td><td><?$path:></td>
+            <td><?slink "[EDIT]", "app_edit", -appid => $id:></td>
+            <td><?slink "[D]", -delete => $id:>ELETE</td>
       </tr><:
    }
 :>
@@ -82,16 +81,16 @@ __"Currently Mounted Applications":<br />
 ]]></phtml></module>
 
 <module name="app_edit">
-<state keys="appref" local="yes"/>
 <phtml><![CDATA[
 <:
-   my $row = $S{appref} ||= new PApp::DataRef 'DB_row',
-      table => "app", where => [id => $A{appid}];
+   my $row = new PApp::DataRef 'DB_row',
+      table => "app", where => [id => $A{appid}],
+      insertid => 1, delay => 1, preload => 1, autocommit => 1;
 
    $row->{mountconfig} ||= "\$Location{'~ ^/$row->{name}(/|\$)'} = \\%papp_handler," if defined $row->{name};
-?>
+:>
 
-<h2>__"Edit Application:" $row->{name}</h2>
+<h2>__"Edit Application:" <?$row->{name}:></h2>
 
 <?slink __"[BACK]", "apps":>
 
@@ -132,7 +131,7 @@ delayed  => 0,
    my $obj = rnew Devel::Symdump;
    for my $pkg (sort $obj->packages) {
       my ($rval, $ops, $bytes) = B::TerseSize::package_size($pkg);
-      :><tr><td><?escape_html $pkg?></td><td>$ops</td><td>$bytes</td></tr><:
+      :><tr><td><?escape_html $pkg:></td><td><?$ops:></td><td><?$bytes:></td></tr><:
    }
 :>
 #else
@@ -141,14 +140,6 @@ delayed  => 0,
 ]]></phtml></module>
 
 </package>
-
-<callback name="httpd_restart"><perl><![CDATA[
-   if (!reload_p) {
-      my $pid = getppid;
-      warn "restarting httpd (pid $pid)...\n";
-      kill 'USR1', $pid;
-   }
-]]></perl></callback>
 
 <callback name="flush_cache"><perl><![CDATA[
    PApp::flush_pkg_cache;
@@ -179,9 +170,6 @@ __"You need to authentificate yourself first"<p />
 <td><?slink __"Edit Access Rights", "admin/acedit,admin/acedit/":></td>
 <td><?slink __"Edit Applications", "admin/apps":></td>
 <td><?slink __"Flush Package Cache", SURL_EXEC($ppkg->refer('flush_cache')):></td>
-#  if (PApp->interface)[0] eq "PApp::Apache"
-<td><?slink __"Restart Apache (USR1)", SURL_EXEC($ppkg->refer('httpd_restart')):></td>
-#  endif
 # endif
 # if access_p "poedit"
 <td><?slink __"Edit Translations", "admin/poedit,admin/poedit/":></td>

@@ -227,7 +227,7 @@ find_path (SV *path, HV **hashp)
 }
 
 #define SURL_STYLE    0x41
-#define SURL_FILENAME 0x42
+#define SURL_SUFFIX   0x42
 #define SURL_PUSH     0x01
 #define SURL_POP      0x81
 #define SURL_UNSHIFT  0x02
@@ -419,28 +419,30 @@ MODULE = PApp		PACKAGE = PApp
 
 BOOT:
 {
-  cipher_e    = gv_fetchpv ("PApp::cipher_e"   , TRUE, SVt_PV);
-  pmod        = gv_fetchpv ("PApp::pmod"       , TRUE, SVt_PV);
-  curpath     = gv_fetchpv ("PApp::curpath"    , TRUE, SVt_PV);
-  curprfx     = gv_fetchpv ("PApp::curprfx"    , TRUE, SVt_PV);
-  location    = gv_fetchpv ("PApp::location"   , TRUE, SVt_PV);
-  big_a       = gv_fetchpv ("PApp::A"          , TRUE, SVt_PV);
-  big_p       = gv_fetchpv ("PApp::P"          , TRUE, SVt_PV);
-  big_s       = gv_fetchpv ("PApp::S"          , TRUE, SVt_PV);
-  state       = gv_fetchpv ("PApp::state"      , TRUE, SVt_PV);
-  arguments   = gv_fetchpv ("PApp::arguments"  , TRUE, SVt_PV);
-  userid      = gv_fetchpv ("PApp::userid"     , TRUE, SVt_IV);
-  stateid     = gv_fetchpv ("PApp::stateid"    , TRUE, SVt_IV);
-  sessionid   = gv_fetchpv ("PApp::sessionid"  , TRUE, SVt_IV);
-  module      = gv_fetchpv ("PApp::module"     , TRUE, SVt_PV);
-  modules     = gv_fetchpv ("PApp::modules"    , TRUE, SVt_PV);
-  surlstyle   = gv_fetchpv ("PApp::surlstyle"  , TRUE, SVt_IV);
+  cipher_e     = gv_fetchpv ("PApp::cipher_e"    , TRUE, SVt_PV);
+  pmod         = gv_fetchpv ("PApp::pmod"        , TRUE, SVt_PV);
+  curpath      = gv_fetchpv ("PApp::curpath"     , TRUE, SVt_PV);
+  curprfx      = gv_fetchpv ("PApp::curprfx"     , TRUE, SVt_PV);
+  location     = gv_fetchpv ("PApp::location"    , TRUE, SVt_PV);
+  big_a        = gv_fetchpv ("PApp::A"           , TRUE, SVt_PV);
+  big_p        = gv_fetchpv ("PApp::P"           , TRUE, SVt_PV);
+  big_s        = gv_fetchpv ("PApp::S"           , TRUE, SVt_PV);
+  state        = gv_fetchpv ("PApp::state"       , TRUE, SVt_PV);
+  arguments    = gv_fetchpv ("PApp::arguments"   , TRUE, SVt_PV);
+  userid       = gv_fetchpv ("PApp::userid"      , TRUE, SVt_IV);
+  stateid      = gv_fetchpv ("PApp::stateid"     , TRUE, SVt_IV);
+  sessionid    = gv_fetchpv ("PApp::sessionid"   , TRUE, SVt_IV);
+  module       = gv_fetchpv ("PApp::module"      , TRUE, SVt_PV);
+  modules      = gv_fetchpv ("PApp::modules"     , TRUE, SVt_PV);
+  surlstyle    = gv_fetchpv ("PApp::surlstyle"   , TRUE, SVt_IV);
 }
 
 # the most complex piece of shit
 void
 surl(...)
 	PROTOTYPE: @
+        ALIAS:
+           salternative = 1
 	PPCODE:
 {
         int i = 0;
@@ -481,7 +483,8 @@ surl(...)
 
         xcurprfx = SvPV (GvSV (curprfx), lcurprfx);
 
-        av_push (args, pathinfo);
+        if (!ix || items & 1) /* only set module when explicitly given */
+          av_push (args, SvREFCNT_inc (pathinfo));
 
         for (; i < items; i += 2)
           {
@@ -491,12 +494,12 @@ surl(...)
             if (SvROK (arg))
               {
                 if (!sv_is_scalar_type (SvRV (arg)))
-                  croak ("surl: tried to assign scalar to non-scalar reference");
+                  croak ("surl: tried to assign scalar to non-scalar reference (e.g. 'surl \\@x => 5')");
 
                 arg = newSVsv (arg);
                 val = newSVsv (val);
               }
-            else if (SvCUR (arg) == 2 && !*SvPV_nolen (arg))
+            else if (SvPOK(arg) && SvCUR (arg) == 2 && !*SvPV_nolen (arg))
               /* do not expand SURL_xxx constants */
               {
                 int surlmod = (unsigned char)SvPV_nolen (arg)[1];
@@ -506,7 +509,7 @@ surl(...)
                     style = SvIV (val);
                     continue;
                   }
-                else if (surlmod == SURL_FILENAME)
+                else if (surlmod == SURL_SUFFIX)
                   {
                     path = val;
                     continue;
@@ -535,73 +538,90 @@ surl(...)
             av_push (args, val);
           }
 
-        {
-          AV *av;
-          SV **he = hv_fetch ((HV *)GvHV (state), "papp_alternative", 16, 0);
-
-          if (!he || !SvROK ((SV *)*he))
-            croak ("$state{papp_alternative} not an arrayref");
-
-          av = (AV *)SvRV ((SV *)*he);
-          av_push (av, newRV_noinc ((SV *) args));
-          xalternative = av_len (av);
-        }
-
-        if (GIMME_V != G_VOID)
+        if (ix == 1)
           {
-            uchar key[x64_enclen (16)];
-            int count;
-            UV xuserid    = SvUV (GvSV (userid));
-            UV xstateid   = SvUV (GvSV (stateid));
-            UV xsessionid = SvUV (GvSV (sessionid));
-
-            key[ 0] = xuserid     ; key[ 1] = xuserid      >> 8; key[ 2] = xuserid      >> 16; key[ 3] = xuserid      >> 24;
-            key[ 4] = xstateid    ; key[ 5] = xstateid     >> 8; key[ 6] = xstateid     >> 16; key[ 7] = xstateid     >> 24;
-            key[ 8] = xalternative; key[ 9] = xalternative >> 8; key[10] = xalternative >> 16; key[11] = xalternative >> 24;
-            key[12] = xsessionid  ; key[13] = xsessionid   >> 8; key[14] = xsessionid   >> 16; key[15] = xsessionid   >> 24;
-
-            ENTER;
-            PUSHMARK (SP);
-            XPUSHs (GvSV (cipher_e));
-            XPUSHs (sv_2mortal (newSVpvn ((char *)key, 16)));
-            PUTBACK;
-            count = call_method ("encrypt", G_SCALAR);
-            SPAGAIN;
-
-            assert (count == 1);
-
-            x64_enc (key, POPp, 16);
-
-            LEAVE;
-
-            surl = newSVsv (GvSV (location));
+            /* salternative */
+            XPUSHs (sv_2mortal (newRV_noinc ((SV *) args)));
+          }
+        else
+          {
+            surl = sv_2mortal (newSVsv (GvSV (location)));
             sv_catpvn (surl, "/", 1);
             sv_catsv (surl, pathinfo);
-            if (style == 1) /* url */
-              {
-                sv_catpvn (surl, "/", 1);
-                sv_catpvn (surl, key, x64_enclen (16));
-              }
-            else if (style == 2) /* get */
-              {
-                if (path)
-                  {
-                    sv_catpvn (surl, "/", 1);
-                    sv_catsv (surl, path);
-                  }
 
-                sv_catpvn (surl, "?papp=", 6);
-                sv_catpvn (surl, key, x64_enclen (16));
+            if (style == 3 && GIMME_V != G_ARRAY)
+              {
+                SvREFCNT_dec (args);
+                XPUSHs (surl);
               }
-            else if (style == 3) /* empty */
-              ;
             else
-              croak ("illegal surlstyle %d requested", style);
+              {
+                AV *av;
+                SV **he = hv_fetch ((HV *)GvHV (state), "papp_alternative", 16, 0);
 
-            XPUSHs (sv_2mortal (surl));
-            if (style == 3)
-              XPUSHs (sv_2mortal (newSVpvn (key, x64_enclen (16))));
+                if (!he || !SvROK ((SV *)*he))
+                  croak ("$state{papp_alternative} not an arrayref");
+
+                av = (AV *)SvRV ((SV *)*he);
+                av_push (av, newRV_noinc ((SV *) args));
+                xalternative = av_len (av);
+
+                if (GIMME_V != G_VOID)
+                  {
+                    uchar key[x64_enclen (16)];
+                    int count;
+                    UV xuserid    = SvUV (GvSV (userid));
+                    UV xstateid   = SvUV (GvSV (stateid));
+                    UV xsessionid = SvUV (GvSV (sessionid));
+
+                    key[ 0] = xuserid     ; key[ 1] = xuserid      >> 8; key[ 2] = xuserid      >> 16; key[ 3] = xuserid      >> 24;
+                    key[ 4] = xstateid    ; key[ 5] = xstateid     >> 8; key[ 6] = xstateid     >> 16; key[ 7] = xstateid     >> 24;
+                    key[ 8] = xalternative; key[ 9] = xalternative >> 8; key[10] = xalternative >> 16; key[11] = xalternative >> 24;
+                    key[12] = xsessionid  ; key[13] = xsessionid   >> 8; key[14] = xsessionid   >> 16; key[15] = xsessionid   >> 24;
+
+                    ENTER;
+                    PUSHMARK (SP);
+                    XPUSHs (GvSV (cipher_e));
+                    XPUSHs (sv_2mortal (newSVpvn ((char *)key, 16)));
+                    PUTBACK;
+                    count = call_method ("encrypt", G_SCALAR);
+                    SPAGAIN;
+
+                    assert (count == 1);
+
+                    x64_enc (key, POPp, 16);
+
+                    LEAVE;
+
+                    if (style == 1) /* url */
+                      {
+                        sv_catpvn (surl, "/", 1);
+                        sv_catpvn (surl, key, x64_enclen (16));
+                      }
+                    else if (style == 2) /* get */
+                      {
+                        if (path)
+                          {
+                            sv_catpvn (surl, "/", 1);
+                            sv_catsv (surl, path);
+                          }
+
+                        sv_catpvn (surl, "?papp=", 6);
+                        sv_catpvn (surl, key, x64_enclen (16));
+                      }
+                    else if (style == 3) /* empty */
+                      ;
+                    else
+                      croak ("illegal surlstyle %d requested", style);
+
+                    XPUSHs (surl);
+                    if (style == 3 && GIMME_V == G_ARRAY)
+                      XPUSHs (sv_2mortal (newSVpvn (key, x64_enclen (16))));
+                  }
+              }
           }
+
+        SvREFCNT_dec (pathinfo);
 }
 
 SV *
@@ -748,7 +768,8 @@ modpath_thaw(modulepath)
 	OUTPUT:
         RETVAL
 
-# destroy %P, %S, %A and %state, but do not call DESTROY
+# destroy %P, %S and %state, but do not call DESTROY
+# TODO: why %P here and not in update_state?
 void
 _destroy_state()
 	CODE:

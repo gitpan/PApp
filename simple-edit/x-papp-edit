@@ -1,28 +1,115 @@
-#!/bin/sh
+#!/usr/bin/perl
 
-if [ "$1" = "--slave" ]; then
-   POSTURL="$2"
-   END="$3"
-   TMP="$4"
-   if [ "$END" = "__END__" ]; then
-      vi "$TMP"
-      echo "uploading..."
-      echo
-      POST -s -c application/x-papp-edit -- "$POSTURL" <"$TMP"
-      rm -f "$TMP"
-      echo
-      echo
-      echo "press enter to close this window..."
-      read
-   fi
-else
-   exec <"$1"
-   read POSTURL
-   read EXTENSION
-   read END
-   TMP="$1~$$$EXTENSION"
-   cat >"$TMP"
-   rxvt -e "$0" --slave "$POSTURL" "$END" "$TMP"
-   rm -f "$TMP" # just to be sure...
-fi
+@EDITOR   = qw(rxvt -g 90x25 -e vim);
+$XMESSAGE = "xmessage";
+$POLLINT  = 0.3;
+
+use POSIX ":sys_wait_h";
+use LWP::UserAgent;
+use File::Temp qw(tempdir);
+
+# 1. init
+
+my $TEMPDIR = tempdir TEMPDIR => 1, CLEANUP => 1;
+
+sub msgbox {
+   system $XMESSAGE, "-buttons", "OK", "-default", "OK", "-center", @_;
+}
+
+$SIG{__DIE__} = sub {
+   (my $msg = $_[0]) =~ s/\n$//;
+   msgbox $_[0];
+   exit (1);
+};
+
+my $ua = new LWP::UserAgent;
+$ua->env_proxy;
+
+$ua->agent("xpcse/0.1; unix-perl");
+
+# 2. parse
+
+open my $request, "<$ARGV[0]\000"
+   or die "unable to open submitted command file: $!\n";
+
+$POSTURL   = <$request>;
+$EXTENSION = <$request>;
+$END       = <$request>;
+
+$END eq "__END__\012"
+   or die "protocol error (wrong protocol version for this client?)\n";
+
+chomp $EXTENSION;
+
+my $TEMP = "$TEMPDIR/xpcse$EXTENSION";
+
+# 3. create local file
+
+my $MTIME;
+
+{
+   my $buf;
+   open my $fh, ">$TEMP\000"
+      or die "$TEMP: $!\n";
+
+   while (read $request, $buf, 16384) {
+      print $fh $buf
+         or die "unable to write temp file: $!";
+   }
+
+   close $fh;
+
+   $MTIME = time - 1;
+   utime $MTIME, $MTIME, $TEMP;
+}
+
+# 4. start editor
+
+my $editpid;
+
+if (0 == ($editpid = fork)) {
+   exec @EDITOR, $TEMP;
+   exit(255);
+} elsif (!defined $editpid) {
+   die "error while starting editor: $!\n";
+}
+
+# 5. poll file && upload
+
+sub upload {
+   my $file = do {
+      local($/);
+      open my $fh, "<$TEMP\000"
+         or die "$TEMP: $!";
+      <$fh>;
+   };
+
+   $MTIME = (stat $TEMP)[9] - 1;
+   utime $MTIME, $MTIME, $TEMP;
+
+   my $hdr = new HTTP::Headers Content_Type => "text/plain; charset=utf-8";
+
+   my $res = $ua->request(new HTTP::Request POST => "$POSTURL?update=1", $hdr, $file);
+
+   if ($res->is_success) {
+      my $content = $res->content;
+      $content =~ s/^-+//;
+      
+      if ($res->code == 200 || length ($content) > 100) {
+         msgbox -timeout => 1, $content;
+      } else {
+         msgbox $content;
+      }
+   } else {
+      msgbox "UPLOAD FAILED\n" . $res->as_string;
+   }
+}
+
+do {
+   select undef, undef, undef, $POLLINT;
+   $MTIME != (stat $TEMP)[9] and upload;
+} while $editpid != waitpid $editpid, WNOHANG;
+
+$MTIME != (stat $TEMP)[9] and upload;
+
 

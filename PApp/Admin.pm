@@ -22,7 +22,7 @@ use Convert::Scalar ':utf8';
 
 use base 'Exporter';
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT = qw();
 
 our $verbose = 1;

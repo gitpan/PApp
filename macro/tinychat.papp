@@ -22,7 +22,7 @@ tinychar - a very tiny chat box for your server ;)
 
 -->
 
-<import pm="PApp::User">username</import>
+<import pm="PApp::UserObs">username</import>
 
 <macro name="_tinychat"><pxml><![CDATA[
 <?sform -tinychat_submit => 1:>
@@ -57,7 +57,7 @@ tinychar - a very tiny chat box for your server ;)
 <macro name="tinychat_top*()"><pxml><![CDATA[
 #if $S{papp_tinychat}
 <p><small>
-<?slink __"[move chatbox to bottom]", papp_tinychat => undef, SURL_SAVE_PREFS?>
+<?slink __"[move chatbox to bottom]", papp_tinychat => undef, SURL_SAVE_PREFS:>
 <:_tinychat:>
 </small></p>
 #endif
@@ -67,7 +67,7 @@ tinychar - a very tiny chat box for your server ;)
 #if !$S{papp_tinychat}
 <p><small>
 <:_tinychat:>
-<?slink __"[move chatbox to top]", papp_tinychat => 1, SURL_SAVE_PREFS?>
+<?slink __"[move chatbox to top]", papp_tinychat => 1, SURL_SAVE_PREFS:>
 </small></p>
 #endif
 ]]></pxml></macro>

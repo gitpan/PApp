@@ -14,7 +14,7 @@ macro/admin - user access utilities for PApp
 
 =head1 DESCRIPTION
 
-See L<PApp::User> for most of the functions that formerly were defined
+See L<PApp::UserObs> for most of the functions that formerly were defined
 here.
 
 =head2 EXPORTED FUNCTIONS
@@ -23,11 +23,11 @@ here.
 
 =cut
 
-use PApp::User ();
+use PApp::UserObs ();
 
 my $surl_login_cb = create_callback {
    my ($user, $pass) = ($P{papp_resu}, $P{papp_ssap});
-   $PApp::arguments{papp_login_failed} = !PApp::User::verify_login $user, $pass if $user;
+   $PApp::arguments{papp_login_failed} = !PApp::UserObs::verify_login $user, $pass if $user;
 } name => "papp_login";
 
 ]]></perl>
@@ -75,13 +75,13 @@ be executed so you can add page-specific  info.
 
 =cut
 
-?>
+:>
    <table width="100%" bgcolor="#ffffa0" cellpadding="20" cellspacing="0" border="0">
       <tr><td><font color="#000000">
          <h1>Admin-Info</h1>
 
-         __"You are currently known to me as user #"<b>$PApp::userid</b><br />
-#if PApp::User::authen_p
+         __"You are currently known to me as user #"<b><?$PApp::userid:></b><br />
+#if PApp::UserObs::authen_p
          __"Current access rights include" <:
             use bytes;
             for (1 .. 8*length $state{papp_access}) {
@@ -99,7 +99,7 @@ be executed so you can add page-specific  info.
 
          __"<i>Possible(!)</i> URI (for referencing) of this page:" <?alink ((reference_url 1)x2):><br />
          __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p />
-         <?slink __"Reload page and drop all priviledges", &PApp::User::SURL_USER_LOGOUT:>
+         <?slink __"Reload page and drop all priviledges", &PApp::UserObs::SURL_USER_LOGOUT:>
 
          <:@_ and &{$_[0]}:>
       </font></td></tr>
@@ -118,7 +118,7 @@ be executed so you can add page-specific  info.
 =cut
 
 :>
-#if PApp::User::authen_p
+#if PApp::UserObs::authen_p
    <:adminbox:>
 #else
    <:loginbox:>
@@ -127,7 +127,7 @@ be executed so you can add page-specific  info.
 
 <macro name="force_login*($)" args="$msg"><phtml><![CDATA[<:
 abort_with {
-   PApp::User::user_logout;
+   PApp::UserObs::user_logout;
    content_type "text/html";
    :><html><head><title><?$msg:></title></head><:
    :><body text="black" link="#1010C0" vlink="#101080" alink="red" bgcolor="white"><:

@@ -19,7 +19,7 @@ use base Exporter;
 use utf8;
 no bytes;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT = qw(
 
       errbox
@@ -143,6 +143,12 @@ and content. C<img>, C<br> and C<input> elements are handled specially
 
 =cut
 
+my %html_empty = (
+   img   => 1, IMG   => 1, Img   => 1,
+   br    => 1, BR    => 1, Br    => 1,
+   input => 1, INPUT => 1, Input => 1,
+);
+
 sub tag {
    my $tag = shift;
    my $r = "<$tag";
@@ -152,7 +158,7 @@ sub tag {
          $r .= " $k=" . escape_attr($v);
       }
    }
-   if (@_ or $tag !~ /^(?:img|br|input)$/i) {
+   if (@_ or !$html_empty{$tag}) {
       $r .= ">";
       $r .= (join "", @_)."</$tag>" if @_;
    } else {

@@ -58,8 +58,8 @@
    while ($st->fetch) {
       :><tr><td>
          <?slink gettext$name,
-                 projectid => $id?></td>
-        <td>$budget</td>
+                 projectid => $id:></td>
+        <td><?$budget:></td>
         </tr>
       <:
    }

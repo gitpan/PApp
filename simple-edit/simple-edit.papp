@@ -2,7 +2,6 @@
 <domain name="papp" lang="en">
 
 <macro name="remote_edit*" args="$data $extension @surlargs"><pxml><![CDATA[<:
-
    content_type "application/x-papp-edit", "utf-8";
 
    my $url;
@@ -11,13 +10,54 @@
    $url .= surl @surlargs;
 
    :><?"$url\012$extension\012__END__\012$data":><:
-
 :>]]></pxml></macro>
 
 <macro name="remote_edit_parse*"><perl><![CDATA[
    my $buf;
    $request->read($buf, $request->header_in("Content-Length"));
+   Convert::Scalar::utf8_valid $buf or die "format violation - only utf8 supported\n";
    Convert::Scalar::utf8_on $buf;
+   $buf =~ y/\x{feff}//d;
+   $buf;
+]]></perl></macro>
+
+<callback name="remote_edit" args="$data $save"><phtml><![CDATA[<:
+   abort_with {
+      if ($save) {
+         ${$data->{ref}} = &remote_edit_parse;
+
+         content_type "text/plain";
+         $request->status(200);
+
+         echo "update ok";
+
+         $P{update} or echo "\n\nWARNING: using old version of x-papp-edit"; #FIXME#
+
+      } else {
+         content_type "application/x-papp-edit", "utf-8";
+         $request->header_out("Content-Disposition" => "filename=x.xpcse"); # for windows (file extension!)
+
+         :><?
+            "http://" . $request->hostname . ":" . $request->get_server_port . $data->{upd} . "\012"
+            . $data->{ext} . "\012"
+            . "__END__\012"
+            . ${$data->{ref}}
+         :><:
+      }
+   }
+:>]]></phtml></callback>
+
+<macro name="client_edit_surl*" args="$ref $extension"><perl><![CDATA[
+   my $data = {
+      ref => $ref,
+      ext => $extension,
+   };
+   $data->{upd} = surl SURL_EXEC($papp_ppkg->refer('remote_edit', $data, 1));
+   surl SURL_EXEC($papp_ppkg->refer('remote_edit', $data, 0));
+]]></perl></macro>
+
+<macro name="client_edit_slink*" args="$content $ref $extension"><perl><![CDATA[
+   alink $content, client_edit_surl $ref, $extension;
 ]]></perl></macro>
 
 <perl><![CDATA[

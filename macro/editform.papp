@@ -13,9 +13,7 @@ macro/editform - macros used for creating sql editing forms
 
 =head1 DESCRIPTION
 
-*sigh* :( Not yet.
-      
-Basically, this package lets you create very powerful html forms.
+This package lets you create very powerful html forms.
 
 Unless noted otherwise, all the functions creating input elements accept
 an optional additional argument which must be a hashref with additional
@@ -74,9 +72,16 @@ sub _ef_parse_end($) {
    my $ef = shift;
 
    for my $field (values %{$ef->{"/"}}) {
-      ${$field->{ref}} = $field->{multi}    if exists $field->{multi};
-      ${$field->{ref}} = $field->{constant} if exists $field->{constant};
-      ${$field->{ref}} = undef              if exists $field->{checkbox};
+      ${$field->{ref}} = $field->{multi}      if exists $field->{multi};
+      ${$field->{ref}} = $field->{constant}   if exists $field->{constant};
+
+      if (exists $field->{checkbox}) {
+         if ($field->{checkbox}) {
+            ${$field->{ref}} &=~ $field->{checkbox};
+         } else {
+            ${$field->{ref}} = 0;
+         }
+      }
    }
 
    # TODO: ef_submit should be communicated here
@@ -100,14 +105,60 @@ sub _ef_parse_field($$$) {
 
    if (exists $field->{multi}) {
       push @{$field->{multi}}, $data;
-   } elsif (delete $field->{checkbox}) {
-      ${$field->{ref}} = 1;
+   } elsif (exists $field->{checkbox}) {
+      if ($field->{checkbox}) {
+         ${$field->{ref}} |= $field->{checkbox};
+      } else {
+         ${$field->{ref}} = 1;
+      }
+      delete $field->{checkbox};
    } else {
       ${$field->{ref}} = $data;
    }
 }
 
-my $ef_parse_multipart = register_callback {
+sub ef_parse_simple {
+   my $ef = shift;
+
+   _ef_parse_begin($ef);
+
+   for my $name (keys %P) {
+      if (exists $ef->{"/"}{$name}) {
+         my $field = $ef->{"/"}{$name};
+         my $data = $P{$name}; #FIXME# was delete $P, but that's not good for debugging#d#
+         if (exists $field->{ref}) {
+            for $data (ref $data ? @$data : $data) {
+               $data =~ s/\r//g;
+               _ef_parse_field($field, $data, $state{papp_lcs});
+            }
+         } elsif (exists $field->{path}) {
+            fancydie "file upload widgets are not supported with either ef_sbegin or ef_cbegin/ef_begin";
+         } elsif (exists $field->{submit}) {
+            PApp::set_alternative delete $field->{submit} if $field->{submit};
+         } else {
+            fancydie "internal error (EF01), please report";
+         }
+      }
+   }
+   
+   _ef_parse_end($ef);
+}
+
+my $ef_parse_s = register_callback {
+   $request->query_string ne ""
+      or fancydie "missing form data: query string empty";
+
+   &ef_parse_simple;
+} name => "papp_ef_s";
+
+my $ef_parse_c = register_callback {
+   $request->header_in("Content-Type") eq "application/x-www-form-urlencoded"
+      or fancydie "missing form data: application/x-www-form-urlencoded expected, but none found";
+
+   &ef_parse_simple;
+} name => "papp_ef_c";
+
+my $ef_parse_m = register_callback {
    my $ef = shift;
 
    _ef_parse_begin($ef);
@@ -159,37 +210,10 @@ my $ef_parse_multipart = register_callback {
          return;
       }
       return 1;
-   };
+   } or fancydie "missing form data: multipart/form-data expected, but none posted";
 
    _ef_parse_end($ef);
 } name => "papp_ef_m";
-
-my $ef_parse_simple = register_callback {
-   my $ef = shift;
-
-   _ef_parse_begin($ef);
-
-   for my $name (keys %P) {
-      if (exists $ef->{"/"}{$name}) {
-         my $field = $ef->{"/"}{$name};
-         my $data = $P{$name}; #FIXME# was delete $P, but that's not good for debugging#d#
-         if (exists $field->{ref}) {
-            for $data (ref $data ? @$data : $data) {
-               $data =~ s/\r//g;
-               _ef_parse_field($field, $data, $state{papp_lcs});
-            }
-         } elsif (exists $field->{path}) {
-            fancydie "file upload widgets are not supported with either ef_sbegin or ef_cbegin";
-         } elsif (exists $field->{submit}) {
-            PApp::set_alternative delete $field->{submit} if $field->{submit};
-         } else {
-            fancydie "internal error (EF01), please report";
-         }
-      }
-   }
-   
-   _ef_parse_end($ef);
-} name => "papp_ef_s";
 
 sub _ef_begin {
    my $ef_parse = shift;
@@ -198,15 +222,15 @@ sub _ef_begin {
    $attr, (@_ & 1 ? shift : ()), SURL_EXEC($ef_parse->($ef_args)), @_;
 }
 
-sub ef_mbegin* { multipart_form _ef_begin($ef_parse_multipart, @_) }
-sub ef_sbegin* { sform          _ef_begin($ef_parse_simple   , @_) }
-sub ef_cbegin* { cform          _ef_begin($ef_parse_simple   , @_) }
+sub ef_mbegin* { multipart_form _ef_begin($ef_parse_m, @_) }
+sub ef_sbegin* { sform          _ef_begin($ef_parse_s, @_) }
+sub ef_cbegin* { cform          _ef_begin($ef_parse_c, @_) }
 
 # sub ef_begin* { # hack to get it exported
 *ef_begin = *ef_cbegin;
 
 sub ef_end* {
-   delete $ef_args->{radioref};
+   # delete $ef_args->{radioref};
    undef $ef_args; # important for database accessors
    endform;
 }
@@ -262,14 +286,7 @@ Output a reset button. If C<$value> is omitted, __"Restore Values" is used.
    my $value = shift;
    defined $value or $value = __"Save Changes";
    my $key = ef_nextid (undef, $attr);
-   $ef_args->{"/"}{$key}{submit} = @_
-      ? do {
-           &surl;
-           my $sub = pop @{$state{papp_alternative}};
-           shift @$sub unless @_ & 1; # kill module path unless explicitly given
-           $sub;
-        }
-      : undef;
+   $ef_args->{"/"}{$key}{submit} = @_ ? &PApp::salternative : undef;
    submit $attr, $key, $value;
 ]]></perl></macro>
 
@@ -301,9 +318,11 @@ Output a non-readable text input field.
 Output a textarea tag with the given C<width> (if C<height> is omitted
 C<ef_text> tries to be intelligent).
 
-=item ef_checkbox fieldref
+=item ef_checkbox fieldref[, bitmask]
 
-Output a checkbox. C<fieldref> is evaluated as a normal perl boolean.
+Output a checkbox. If C<bitmask> is missing, C<fieldref> is evaluated as a
+normal perl boolean. Otherwise, the C<bitmask> is used to set or clear the
+given bit in the C<fieldref>.
 
 =item ef_radio fieldref, value
 
@@ -319,7 +338,8 @@ Output an input button element.
 =item ef_hidden fieldref
 
 Output a field of type "hidden" (see also C<ef_constant> for a way to
-specify constants that cannot be altered by the user).
+specify constants that cannot be altered by the client, as C<ef_hidden>
+cannot guarentee this).
 
 =cut
 
@@ -361,9 +381,9 @@ specify constants that cannot be altered by the user).
 
 <macro name="ef_checkbox*"><perl><![CDATA[
    my $attr = ref $_[0] eq "HASH" ? shift : {};
-   $attr->{checked} = "checked" if ${$_[0]};
+   $attr->{checked} = "checked" if $_[1] ? ${$_[0]} & $_[1] : ${$_[0]};
    my $id = ef_nextid($_[0], $attr);
-   $ef_args->{"/"}{$id}{checkbox} = 1;
+   $ef_args->{"/"}{$id}{checkbox} = $_[1];
    checkbox $attr, $id;
 ]]></perl></macro>
 
@@ -437,14 +457,15 @@ corresponding key will be stored in the result field. Examples:
 
 Additional C<key> => C<value> pairs can be appended and will be used.
 
-=item ef_set fieldref, relation [mysql-specific]
+=item ef_set fieldref, [ table => "column" ] [mysql-specific]
 
-Similar to C<ef_relation>, but multiple selections are possible. The field
-value must be of type "arrayref" for this to work. Example:
+Similar to C<ef_relation>, but is based on the SQL SET type, i.e. multiple
+selections are possible. The field value must be of type "arrayref" for
+this to work. Example:
 
   ef_set \$field, [game => "categories"];
 
-=item ef_enum fieldref, relation [mysql-specific]
+=item ef_enum fieldref, [ table => "column" ] [mysql-specific]
 
 Similar to C<ef_set>, but is based on the ENUM type in sql.
 
@@ -461,7 +482,7 @@ Similar to C<ef_set>, but is based on the ENUM type in sql.
    my ($sel, @arg) = @$relation;
    my $st = sql_exec \my($id,$val), "select $sel", @arg;
    push @values, $id => $val while $st->fetch;
-   ef_selectbox $field, \@values;
+   ef_selectbox $attr, $field, \@values;
 ]]></perl></macro>
 
 <macro name="ef_set*"><perl><![CDATA[
@@ -472,7 +493,7 @@ Similar to C<ef_set>, but is based on the ENUM type in sql.
    my $type = $st->fetchrow_arrayref->[1];
    $type =~ s/^set\('(.*)'\)$/$1/ or die "ef_set: field '$fild' is not of set type\n";
 
-   ef_selectbox $field, map {$_, $_} split /','/, $type;
+   ef_selectbox $attr, $field, map {$_, $_} split /','/, $type;
 ]]></perl></macro>
 
 <macro name="ef_enum*"><perl><![CDATA[
@@ -483,7 +504,7 @@ Similar to C<ef_set>, but is based on the ENUM type in sql.
    my $type = $st->fetchrow_arrayref->[1];
    $type =~ s/^enum\('(.*)'\)$/$1/ or die "ef_enum: field '$fild' is not of enum type\n";
 
-   ef_selectbox $field, map {$_, $_} split /','/, $type;
+   ef_selectbox $attr, $field, map {$_, $_} split /','/, $type;
 ]]></perl></macro>
 
 <perl><![CDATA[
@@ -544,7 +565,7 @@ hashref with additonal name => value pairs.
 
 Add a callback the is to be called at BEGINing or END of result
 processing, i.e. call every BEGIN callback before the form results are
-beign processed and call every END callback after all form arguments have
+being processed and call every END callback after all form arguments have
 been processed.
 
 =cut

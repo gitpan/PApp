@@ -14,7 +14,7 @@ PApp::ECMAScript - make javascript horrors less horrible
 
 package PApp::ECMAScript;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT = qw($js escape_string_sq escape_string_dq);
 
 use base Exporter;
@@ -34,7 +34,7 @@ sub new {
 
 Create a new global PApp::ECMAScript object, storing it in the (exported)
 variable C<$js>, which should be shared between all modules for caching
-purposes. Consequently, this functino should be called once in the request
+purposes. Consequently, this function should be called once in the request
 callback or in the global stylesheet.
 
 =cut
@@ -286,7 +286,7 @@ package PApp::ECMAScript::Layer;
 =head2 CLASS PApp::ECMAScript::Layer
 
 This class manages floating cxx objects (i.e. objects with style invisible
-that can be shown, hidden, moved etc... usign javascript).
+that can be shown, hidden, moved etc... using javascript).
 
 =cut
 

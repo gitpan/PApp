@@ -6,6 +6,10 @@ use PApp::Admin;
 use PApp::Config;
 use PApp::DataRef;
 use PApp::Env;
+use PApp::Prefs;
+use PApp::UserObs;
+
+use PApp ();
 
 sub usage {
    my $self = $0;
@@ -159,6 +163,7 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
          $obj = new PApp::DataRef 'DB_row',
                     table => "app",
                     where => [id => sql_fetch "select id from app where name = ?", $_[1]],
+                    insertid => 1,
                     delay => 1;
          $obj->{name} = $_[1];
          $obj->{appset} ||= 0;
@@ -199,37 +204,32 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
 
       "user|u=s" => sub {
          $class = User;
-         $obj = new PApp::DataRef 'DB_row',
-                    table => "user",
-                    where => [id => sql_fetch "select id from app where name = ?", $_[1]],
-                    delay => 1;
-         $obj->{user} = $_[1];
-         clean {
-            my $obj = shift;
-            if ($obj->dirty) {
-               $obj->flush;
-            }
-         } $obj;
+         $obj = userid $_[1] || user_create;
       },
       "password=s" => sub {
          $class and $obj or die "--password called without a selected user\n";
          call {
-            srand;
-            $obj->{pass} = crypt shift,
-               join '', ('.', '/', 0..9, 'A'..'Z', 'a'..'z')[rand 64, rand 64];
-         } $_[1];
+            local $PApp::userid = $_[0];
+            update_password $_[1];
+         } $obj, $_[1];
       },
       "comment=s" => sub {
          $class and $obj or die "--comment called without a selected user/group\n";
-         call { $obj->{comment} = shift } $_[1];
+         if (ref $obj) {
+            call { $obj->{comment} = shift } $_[1];
+         } else {
+            call {
+               local $PApp::userid = $_[0];
+               update_comment $_[1];
+            } $obj, $_[1];
+         }
       },
       "grant=s" => sub {
          $class and $obj or die "--grant called without a selected user\n";
 	 my $grp = sql_fetch "select id from grp where name like ?", $_[1];
 	 $grp or die "--grant called with nonexistant group\n";
          clean {
-	    $_[0]->flush;
-	    sql_exec "insert into usergrp (userid, grpid) values (?, ?)", $_[0]{id}, $_[1];
+	    sql_exec "insert into usergrp (userid, grpid) values (?, ?)", $_[0], $_[1];
 	 } $obj, $grp;
       },
       "revoke=s" => sub {
@@ -237,8 +237,7 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
 	 my $grp = sql_fetch "select id from grp where name like ?", $_[1];
 	 $grp or die "--revoke called with nonexistant group\n";
          clean {
-	    $_[0]->flush;
-	    sql_exec "delete from usergrp where userid = ? and grpid = ?", $_[0]{id}, $_[1];
+	    sql_exec "delete from usergrp where userid = ? and grpid = ?", $_[0], $_[1];
 	 } $obj, $grp;
       },
 
@@ -351,17 +350,19 @@ sub list_groups {
 
 sub list_users {
    my $st = sql_exec 
-               \my($id, $prefs, $user, $pass, $comment),
-               "select id, length(prefs), user, length(pass), comment
-                from user
-                where id = ? or user like ?
-                order by 3",
-               $_[0], $_[0];
+               \my($id),
+               "select uid from prefs
+                where path = '' and name = 'papp_username'
+                      and value like ?
+                order by 1",
+               $_[0];
 
-   printf "%4s %-9s %-5s %-5s %s\n", "UID", "NAME", "PASS", "PREFS", "COMMENT";
+   printf "%4s %-9s %s\n", "UID", "NAME", "COMMENT";
    while ($st->fetch) {
-      printf "%4s %-9s %-5s %5s %s\n",
-         $id, $user, $pass ? "yes" : "no", "#$prefs", $comment;
+      printf "%4s %-9s %s\n",
+         $id,
+         (username $id),
+         $PApp::prefs->user_get($id, "papp_comment");
    }
 }
 

@@ -8,7 +8,7 @@
 <import src="macro/util"/>
 <import src="macro/editform"/>
 
-<import pm="PApp::User"/>
+<import pm="PApp::UserObs"/>
 
 <module name="">
 <state keys="usearch gsearch" import="yes"/>
@@ -17,7 +17,7 @@
 #if $S{ac_users}
    <h2><?slink "&lt;&lt;&lt; ".__"Users", ac_users => 0, SURL_SAVE_PREFS:></h2>
 
-   <:my ($cnt) = sql_fetch "select count(*) from user":>
+   <:my ($cnt) = sql_fetch "select count(distinct uid) from prefs":>
    <?sprintf __"There are currently %d users in the database.", $cnt:>
    <ul>
    <:$S{usearch} = "_" unless exists $S{usearch}:>
@@ -25,28 +25,30 @@
    </ul>
 
    __"To see all users, enter nothing in the 'Search' entry"<br>
-   __"To see only registered users, enter a single underscore in the 'Search' entry"<p>
 
    <:
-      my $st = sql_exec \my($id, $user, $pass, $comment),
-                        "select id, user, pass, comment
-                         from user
-                         where user like ? or comment like ?
-                         order by 2
+      my $st = sql_exec \my($id),
+                        "select distinct uid
+                         from prefs
+                         where path = ''
+                               and (name = 'papp_username' or name = 'papp_comment')
+                               and value like ?
+                         order by 1
                          limit 20",
-                         ("%$S{usearch}%")x2;
+                         "%$S{usearch}%";
    :>
 #if $A{delete_user}
    <:user_delete $A{delete_user}:>
 #endif
    __"Only the first 20 matches shown currently."<br />
    <table rules="all" frame="box" border="1">
-   <tr><th>__"ID"</th><th>__"login"</th><th>__"password"</th>
+   <tr><th>__"ID"</th><th>__"login"</th>
        <th>__"comment"</th><th>&nbsp;</th><th>__"access rights"</th>
    <: while ($st->fetch) {
          $comment ||= "&nbsp;"
-         ?>
-            <tr><td>$id<td>$user<td>$pass<td><?substr $comment, 0, 30?></td>
+         :>
+            <tr><td><?$id:></td><td><?escape_html username $id:></td>
+                <td><?escape_html substr $PApp::prefs->user_get($id, "papp_comment"), 0, 30:></td>
                 <td>
                    <?slink __"[EDIT]", "edit_user", userid => $id:>
                    <?slink __"[DELETE]", -delete_user => $id:>
@@ -90,8 +92,8 @@
    <:
       while ($st->fetch) {
          $comment ||= "&nbsp;"
-         ?>
-            <tr><td>$id<td>$user<td><?substr $comment, 0, 30?></td>
+         :>
+            <tr><td><?$id:><td><?$user:><td><?substr $comment, 0, 30:></td>
                 <td><?slink __"[EDIT]", "edit_grp", grpid => $id:>
                     <?slink __"[DROP]", -delete_grp => $id:></td>
          <:
@@ -140,14 +142,19 @@
 #if $A{add_grp}
    <:sql_exec "replace into usergrp values (?, ?)", $S{userid}, $P{grpid}:>
 #endif
-   <:my $row = new PApp::DataRef 'DB_row', table => "user", where => [id => $S{userid}], preload => 1, delay => 1:>
    <?ef_begin:>
    <table>
-   <tr><td>__"User"</td><td><?ef_string \$row->{user}, 20:>
-   <tr><td>__"Password"</td><td><?ef_password \$row->{[pass, PApp::DataRef::DB_row::filter_password]}, 14:>
+   <:my $username = $PApp::prefs->user_ref($S{userid}, "papp_username"):>
+   <tr><td>__"User"</td><td><?ef_string $username, 20:>
+   <:my $password = $PApp::prefs->user_ref($S{userid}, "papp_password"):>
+   <:$password = new PApp::DataRef 'Scalar', ref => $password, &PApp::DataRef::DB_row::filter_password:>
+   <tr><td>__"Password"</td><td><?ef_password $password, 14:>
                                 __"(leave this field empty for no change)"
-   <tr><td>__"Comment"</td><td><?ef_text \$row->{comment}, 60, 8:>
+   <:my $comment = $PApp::prefs->user_ref($S{userid}, "papp_comment"):>
+   <tr><td>__"Comment"</td><td><?ef_text $comment, 60, 8:>
+#if 0
    <tr><td>__"Preferences"</td><td><?ef_text \$row->{["prefs", fetch => $fetch_prefs, store => $store_prefs]}, 60, 14:>
+#endif
    <:
       my $st = sql_exec \my($id, $name),
                         "select g.id, g.name from usergrp u, grp g
@@ -155,8 +162,8 @@
                          order by 2",
                         $S{userid};
       while ($st->fetch) {
-         ?>
-            <tr><td>__"User Group:"</td><td>$name <?slink __"[DELETE]", -delete_grp => $id:>
+         :>
+            <tr><td>__"User Group:"</td><td><?$name:> <?slink __"[DELETE]", -delete_grp => $id:>
          <:
       }
    :>
@@ -165,12 +172,12 @@
    <?ef_end:>
    <h3>__"Add Group:"</h3>
       <?sform -add_grp => 1:>
-      <select name=grpid>
+      <select name="grpid">
       <:
          my $st = sql_exec \my($id, $name),
                            "select id, name from grp order by 2";
          while ($st->fetch) {
-            ?><option value=$id>$name</option><:
+            :><option value="<?$id:>"><?$name:></option><:
          }
       :>
       </select>

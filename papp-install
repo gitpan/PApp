@@ -5,6 +5,9 @@ use File::Compare;
 use File::Glob ':glob';
 use DBI;
 
+use Storable ();
+use Compress::LZF qw(:compress :freeze);
+
 use blib;
 use lib '.';
 
@@ -145,10 +148,20 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do("drop table state") if $installed_version < 0.12;
+$DBH->do(<<SQL);
+   create table event (
+     id int(10) unsigned not null auto_increment,
+     event varchar(255) not null,
+     ctime timestamp(14),
+     data mediumblob default '' not null,
+     primary key (id, event(16))
+   )
+SQL
+
+$DBH->do("drop table state") if $installed_version < 0.142;
 $DBH->do(<<SQL);
    create table state (
-     id int(10) unsigned not null auto_increment,
+     id int(10) unsigned not null,
      ctime timestamp(14),
      previd int(10) unsigned default '0' not null,
      alternative mediumint(8) unsigned default '0' not null,
@@ -160,25 +173,103 @@ $DBH->do(<<SQL);
    ) delay_key_write=1
 SQL
 
+$DBH->do("drop table eventcount") if $installed_version < 0.141;
+
 $DBH->do(<<SQL);
-   create table user (
-     id int(10) unsigned not null auto_increment,
-     ctime timestamp(14),
-     prefs blob not null,
-     user varchar(100) not null,
-     pass varchar(14) not null,
-     comment text not null,
-     primary key (id),
-     key user (user)
+   create table event_count (
+      count int(10) unsigned not null
    )
 SQL
+
+unless (sql_fetch "select count(*) from event_count") {
+   sql_exec "insert into event_count values (0)";
+   sql_exec "delete from event";
+}
+
+$DBH->do(<<SQL);
+   create table state_seq (
+      seq int(10) unsigned not null
+   )
+SQL
+
+unless (sql_fetch "select count(*) from state_seq") {
+   sql_exec "insert into state_seq values (1)";
+   sql_exec "delete from state";
+}
+
+$DBH->do(<<SQL);
+   create table prefs (
+     uid int(10) unsigned not null default '0',
+     path varchar(255) binary not null default '',
+     name varchar(255) binary not null default '',
+     value mediumblob not null,
+     unique key id (path(140),name(100),uid)
+   )
+SQL
+
+if ($installed_version < 0.142) {
+   eval {
+      my $st = sql_exec \my($userid, $prefs, $user, $pass, $comment),
+                        "select id, prefs, user, pass, comment from user";
+
+      print "Converting user preferences data to new format";
+
+      while ($st->fetch) {
+         print ".";
+         if ($user ne "") {
+            sql_exec "replace into prefs (uid, path, name, value) values (?,'',?,?)",
+                     $userid, "papp_username", sfreeze_cr $user;
+         }
+         if ($pass ne "") {
+            sql_exec "replace into prefs (uid, path, name, value) values (?,'',?,?)",
+                     $userid, "papp_password", sfreeze_cr $pass;
+         }
+         if ($comment ne "") {
+            sql_exec "replace into prefs (uid, path, name, value) values (?,'',?,?)",
+                     $userid, "papp_comment", sfreeze_cr $comment;
+         }
+         if ($prefs ne "") {
+            $prefs = Storable::thaw decompress $prefs;
+            while (my ($path, $keys) = each %$prefs) {
+               next unless %$keys;
+               sql_exec $DBH, "replace into prefs (uid, path, name, value) values (?,?,?,?)",
+                              $userid, $path, "papp_prefs", 
+                              compress Storable::nfreeze($keys);
+            }
+         }
+      }
+
+      print " done.\n";
+   };
+}
+
+$DBH->do(<<SQL);
+   create table user_seq (
+      seq int(10) unsigned not null
+   )
+SQL
+
+unless (sql_fetch "select count(*) from user_seq") {
+   sql_exec "insert into user_seq values (?)", sql_fetch "select max(uid) + 1 from prefs";
+}
+
+$DBH->do("drop table user") if $installed_version < 0.142;
+
+if ($installed_version < 0.124) {
+   $DBH->do("alter table grp add unique key (name)");
+}
+
+if ($installed_version < 0.14) {
+   $DBH->do("alter table grp change name name varchar(160) not null");
+}
 
 $DBH->do(<<SQL);
    create table grp (
      id int(10) unsigned not null auto_increment,
      name varchar(100) not null,
      comment text not null,
-     primary key (id)
+     primary key (id),
+     unique (name)
    )
 SQL
 
@@ -251,7 +342,6 @@ $DBH->do(<<SQL);
   )
 SQL
 
-
 $DBH->do("delete from pkg");
    # if $PApp::Config::VERSION != $installed_version;
 
@@ -264,13 +354,15 @@ EOF
 
 eval {
    $DBH->do("insert into appset values (1, 'default')")
-   or die;
+      or die;
 };
 
 print "creating admin user and admin group... ";
 eval {
    my $pass = crypt "public", "xx";
-   $DBH->do("insert into user values (1, NULL, '', 'admin', '$pass', 'Main Administrator')")
+       $DBH->do("insert into prefs values (1, '', 'papp_username', 'admin')")
+   and $DBH->do("insert into prefs values (1, '', 'papp_password', '$pass')")
+   and $DBH->do("insert into prefs values (1, '', 'papp_comment', 'Main Administrator')")
    and $DBH->do("insert into grp values (1, 'admin'      , 'hyperuser access rights')")
    and $DBH->do("insert into grp values (2, 'poedit'     , 'general translator access')")
    and $DBH->do("insert into grp values (3, 'poedit_*'   , 'translator access for all apps')")

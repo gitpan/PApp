@@ -31,7 +31,7 @@ use PApp::I18n qw(normalize_langid);
 no bytes;
 use utf8;
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 
 =item ($ppkg, $name, $code) = parse_file $papp, $path
 
@@ -242,6 +242,7 @@ sub parse_file {
 
 	    $end = sub {
 	       pop @curnosession;
+               $curchr[-1] .= $_[0];
 	    };
 
          } elsif ($element eq "include") {

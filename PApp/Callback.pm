@@ -15,8 +15,6 @@ PApp::Callback - a workaround for the problem of nonserializable code.
 
 =head1 DESCRIPTION
 
-HIGHLY EXPERIMENTAL MODULE, INDEED!
-
 The problem: Code is unserializable (at the moment, but it will probably never be
 efficient to serialize code).
 
@@ -36,13 +34,13 @@ require 5.006;
 
 use base 'Exporter';
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...
 
 Registers a function (preferably at program start) and returns a callback
-object that can be used to create callable but serializable objects.
+object that can be used to create callable and serializable objects.
 
 If C<functiondef> is a string it will be interpreted as a function name in
 the callers package (unless it conatins '::'). Otherwise you should use a

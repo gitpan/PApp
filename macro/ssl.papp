@@ -149,7 +149,7 @@ This can be used to drop SSL security.
 <perl><![CDATA[
 
 use PApp qw(*state $userid getuid);
-use PApp::User;
+use PApp::UserObs;
 
 sub _compress_cert($) {
  my ($ret) = '';

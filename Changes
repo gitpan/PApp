@@ -1,5 +1,84 @@
 Revision history for Perl extension PApp
 
+0.142 Tue Apr 16 19:17:14 CEST 2002
+	- WARNING: You need to either re-run papp-install, or
+          run "alter table papp.grp add unique key (name)" before using this
+          version.
+        - WARNING: DataRef now requires an explicit insertid => 1 when
+          sql_insertid behaviour on zero or undef keys is intended.
+        - WARNING: renamed PApp::User to PApp::UserObs to allow for API
+          needed API changes. Do so in your own programs.
+        - optimized surl to only generate the destination module name
+          when expliticly given and generate alternatives only when necessary.
+          saves time & disk space.
+        - editform now checks wether form data is submitted and dies otherwise.
+        - correctly re-set the cookie when a user logs in.
+        - PApp::User(Obs)? now has immediate grant/revoke_access, i.e. access
+          right changes become effective immediately in all sessions.
+        - simple-edit/x-papp-edit now correctly uses any proxies specified
+          in the environment.
+        - I18n-tables are flushed automatically when poedit writes them,
+          no server-restarts neccessary.
+        - updated (some) iso translations.
+        - <noession> no longer eats package bodies.
+        - HACK: package names containing "::" are unshared and keep their
+          name when compiled to perl.
+        - handle_error now sets the status to 500 (internal server error).
+
+0.141 <no formal release>
+	- bump version for database changes.
+	- state id's are now handled by sequences.
+	- fix userid NULL issues with newer(?) userhandling.
+        - rewrote bin/papp-env using Getopt::Long, now supports --help.
+        - fix PApp::DataRef::delete.
+        - PApp::DataRef didn't support preload => 1 and cache => 0 (cache
+          => 1 is now being forced on preload).
+        - streamlined state-handling a bit.
+        - PApp::DataRef now supports creating rows when caching is off.
+        - PApp::DataRef::Scalar supports generic fetch/store methods.
+        - implemented getpref/setpref function that somehow replace the
+          planned %T functionality. convert user-preferences into the new
+          format.
+
+0.14  <no formal release>
+        - new module PApp::Event.
+        - new function PApp::XML::expand_pi.
+        - editform's ef_checkbox can now modify bitfields.
+        - correct implicit DBH is now set when applications/packages are
+          being compiled.
+        - fixed insert/replace optimization and insertid in DataRef.
+        - surl could coredump when passed funny objects.
+        - $papp_ppkg now package variable in evere <package>.
+        - ef_relation, enum and set now honor html-attributes.
+        - fix the self-ref-circle in PApp::DataRef.
+        - better error messages for config_eval.
+        - updated PApp::DataRef to do REPLACE or INSERT/UPDATE dynamically
+          and documented what is being done;
+        - added a PApp::DataRef::new_locked method.
+        - allow preload => 1 to fail in PApp::DataRef.
+        - fixed the case when utf8 was set to an array.
+	- converted the FAQ to xml and put it online using schmorp's
+          hilarious instant-faq xslt.
+        - implemented app-name-specific access rights in PApp::User.
+        - added eventcount table && checks to enable event processing.
+        - added even more %T hooks (%T was already there and handled,
+          so there is no speed hit yet).
+        - removed %T completely, will be done using a functional interface.
+        - PApp::User::newgrp behaves better when the group already exists now.
+        - bin/papp-admin can now edit users properly.
+        - new, experimental update-policy for PApp::DataRef. mysql users
+          should use mysql_client_found_rows where possible.
+        - ?> now has the same semantics as :> (it was deprecated before)
+        - --"" in :>-sections now doesn't interpolate anymore. might one day
+          be working, but now now.
+        - removed an illegal optimization in PApp::PCode.
+        - utf8-ified PApp::User.
+        - updated PApp::DataRef to support multiple keys. Also warns about
+          lots of deprecated uses that will be removed.
+        - DataRef now supports specialization (template objects).
+        - macro/editform now sets checkboxes to 0 instead of undef (an
+          implementation detail).
+
 0.122 Mon Dec  3 19:32:50 CET 2001
 	- fixed hashing of long strings in PApp::I18n. This invalidates
           all translation tables.

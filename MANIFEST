@@ -5,7 +5,7 @@ MANIFEST
 INSTALL
 THANKS
 LICENSE
-FAQ
+FAQ.xml
 
 Makefile.PL
 PApp.pm
@@ -29,11 +29,14 @@ PApp/XSLT.pm
 PApp/XSLT/Sablotron.pm
 PApp/XSLT/LibXSLT.pm
 PApp/Env.pm
+PApp/Event.pm
 PApp/Callback.pm
 PApp/DataRef.pm
 PApp/Log.pm
 PApp/Lock.pm
+PApp/Prefs.pm
 PApp/User.pm
+PApp/UserObs.pm
 
 I18n/Makefile.PL
 I18n/I18n.pm
@@ -64,6 +67,7 @@ demo/demo.papp
 demo/README
 demo/demo1.pxsl
 demo/demo2.pxsl
+demo/demodb.sql
 
 apps/poedit.papp	simple translation editor
 widget/poedit.papp
@@ -90,7 +94,6 @@ i18n/iso3166.po
 
 bin/papp-env
 bin/papp-admin
-bin/papp-httpd
 
 papp-install
 i18n-upgradeutf8
@@ -103,6 +106,7 @@ eg/exec.cgi		mount an appset using cgi/CGI::SpeedyCGI
 
 doc/intro.sdf		lame english introduction (no tutorial)
 doc/pws2001.sdf		the perl-workshop-2001 introduction/tutorial (german)
+doc/faqhtml.xsl
 
 xcms/xcms.papp		The eXtensible Content Management System
 xcms/xcms.sql

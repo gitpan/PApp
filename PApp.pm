@@ -3,8 +3,9 @@
 
 #line 5 "(PApp.pm)"
 
+#FIXME#
 # DEVEL-9021 regexec/utf8_alnum=0 workaround
-{ use utf8; local $x = "_"; $x =~ /\w|\d|\S|\p{IsPrint}/; }
+#{ use utf8; local $x = "_"; $x =~ /\w|\d|\S|\p{IsPrint}/; }
 
 =head1 NAME
 
@@ -117,7 +118,7 @@ use File::Basename qw(dirname);
 
 use Storable;
 
-use Compress::LZF;
+use Compress::LZF qw(:compress :freeze);
 use Crypt::Twofish2;
 
 use PApp::Config qw($DBH DBH);
@@ -131,13 +132,15 @@ use PApp::Application;
 use PApp::Package;
 use PApp::Util;
 use PApp::Recode ();
+use PApp::Prefs ();
+use PApp::Event ();
 
 <<' */'=~m>>;
  
 /*
  * the DataRef module must be included just in case
  * no application has been loaded and we need to deserialize state,
- * since overloaded packages must alread exist before an object becomes
+ * since overloaded packages must already exist before an object becomes
  * overloaded. Ugly.
  */
 
@@ -146,7 +149,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 0.122;
+   $VERSION = 0.142;
 
    use base Exporter;
 
@@ -164,12 +167,13 @@ BEGIN {
          surl_style
          SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
 
-         $request $NOW *ppkg $papp *state %P *A *S *L *T
+         $request $NOW *ppkg $papp *state %P *A *S
          $userid $sessionid reload_p switch_userid save_prefs getuid
 
          dprintf dprint echo capture $request 
          
          N_ language_selector preferences_url preferences_link
+         getpref setpref
    );
    @EXPORT_OK = qw(config_eval abort_with_file);
 
@@ -205,10 +209,8 @@ our $userid;      # uncrypted user-id
 
 our %state;
 our %arguments;
-our %transactions;
 our %S; # points into %state
 our %A; # points into %arguments
-our %T; # points into %transactions
 our %P;
 
 our %papp;        # toplevel ("mounted") applications
@@ -263,12 +265,22 @@ our $url_prefix_sslauth = undef;
 
 our $logfile = undef;
 
+our $event_count = 0;
+
+our $prefs    = new PApp::Prefs "";      # the global preferences
+our $curprefs = new PApp::Prefs $curpfx; # the current application preferences
+
 %preferences = (  # system default preferences
    '' => [qw(
       papp_locale
-      papp_last_cookie
+      papp_cookie
    )],
 );
+
+# flush translation table caches when they are re-written
+PApp::Event::on papp_i18n_flush => sub {
+   PApp::I18n::flush_cache;
+};
 
 our $papp_main;
 
@@ -341,14 +353,6 @@ reserved for use by this module. Everything else is yours.
 
 Similar to C<%state>, but is local to the current application. Input
 arguments prefixed with a dash end up here.
-
-=item %T [read-write, persistent]
-
-(NYI) reserved
-
-=item %L [read-write, persistent]
-
-(NYI) reserved
 
 =item %A [read-write, input only]
 
@@ -508,22 +512,26 @@ sub PApp::Base::configure {
 
    $configured = 1;
 
-   exists $a{libdir}		and $libdir	= $a{libdir};
-   exists $a{pappdb}		and $statedb	= $a{pappdb};
+   exists $a{libdir}		and $libdir	  = $a{libdir};
+   exists $a{pappdb}		and $statedb	  = $a{pappdb};
    exists $a{pappdb_user}	and $statedb_user = $a{pappdb_user};
    exists $a{pappdb_pass}	and $statedb_pass = $a{pappdb_pass};
+
    exists $a{cookie_reset}	and $cookie_reset = $a{cookie_reset};
    exists $a{cookie_expires}	and $cookie_expires = $a{cookie_expires};
-   exists $a{cipherkey}		and $key	= $a{cipherkey};
-   exists $a{onerr}		and $onerr	= $a{onerr};
-   exists $a{url_prefix_nossl}	and $url_prefix_nossl = $a{url_prefix_nossl};
-   exists $a{url_prefix_ssl}	and $url_prefix_ssl = $a{url_prefix_ssl};
-   exists $a{url_prefix_sslauth} and $url_prefix_sslauth = $a{url_prefix_sslauth};
 
-   exists $a{checkdeps} 	and $checkdeps	= $a{checkdeps};
-   exists $a{delayed} 		and $delayed	= $a{delayed};
+   exists $a{cipherkey}		and $key	  = $a{cipherkey};
 
-   exists $a{logfile}		and $logfile	= $a{logfile};
+   exists $a{onerr}		and $onerr	  = $a{onerr};
+
+   exists $a{url_prefix_nossl}	and $url_prefix_nossl   = $a{url_prefix_nossl};
+   exists $a{url_prefix_ssl}	and $url_prefix_ssl     = $a{url_prefix_ssl};
+   exists $a{url_prefix_sslauth}and $url_prefix_sslauth = $a{url_prefix_sslauth};
+
+   exists $a{checkdeps} 	and $checkdeps	  = $a{checkdeps};
+   exists $a{delayed} 		and $delayed	  = $a{delayed};
+
+   exists $a{logfile}		and $logfile	  = $a{logfile};
 
    my $lang = { lang => 'en', domain => 'papp' };
    
@@ -567,6 +575,8 @@ sub PApp::Base::configured {
       $cipher_d = new Crypt::Twofish2 $key;
       $cipher_e = new Crypt::Twofish2 $key;
 
+      $event_count = sql_fetch DBH, "select count from event_count";
+
       PApp::I18n::set_base($i18ndir);
 
       $translator = PApp::I18n::open_translator("papp", "en");
@@ -586,7 +596,8 @@ sub configured_p {
 #############################################################################
 
 =item dprintf "format", value...
-dprint value...
+
+=item dprint value...
 
 Work just like print/printf, except that the output is queued for later use by the C<debugbox> function.
 
@@ -706,9 +717,6 @@ preserved.
 
 sub reference_url {
    my $url;
-   return "&lt;reference url not yet implemented&gt;";
-   die;
-   #FIXME#
    if ($_[0]) {
       $url = "http://" . $request->hostname;
       $url .= ":" . $request->get_server_port if $request->get_server_port != 80;
@@ -791,7 +799,7 @@ The following (symbolic) modifiers can also be used:
  SURL_SUFFIX(<file>)
    sets the filename in the generated url to the given string. The
    filename is the last component of the url commonly used by browsers as
-   the default name to save files. Works only with SURL_STYLE_GET only.
+   the default name to save files. Works only with SURL_STYLE_GET.
 
 Examples:
 
@@ -865,7 +873,7 @@ C<suburl>-caller.
 
 =item retlink content [, surl-args]
 
-Just like returl, but creates an C<A HREF> link witht he given contents.
+Just like returl, but creates an C<A HREF> link with the given contents.
 
 =cut
 
@@ -968,8 +976,10 @@ sub endform {
 =item parse_multipart_form \&callback;
 
 Parses the form data that was encoded using the "multipart/form-data"
-format. For every parameter, the callback will be called with
-four arguments: Handle, Name, Content-Type, Content-Type-Args,
+format. Returns true when form data was present, false otherwise.
+
+For every parameter, the callback will be called with four
+arguments: Handle, Name, Content-Type, Content-Type-Args,
 Content-Disposition (the latter two arguments are hash-refs, with all keys
 lowercased).
 
@@ -1003,7 +1013,7 @@ strings so watch out!
 # parse a single mime-header (e.g. form-data; directory="pub"; charset=utf-8)
 sub parse_mime_header {
    my $line = $_[0];
-   $line =~ /([^ ()<>@,;:\\"\/.[\]=]+)/g; # the tspecials from rfc1521
+   $line =~ /([^ ()<>@,;:\\".[\]=]+)/g; # the tspecials from rfc1521, except /
    my @r = $1;
    no utf8; # devel7 has no polymorphic regexes
    use bytes; # these are octets!
@@ -1016,12 +1026,13 @@ sub parse_mime_header {
              ([^ ()<>@,;:\\".[\]]+)
             )
          /gxs) {
+      push @r, lc $1;
       my $value = $2 || $3;
       # we dequote only the three characters that MUST be quoted, since
       # microsoft is obviously unable to correctly implement even mime headers:
       # filename="c:\xxx". *sigh*
       $value =~ s/\\([\015"\\])/$1/g;
-      push @r, lc $1, $value;
+      push @r, $value;
    }
    @r;
 }
@@ -1066,13 +1077,15 @@ sub parse_multipart_form(&) {
          $ct{charset} ||= $state{papp_lcs} || "iso-8859-1";
          unless ($cb->($fh, $name, $ct, \%ct, \%cd)) {
             my $buf;
-            while ($fh->read($buf, 16384, length $$buf) > 0)
+            while ($fh->read($buf, 16384) > 0)
               { }
          }
       }
    }
 
    $request->header_in("Content-Length", 0);
+
+   1;
 }
 
 =item PApp::flush [not exported by default]
@@ -1268,7 +1281,7 @@ sub abort_with(&) {
 
 Abort processing of the current module stack, set the content-type header
 to the content-type given and sends the file given by *FH to the client.
-No cleanup-handlers or other thingsw ill get called and the function
+No cleanup-handlers or similar functions will get called and the function
 does of course not return. This function does I<not> call close on the
 filehandle, so if you want to have the file closed after this function
 does its job you should not leave references to the file around.
@@ -1295,7 +1308,7 @@ sub set_cookie {
    $request->header_out(
       'Set-Cookie',
       "PAPP_1984="
-      . (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, 0, 0, $state{papp_last_cookie}))
+      . (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, 0, 0, $state{papp_cookie}))
       . "; PATH=/; EXPIRES="
       . unixtime2http($NOW + $cookie_expires, "cookie")
    );
@@ -1402,6 +1415,7 @@ sub language_selector {
    my $translator = shift;
    my $current = shift;
    for my $lang ($translator->langs) {
+      next if $lang eq "*" || lc $lang eq "mul";
       my $name = PApp::I18n::translate_langid($lang, $lang);
       if ($lang ne $current) {
          echo slink "[$name]", SURL_SET_LOCALE($lang);
@@ -1447,20 +1461,6 @@ sub split_path($) {
 
 #############################################################################
 
-# should be all my variables, broken due to mod_perl
-
-   $st_fetchstate;
-   $st_newstateid;
-   $st_updatestate;
-
-   $st_reload_p;
-
-   $st_fetchprefs;
-   $st_newuserid;
-   $st_updateprefs;
-
-   $st_updateatime;
-
 =item reload_p
 
 Return the count of reloads, i.e. the number of times this page
@@ -1474,39 +1474,59 @@ by default, but only when you need it.
 sub reload_p {
    if ($prevstateid) {
       $st_reload_p->execute($prevstateid, $alternative);
-      $st_reload_p->fetchrow_arrayref->[0]-1
+      $st_reload_p->fetchrow_arrayref->[0]
    } else {
       0;
    }
 }
 
+=item getpref $key
+
+Return the named user-preference variable (or undef, when the variable
+does not exist) for the current application.
+
+User preferences can be abused for other means, like timeout-based session
+authenticitation. This works, because user preferences, unlike state
+variables, change their values simultaneously in all sessions.
+
+See also L<PApp::Prefs>.
+
+=item setpref $key, $value
+
+Set the named preference variable. If C<$value> is C<undef>, then the
+variable will be deleted. You can pass in (serializable) references.
+
+See also L<PApp::Prefs>.
+
+=cut
+
+sub getpref($) {
+   $curprefs->get($_[0]);
+}
+
+sub setpref($;$) {
+   $curprefs->set($_[0], $_[1]);
+}
+
 # forcefully (re-)read the user-prefs and returns the "new-user" flag
 # reads all user-preferences (no args) or only the preferences
-# for the given path (arguments is given)
-sub load_prefs(@) {
+# for the given path (argument is given)
+sub load_prefs($) {
    if ($userid) {
-      $st_fetchprefs->execute($userid);
-
-      if (defined (my $prefs = $st_fetchprefs->fetchrow_array)) {
+      my $st = sql_exec $DBH, \my($prefs),
+                        "select value from prefs where uid = ? and path = ? and name = 'papp_prefs'",
+                        $userid, $_[0];
+      if ($st->fetch) {
          $prefs &&= Storable::thaw decompress $prefs;
 
-         my @keys;
-         for my $path (@_ ? @_ : keys %preferences) {
-            if ($path && !exists $state{$path}) {
-               return if @_ == 1;
-            } else {
-               my $h = $path ? $state{$path} : \%state;
-               while (my ($k, $v) = each %{$prefs->{$path}}) {
-                  $h->{$k} = $v;
-               }
-            }
-         }
+         my $h = $_[0] ? $state{$_[0]} : \%state;
+         @$h{keys %$prefs} = values %$prefs;
 
+         return 0;
+      } else {
          return 1;
       }
    }
-
-   undef $userid;
 }
 
 =item save_prefs
@@ -1516,25 +1536,25 @@ Save the preferences for all currently loaded applications.
 =cut
 
 sub save_prefs {
-   my $prefs;
+   my %prefs;
    my $userid = getuid;
-
-   $st_fetchprefs->execute($userid);
-
-   if ($prefs = $st_fetchprefs->fetchrow_array) {
-      $prefs = Storable::thaw decompress $prefs;
-   } else {
-      $prefs = {};
-   }
 
    while (my ($path, $keys) = each %preferences) {
       next if $path && !exists $state{$path};
       
       my $h = $path ? $state{$path} : \%state;
-      $prefs->{$path} = { map { $_ => $h->{$_} } grep { exists $h->{$_} } @$keys };
+      $prefs{$path} = { map { $_ => $h->{$_} } grep { defined $h->{$_} } @$keys };
    }
 
-   $st_updateprefs->execute(compress Storable::nfreeze($prefs), $userid);
+   while (my ($path, $keys) = each %prefs) {
+      if (%$keys) {
+         $st_replacepref->execute($userid, $path, "papp_prefs", 
+                                  compress Storable::nfreeze($keys));
+      } else {
+         $st_deletepref->execute($uid, $path, "papp_prefs");
+                        $userid, $path, "papp_prefs";
+      }
+   }
 }
 
 =item switch_userid $newuserid
@@ -1549,12 +1569,17 @@ without changing anything else.
 
 sub switch_userid {
    if ($userid != $_[0]) {
-      $state{papp_switch_newuserid} = $_[0];
-      $state{papp_last_cookie} = 0; # unconditionally re-set the cookie
-
       $userid = $_[0];
 
-      load_prefs "", keys %preferences if $userid;
+      if ($userid) {
+         load_prefs "";
+         for (keys %preferences) {
+            load_prefs $_ if exists $state{$_};
+         }
+      }
+
+      $state{papp_switch_newuserid} = $_[0];
+      $state{papp_cookie} = 0; # unconditionally re-set the cookie
    }
 }
 
@@ -1562,7 +1587,7 @@ sub switch_userid {
 
 Return a user id, allocating it if necessary (i.e. if the user has no
 unique id so far). This can be used to force usertracking, just call
-C<userid> in your C<newuser>-callback. See also C<$userid> to get the
+C<getuid> in your C<newuser>-callback. See also C<$userid> to get the
 current userid (which might be zero).
 
 =cut
@@ -1570,15 +1595,19 @@ current userid (which might be zero).
 sub getuid() {
    $userid ||= do {
       $st_newuserid->execute;
-      switch_userid sql_insertid($st_newuserid);
+      switch_userid sql_insertid $st_newuserid;
       $userid;
    }
 }
 
 sub update_state {
    %arguments = %A = ();
-   $st_updatestate->execute(compress Storable::mstore(\%state),
-                            $userid, $sessionid, $stateid) if $stateid;
+
+   $st_insertstate->execute($stateid,
+                            compress Storable::mstore(\%state),
+                            $userid, $prevstateid, $sessionid, $alternative)
+      if @{$state{papp_alternative}};
+
    &_destroy_state; # %P = %S = %state = (), but in a safe way
    undef $stateid;
 }
@@ -1620,7 +1649,7 @@ sub config_eval(&) {
       local $eval_level = 1;
       local $SIG{__DIE__} = \&PApp::Exception::diehandler;
       my $retval = eval { &{$_[0]} };
-      config_error PApp $@ if $@;
+      config_error PApp $@->as_string if $@;
       return $retval;
    } else {
       return &{$_[0]};
@@ -1727,12 +1756,27 @@ sub handle_error($) {
       or $exc = new PApp::Exception error => 'Script evaluation error',
                                     info => [$exc];
    $exc->errorpage;
+   $request->status(500);
    eval { update_state };
    eval { flush_cvt };
    if ($request) {
       $request->log_reason($exc, $request->filename);
    } else {
       print STDERR $exc;
+   }
+}
+
+# return a new stateid, pool stateids a bit
+{
+   my ($id1, $id2);
+
+   sub newstateid {
+      if ($id1 == $id2) {
+         $st_newstateids->execute(16);
+         $id1 = sql_insertid $st_newstateids;
+         $id2 = $id1 + 16;
+      }
+      $id1++;
    }
 }
 
@@ -1759,9 +1803,6 @@ sub handle_error($) {
 # on input, $location, $pathinfo, $request and $papp must be preset
 #
 sub _handler {
-   my $state;
-   my $filename;
-
    # for debugging only, maybe?
    local $SIG{QUIT} = sub { die "SIGQUIT" };
 
@@ -1793,24 +1834,30 @@ sub _handler {
             || ($pathinfo =~ s%/([\-.a-zA-Z0-9]{22,22})$%% && $1);
 
       if ($state) {
-         ($userid, $prevstateid, $alternative, $sessionid) = unpack "VVVxxxx", $cipher_d->decrypt(PApp::X64::dec $state);
-         $st_fetchstate->execute($prevstateid);
+         ($userid, $prevstateid, $alternative, $sessionid) =
+            unpack "VVVxxxx", $cipher_d->decrypt(PApp::X64::dec $state);
 
+         $st_fetchstate->execute($prevstateid);
          $state = $st_fetchstate->fetchrow_arrayref;
+      } else {
+         $st_eventcount->execute;
+         $state = $st_eventcount->fetchrow_arrayref;
       }
 
-      if ($state) {
-         $st_newstateid->execute($prevstateid, $alternative);
-         $stateid = sql_insertid $st_newstateid;
+      $stateid = newstateid;
 
-         *state = Storable::mretrieve decompress $state->[0];
+      PApp::Event::handle_events($state->[0]) if $event_count != $state->[0];
 
-         $nextid = $state->[2];
-         $sessionid = $state->[3];
+      if (defined $state->[1]) {
+         $stateid = newstateid;
 
-         if ($state->[1] != $userid) {
-            if ($state->[1] != $state{papp_switch_newuserid}) {
-               fancydie "User id mismatch", "maybe someone is tampering?";
+         $sessionid = $state->[4];
+
+         *state = Storable::mretrieve decompress $state->[1];
+
+         if ($state->[2] != $userid) {
+            if ($state->[2] != $state{papp_switch_newuserid}) {
+               fancydie "user id mismatch ($state->[2] <> $state{papp_switch_newuserid}", "maybe someone is tampering?";
             } else {
                $userid = $state{papp_switch_newuserid};
             }
@@ -1824,20 +1871,16 @@ sub _handler {
                              info => [appid => $state{papp_appid}];
 
       } else {
-         $st_newstateid->execute(0, 0);
-         $sessionid = $stateid = sql_insertid $st_newstateid;
+         ($sessionid, $prevstateid, $alternative) = ($stateid, 0, 0);
 
          $state{papp_appid} = $papp->{appid};
 
-         $modules = $pathinfo ? modpath_thaw substr $pathinfo, 1 : ();
-
-         $alternative = 0;
-         $prevstateid = 0;
+         $modules = $pathinfo =~ m%/(.*?)/?$% ? modpath_thaw $1 : ();
 
          if ($request->header_in('Cookie') =~ /PAPP_1984=([0-9a-zA-Z.-]{22,22})/) {
-            ($userid, undef, undef, $state{papp_last_cookie}) = unpack "VVVV", $cipher_d->decrypt(PApp::X64::dec $1);
+            ($userid, undef, undef, $state{papp_cookie}) = unpack "VVVV", $cipher_d->decrypt(PApp::X64::dec $1);
          } else {
-            undef $userid;
+            $userid = 0;
          }
 
          if ($userid) {
@@ -1875,9 +1918,8 @@ sub _handler {
       &{shift @{$state{papp_execonce}}} while @{$state{papp_execonce}};
       delete $state{papp_execonce};
 
-      if ($state{papp_last_cookie} < $NOW - $cookie_reset
-          or $state{papp_last_cookie} > $NOW) { #d# NUKE this branch in a few weeks
-         $state{papp_last_cookie} = $NOW;
+      if ($state{papp_cookie} < $NOW - $cookie_reset) {
+         $state{papp_cookie} = $NOW;
          set_cookie;
       }
 

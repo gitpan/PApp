@@ -32,16 +32,16 @@ use PApp::Exception qw(fancydie);
 
 use base 'Exporter';
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 @EXPORT_OK = qw(
       xml_quote xml_unquote xml_check xml_encoding xml2utf8
-      xml_include
+      xml_include expand_pi
 );
 
 =item xml_quote $string
 
-Quotes (and returns) the given string using CDATA so that it's contents
-won't be interpreted by an XML parser.
+Quotes (and returns) the given string so that it's contents won't be
+interpreted by an XML parser.
 
 =item xml_unquote $string
 
@@ -53,8 +53,10 @@ character constants are resolved. Everything else is silently ignored.
 
 sub xml_quote {
    local $_ = shift;
-   s/]]>/]]]]>><![CDATA[/g;
-   "<![CDATA[$_]]>";
+   s/</&lt;/g;
+   s/&/&amp;/g;
+   s/]>/]&gt;/g;
+   $_;
 }
 
 sub xml_unquote($) {
@@ -87,7 +89,7 @@ occured.
 
 The optional argument C<$prolog> is prepended to the string, while
 C<$epilog> is appended (i.e. the document is "$prolog$string$epilog"). The
-trick is that the epilog/prolog strings are not counted in the error
+cool thing is that the epilog/prolog strings are not counted in the error
 position (and yes, they should be free of any errors!).
 
 (Hint: Remember to utf8_upgrade before calling this function or make sure
@@ -210,6 +212,59 @@ sub xml2utf8($;$) {
    }
 
    ($version, "utf-8", $standalone);
+}
+
+=item expand_pi $xml, { pi => coderef, pi2 => coderef... }
+
+Takes an xml string and expands all processing instructions given in the
+second argument by calling the respective coderef. The resulting string is
+returned.
+
+The (single) argument to the coderef is the (unquoted) argument.
+
+This function uses a regex (without backtracking in the common case) and
+should be fast.
+
+For example, to execute sql commands using C<sql> processing instructions,
+use something like this:
+
+   Test xml string: <?sql select id from table where mtime = 7?>
+
+   $expanded =
+      expand_pi $xml, {
+         sql => sub {
+            xml_quote join "", sql_ufetch $_[0];
+         },
+      };
+
+=cut
+
+sub expand_pi {
+   local @pi;
+   (my $xml = $_[0]) =~ m{
+      ^
+         (?:
+             # first skip all "normal" text (not <)
+             [^<]+
+           | # then skip CDATA sections
+             <\[CDATA\[ (?: [^\]]+ | \][^\]] | \]\][^>] )* \]\]>
+           | # now process processing instructions
+             <\? (\w+) \s+ ( (?: [^?] | \?[^>] )+ )* \?\>
+                (?{
+                   push @pi, [$-[1] - 2, $+[2] + 2, $1, $2] if exists $_[1]{$1};
+                })
+           | # else must be a tag
+             <[^?]
+         )*
+      $
+   }gx;
+
+   for (reverse @pi) {
+      my ($a, $b, $name, $content) = @$_;
+      substr $xml, $a, $b - $a, $_[1]{$name}->(xml_unquote $content);
+   }
+
+   $xml;
 }
 
 =item xml_include $document, $base [, $uri_handler($uri, $base) ]

@@ -127,7 +127,7 @@ PApp::Config - hold common configuration settings
 
 =cut
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 
 require Exporter;
 
@@ -221,15 +221,14 @@ $PApp::statedb_pass = $PApp::Config{STATEDB_PASS};
 sub _prepare_DBH {
    my $dbh = shift;
 
-   $PApp::st_fetchstate  = $dbh->prepare("select state, userid, previd, sessid from state where id = ?");
-   $PApp::st_newstateid  = $dbh->prepare("insert into state (previd, alternative) values (?, ?)");
-   $PApp::st_updatestate = $dbh->prepare("update state set state = ?, userid = ?, sessid = ? where id = ?");
-
+   $PApp::st_fetchstate  = $dbh->prepare("select count, state, userid, previd, sessid from event_count left join state on (id = ?)");
+   $PApp::st_newstateids = $dbh->prepare("update state_seq set seq = last_insert_id(seq) + ?");
+   $PApp::st_insertstate = $dbh->prepare("replace into state (id, state, userid, previd, sessid, alternative) values (?,?,?,?,?,?)");
+   $PApp::st_eventcount  = $dbh->prepare("select count from event_count");
    $PApp::st_reload_p    = $dbh->prepare("select count(*) from state where previd = ? and alternative = ?");
-
-   $PApp::st_fetchprefs  = $dbh->prepare("select prefs from user where id = ?");
-   $PApp::st_newuserid   = $dbh->prepare("insert into user () values ()");
-   $PApp::st_updateprefs = $dbh->prepare("update user set prefs = ? where id = ?");
+   $PApp::st_newuserid   = $dbh->prepare("update user_seq set seq = last_insert_id(seq) + 1");
+   $PApp::st_replacepref = $dbh->prepare("replace into prefs (uid, path, name, value) values (?,?,?,?)");
+   $PApp::st_deletepref  = $dbh->prepare("delete from prefs where uid = ? and path = ? and name = ?");
 }
 
 sub Database() {

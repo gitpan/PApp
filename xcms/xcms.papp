@@ -5,7 +5,7 @@
 <translate fields="content.text style.text" style="auto" lang="*"/>
 
 <import src="macro/editform"/>
-<import pm="PApp::User"/>
+<import pm="PApp::UserObs"/>
 <import src="macro/admin"/>
 <import pm="PApp::ECMAScript"/>
 <import src="simple-edit/simple-edit"/>

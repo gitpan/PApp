@@ -14,7 +14,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 0.122;
+$VERSION = 0.142;
 
 package PApp::Package;
 
@@ -209,7 +209,7 @@ sub gen_lexical : locked {
    my $self = shift;
    my $value = shift;
    push @{$self->{lexical}}, $value;
-   my $lexical = '$PAPP_PACKAGE_LEXICAL_'.++$lexname;
+   my $lexical = '$PAPP_'.++$lexname;
    $self->{header} .= "my $lexical = \$PApp::ppkg->{lexical}[".scalar($#{$self->{lexical}})."];\n";
    $lexical;
 }
@@ -246,15 +246,28 @@ sub compile : locked {
    my $code = shift;
 
    $ppkg->{package} and fancydie "compile called on a ppkg with a defined package";
-   $ppkg->{package} = "PApp::".++$upid,
 
-   local $PApp::ppkg = $ppkg;
-                         # ¿dead?
-   #local $PApp::output; # bodies can generate spurious output
+   if ($ppkg->{name} =~ /::/) {
+      $ppkg->{package} = $ppkg->{name};
+   } else {
+      $ppkg->{package} = "PApp::".++$upid,
+   }
+
+   local $PApp::ppkg          = $ppkg;
+   local $PApp::SQL::Database = $PApp::SQL::Database;
+   local $PApp::SQL::DBH      = $PApp::SQL::DBH;
+
+   if ($ppkg->{database}) {
+      $PApp::SQL::Database = $ppkg->{database};
+      $PApp::SQL::DBH      =
+         $PApp::SQL::Database->checked_dbh
+            or fancydie "error connecting to database ".$PApp::SQL::Database->dsn, $DBI::errstr;
+   }
 
    *{$ppkg->{package}."::EXPORT"} = $ppkg->{export};
    @{$ppkg->{package}."::ISA"} = q(PApp::Package);
    
+   ${$ppkg->{package}."::papp_ppkg"      } = $ppkg;
    *{$ppkg->{package}."::papp_ppkg_table"} = \my $ppkg_table;
    ${$ppkg->{package}."::papp_translator"} = PApp::I18n::open_translator(
                                                 "$PApp::i18ndir/$ppkg->{domain}",
@@ -313,6 +326,8 @@ use PApp::Util (); # nothing yet
    while (my ($k, $v) = each %{$code->{module}}) {
       $ppkg->{module}{$k}{cb} = $ppkg->_eval("# module '$k'\nsub {\n$v\n}");
    }
+
+   delete $ppkg->{lexical}; # save some memory and also keep the rfeerence counters sane
 }
 
 sub mark_statekey {
@@ -322,11 +337,11 @@ sub mark_statekey {
    $ppkg->{local}{$key}{$extra} = 1 if $attr eq "local";
 }
 
-=item $ppkg->insert($name, $module, $conf)
+=item $ppkg->insert($name, $module, $conf) *EXPERIMENTAL*
 
 Insert the given package at the current position, optionally setting the
 default module to C<$module> and C<$PApp::curconf> to C<$conf>. If no name
-is given (or $name is undeF), the package will be embedded under it's
+is given (or $name is undef), the package will be embedded under it's
 "natural" name, otherwise the given name is used to differentiate between
 different instances of the same package.
 
@@ -351,14 +366,14 @@ sub insert($;$$$) {
    local (%S, %A);
 
    local $curconf = $conf;
-   #ocal $curprfx = $curprfx;
+   #ocal $curprfx = $curprfx; # 'tis correct
    local $curpath = "$curpath/$name";
 
    $$curmod->{$name}{"\x00"} ||= $module;
    PApp::Package::run($ppkg, \$$curmod->{$name});
 }
 
-=item $ppkg->embed($name, $module, $conf)
+=item $ppkg->embed($name, $module, $conf) *EXPERIMENTAL*
 
 Embed the given package. This function is identical to the insert method
 above with the exception of the namespace (eg. %S) , which will NOT be
@@ -416,14 +431,13 @@ sub run($$) {
             or fancydie "error connecting to database ".$PApp::SQL::Database->dsn, $DBI::errstr;
    }
 
+   # TODO: key on $transactions not on $state
    if (exists $state{$curprfx}) {
-      *S = $state    {$curprfx};
-      *A = $arguments{$curprfx};
-      *T = $arguments{$curprfx};
+      *S = $state       {$curprfx};
+      *A = $arguments   {$curprfx};
    } else {
-      *S = $state    {$curprfx} = {};
-      *A = $arguments{$curprfx} = {};
-      *T = $arguments{$curprfx} = {};
+      *S = $state       {$curprfx} = {};
+      *A = $arguments   {$curprfx} = {};
 
       while (defined $pmod->{nosession}) {
          $module = $$curmod->{"\x00"} = $pmod->{nosession};

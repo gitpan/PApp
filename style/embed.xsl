@@ -54,7 +54,7 @@
    <script type="text/javascript" language="javascript">
       <xsl:comment>
          <xsl:text>&#10;</xsl:text>
-         <xsl:text disable-output-escaping="yes"><xsl:apply-templates/></xsl:text>
+         <xsl:value-of disable-output-escaping="yes"/>
          <xsl:text>//</xsl:text>
       </xsl:comment>
    </script>
