@@ -7,7 +7,7 @@
 <macro name="remote_edit_parse*"><perl><![CDATA[
    my $buf;
    $request->read($buf, $request->header_in("Content-Length"));
-   if ($request->header_in("Content-Type") =~ /text\//) {
+   if ($request->header_in("Content-Type") =~ /^text\//) {
         Convert::Scalar::utf8_valid $buf or die "format violation - only utf8 supported\n";
         Convert::Scalar::utf8_on $buf;
 
@@ -51,7 +51,7 @@
                   rename "$dest.$$", $dest or die "can't rename to $dest";
                } else {
                   my $x = &remote_edit_parse;
-                  $x =~ s/\015\012/\012/g if $data->{mime} =~ m@^text/@ and $P{ostype} eq "win";
+                  $x =~ s/\015\012/\012/g if $data->{mime} =~ m@^text/@ && $P{ostype} eq "win";
                   ${$data->{ref}} = $x;
                }
                content_type "text/plain";
@@ -85,19 +85,22 @@
             }
          } else {
             my %outflags;
-            $outflags{"Extension"}              = $flags{extension} || (".". (PApp::MimeType::by_mimetype($data->{mime}))->extension) or ".no-mime.bin";
+            $outflags{"Extension"}              = $flags{extension}
+                                                  or "." . (PApp::MimeType::by_mimetype($data->{mime})
+                                                            or PApp::MimeType::by_mimetype("application/octet-stream"))->extension;
             $outflags{"Url"}                    = "http://" . $request->hostname . ":" . $request->get_server_port . $data->{upd};
             $outflags{"Content-Type"}           = $data->{mime};
             $outflags{"Server-Date"}            = time2str();
             $outflags{"Xpcse-Protocol-Version"} = "1.1";
             $outflags{"Quiet"}                  = $flags{quiet} if exists $flags{quiet};
-            $outflags{"On-Exit-Only"}           = $flags{'on_exit_only'} if exists $flags{'on_exit_only'};
-            $outflags{"Check-Ms"}               = $flags{'check_ms'} if exists $flags{'check_ms'};
-            $outflags{"Dirty-Wait"}             = $flags{'dirty_wait'} if exists $flags{'dirty_wait'};
-            $outflags{"Auth-Username"}          = $flags{'auth_username'} if exists $flags{'auth_username'};
-            $outflags{"Auth-Password"}          = $flags{'auth_password'} if exists $flags{'auth_password'};
-            $outflags{"Auth-Proxy-Username"}    = $flags{'auth_proxy_username'} if exists $flags{'auth_proxy_username'};
-            $outflags{"Auth-Proxy-Password"}    = $flags{'auth_proxy_password'} if exists $flags{'auth_proxy_password'};
+            $outflags{"On-Exit-Only"}           = $flags{on_exit_only} if exists $flags{on_exit_only};
+            $outflags{"Check-Ms"}               = $flags{check_ms} if exists $flags{check_ms};
+            $outflags{"Dirty-Wait"}             = $flags{dirty_wait} if exists $flags{dirty_wait};
+            $outflags{"Auth-Username"}          = $flags{auth_username} if exists $flags{auth_username};
+            $outflags{"Auth-Password"}          = $flags{auth_password} if exists $flags{auth_password};
+            $outflags{"Auth-Proxy-Username"}    = $flags{auth_proxy_username} if exists $flags{auth_proxy_username};
+            $outflags{"Auth-Proxy-Password"}    = $flags{auth_proxy_password} if exists $flags{auth_proxy_password};
+            $outflags{"Line"}                   = $flags{line} if exists $flags{line};
 
             my $outflags;
             while(my ($x,$y) = each %outflags) {
@@ -117,8 +120,8 @@
 :>]]></phtml></callback>
 
 <macro name="client_edit_surl*" args="$ref $mime %flags"><perl><![CDATA[
-   $mime = PApp::MimeType::by_extension $flags{extension} if !defined $mime and $flags{extension};
-   $mime = (PApp::MimeType::by_filename $ref)->mimetype if !defined $mime and !ref $ref;
+   $mime = PApp::MimeType::by_extension $flags{extension} if !defined $mime && $flags{extension};
+   $mime = (PApp::MimeType::by_filename $ref)->mimetype if !defined $mime && !ref $ref;
    my $data = {
       (ref $ref) ? (ref => $ref) : (file => $ref),
       mime  => $mime,
@@ -182,8 +185,10 @@ Returns a surl for remote editing ref
 
                       auth_proxy_password => "password"
                         password for proxy authentification
-                        
-  
+
+                      line => 9999
+                        select current line for edit sessions, only a hint
+
 =item client_edit_slink $content, $ref, $content-type, %flags
 
 See C<client_edit_surl>

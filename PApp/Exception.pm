@@ -24,7 +24,7 @@ use PApp::HTML;
 
 use utf8;
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 @EXPORT = qw(fancydie try catch);
 
 no warnings;
@@ -314,7 +314,7 @@ sub papp_backtrace {
   my($p,$f,$l,$s,$h,$w,$e,$r,$a, @a, @ret,$i);
   $start = 1 unless $start;
   for ($i = $start; @DB::args = ("optimized away"), ($p,$f,$l,$s,$h,$w,$e,$r) = caller($i); $i++) {
-    $f = "file `$f'" unless $f eq '-e';
+    $f = "<commandline>" if $f eq "-e";
     $w = $w ? '@ = ' : '$ = ';
     if ($i > $start) {
        my @a = map {
@@ -352,10 +352,8 @@ sub papp_backtrace {
        } elsif ($s eq '(eval)') {
          $s = "eval {...}";
        }
-       push @ret, "$w$s$a from $f line $l";
-    } else {
-       push @ret, "$w$s$a called from $f line $l";
     }
+    push @ret, "$w$s$a\ncalled from $f line $l";
     last if $DB::signal;
   }
   return @ret;
@@ -431,12 +429,13 @@ an error occurs.
 
 =cut
 
-sub try(&;@) {
+sub try(&;$@) {
    my @r = eval {
-      local $SIG{__DIE__} = \&_diehandler;
+      local $SIG{__DIE__} = \&diehandler;
       &{+shift};
    };
    if ($@) {
+      die if UNIVERSAL::isa $@, PApp::Upcall::;
       my $err = shift;
       fancydie $err, $@, @_;
    }

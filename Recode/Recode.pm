@@ -15,9 +15,6 @@ PApp::Recode - convert bytes from one charset to another
 This module creates conversion functions that enable you to convert text
 data from one character set (and/or encoding) to another.
 
-#FIXME# this module is certainly NOT finished yet, as PApp itself
-currently uses PApp::Recode::Pconv internaly ;->
-
 =cut
 
 package PApp::Recode;
@@ -25,7 +22,7 @@ package PApp::Recode;
 use Convert::Scalar ();
 
 BEGIN {
-   $VERSION = 0.143;
+   $VERSION = 0.2;
 
    require XSLoader;
    XSLoader::load 'PApp::Recode', $VERSION;
@@ -38,13 +35,13 @@ BEGIN {
 =item charset_valid $charset
 
 Returns a boolean indicating wether the named charset is valid on this
-system (i.e. can be converted from/to UTF-8).
-
-Currently this function always returns 1. #FIXME#
+system (where "valid" is defined as "can be converted from/to UTF-8 using
+this module").
 
 =cut
 
-my %charset_valid = ( "iso-8859-1" => 1, "utf-8" => 1 );
+# cache the results, some frequently used charsets are always supported
+my %charset_valid = ( "iso-8859-1" => 1, "utf-8" => 1, "ascii" => 1 );
 
 sub charset_valid {
    unless (exists $charset_valid{$_[0]}) {
@@ -63,7 +60,7 @@ sub charset_valid {
 
 =head2 THE PApp::Recode CLASS
 
-This class has never been tested, so don't expect it to work.
+This class can be used to convert textual data between various encodings.
 
 =over 4
 
@@ -74,22 +71,23 @@ argument from the source character set into the destination character set
 each time it is called (it does remember state, though. A call without
 arguments resets the state).
 
-Perl's internal utf8-flag is ignored on input and not set on output.
+Perl's internal UTF-8-flag is ignored on input and not set on output.
 
-Example: create a converter that converts utf-8 into ascii, html-escaping any non-ascii characters:
+Example: create a converter that converts UTF-8 into ascii, html-escaping
+any non-ascii characters:
 
    new PApp::Recode "ascii", "utf-8", sub { sprintf "&#x%x;", $_[0] };
 
 =item $converter = to_utf8 PApp::Recode "source-character-set" [, \&fallback]
 
 Similar to a call to C<new> with the first argument equal to "utf-8". The
-returned conversion function will, however, forcefully set perl's utf-8
+returned conversion function will, however, forcefully set perl's UTF-8
 flag on the returned scalar.
 
 =item $converter = utf8_to PApp::Recode "destination-character-set" [, \&fallback]
 
 Similar to a call to C<new> with the second argument equal to "utf-8". The
-returned conversion function will, however, upgrade its argument to utf-8.
+returned conversion function will, however, upgrade its argument to UTF-8.
 
 =cut
 
@@ -119,14 +117,6 @@ sub utf8_to($$;$) {
       &$converter;
    };
 }
-
-=back
-
-=head2 THE PApp::Recode::Pool CLASS
-
-NYI
-
-=over 4
 
 =back
 

@@ -154,7 +154,7 @@ delayed  => 0,
 </head>
 <body text="black" link="#1010C0" vlink="#101080" alink="red" bgcolor="white">
 <table width="100%"><tr><td><h1>__"PApp Administration Desk"</h1></td><td align="right">
-<:language_selector $papp_translator, $papp_ppkg_table->lang:>
+<:language_selector $papp_translator:>
 </td></tr></table>
 <:tinychat_top:>
 

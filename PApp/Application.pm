@@ -30,7 +30,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 
 =item $papp = new PApp::Application args...
 
@@ -38,38 +38,8 @@ $VERSION = 0.143;
 
 sub new {
    my $class = shift;
-   my $self = bless { @_ }, $class;
 
-   my $path = PApp::Util::find_file $self->{path}, ["papp"];
-
-   -f $path or fancydie "papp-application '$self->{path}' not found\n";
-
-   $self->{path} = $path;
-
-   $self;
-}
-
-=item $papp->mount
-
-Do necessary bookkeeping to mount an application.
-
-=cut
-
-sub mount {
-   my $self = shift;
-   my %args = @_;
-
-   $self->load_config;
-
-   delete $self->{cb_src}; # not needed for mounted applications
-
-   local $self->{root}{name} = $self->{name}; # bad hack, but not a design error
-
-   $self->for_all_packages(sub {
-      my ($ppkg, $path, $name) = @_;
-      $PApp::preferences{"$path/$name"} = [keys %{$ppkg->{preferences}}] if $ppkg->{preferences};
-   });
-
+   bless { @_ }, $class;
 }
 
 =item $ppkg->preprocess
@@ -78,163 +48,15 @@ Parse the package (includign all subpackages) and store the configuration
 and code data in the PApp Package Cache(tm) for use by load_config and
 load_code.
 
-=cut
+=item $papp->mount
 
-sub preprocess {
-   my $self = shift;
-
-   my($R, $W); pipe $R, $W;
-
-   my $pid = fork; # do not waste precious memory
-
-   if ($pid == 0) {
-      close $R;
-
-      local $SIG{__DIE__};
-
-      #print "gdb /usr/app/sbin/httpd $$\n"; #<STDIN>;
-
-      eval {
-         PApp::SQL::reinitialize;
-         local $PApp::SQL::DBH = DBH;
-
-         require PApp::Parser;
-         ($ppkg, $code) = PApp::Parser::parse_file($self, $self->{path});
-
-         Storable::store_fd [
-            Storable::nfreeze({
-               root => $ppkg,
-               file => $self->{file},
-               translate => $self->{translate},
-            }),
-            Storable::nfreeze($code),
-         ], $W;
-      };
-
-      if ($@) {
-         local $Storable::forgive_me = 1;
-         Storable::store_fd [undef, $@], $W;
-      }
-
-      close $W;
-      &PApp::Util::_exit;
-      exit(255); # just in case, for some reason, this gets propagated to the client
-   } elsif ($pid > 0) {
-      close $W;
-
-      my ($config, $code) = eval { my ($config, $code) = @{Storable::retrieve_fd $R} };
-      close $R;
-
-      waitpid $pid, 0;
-
-      if ($?) {
-         require POSIX;
-         if (($? & 127) == &POSIX::SIGSEGV) {
-            die "\nchild died with SIGSEGV while parsing...\ndid you remember to disable expat while compiling apache?\nyou lost";
-         }
-      }
-
-      die $code unless $config; # config is undef on error
-
-      sql_exec DBH,
-               "replace into pkg (id, ctime, config, code) values (?, NULL, ?, ?)",
-               $self->{path}, $config, $code;
-   } else {
-      fancydie "unable to fork to preprocess";
-   }
-}
-
-my @config = qw(file root);
-
-sub load_config {
-   my $self = shift;
-
-   return if $self->{root};
-
-   my ($ctime, $config) = sql_fetch DBH, "select ctime, config from pkg where id = ?", $self->{path};
-
-   unless ($config) {
-      $self->preprocess;
-      ($ctime, $config) = sql_fetch DBH, "select ctime, config from pkg where id = ?", $self->{path};
-   }
-
-   $config or fancydie "load_config: unable to compile package", $self->{path};
-
-   $config = Storable::thaw $config;
-
-   $self->{ctime} = $ctime;
-   while (my ($k, $v) = each %$config) {
-      $self->{$k} = $v;
-   }
-
-   $self->check_deps;
-}
-
-sub load_code {
-   my $self = shift;
-
-   return if $self->{compiled};
-
-   $self->load_config;
-
-   $self->{path} or fancydie "can't load_code pathless packages";
-
-   my $code;
-
-   while() {
-      $code = sql_fetch DBH, "select code from pkg where id = ? and ctime = ?", $self->{path}, $self->{ctime};
-      last if $code;
-      $self->unload;
-      $self->load_config;
-   }
-
-   $code or fancydie "load_config: unable to compile package", $self->{path};
-   $code = Storable::thaw $code;
-
-   local $PApp::papp          = $self;
-   local $PApp::SQL::Database = $self->{database};
-   local $PApp::SQL::DBH      = $self->{database} && $self->{database}->checked_dbh;
-
-   $self->for_all_packages(sub {
-      my ($ppkg, $path, $name) = @_;
-      my $code = $code->{"$path/$name"}
-         or fancydie "config/code disagree", "no code for package $path/$name found";
-
-      $ppkg->compile($code);
-
-      # add cb's from current package
-      for my $type (qw(init childinit childexit request cleanup newsession newuser)) {
-         push @{$self->{cb_src}{$type}}, map "package $ppkg->{package};\n$_", @{$code->{cb}{$type}};
-      }
-   });
-
-   for my $type (qw(init childinit childexit)) {
-      my $cb = join ";", PApp::Util::uniq delete $self->{cb_src}{$type};
-      $self->{cb}{$type} = eval "use utf8; no bytes; sub {\n$cb\n}";
-      fancydie "error while compiling application callback", $@,
-               info => [name => $self->{name}],
-               info => [path => $self->{path}],
-               info => [source => $self->{cb_src}{$type}] if $@;
-   }
-
-   $self->{compiled} = 1;
-
-   $self;
-}
-
-=item $ppkg->for_all_packages (callback<papp,path,name>, initial-path)
-
-Run a sub for all packages in a papp.
+Do necessary bookkeeping to mount an application.
 
 =cut
 
-sub for_all_packages($&;$$) {
-   my $self = shift;
-   my $cb   = shift;
-   my $path = shift || "";
-
-   $self->{root}->for_all_packages($cb, $path, $self->{root}{name});
-}
+sub load_config { }
+sub load_code { }
+sub mount { }
 
 sub unload {
    my $self = shift;
@@ -314,7 +136,7 @@ sub find_import($) {
    my $path = shift;
    my $imp = $import{$path};
    unless (defined $imp) {
-      $imp = new PApp::Application path => $path;
+      $imp = new PApp::Application::PApp:: path => $path;
       $imp->load_config;
       $imp->check_deps;
       $import{$path} = $imp;
@@ -411,7 +233,213 @@ sub files($;$) {
 
 "Run" the application, i.e. find the current package & module and execute it.
 
+=item $papp->new_package(same arguments as PApp::Package->new)
+
+Creates a new PApp::Package that belongs to this application.
+
 =cut
+
+sub new_package {
+   my $self = shift;
+   my $ppkg = new PApp::Package(@_);
+   Convert::Scalar::weaken ($ppkg->{papp} = $self);
+   $ppkg;
+}
+
+package PApp::Application::PApp;
+
+use PApp::SQL;
+use PApp::Exception;
+use PApp::Config qw(DBH $DBH);
+
+use base PApp::Application;
+
+sub new {
+   my $class = shift;
+
+   my $self = $class->SUPER::new(@_);
+
+   my $path = PApp::Util::find_file $self->{path}, ["papp"];
+
+   -f $path or fancydie "papp-application '$self->{path}' not found\n";
+
+   $self->{path} = $path;
+
+   $self;
+}
+
+sub mount {
+   my $self = shift;
+   my %args = @_;
+
+   $self->load_config;
+
+   delete $self->{cb_src}; # not needed for mounted applications
+
+   local $self->{root}{name} = $self->{name}; # bad hack, but not a design error
+
+   $self->for_all_packages(sub {
+      my ($ppkg, $path, $name) = @_;
+      $PApp::preferences{"$path/$name"} = [keys %{$ppkg->{preferences}}] if $ppkg->{preferences};
+   });
+
+}
+
+sub preprocess {
+   my $self = shift;
+
+   my($R, $W); pipe $R, $W;
+
+   my $pid = fork; # do not waste precious memory
+
+   if ($pid == 0) {
+      close $R;
+
+      local $SIG{__DIE__};
+
+      #print "gdb /usr/app/sbin/httpd $$\n"; #<STDIN>;
+
+      eval {
+         PApp::SQL::reinitialize;
+         local $PApp::SQL::DBH = DBH;
+
+         require PApp::Parser;
+         ($ppkg, $code) = PApp::Parser::parse_file($self, $self->{path});
+
+         PApp::Storable::store_fd [
+            PApp::Storable::nfreeze({
+               root => $ppkg,
+               file => $self->{file},
+               translate => $self->{translate},
+            }),
+            PApp::Storable::nfreeze($code),
+         ], $W;
+      };
+
+      if ($@) {
+         local $Storable::forgive_me = 1;
+         PApp::Storable::store_fd [undef, $@], $W;
+      }
+
+      close $W;
+      &PApp::Util::_exit;
+      exit(255); # just in case, for some reason, this gets propagated to the client
+   } elsif ($pid > 0) {
+      close $W;
+
+      my ($config, $code) = eval { my ($config, $code) = @{PApp::Storable::retrieve_fd $R} };
+      close $R;
+
+      waitpid $pid, 0;
+
+      if ($?) {
+         require POSIX;
+         if (($? & 127) == &POSIX::SIGSEGV) {
+            die "\nchild died with SIGSEGV while parsing...\ndid you remember to disable expat while compiling apache?\nyou lost";
+         }
+      }
+
+      die $code unless $config; # config is undef on error
+
+      sql_exec $DBH,
+               "replace into pkg (id, ctime, config, code) values (?, NULL, ?, ?)",
+               $self->{path}, $config, $code;
+   } else {
+      fancydie "unable to fork to preprocess";
+   }
+}
+
+my @config = qw(file root);
+
+sub load_config {
+   my $self = shift;
+
+   return if $self->{root};
+
+   my ($ctime, $config) = sql_fetch $DBH, "select ctime, config from pkg where id = ?", $self->{path};
+
+   unless ($config) {
+      $self->preprocess;
+      ($ctime, $config) = sql_fetch $DBH, "select ctime, config from pkg where id = ?", $self->{path};
+   }
+
+   $config or fancydie "load_config: unable to compile package", $self->{path};
+
+   $config = PApp::Storable::thaw $config;
+
+   $self->{ctime} = $ctime;
+   while (my ($k, $v) = each %$config) {
+      $self->{$k} = $v;
+   }
+
+   $self->check_deps;
+}
+
+sub load_code {
+   my $self = shift;
+
+   return if $self->{compiled};
+
+   $self->load_config;
+
+   $self->{path} or fancydie "can't load_code pathless packages";
+
+   my $code;
+
+   while() {
+      $code = sql_fetch $DBH, "select code from pkg where id = ? and ctime = ?", $self->{path}, $self->{ctime};
+      last if $code;
+      $self->unload;
+      $self->load_config;
+   }
+
+   $code or fancydie "load_config: unable to compile package", $self->{path};
+   $code = PApp::Storable::thaw $code;
+
+   local $PApp::papp          = $self;
+   local $PApp::SQL::Database = $self->{database};
+   local $PApp::SQL::DBH      = $self->{database} && $self->{database}->checked_dbh;
+
+   $self->for_all_packages(sub {
+      my ($ppkg, $path, $name) = @_;
+      my $code = $code->{"$path/$name"}
+         or fancydie "config/code disagree", "no code for package $path/$name found";
+
+      $ppkg->compile($code);
+
+      # add cb's from current package
+      for my $type (qw(init childinit childexit request cleanup newsession newuser)) {
+         push @{$self->{cb_src}{$type}}, map "package $ppkg->{package};\n$_", @{$code->{cb}{$type}};
+      }
+   });
+
+   for my $type (qw(init childinit childexit)) {
+      my $cb = join ";", PApp::Util::uniq delete $self->{cb_src}{$type};
+      $self->{cb}{$type} = eval "use utf8; no bytes; sub {\n$cb\n}";
+      fancydie "error while compiling application callback", $@,
+               info => [name => $self->{name}],
+               info => [path => $self->{path}],
+               info => [source => $self->{cb_src}{$type}] if $@;
+   }
+
+   $self->{compiled} = 1;
+
+   $self;
+}
+
+=item $ppkg->for_all_packages (callback<papp,path,name>, initial-path)
+
+Run a sub for all packages in a papp.
+
+=cut
+
+sub for_all_packages($&;$$) {
+   my $self = shift;
+   my $cb   = shift;
+   my $path = shift || "";
+
+   $self->{root}->for_all_packages($cb, $path, $self->{root}{name});
+}
 
 sub run {
    package PApp;
@@ -433,17 +461,56 @@ sub run {
    $papp->{root}->run(\$modules);
 }
 
-=item $papp->new_package(same arguments as PApp::Package->new)
+package PApp::Application::Agni;
 
-Creates a new PApp::Package that belongs to this application.
+=back
+
+=head2 PApp::Application::Agni
+
+There is another Application type, Agni, which allows you to directly mount a specific
+agni object. To do this, you have to specify the application path like this:
+
+  PApp::Application::Agni/path/gid
+
+e.g., to mount the admin application in root/agni/, use this:
+
+  PApp::Application::Agni/root/agni/4295054263
 
 =cut
 
-sub new_package {
-   my $self = shift;
-   my $ppkg = new PApp::Package(@_);
-   Convert::Scalar::weaken ($ppkg->{papp} = $self);
-   $ppkg;
+use Carp 'croak';
+
+use base PApp::Application;
+
+sub new {
+   my ($class, %arg) = @_;
+
+   require Agni;
+
+   $arg{path} =~ /^\/(.*\/)(\d+)$/
+      or croak "unable to parse agni path/gid from '$arg{path}'";
+   my ($path, $gid) = ($1, $2);
+
+   defined $Agni::pathid{$path}
+      or croak "can't resolve path '$path'";
+
+   my $obj = Agni::path_obj_by_gid($Agni::pathid{$path}, $gid)
+      or croak "unable to mount object $path$gid";
+
+   $class->SUPER::new(%arg, obj => $obj);
+}
+
+sub run {
+   package PApp;
+
+   local $papp    = shift;
+   local $curpath = "";
+   local $curprfx = "/$papp->{name}";
+
+   local $PApp::SQL::Database = $PApp::Config::Database;
+   local $PApp::SQL::DBH      = $PApp::Config::DBH;
+
+   $papp->{obj}->show;
 }
 
 1;

@@ -1,5 +1,6 @@
 README
 README.DB
+README.unicode
 Changes
 MANIFEST
 INSTALL
@@ -133,4 +134,7 @@ Storable/README		PApp::Storable is not part of PApp
 Storable/Makefile.PL
 Storable/Storable.pm
 Storable/Storable.xs
+
+Agni.pm			The Agni CMS runtime system
+bin/agni		The Agni daemon/tool
 

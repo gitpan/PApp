@@ -32,16 +32,16 @@ call.
 
 package PApp::Log;
 
-use Storable;
 use Compress::LZF;
 
+use PApp::Storable;
 use PApp::SQL;
 use PApp::Config;
 use PApp::Env;
 
 use base Exporter;
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 @EXPORT = qw();
 
 =head2 CALLBACKS
@@ -140,7 +140,7 @@ sub find_pmod($) {
                 "select app from app where id = ?",
                 $appid;
 
-      $pmod{$mntid}           = $app ? Storable::thaw decompress $app : die;
+      $pmod{$mntid}           = $app ? PApp::Storable::thaw decompress $app : die;
       $pmod{$mntid}{location} = $location;
       #FIXME# $config?
    }
@@ -151,7 +151,7 @@ sub find_pmod($) {
 # into the meta and state hashes.
 sub decode_state {
    my $row = shift;
-   my $state = Storable::thaw decompress $row->[4];
+   my $state = PApp::Storable::thaw decompress $row->[4];
    my $pmod = find_pmod $state->{papp_mntid};
    my %meta = (
          id       => $row->[0],

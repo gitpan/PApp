@@ -1,0 +1,414 @@
+#!/usr/bin/perl
+
+use Getopt::Long;
+
+use PApp;
+use PApp::Config ();
+use PApp::SQL;
+use PApp::XML qw(xml_quote xml_attr xml_tag xml_cdata);
+use PApp::Util qw(dumpval); # debug#d#
+use PApp::Event ();
+use MIME::Base64;
+use Convert::Scalar qw(utf8_valid);
+
+use Agni;
+
+sub up {
+   my $self = $_[0];
+   $self;
+}
+
+sub ag {
+   $g ||= do {
+      up { 1,2,3,3};
+   };
+
+}
+
+sub do_some_tests {
+   #my $root = path_obj_by_gid 0, 1;
+   my $meta_parcel = 5100000280;
+   my $classname = 23;
+   my $mnamespace = 4295048763;
+   my $self = path_obj_by_gid 2,5100000360;
+   Agni::rmagical_off $self;
+   warn PApp::Util::dumpval($self);
+   %$self = ();
+   warn "GID RC ".Convert::Scalar::refcnt_rv $self;
+}
+
+sub quote_attr($) {
+   local $_ = $_[0];
+   s/^/\t/gm;
+   $_ = "\n$_\n    ";
+   xml_cdata $_;
+}
+
+sub print_attr {
+   my ($fh, $type, $data) = @_;
+
+   my $encode = !utf8_valid $data || $data =~ /[\x{0}-\x{8}\x{b}\x{c}\x{e}-\x{1f}]/;
+
+   print $fh "\n    ",
+             (xml_tag "a",
+                 type => $type,
+                 $encode ? (base64 => "yes") : (),
+                 defined $data
+                    ? (length $data) < 30 && $data !~ y/a-zA-Z0-9_:\-$, //c
+                       ? (value => $data, undef)
+                       : ($encode
+                          ? "\n" . (encode_base64 $data) . "    "
+                          : quote_attr $data)
+                    : (null => yes, undef));
+}
+
+sub parse_objects {
+   my ($file) = @_;
+   my @end;
+   my $data;
+   my @objs;
+   my @paths;
+   my ($o, $all);
+   my @map_path;
+   my %map_path;
+
+   require XML::Parser::Expat;
+
+   my $parser = new XML::Parser::Expat;
+   $parser->setHandlers(
+      Start => sub {
+         shift;
+         push @end, do {
+            if ($_[0] eq "database" or $_[0] eq "image") {
+               shift;
+               my %a = @_;
+               die "unsupported version '$a{version}'" if $a{version} != 1;
+               sub { }
+            } elsif ($_[0] eq "path") {
+               shift;
+               my %a = @_;
+               my $id = $a{id};
+               $data = "";
+               sub {
+                  push @paths, $data;
+                  $map_path[$id] = $#paths;
+               }
+            } elsif ($_[0] eq "o") {
+               shift;
+               my %o = @_;
+               $o = { gid => $o{gid}, attr => {} };
+               $o{isa} and $o->{isa} = $o{isa};
+
+               if (exists $o{paths}) {
+                  $o->{paths} = $map_path{$o{paths}} ||= do {
+                     my $paths = "0";
+                     for (split /,/, $o{paths}) {
+                        defined $map_path[$_] or die "object (gid $gid, paths $o{paths}) references undeclared path $_";
+                        $paths = Agni::or64 $paths, Agni::bit64 $map_path[$_];
+                     }
+                     $paths;
+                  };
+               }
+
+               push @objs, $o;
+               sub { }
+            } elsif ($_[0] eq "a" or $_[0] eq "m") {
+               shift;
+               $data = "";
+               %m = @_;
+               sub {
+                  $data =~ s/^\n//; $data =~ s/\n?    $//; $data =~ s/^\t//gm;
+                  undef $data if exists $m{null};
+                  $data = decode_base64($data) if exists $m{base64};
+                  $data = $m{value} if exists $m{value};
+                  $o->{attr}{$m{type}} = $data;
+               }
+            } else {
+               $parser->xpcroak("$file illegal element <$_[0]> found");
+            }
+         }
+      },
+      End => sub {
+         &{pop @end};
+      },
+      Char => sub {
+         $data .= $_[1];
+      },
+   );
+   eval {
+      $parser->parsefile($file);
+   };
+   $parser->release;
+   $@ and die;
+
+   (\@paths, \@objs);
+}
+
+sub save_image {
+   my ($file) = @_;
+   my $fh;
+   defined $file and do { open $fh, ">", $file or die "can't create '$file': $!" };
+   $fh ||= \*STDOUT; 
+
+   print $fh xml_tag("image", version => '1'),
+             "\n\n";
+
+   sql_exec "lock tables obj read, obj_attr read, obj_path read, obj_isa read";
+
+   my %map_path; # mask => list
+   my @map_path;
+   my @pathids;
+
+   my $st = sql_exec \my($id, $path),
+                     "select id, path from obj_path order by path";
+
+   while ($st->fetch) {
+      push @pathids, $id;
+      $map_path[$id] = $#pathids;
+      print $fh xml_tag "path", id => $#pathids, xml_quote $path;
+      print $fh "\n";
+   }
+   print $fh "\n";
+
+   my $st = sql_exec \my($id, $gid, $paths, $isa),
+   		     "select obj.id, gid, paths, obj_isa.isa
+                      from obj left join obj_isa on (obj.id = obj_isa.id and obj_isa.grade = 1)
+                      order by gid, paths";
+
+   while($st->fetch) {
+      $paths
+         = $map_path{$paths}
+            ||= join ",",
+               sort
+                  map $map_path[$_],
+                     grep { Agni::and64 $paths, Agni::bit64 $_ } sort @pathids;
+
+      print $fh xml_tag("o", gid => $gid, paths => $paths, $isa ? (isa => $isa) : ()),
+                "\n";
+      my $st = sql_exec \my($type, $data),
+                        "select type, " . (Agni::any_data "obj_attr") . "
+                         from obj_attr where id = ?
+                         order by type",
+                        $id;
+
+      while ($st->fetch) {
+         print_attr $fh, $type, $data;
+         print $fh "\n";
+      }
+      print $fh "\n</o><!--$paths/$gid-->\n\n\n";
+   }
+   print $fh "</image>\n\n";
+   sql_exec "unlock tables"; 
+}
+
+sub load_image {
+   my ($file) = @_;
+
+   my ($paths, $objs) = parse_objects $file;
+
+   my %isa;
+   my %sqlcol;
+   
+   # gather info
+   for (@$objs) {
+      $isa{$_->{gid}} = $_->{isa};
+      $sqlcol{$_->{gid}} = $_->{attr}{$Agni::OID_ATTR_SQLCOL} if exists $_->{attr}{$Agni::OID_ATTR_SQLCOL};
+   }
+
+   # check consistency
+   # - should check isa chain to object 1
+   for (@$objs) {
+      if (my @extra = grep !exists $sqlcol{$_}, keys %{$_->{attr}}) {
+         die "object $_->{paths}/$_->{gid} references types (@extra) not in dump";
+      }
+   }
+
+   sql_exec "lock tables obj write, obj_attr write, obj_path write, obj_isa write";
+   sql_exec "delete from obj";
+   sql_exec "delete from obj_attr";
+   sql_exec "delete from obj_isa";
+   sql_exec "delete from obj_path";
+
+   # create paths
+   for my $id (0 .. $#$paths) {
+      sql_exec "insert into obj_path (id, path) values (?, ?)", $id, $paths->[$id];
+   }
+
+   # create objects and attrs
+   for (@$objs) {
+      $_->{id} = Agni::insert_obj undef, $_->{gid}, $_->{paths};
+      while (my ($type, $value) = each %{$_->{attr}}) {
+         sql_exec "insert into obj_attr (id, type, d_$sqlcol{$type}) values (?, ?, ?)",
+                  $_->{id}, $type, $value;
+      }
+   }
+
+   # create isa tree
+   for (@$objs) {
+      my $grade = 0;
+      my $isa = $_->{gid};
+      do {
+         sql_exec "insert into obj_isa (id, isa, grade) values (?, ?, ?)",
+                  $_->{id}, $isa, $grade++;
+      } while $isa = $isa{$isa};
+   }
+
+   PApp::Event::broadcast agni_update => [&Agni::UPDATE_PATHS];
+   PApp::Event::broadcast agni_update => [&Agni::UPDATE_ALL];
+
+   sql_exec "unlock tables";
+}
+
+sub export_path {
+   my ($path,$file) = @_;
+   my $fh;
+   defined $file and do { open($fh, ">", $file) or die "can't create '$file': $!" };
+   $fh ||= \*STDOUT; 
+
+   die "no such path '$path'" unless sql_exists "obj_path where path = ?", $path;
+   
+   print $fh xml_tag("database", version => '1', path => $path),
+             "\n\n";
+
+   sql_exec "lock tables obj read, obj_attr read, obj_path read, obj_isa read";
+
+   my $st = sql_exec \my($id, $gid, $paths, $isa),
+   		     "select obj.id, gid, paths, obj_isa.isa
+                      from obj left join obj_isa on (obj.id = obj_isa.id and obj_isa.grade = 1)
+                      where paths & (1 << ?) <> 0 and paths & ? = 0
+                      order by gid, paths",
+                     $pathid{$path}, $parpathmask[$pathid{$path}];
+
+   while($st->fetch) {
+      print $fh xml_tag("o", gid => $gid,  $isa ? (isa => $isa) : ());
+      my $st = sql_exec \my($type,$data),
+                        "select type, ".(Agni::any_data "obj_attr")."
+                         from obj_attr where id = ?
+                         order by type",
+                        $id;
+
+      while ($st->fetch) {
+         print_attr $fh, $type, $data;
+      }
+      print $fh "\n</o>\n\n\n";
+   }
+   print $fh "</database>\n\n";
+   sql_exec "unlock tables"; 
+}
+
+sub import_path {
+   my ($path, $file) = @_;
+
+   Agni::newpath $path;#d# should not be done automatically
+      print STDERR "WARNING: paths should not be created automatically\n";#d#
+
+   my $pathid = $pathid{$path};
+   die "no such path '$path'" unless defined $pathid;
+
+   my ($paths, $objs) = parse_objects $file;
+
+   @$paths and die "file contains paths attributes, might be an image file. not imported.";
+
+   Agni::import_objs($objs, $pathid, 0);
+}
+
+sub garbage_collect {
+   my $ids = Agni::find_dead_objects;
+
+   if (@$ids) {
+      #print "DEAD OBJECTS: ".(join " ", sort @$ids)."\n";
+      print "DELETING OBJECTS: ".(join " ", sort @$ids)."\n";
+      #$|=1;
+      #print "delete (y/n)?";
+      #if (<STDIN> =~ /^y/i) {
+         Agni::mass_delete_objects $ids;
+      #}
+   }
+}
+
+sub exec_cmd {
+   
+   my ($path, @cmd) = @_;
+
+   die "no such path '$path'" unless defined $Agni::pathid{$path};
+   
+   my $cmdline = path_obj_by_gid($Agni::pathid{$path}, $Agni::OID_CMDLINE_HANDLER);
+
+   print $cmdline->command(@cmd);
+
+}
+
+sub usage {
+   print STDERR <<EOF;
+Usage: $0 ...
+
+   --app id|name                 use specified application instead of "mercury"
+   --file file                   write output to file or read input from file
+   --daemon            	         go into daemon mode
+   -i | --interval <seconds>
+   --export-path path            write path to file (or stdout)
+   --import-path path            import path from file
+
+   --newpath <path>              creates a new path
+   
+   -e | --exec-cmd path command  executes a command as defined in util::cmdline
+                                 path specifies the path to the object.
+
+EOF
+   exit 1;
+}
+
+Getopt::Long::Configure ("bundling", "no_ignore_case");
+
+my @exec;
+my $fn;
+
+GetOptions(
+   "file=s" => sub { $fn = $_[1] },
+   "interval|i=i" => sub {
+      $interval = shift;
+   },
+   "daemon" => sub {
+      push @exec, sub {
+         do {
+            runq;
+            sleep $interval;
+         } while $interval;
+      };
+   },
+   "init-db" => sub {
+      push @exec, sub { Agni::init_db };
+   },
+   "save-image=s" => sub {
+      my $path = $_[1]; push @exec, sub { save_image $path };
+   },
+   "load-image=s" => sub {
+      my $path = $_[1]; push @exec, sub { load_image $path };
+   },
+   "export-path=s" => sub {
+      my $layer = $_[1]; push @exec, sub { export_path $layer, $fn };
+   },
+   "import-path=s" => sub {
+      my $path = $_[1]; push @exec, sub { import_path $path, $fn };
+   },
+   "garbage-collect" => sub {
+      push @exec, \&garbage_collect;
+   },
+   "newpath=s" => sub {
+      my $path = $_[1]; push @exec, sub { Agni::newpath $path };
+   },
+   "test" => sub {
+      push @exec, \&do_some_tests;
+   },
+   "exec-cmd|e=s" => sub {
+      my $path = $_[1]; push @exec, sub { exec_cmd $path, @ARGV } ;
+   }
+) or usage;
+
+@exec or usage;
+
+local $PApp::SQL::Database = PApp::Config::Database;
+local $PApp::SQL::DBH      = PApp::Config::DBH;
+
+&{shift @exec} while @exec;
+

@@ -4,6 +4,40 @@ $XMESSAGE = "xmessage";
 $TERMINAL = $ENV{XPCSE_TERMINAL} || "rxvt -g 90x25 -e";
 $EDITOR   = $ENV{EDITOR} || "vi";
 
+=head1 NAME
+
+xpcse 
+
+=head1 SYNOPSIS
+
+With different environment variables you can change the behavior of xpcse for Linux. 
+These envrironment variables are C<EDITOR> and C<XPCSE_TERMINAL>
+
+Examples: 
+  export XPCSE_TERMINAL='rxvt -g 90x25 -e'
+  export EDITOR='vi'
+
+Prerequesitions:
+
+=over 4
+
+=item * ~/.mailcap you need to add this addepted line
+  application/x-xpcse; /location/of/xpcse '%s'
+
+=item * ~/.mailcap.xpcse or /etc/mailcap.xpcse
+There you need to add like in the standard mailcap the applications that should be used to
+edit the different filetypes. Like this:
+  image/jpeg;xv -maxpect '%s'; edit=/location/of/program/to/edit '%s'
+
+=back
+
+=head1 DESCRIPTION
+
+The goal of xpcse is to provide the possibility of modify files, contentent of a database 
+or ... at the client-side with any software you want.
+
+=cut
+
 use POSIX ":sys_wait_h";
 use LWP::UserAgent;
 use File::Temp qw(tempdir);
@@ -14,10 +48,11 @@ use Config;
 
 our $TEMPDIR;
 
-our $check_ms = 300;
+our $check_ms = 100;
 our $on_exit_only = 0;
 our $dirty_wait = 1;
 our $quiet = 0;
+our $line = "";
 
 our $PROTOCOL_VERSION = "1.1";
 our $VERSION = 0.2;
@@ -30,9 +65,19 @@ END {
    system "rm", "-rf", $TEMPDIR;
 }
 
+my $msg_pid = -1;
 sub msgbox {
-   system $XMESSAGE, "-buttons", "OK", "-default", "OK", "-center", "-name", @_;
+   kill 9, $msg_pid unless $msg_pid == -1;
+   exec $XMESSAGE, "-buttons", "OK", "-default", "OK", "-center", "-name", @_ unless $msg_pid = fork;
+   select undef, undef, undef, 0.25; # avoid extreme loops on uncommited messages (does not happen, just to be sure).
 }
+
+$SIG{CHLD} = 'IGNORE';
+$SIG{__DIE__} = sub {
+   (my $msg = $_[0]) =~ s/\n$//;
+   msgbox "xpcse_error", $_[0];
+   exit 1;
+};
 
 sub parse_header($) {
    local $/ = "\015\012\015\012";
@@ -51,13 +96,6 @@ sub parse_header($) {
 
    %hdr;
 }
-
-
-$SIG{__DIE__} = sub {
-   (my $msg = $_[0]) =~ s/\n$//;
-   msgbox "xpcse_error", $_[0];
-   exit (1);
-};
 
 my $ua = new LWP::UserAgent;
 $ua->env_proxy;
@@ -84,7 +122,6 @@ sub download {
    }
 }
 
-
 # 2. parse
 
 open my $request, "<$ARGV[0]\000"
@@ -94,8 +131,8 @@ our %hdr = parse_header $request;
 close $request;
 #unlink $ARGV[0]; # marc says you'll have a better life without this
 
-for(qw(url extension content-type xpcse-protocol-version)) {
-  die "protocol error: required header \"$_\" missing" unless exists $hdr{$_};
+for (qw(url extension content-type xpcse-protocol-version)) {
+   exists $hdr{$_} or die "protocol error: required header \"$_\" missing";
 }
 
 $hdr{'xpcse-protocol-version'} >= 1
@@ -110,10 +147,12 @@ $TEMP ||= "$TEMPDIR/xpcse$hdr{extension}";
 
 # @@@
 
-$dirty_wait = $hdr{"dirty-wait"} if $hdr{dirty_wait} =~ /^\d+$/;
-$quiet = $hdr{quiet} if $hdr{quiet} =~ /^\d+$/;
+$dirty_wait   = $hdr{"dirty-wait"} if $hdr{dirty_wait} =~ /^\d+$/;
+$quiet        = $hdr{quiet} if $hdr{quiet} =~ /^\d+$/;
 $on_exit_only = $hdr{"on-exit-only"} if $hdr{"on-exit-only"} =~ /^\d+$/;
-$check_ms = $hdr{"check-ms"} if $hdr{"check-ms"} =~ /^\d+$/ && $hdr{"check-ms"} > 65;
+$check_ms     = $hdr{"check-ms"} if $hdr{"check-ms"} =~ /^\d+$/ && $hdr{"check-ms"} > 65;
+
+$line         = "+$hdr{line}" if $hdr{line} =~ /^\d+$/;
 
 $http_headers = new HTTP::Headers;
 $http_headers->authorization_basic      ($hdr{"auth-username"},       $hdr{"auth-password"})
@@ -129,10 +168,8 @@ die "no file $TEMP" unless -f $TEMP;
 
 my $MTIME;
 
-{
-   $MTIME = time - 1;
-   utime $MTIME, $MTIME, $TEMP;
-}
+$MTIME = time - 1;
+utime $MTIME, $MTIME, $TEMP;
 
 # 4. start editor
 
@@ -140,7 +177,7 @@ my $editpid;
 
 if (0 == ($editpid = fork)) {
    if ($hdr{'content-type'} eq "text/plain") {
-      exec "$TERMINAL $EDITOR $TEMP";
+      exec "$TERMINAL $EDITOR $line $TEMP";
    } else {
       local $ENV{MAILCAPS} = "$ENV{HOME}/.mailcap.xpcse:/etc/mailcap.xpcse:$ENV{MAILCAPS}";
       my $rm = -x "$Config{sitebin}/run-mailcap" ? "$Config{sitebin}/run-mailcap" : "run-mailcap";
@@ -161,6 +198,9 @@ sub upload {
       <$fh>;
    };
 
+   # stat just before uploading, so we don't miss changes also change
+   # filetime to a somewhat earlier point in time, so we really don't miss
+   # any changes.
    $MTIME = (stat $TEMP)[9] - 1;
    utime $MTIME, $MTIME, $TEMP;
 
@@ -181,18 +221,21 @@ sub upload {
    }
 }
 
-my ($dirty, $dwait) = (0,0);
+my ($dirty, $dwait) = (0, 0);
 
 do {
-   select undef, undef, undef, $check_ms/1000;
-   $MTIME2 = (stat $TEMP)[9];
-   if($MTIME2 != $MTIME) {
-      ($dirty, $dwait) = (1,0);
+   for (my $movecheck = 0; $movecheck < 15; $movecheck++) {
+        select undef, undef, undef, $check_ms/1000;
+        $MTIME2 = (stat $TEMP)[9];
+        last if defined $MTIME2;
+   }
+   if ($MTIME2 != $MTIME) {
+      ($dirty, $dwait) = (1, 0);
       $MTIME = $MTIME2;
    } else {
-      if(!$on_exit_only && $dirty) {
-         if(++$dwait > $dirty_wait) {
-            ($dirty, $dwait) = (0,0);
+      if (!$on_exit_only && $dirty) {
+         if (++$dwait > $dirty_wait) {
+            ($dirty, $dwait) = (0, 0);
             upload;
          }
       }

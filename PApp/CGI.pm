@@ -40,7 +40,7 @@ use Exporter;
 BEGIN {
    @ISA = (PApp::Base::);
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.143;
+   $VERSION = 0.2;
 }
 
 =head2 FUNCTIONS
@@ -201,7 +201,7 @@ sub new {
          document_root => $ENV{DOCUMENT_ROOT},
          path_info     => $ENV{PATH_INFO},
          query_string  => $ENV{QUERY_STRING},
-         #uri           => $ENV{SCRIPT_URL} || "$ENV{SCRIPT_NAME}$ENV{PATH_INFO}",
+         #uri           => $ENV{SCRIPT_URL} || $ENV{SCRIPT_URI} || "$ENV{SCRIPT_NAME}$ENV{PATH_INFO}",
          name          => $ENV{SCRIPT_NAME},
          method        => $ENV{REQUEST_METHOD},
          filename      => $ENV{PATH_TRANSLATED},
@@ -263,10 +263,10 @@ sub get_remote_logname {
 }
 
 sub hostname {
-   $_[0]->{headers_in}{Host};
+   $_[0]->{headers_in}{Host} =~ /^([^:]*)/; $1;
 }
 
-sub port {
+sub get_server_port {
    $_[0]->{connection}{local_port};
 }
 

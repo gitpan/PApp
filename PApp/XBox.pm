@@ -19,7 +19,7 @@ in normal Perl modules. More often, you
 
 package PApp::XBox;
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 
 use PApp::PCode ();
 use PApp::Util ();

@@ -5,7 +5,7 @@
 
 =head1 NAME
 
-macro/editform - macros used for creating sql editing forms
+macro/editform - macros used for creating html forms
 
 =head1 SYNOPSIS
 
@@ -31,6 +31,9 @@ use Convert::Scalar ();
 my $EF_KEY;
 my $ef_args;
 my $ef_key;
+my $ef_recurse;
+my $ef_stateid; # stateid of currently open form
+my $ef_form;    # the reference to the form html tag
 
 sub ef_nextid($;$) {
    $EF_KEY or Carp::croak "editform called without outside ef_begin/ef_end calls\n";
@@ -46,9 +49,22 @@ C<PApp::multipart_form>). The arguments are treated exactly like
 PApp::surl arguments. If it contains callbacks or similar commands then
 these will be executed AFTER the form has been processed.
 
+If, inside C<ef_begin>/C<ef_end>, another form is embedded, the outside
+form will automatically be upgraded (sbegin < cbegin < mbegin) to the most
+powerful form required by the forms and the nested forms are integrated
+into the surrounding form.
+
+Please note that this doesn't work when you change the module, as only the
+outside C<ef_begin> call will have the module name honoured, so always use
+a C<ef_submit> to do this, or things will go very wrong.
+
+NOTE: editform does not currently check wether a nested form specifies a;
+module name. Behaviour in this case is undefined, and will most likely
+result in an obscure error from surl.
+
 =item ef_sbegin [surl-arguments]
 
-Similar to C<ef_begin>, but uses C<PApp::sform> to create the form. This
+Similar to C<ef_mbegin>, but uses C<PApp::sform> to create the form. This
 disables C<ef_file> widgets with most (if not all browsers).
 
 =item ef_cbegin [surl-arguments]
@@ -57,7 +73,8 @@ Similar to C<ef_sbegin>, but uses C<PApp::cform> to create the form.
 
 =item ef_begin [surl-arguments]
 
-Identical to C<ef_cbegin>, just for your convinience.
+Identical to C<ef_cbegin>, just for your convinience, as this is the form
+most often used.
 
 =item ef_end
 
@@ -86,8 +103,9 @@ sub _ef_parse_end($) {
       }
    }
 
-   # TODO: ef_submit should be communicated here
    &$_ for @{$ef->{cb_end}};
+
+   PApp::set_alternative $ef->{args};
 }
 
 sub _ef_parse_field($$$) {
@@ -224,28 +242,55 @@ my $ef_parse_m = register_callback {
 } name => "papp_ef_m";
 
 sub _ef_begin {
-   my $ef_parse = shift;
+   my $type = pop;
    my $attr = ref $_[0] eq "HASH" ? shift : {};
-   $ef_args = {};
-   $EF_KEY = "ef00";
-   $attr, (@_ & 1 ? shift : ()), $ef_parse->($ef_args), @_;
+   if ($ef_recurse && $PApp::stateid == $ef_stateid) {
+      $ef_recurse++;
+      $ef_type       ||= $type;
+      $ef_args->{attr} = { %$attr, %{$ef_args->{attr}} };
+      push @{$ef_args->{args}}, @_;
+      "";
+   } else {
+      $ef_recurse = 1;
+      $ef_stateid = $PApp::stateid;
+      $ef_type    = $type;
+      $EF_KEY     = "ef00";
+      $ef_args    = {
+         attr => $attr,
+         args => &PApp::salternative,
+      };
+      ((undef, $ef_form) = fixup_marker)[0];
+   }
 }
 
-sub ef_mbegin* { multipart_form _ef_begin($ef_parse_m, @_) }
-sub ef_sbegin* { sform          _ef_begin($ef_parse_s, @_) }
-sub ef_cbegin* { cform          _ef_begin($ef_parse_c, @_) }
+sub ef_sbegin* { _ef_begin @_, 1 }
+sub ef_cbegin* { _ef_begin @_, 2 }
+sub ef_mbegin* { _ef_begin @_, 4 }
 
 # sub ef_begin* { # hack to get it exported
 *ef_begin = *ef_cbegin;
 
 sub ef_end* {
-   # delete $ef_args->{radioref};
-   undef $ef_args; # important for database accessors
-   undef $EF_KEY;
-   endform;
+   $ef_recurse 
+      or Carp::croak "ef_end called but no form is open";
+
+   if (--$ef_recurse) {
+      "";
+   } else {
+      $$ef_form = 
+         $ef_type & 4 ? multipart_form $ef_parse_m->($ef_args)
+       : $ef_type & 2 ? cform          $ef_parse_c->($ef_args)
+       : $ef_type & 1 ? sform          $ef_parse_s->($ef_args)
+       : Carp::croak "editform: internal error, ef_type is $ef_type";
+
+      # delete $ef_args->{radioref};
+      undef $ef_args; # important for database accessors
+      undef $EF_KEY;
+      (fixup_marker endform)[0];
+   }
 }
 
-=item ef_edit [group]
+=item ef_edit [group] #DEPRECATED
 
 Returns wether the global edit-mode is active (i.e. if C<$S{ef_edit}> is
 true). If the argument C<group> is given, additionally check for the stated
@@ -257,7 +302,7 @@ sub ef_edit*(;$) {
    $S{ef_edit} and (!@_ or access_p $_[0]);
 }
 
-=item ef_may_edit
+=item ef_may_edit #DEPRECATED
 
 Display a link that activates or de-activates global edit-mode (see
 C<ef_edit>).
@@ -552,6 +597,9 @@ unlinking it).
 Although a source path can be given, most browsers will ignore it. Some
 will display it, but not use it, so it's a rather useless feature.
 
+C<ef_file> automatically upgrades the surrounding form to a multipart
+form.
+
 =cut
 
 ]]></perl>
@@ -559,6 +607,7 @@ will display it, but not use it, so it's a rather useless feature.
 <macro name="ef_file*"><perl><![CDATA[
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    my $id = ef_nextid(undef, $attr);
+   $ef_type ||= 4;
    $ef_args->{"/"}{$id}{path} = $_[0];
    filefield $attr, $id, $_[1];
 ]]></perl></macro>

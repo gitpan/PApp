@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?> <license>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<papp-public-license>
+<preamble>
 
 PApp is not in the public domain. To legally use it, you must own a
 license. The exact conditions under which you might use PApp are given
@@ -7,10 +9,15 @@ might use PApp free-of-charge unless you use it for profit, in which case
 you need to buy a copy from us. Private and University use, for example,
 is free but might require registration with us.
 
-You can, of course, evaluate this software for your uses before you buy or
-register it.
+You can, of course, evaluate this software before you buy or register it.
 
-----------------------------------------------------------------------------
+We alternatively offer a version of PApp under the General Public
+License. Please contact papp@nethype.de for more info on pricing (to cover
+our development costs we expect around ¤100000 for the GPL version).
+
+</preamble>
+<hr>----------------------------------------------------------------------</hr>
+<license alt="legally binding part of the license">
 
 
 	     PApp Public License - 2001-02-04 nethype GmbH
@@ -136,7 +143,10 @@ Place of Court.
 	  legally possible the place of court has to be Heilbronn,
 	  Germany.
 
-Postamble. Thanks for threading through all this ;)
-
 </license>
+<hr>----------------------------------------------------------------------</hr>
+<postamble>
+Thanks for threading through all this ;)
+</postamble>
 
+</papp-public-license>

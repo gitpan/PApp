@@ -32,10 +32,10 @@ PApp database requirenments
 
     PApp::DataRef:
        
-        PApp::DataRef uses "harmless" select and update statements
-        to read/write existing table rows. When creating new rows
-        it will insert the row with the primary key set to NULL
-        and expect it to create a new row and therefore requires
+        PApp::DataRef uses "harmless" select and update statements to
+        read/write existing table rows. When creating new rows and
+        insertid is "1", it will insert the row with the primary key set
+        to NULL and expect it to create a new row and therefore requires
         PApp::SQL::sql_insertid. This is fortunately a common exension.
 
     PApp::SQL:
@@ -47,5 +47,5 @@ PApp database requirenments
         implementation to make PApp::DataRef and the core work.
 
 If you need an adaption for your database please contact
-papp-porting@plan9.de for availability.
+papp-porting@nethype.de for availability.
 

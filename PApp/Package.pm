@@ -14,7 +14,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 
 package PApp::Package;
 
@@ -265,21 +265,18 @@ sub compile : locked {
 
    *{$ppkg->{package}."::EXPORT"} = $ppkg->{export};
    @{$ppkg->{package}."::ISA"} = q(PApp::Package);
-   
-   ${$ppkg->{package}."::papp_ppkg"      } = $ppkg;
-   *{$ppkg->{package}."::papp_ppkg_table"} = \my $ppkg_table;
-   ${$ppkg->{package}."::papp_translator"} = PApp::I18n::open_translator(
-                                                "$PApp::i18ndir/$ppkg->{domain}",
-                                                @{$ppkg->{langs}},
-                                             );
-   *{$ppkg->{package}."::__"}              = sub ($) { PApp::I18n::Table::gettext($ppkg_table, $_[0]) };
-   *{$ppkg->{package}."::gettext"}         = sub ($) { PApp::I18n::Table::gettext($ppkg_table, $_[0]) };
 
-   push @{$code->{cb}{request}}, "
-#line 1 \"(language initialization '$ppkg->{name}')\"
-package $ppkg->{package};
-\$papp_ppkg_table = PApp::I18n::get_table(\$papp_translator, \$PApp::langs);
-";
+   my $translator = PApp::I18n::open_translator(
+                       "$PApp::i18ndir/$ppkg->{domain}",
+                       @{$ppkg->{langs}},
+                    );
+   
+   *{$ppkg->{package}."::papp_translator"} = \$translator;
+   ${$ppkg->{package}."::papp_ppkg"      } = $ppkg;
+   *{$ppkg->{package}."::papp_ppkg_table"} = sub { PApp::I18n::get_table($translator, $PApp::langs) };
+   
+   *{$ppkg->{package}."::__"}      = sub ($) { PApp::I18n::Table::gettext(PApp::I18n::get_table($translator, $PApp::langs), $_[0]) };
+   *{$ppkg->{package}."::gettext"} = sub ($) { PApp::I18n::Table::gettext(PApp::I18n::get_table($translator, $PApp::langs), $_[0]) };
 
    my $body = "
 #line 1 \"(module preamble '$ppkg->{name}')\"

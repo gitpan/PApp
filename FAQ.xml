@@ -33,13 +33,13 @@ and pass it to your callback when you refer() to the callback.
 
 <qa q='How do I get the currently selected language?'>
 
-<c>my $langid = $papp_ppkg_table->lang</c>
+<c>my $langid = $papp_translator->get_table($PApp::langs)->lang</c>
 
 </qa>
 
 <qa q='How can I quickly get a language selector for all supported languages?'>
 
-<c>&lt;:language_selector $papp_translator, $papp_ppkg_table->lang:></c>
+<c>&lt;:language_selector $papp_translator:></c>
 
 </qa>
 

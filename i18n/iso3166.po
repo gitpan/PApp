@@ -163,6 +163,11 @@ msgstr "Britisches Territorium im Indischen Ozean"
 msgid "Brunei"
 msgstr "Brunei Darussalam"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Brunei Darussalam"
+msgstr ""
+
 #$lang=eng
 msgid "Bulgaria"
 msgstr "Bulgarien"
@@ -227,6 +232,12 @@ msgstr "China"
 msgid "Christmas island"
 msgstr "Weihnachtsinsel"
 
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+#$flags=2
+msgid "Cocos (keeling) islands"
+msgstr "Cook-Inseln"
+
 #$lang=eng
 msgid "Cocos islands"
 msgstr "Kokosinseln"
@@ -255,6 +266,11 @@ msgstr "Cookinseln"
 msgid "Costa Rica"
 msgstr "Costa Rica"
 
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Cote d'Ivoire"
+msgstr "Côte dIvoire"
+
 #$lang=eng
 msgid "Croatia"
 msgstr "Kroatien"
@@ -275,6 +291,16 @@ msgstr "Tschechische Republik"
 #$flags=2
 msgid "Côte d'Ivoire"
 msgstr "Côte dIvoire"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Democratic People's Republic of Korea"
+msgstr "Volksrepublik Korea"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Republic of the Congo"
+msgstr "Demokratische Republik des Kongo"
 
 #$lang=eng
 msgid "Denmark"
@@ -343,6 +369,11 @@ msgstr "Europa"
 #$lang=eng
 msgid "Faeroe Islands"
 msgstr "Färöer"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Falkland Islands (Malvinas)"
+msgstr "Falklandinseln (Malvinas)"
 
 #$lang=eng
 msgid "Fiji"
@@ -448,6 +479,11 @@ msgstr "Honduras"
 msgid "Hong Kong"
 msgstr ""
 
+# #getiso-hack#
+#$lang=eng
+msgid "Hong Kong Special Administrative Region of China"
+msgstr "Hongkong Verwaltungsgebiet China"
+
 #$lang=eng
 msgid "Hungary"
 msgstr "Ungarn"
@@ -467,6 +503,11 @@ msgstr "Indonesien"
 #$lang=eng
 msgid "Iran"
 msgstr "Iran"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Iran (Islamic Republic of)"
+msgstr "Iran (Islamische Republik des)"
 
 #$lang=eng
 msgid "Iraq"
@@ -532,6 +573,11 @@ msgstr "Kirgisistan"
 msgid "Lao"
 msgstr "Laos, Demokratische Volksrepublik"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Lao People's Democratic Republic"
+msgstr "Volksrepublik Lao"
+
 #$lang=eng
 msgid "Latin America and the Caribbean"
 msgstr "Lateinamerika und die Karibik"
@@ -567,6 +613,11 @@ msgstr "Luxemburg"
 #$lang=eng
 msgid "Macao"
 msgstr "Macau"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Macao Special Administrative Region of China"
+msgstr "Macao Verwaltungsgebiet China"
 
 #$lang=eng
 msgid "Macedonia"
@@ -635,6 +686,11 @@ msgstr "Mexiko"
 #$lang=eng
 msgid "Micronesia"
 msgstr "Mikronesien, Föderierte Staaten von"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Micronesia, Federated States of"
+msgstr "Mikronesien, Föderative Staaten der"
 
 #$lang=eng
 msgid "Middle Africa"
@@ -728,9 +784,19 @@ msgstr "Nordamerika"
 msgid "Northern Europe"
 msgstr "Nordeuropa"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Northern Mariana Islands"
+msgstr "Nordliche Marianeninseln"
+
 #$lang=eng
 msgid "Norway"
 msgstr "Norwegen"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Occupied Palestinian Territory"
+msgstr "Palästina"
 
 #$lang=eng
 msgid "Oceania"
@@ -800,6 +866,12 @@ msgstr "Katar"
 msgid "Republic of Korea"
 msgstr "Korea, Republik"
 
+# #getiso-hack#
+#$lang=eng
+#$flags=2
+msgid "Republic of Moldova"
+msgstr "Republik Korea"
+
 #$lang=eng
 msgid "Romania"
 msgstr "Rumänien"
@@ -808,9 +880,24 @@ msgstr "Rumänien"
 msgid "Russia"
 msgstr "Russische Föderation"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Russian Federation"
+msgstr "Russische Föderation"
+
 #$lang=eng
 msgid "Rwanda"
 msgstr "Ruanda"
+
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "RÃ©union"
+msgstr "RÃ©union"
+
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Réunion"
+msgstr "Réunion"
 
 #$lang=eng
 msgid "Saint Helena"
@@ -839,6 +926,11 @@ msgstr "Samoa"
 #$lang=eng
 msgid "San Marino"
 msgstr "San Marino"
+
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Sao Tome and Principe"
+msgstr "São Tomé und Príncipe"
 
 #$lang=eng
 msgid "Saudi Arabia"
@@ -940,6 +1032,12 @@ msgstr "Schweiz"
 msgid "Syria"
 msgstr "Syrien, Arabische Republik"
 
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+#$flags=2
+msgid "Syrian Arab Republic"
+msgstr "Iran (Islamische Republik des)"
+
 #$lang=eng
 #$flags=2
 msgid "São Tome and Principe"
@@ -948,6 +1046,11 @@ msgstr "São Tomé und Príncipe"
 #$lang=eng
 msgid "Taiwan"
 msgstr "Taiwan, siehe: China"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Taiwan Province of China"
+msgstr "Taiwan, Chinesische Provinz"
 
 #$lang=eng
 msgid "Tajikistan"
@@ -1005,12 +1108,28 @@ msgstr "Uganda"
 msgid "Ukraine"
 msgstr "Ukraine"
 
+# #getiso-hack#
+#$lang=eng
+msgid "United Arab Emirates"
+msgstr "Vereinigte Arabische Emirate"
+
 #$lang=eng
 msgid "United Kingdom"
 msgstr "Vereinigtes Königreich"
 
+# #getiso-hack#
+#$lang=eng
+msgid "United Republic of Tanzania"
+msgstr "Vereinigte Republik Tansania"
+
 #$lang=eng
 msgid "United States"
+msgstr "Vereinigte Staaten"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+#$flags=2
+msgid "United States Virgin Islands"
 msgstr "Vereinigte Staaten"
 
 #$lang=eng
@@ -1299,6 +1418,17 @@ msgid "China"
 msgstr "Chine"
 
 #$lang=eng
+#$flags=2
+msgid "Christmas island"
+msgstr "Îles Caïmanes"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+#$flags=2
+msgid "Cocos (keeling) islands"
+msgstr "Îles Cook"
+
+#$lang=eng
 msgid "Colombia"
 msgstr "Colombie"
 
@@ -1317,6 +1447,11 @@ msgstr "Îles Cook"
 #$lang=eng
 msgid "Costa Rica"
 msgstr "Costa Rica"
+
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Cote d'Ivoire"
+msgstr "Côte d'Ivoire"
 
 #$lang=eng
 msgid "Croatia"
@@ -1343,6 +1478,11 @@ msgstr "Côte d'Ivoire"
 #$lang=eng
 msgid "Côte dIvoire"
 msgstr "Côte d’Ivoire"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Democratic People's Republic of Korea"
+msgstr "République populaire démocratique de Corée"
 
 # #getiso-hack#
 #$lang=eng
@@ -1431,6 +1571,11 @@ msgstr "Îles Féroé"
 msgid "Falkland Islands"
 msgstr "Îles Falkland (Malvinas)"
 
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Falkland Islands (Malvinas)"
+msgstr "Îles Falkland (Malvinas)"
+
 #$lang=eng
 msgid "Fiji"
 msgstr "Fidji"
@@ -1515,6 +1660,12 @@ msgstr "Guyana"
 msgid "Haiti"
 msgstr "Haïti"
 
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+#$flags=2
+msgid "Heard island and mcdonald islands"
+msgstr "Svalbard et île Jan Mayen"
+
 #$lang=eng
 msgid "Holy See"
 msgstr "Saint-Siège"
@@ -1547,6 +1698,11 @@ msgstr "Indonésie"
 #$lang=eng
 msgid "Iran"
 msgstr "Iran (République islamique d’)"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Iran (Islamic Republic of)"
+msgstr "Iran (République islamique d')"
 
 #$lang=eng
 msgid "Iraq"
@@ -1703,6 +1859,16 @@ msgid "Mexico"
 msgstr "Mexique"
 
 #$lang=eng
+#$flags=2
+msgid "Micronesia"
+msgstr "Indonésie"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Micronesia, Federated States of"
+msgstr "Micronésie (États fédérés de)"
+
+#$lang=eng
 msgid "Monaco"
 msgstr "Monaco"
 
@@ -1793,6 +1959,11 @@ msgstr "Îles Mariannes du Nord"
 msgid "Norway"
 msgstr "Norvège"
 
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Occupied Palestinian Territory"
+msgstr "Territoire palestinien occupé pse"
+
 #$lang=eng
 msgid "Oman"
 msgstr "Oman"
@@ -1872,6 +2043,16 @@ msgstr "Fédération de Russie"
 msgid "Rwanda"
 msgstr "Rwanda"
 
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "RÃ©union"
+msgstr "RÃ©union"
+
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Réunion"
+msgstr "Réunion"
+
 #$lang=eng
 msgid "Saint Helena"
 msgstr "Sainte-Hélène"
@@ -1899,6 +2080,11 @@ msgstr "Samoa"
 #$lang=eng
 msgid "San Marino"
 msgstr "Saint-Marin"
+
+# DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Sao Tome and Principe"
+msgstr "Sao Tomé-et-Principe"
 
 #$lang=eng
 msgid "Saudi Arabia"
@@ -2001,6 +2187,11 @@ msgstr "Suisse"
 msgid "Syria"
 msgstr "République arabe syrienne"
 
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Syrian Arab Republic"
+msgstr "République arabe syrienne"
+
 #$lang=eng
 msgid "São Tome and Principe"
 msgstr "Sao Tomé-et-Principe"
@@ -2008,6 +2199,11 @@ msgstr "Sao Tomé-et-Principe"
 #$lang=eng
 msgid "Taiwan"
 msgstr "Taïwan, Province de Chine"
+
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "Taiwan Province of China"
+msgstr "Province chinoise de Taïwan"
 
 #$lang=eng
 msgid "Tajikistan"
@@ -2089,10 +2285,20 @@ msgstr "République-Unie de Tanzanie"
 msgid "United States"
 msgstr "États-Unis d'Amérique"
 
+#   DBI:mysql:papp/iso3166.name
+#$lang=eng
+msgid "United States Virgin Islands"
+msgstr "Îles Vierges américaines"
+
 # #getiso-hack#
 #$lang=eng
 msgid "United States of America"
 msgstr "États-Unis d'Amérique"
+
+#$lang=eng
+#$flags=2
+msgid "United states minor outlying islands"
+msgstr "Îles Vierges américaines"
 
 #$lang=eng
 msgid "Uruguay"

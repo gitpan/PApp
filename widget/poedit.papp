@@ -197,7 +197,7 @@ __"<small>
       <?ef_sbegin SURL_SAVE_PREFS:>
          <td><?ef_selectbox \$S{lang},
                   map {
-                         ($_, "$_ [".translate_langid($_, $papp_ppkg_table->lang)."]")
+                         ($_, "$_ [".translate_langid($_, papp_ppkg_table->lang)."]")
                       } grep $_ ne "*", sort keys %lang
              :></td>
          <td><?ef_submit __"Set":></td>
@@ -245,7 +245,7 @@ __"<small>
 #if $S{lang}
    <h2>__"Selected Target Language ID:" <?$S{lang}:></h2>
    <:
-      my $trans = translate_langid $S{lang}, $papp_ppkg_table->lang;
+      my $trans = translate_langid $S{lang}, papp_ppkg_table->lang;
       if ($trans) {
          echo __"Target Language", ": $trans";
       } else {

@@ -1,4 +1,4 @@
-#!/usr/app/bin/speedy
+#!/opt/bin/speedy
 
 # This is an example of how to use a papp application from CGI, using the
 # SpeedyCGI module. You can still use this code as a "normal" CGI script

@@ -26,7 +26,7 @@ be switched to literal text mode using :>, and switched back to perl using
 
 package PApp::Preprocessor;
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 
 use PApp::PCode ();
 use PApp::Util ();

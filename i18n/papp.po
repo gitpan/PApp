@@ -539,6 +539,11 @@ msgstr "Anzeigen/Edieren aller Meldungen"
 msgid "View/Edit non-valid translations"
 msgstr "Anzeigen/Edieren der unübersetzten/ungeprüften Meldungen"
 
+#$lang=eng
+#$flags=5
+msgid "View/Edit translations containing the following pattern"
+msgstr "Anzeigen/Edieren von Übersetzungen, die das folgende Muster enthalten"
+
 # /root/src/PApp/widget/poedit.papp:239    <?slink __"Write selected translation domains", -export_dpo => 1?><br />
 #$lang=eng
 msgid "Write selected translation domains"
@@ -724,6 +729,10 @@ msgstr "keine Übersetzungsdomänen ausgewählt"
 #$flags=5
 msgid "page redirection"
 msgstr "Weiterleitung"
+
+#$lang=eng
+msgid "password"
+msgstr "Passwort"
 
 # /root/src/PApp/apps/admin.papp:105 <tr><td>__"source path"</td><td><?ef_string \$row->{path}, 60:></td>
 #$lang=eng
@@ -1414,6 +1423,10 @@ msgstr "keng Iwersetzungs Domän ausgewielt"
 #$lang=eng
 msgid "page redirection"
 msgstr "Weiderleedung"
+
+#$lang=eng
+msgid "password"
+msgstr "Passwuerd:"
 
 # /root/src/PApp/apps/admin.papp:105 <tr><td>__"source path"</td><td><?ef_string \$row->{path}, 60:></td>
 #$lang=eng

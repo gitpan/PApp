@@ -148,6 +148,7 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
          $obj = new PApp::DataRef 'DB_row',
                     table => "grp",
                     where => [id => sql_fetch "select id from grp where name = ?", $_[1]],
+                    insertid => 1,
                     delay => 1;
          $obj->{name} = $_[1];
          clean {

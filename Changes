@@ -1,5 +1,18 @@
 Revision history for Perl extension PApp
 
+0.2 Fri Nov 15 20:04:32 CET 2002
+	- new function PApp::fixup_marker which lets you embed fixup markers
+          in the output stream and replace them at page output time.
+	- macro/editform's can now be nested. embedding ef_mbegin &c
+          automatically upgrades the form.
+        - fixed a serializing bug in PApp::Storable, reduced size, too.
+        - fixed a DBH race after ChildInit (fetch without execute...).
+        - new %PApp::temporary hash.
+        - Agni applications can be directly mounted now.
+        - $papp_ppkg_table is now a function (i.e. change occurrences to papp_ppkg_table).
+        - PApp::CGI fixed with respect to xpcse.
+        - updated LICENSE, alternative GPL version available on request (only).
+
 0.143  Fri Sep 27 08:04:19 CEST 2002
 	- ef_selectbox now keeps key values on the server: improved security,
           complex types for key values possible.

@@ -3859,6 +3859,21 @@ msgstr "guarani"
 msgid "Gujarati"
 msgstr "goudjarati"
 
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Gwich´in"
+msgstr "gwich´in"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "GwichÂ´in"
+msgstr "gwichÂ´in"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "GwichÃÂ´in"
+msgstr "gwichÃÂ´in"
+
 #$lang=eng
 msgid "Haida"
 msgstr "haida"
@@ -4413,6 +4428,16 @@ msgstr "sami du Nord"
 msgid "Norwegian"
 msgstr "norvégien"
 
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Norwegian BokmÃ¥l"
+msgstr "norvÃ©gien bokmÃ¥l"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Norwegian BokmÃÂ¥l"
+msgstr "norvÃÂ©gien bokmÃÂ¥l"
+
 #$lang=eng
 msgid "Norwegian Bokmål"
 msgstr "norvégien bokmål"
@@ -4445,6 +4470,21 @@ msgstr "nzema"
 #$lang=eng
 msgid "Occitan"
 msgstr "occitan"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Occitan (post 1500); ProvenÃ§al"
+msgstr "occitan (aprÃ¨s 1500); provenÃ§al"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Occitan (post 1500); ProvenÃÂ§al"
+msgstr "occitan (aprÃÂ¨s 1500); provenÃÂ§al"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "Occitan (post 1500); Provençal"
+msgstr "occitan (après 1500); provençal"
 
 #$lang=eng
 msgid "Ojibwa"
@@ -4534,6 +4574,16 @@ msgstr "portuguais"
 #$lang=eng
 msgid "Prakrit languages"
 msgstr "prâkrit"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "ProvenÃ§al, Old (to 1500)"
+msgstr "provenÃ§al ancien (jusqu'Ã  1500)"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "ProvenÃÂ§al, Old (to 1500)"
+msgstr "provenÃÂ§al ancien (jusqu'ÃÂ  1500)"
 
 #$lang=eng
 #$flags=2
@@ -4943,6 +4993,16 @@ msgstr "venda"
 #$lang=eng
 msgid "Vietnamese"
 msgstr "vietnamien"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "VolapÃ¼k"
+msgstr "volapÃ¼k"
+
+# DBI:mysql:papp/iso639.name
+#$lang=eng
+msgid "VolapÃÂ¼k"
+msgstr "volapÃÂ¼k"
 
 # #getiso-hack#
 #$lang=eng

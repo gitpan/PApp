@@ -50,6 +50,25 @@ get_value 0, "I18NDIR", "directory for i18n tables", "$CFG{LIBDIR}/i18n";
 
 print <<EOF;
 
+Please enter a system ID. A system ID is a number that uniquely identifies
+your PApp installation (one papp database - one papp sysid). Please
+don't make up system id's, either ask for a system ID by writing to
+sysid\@nethype.de, stating something that we can use to uniquely identify
+you (we keep a database of sysids, anonymized if you want), or use an
+official(!) IPv4 address assigned to you.
+
+If you don't want to assign a sysid (or a sysid has already been assigned
+to your database), enter a zero.
+
+EOF
+
+get_value 0, "SYSID", "unique system id", "0";
+
+use Socket;
+$CFG{SYSID} = unpack "N", Socket::inet_aton $CFG{SYSID};
+
+print <<EOF;
+
 PApp will usually run as a specific user/group (e.g. www/www). All files
 installed will be chown'ed to that uid/gid, including the file that
 contains "secret" information.
@@ -130,7 +149,7 @@ PApp::Config - hold common configuration settings
 
 use PApp::SQL;
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 
 require Exporter;
 

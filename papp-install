@@ -5,11 +5,7 @@ use File::Compare;
 use File::Glob ':glob';
 use DBI;
 
-use Storable ();
 use Compress::LZF qw(:compress :freeze);
-
-use blib;
-use lib '.';
 
 @ARGV or die "this program shouldn't be called directly\n";
 
@@ -23,10 +19,14 @@ BEGIN {
    require 'PApp/Config.pm';
 }
 
+use blib;
+use lib '.';
+
 use PApp;
 use PApp::Admin;
 use PApp::SQL;
 use PApp::I18n;
+use PApp::Storable ();
 
 $|=1;
 
@@ -99,7 +99,7 @@ will be done.
 EOF
 
 if ($mode_update) {
-   print "trying to open state database... ";
+   print "trying to open papp database... ";
 
    $DBH =
       DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS},
@@ -136,7 +136,7 @@ version you have to drop the database manually.
 
 EOF
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ env (
      name varchar(255) binary not null,
      value longblob not null,
@@ -144,7 +144,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ msgid (
      nr mediumint(6) unsigned not null auto_increment,
      id mediumblob not null,
@@ -156,7 +156,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ msgstr (
      nr mediumint(6) unsigned default '0' not null,
      lang varchar(16) not null,
@@ -166,7 +166,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ event (
      id int(10) unsigned not null auto_increment,
      event varchar(255) not null,
@@ -178,7 +178,7 @@ SQL
 
 if ($installed_version < 0.142) {
    $DBH->do("drop table state") if $mode_update;
-   $DBH->do(<<SQL);
+   sql_exec <<SQL;
       create table /*! if not exists */ state (
         id int(10) unsigned not null,
         ctime timestamp(14),
@@ -200,7 +200,7 @@ if ($installed_version < 0.143) {
    $DBH->do("alter table msgstr change msg msg mediumblob not null");
 
 
-   $DBH->do(<<SQL);
+   sql_exec <<SQL;
       create table /*! if not exists */ event_count (
          count int(10) unsigned not null
       )
@@ -212,7 +212,7 @@ unless (sql_fetch "select count(*) from event_count") {
    sql_exec "delete from event";
 }
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ state_seq (
       seq int(10) unsigned not null
    )
@@ -223,7 +223,7 @@ unless (sql_fetch "select count(*) from state_seq") {
    sql_exec "delete from state";
 }
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ session (
      sid int(10) unsigned not null default '0',
      name varchar(255) binary not null default '',
@@ -232,7 +232,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ prefs (
      uid int(10) unsigned not null default '0',
      path varchar(255) binary not null default '',
@@ -264,12 +264,12 @@ if ($mode_update && $installed_version < 0.142) {
                      $userid, "papp_comment", sfreeze_cr $comment;
          }
          if ($prefs ne "") {
-            $prefs = Storable::thaw decompress $prefs;
+            $prefs = PApp::Storable::thaw decompress $prefs;
             while (my ($path, $keys) = each %$prefs) {
                next unless %$keys;
                sql_exec $DBH, "replace into prefs (uid, path, name, value) values (?,?,?,?)",
                               $userid, $path, "papp_prefs", 
-                              compress Storable::nfreeze($keys);
+                              compress PApp::Storable::nfreeze($keys);
             }
          }
       }
@@ -278,7 +278,7 @@ if ($mode_update && $installed_version < 0.142) {
    };
 }
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ user_seq (
       seq int(10) unsigned not null
    )
@@ -294,7 +294,7 @@ $DBH->do("alter table grp add comment text not null") if $mode_update && $instal
 $DBH->do("alter table grp add unique key (name)") if $mode_update && $installed_version < 0.124;
 $DBH->do("alter table grp change name name varchar(160) not null") if $mode_update && $installed_version < 0.14;
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ grp (
      id int(10) unsigned not null auto_increment,
      name varchar(100) not null,
@@ -304,7 +304,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ usergrp (
      userid int(10) unsigned default '0' not null,
      grpid int(8) unsigned default '0' not null,
@@ -312,7 +312,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ app (
      id smallint(6) unsigned not null auto_increment,
      name varchar(255) binary default '' not null,
@@ -325,7 +325,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ appset (
      id smallint(5) unsigned not null auto_increment,
      name varchar(255) default '' not null,
@@ -334,7 +334,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ pkg (
      id varchar(255) default '' not null,
      ctime timestamp(14),
@@ -344,7 +344,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ locks (
      id varchar(255) binary default '' not null,
      breaktime int(10) unsigned default '0' not null,
@@ -354,7 +354,7 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do("drop table error") if $installed_version && $installed_version < 0.13;
-$DBH->do(<<SQL);
+sql_exec <<SQL;
    create table /*! if not exists */ error (
      id mediumint(6) unsigned not null auto_increment,
      ctime timestamp(14),
@@ -364,7 +364,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do(<<SQL);
+sql_exec <<SQL;
   create table /*! if not exists */ ssluser (
     userid int(10) unsigned not null default '0',
     cert blob not null,
@@ -373,8 +373,86 @@ $DBH->do(<<SQL);
   )
 SQL
 
+# Agni
+if ($installed_version < 0.2) {
+
+sql_exec <<SQL;
+   CREATE TABLE obj (
+     id int unsigned not null auto_increment default '0',
+     gid bigint unsigned NOT NULL default '0',
+     paths bigint unsigned NOT NULL default '0',
+     primary key (id),
+     unique (gid, paths)
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE obj_isa (
+     id int unsigned NOT NULL default '0',
+     isa bigint unsigned NOT NULL default '0',
+     grade tinyint not null,
+     primary key (isa, grade, id),
+     unique (id, grade, isa)
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE obj_attr (
+     id int unsigned not null default '0',
+     type bigint unsigned not null default '0',
+     d_string varchar(255) binary,
+     d_text mediumblob,
+     d_int bigint,
+     d_double double,
+     primary key (id,type),
+     index (type, d_string(16)),
+     index (type, d_int),
+     index (type, d_double)
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE obj_gidseq (
+     seq bigint unsigned NOT NULL
+   ) TYPE=MyISAM
+SQL
+
+sql_exec <<SQL;
+   CREATE TABLE obj_path (
+     id tinyint(8) unsigned NOT NULL,
+     path varchar(255) NOT NULL,
+     PRIMARY KEY (id)
+   ) TYPE=MyISAM
+SQL
+
+   sql_exec "update env set name = 'PAPP_SYSID' where name = 'SYSID'";
+}
+
+my $installed_sysid = sql_fetch "select value from env where name = 'PAPP_SYSID'";
+
+die "installation sysid and configured sysid don't match"
+   if $installed_sysid > 0 && $CFG{SYSID} > 0 && $installed_sysid != $CFG{SYSID};
+
+if ($CFG{SYSID} > 0 && $installed_sysid == 0) {
+   sql_exec "delete from env where name = 'PAPP_SYSID'";
+   sql_exec "insert into env (name, value) values ('PAPP_SYSID', ?)", $CFG{SYSID};
+   $installed_sysid = $CFG{SYSID};
+}
+
+if ($installed_sysid) {
+   my $measured_sysid = sql_fetch "select seq >> 32 from obj_gidseq";
+
+   if ($measured_sysid == 0) {
+      sql_exec "delete from obj_gidseq";
+      sql_exec "insert into obj_gidseq values ((? << 32) + 1)", $installed_sysid;
+   }
+
+   die "PAPP_SYSID and actual obj_gidseq do NOT match"
+     if $measured_sysid > 0 && $measured_sysid != $installed_sysid;
+}
+
 $DBH->do("delete from pkg");
-   # if $PApp::Config::VERSION != $installed_version;
+   # if $PApp::Config::VERSION != $installed_version; # doesn't hurt
 
 print <<EOF;
 

@@ -30,7 +30,7 @@ use PApp::Exception qw(fancydie);
 
 use base 'Exporter';
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 @EXPORT_OK = qw(
       xml_quote xml_attr xml_unquote xml_tag xml_cdata
       xml_check xml_encoding xml2utf8
@@ -203,11 +203,12 @@ sub xml_check {
 
 This function takes a slightly damaged XML document or fragment and tries
 to repair it. During this process it annotates many errors with error
-messages in <error>-elements.  It also offers the option of adding a
+messages in <error>-elements. It also offers the option of adding a
 custom error message around the specified offste in the file.
 
-This function works best with HTML or HTML-like input, and tries very hard
-not to place error messages at places wheer they won't be visible.
+This function currently works best with HTML or HTML-like input, and
+tries very hard not to place error messages at places where they won't be
+visible.
 
 The result should be parseable by XML parsers, but be warned that not
 every case will be fixed.
@@ -267,7 +268,8 @@ sub xml_errorparser {
       "illegal-character-" . (ord $1) . "-skipped";
    %gex;
 
-   # HTML::Parser can't cope with unicode :(
+   # HTML::Parser can't cope with unicode :(, unfortunately
+   # this destroys position information quite severly
    utf8_upgrade $xml;
    $xml = (utf8_to PApp::Recode "iso-8859-1", \&PApp::_unicode_to_entity)->($xml);
    utf8_downgrade $xml;
@@ -283,7 +285,7 @@ sub xml_errorparser {
          text_h		=> [sub {
             if ($_[1] >= $errofs) {
                $err->("<error>$errmsg, source<pre>\n"
-                      . (xml_cdata substr $xml, $errofs >= 40 ? $errofs - 40 : 0, 40)
+                      . (xml_cdata substr $xml, $errofs >= 160 ? $errofs - 160 : 0, $errofs >= 160 ? 160 : $errofs)
                       . "&#xf7;"
                       . (xml_cdata substr $xml, $errofs, 160)
                       . "\n</pre></error>");

@@ -53,7 +53,7 @@ use PApp::Package;
 BEGIN {
    @ISA = PApp::Base::;
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.143;
+   $VERSION = 0.2;
 }
 
 *PApp::OK = \&Apache::Constants::OK;
@@ -69,10 +69,7 @@ sub ChildInit {
       warn "FATAL: 'configured PApp' was never called, disabling PApp";
    }
 
-   eval { PApp::SQL::reinitialize() };
-   eval { PApp::Env::DBH->disconnect() };
-   eval { PApp::I18n::flush_cache() };
-   undef $PApp::Env::DBH;
+   PApp::post_fork_cleanup;
 
    PApp->event('childinit');
 }

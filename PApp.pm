@@ -61,7 +61,7 @@ source. The "poedit"-demo-application enables editing of the strings
 on-line, so translaters need not touch any text files and can work
 diretcly via the web.
 
-=item Feature-Rich. PApp comes with a I<lot> of
+=item * Feature-Rich. PApp comes with a I<lot> of
 small-but-nice-to-have functionality.
 
 =back
@@ -150,7 +150,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 0.143;
+   $VERSION = 0.2;
 
    use base Exporter;
 
@@ -160,7 +160,7 @@ BEGIN {
          surl slink sform cform suburl sublink retlink_p returl retlink
          current_locals reference_url multipart_form parse_multipart_form
          endform redirect internal_redirect abort_to content_type
-         abort_with setlocale
+         abort_with setlocale fixup_marker
 
          SURL_PUSH SURL_UNSHIFT SURL_POP SURL_SHIFT
          SURL_EXEC SURL_SAVE_PREFS SURL_SET_LOCALE SURL_SUFFIX
@@ -213,6 +213,7 @@ our $userid;      # uncrypted user-id
 
 our %state;
 our %arguments;
+our %temporary;
 our %S; # points into %state
 our %A; # points into %arguments
 our %P;
@@ -225,6 +226,8 @@ our $NOW;         # the current time (so you only need to call "time" once)
 our $output;      # the collected output (must be global)
 our $routput = \$output; # the real output, even inside capture {}
 our $doutput;     # debugging output
+our @fixup;
+
 our $location;    # the current location (a.k.a. application, pathname)
 our $pathinfo;    # the "CGI"-pathinfo
 our $papp;        # the current location (a.k.a. application)
@@ -381,6 +384,10 @@ must use something like this:
 
    my @values = ref $P{field} ? @{$P{field}} : $P{field};
 
+=item %temporary [not exported]
+
+Is empty at the beginning of a request and will be cleared at request end.
+
 =item $userid [read-only]
 
 The current userid. User-Id's are automatically assigned, you are
@@ -412,7 +419,7 @@ The current application's (C<$curprefs>) and the global (C<$prefs>) preferences 
 
 =item $PApp::papp (a hash-ref) [read-only] [not exported] [might get replaced by a function call]
 
-The current PApp::Applicaiton object (see L<PApp::Application>). The
+The current PApp::Application object (see L<PApp::Application>). The
 following keys are user-readable:
 
  config   the argument to the C<config>option given to C<mount>.
@@ -489,7 +496,7 @@ Mount all applications in the named application set. Usually used in the httpd.c
 to mount many applications into the same virtual server etc... Example:
 
   mount_appset PApp 'default';
-               
+
 =item PApp->mount_app($appname)
 
 Can be used to mount a single application.
@@ -558,7 +565,7 @@ sub PApp::Base::configure {
 
    my $lang = { lang => 'en', domain => 'papp' };
    
-   $papp_main = new PApp::Application
+  $papp_main = new PApp::Application::PApp
       path   => "$libdir/apps/papp.papp",
       name   => "papp_main",
       appid  => 0;
@@ -612,6 +619,14 @@ sub PApp::Base::configured {
    }
 }
 
+# must be called after fork, see PApp::Apache
+sub post_fork_cleanup {
+   PApp::I18n::flush_cache;
+   PApp::SQL::reinitialize;
+   undef $PApp::Config::DBH;
+   PApp::Config::DBH;
+}
+
 sub configured_p {
    $configured;
 }
@@ -640,7 +655,7 @@ example, this works:
        print "of course, this is easy\n";
        echo "this as well";
        :>
-          
+
        Yes, this is captured as well!
        <:&this_works:>
        <?$captureme:>
@@ -802,7 +817,7 @@ The following (symbolic) modifiers can also be used:
  SURL_UNSHIFT(<path> => <value>)
    treat the following state key as an arrayref and push or unshift the
    argument onto it.
- 
+
  SURL_POP(<path-or-ref>)
  SURL_SHIFT(<path-or-ref>)
    treat the following state key as arrayref and pop/shift it.
@@ -826,12 +841,12 @@ The following (symbolic) modifiers can also be used:
 
  SURL_SAVE_PREFS
    call save_prefs
- 
+
  SURL_STYLE_URL
  SURL_STYLE_GET
  SURL_STYLE_STATIC
    set various url styles, see C<surl_style>.
- 
+
  SURL_SUFFIX(<file>)
    sets the filename in the generated url to the given string. The
    filename is the last component of the url commonly used by browsers as
@@ -852,18 +867,18 @@ used with C<surl_style>. C<newstyle> must be one of:
  SURL_STYLE_URL
    The "classic" papp style, the session id gets embedded into the url,
    like C</admin/+modules-/bhWU3DBm2hsusnFktCMbn0>.
- 
+
  SURL_STYLE_GET
    The session id is encoded as the form field named "papp" and appended
    to the url as a get request, e.g. C</admin/+modules-?papp=bhWU3DBm2hsusnFktCMbn0>.
- 
+
  SURL_STYLE_STATIC
    The session id is not encoded into the url, e.g. C</admin/+modules->,
    instead, surl returns two arguments. This must never be set as a
    default using C<surl_style>, but only when using surl directly.
 
 =cut
- 
+
 sub surl_style {
    my $old = $surlstyle;
    $surlstyle = $_[1] || $_[0];
@@ -964,6 +979,22 @@ sub returl(;@) {
 
 sub retlink {
    alink shift, &returl;
+}
+
+=item my ($marker, $ref) = fixup_marker [$initial_content]
+
+Create a new fixup marker and return a scalar reference to it's
+replacement text (initially empty if not specified). At page output time
+any fixup markers in the document are replaced by this scalar.
+
+=cut
+
+sub fixup_marker {
+   push @fixup, "$_[0]";
+   (
+      (sprintf "\x{fc00}%06d", $#fixup),
+      \$fixup[-1],
+   );
 }
 
 =item sform [\%attrs,] [module,] arg => value, ...
@@ -1152,6 +1183,11 @@ sub _unicode_to_entity {
 }
 
 sub flush_cvt {
+   # fixup conversion, could be optimized in XS
+   @fixup
+      and $$routput =~ s/\x{fc00}(......)/$fixup[$1]/sg;
+
+   # charset conversion
    if ($output_charset eq "*") {
       #d##FIXME#
       # do "output charset" negotiation, at the moment this is truely pathetic
@@ -1219,7 +1255,7 @@ work.
 
 sub send_upcall(&) {
    local $SIG{__DIE__};
-   die bless $_[0], PApp::Upcall;
+   die bless $_[0], PApp::Upcall::;
 }
 
 =item redirect url
@@ -1419,15 +1455,17 @@ sub debugbox {
    echo "</font></td></tr></table>";
 }
 
-=item language_selector $translator, $current_langid
+=item language_selector $translator [, $current_langid]
 
 Create (and output) html code that allows the user to select one of the
-languages reachable through the $translator. This function might move
-elsewhere, as it is clearly out-of-place here ;)
+languages reachable through the C<$translator>. If C<$current_langid> is
+missing, uses $PApp::langs to select a suitable candidate.
+
+This function might move elsewhere, as it is clearly out-of-place here ;)
 
 Usually used like this:
 
-   <:language_selector $papp_translator, $papp_ppkg_table->lang:>
+   <:language_selector $papp_translator:>
 
 If you want to build your own language selector, here's how:
 
@@ -1451,7 +1489,7 @@ If you want to build your own language selector, here's how:
 
 sub language_selector {
    my $translator = shift;
-   my $current = shift;
+   my $current = shift || $translator->get_table($langs)->lang;
    for my $lang ($translator->langs) {
       next if $lang eq "*" || lc $lang eq "mul";
       my $name = PApp::I18n::translate_langid($lang, $lang);
@@ -1721,8 +1759,17 @@ sub load_app($$) {
       info => [appid => $appid],
       info => [config => PApp::Util::format_source $_config];
 
+   my $class;
+
+   if ($path =~ /^(PApp::[^\/]+)(.*)$/) {
+      $class = $1;
+      $path = $2;
+   } else {
+      $class = PApp::Application::PApp;
+   }
+
    $app_cache{$appid} =
-   $app_cache{$name} = new PApp::Application
+   $app_cache{$name} = new $class
       delayed	         => 1,
       mountconfig	 => $mountconfig,
       url_prefix_nossl   => $url_prefix_nossl,
@@ -1843,10 +1890,13 @@ sub _handler {
    $output_p = 0;
    $doutput = "";
    $output = "";
-   #tie *STDOUT, PApp::Catch_STDOUT;
+   @fixup = ();
+   tie *STDOUT, PApp::Catch_STDOUT;
    $content_type = "text/html";
    $output_charset = "*";
    $warn_log = "";
+
+   local %temporary;
 
    eval {
       local $SIG{__DIE__} = \&PApp::Exception::diehandler;
@@ -1904,7 +1954,7 @@ sub _handler {
 
          $state{papp_appid} = $papp->{appid};
 
-         $modules = $pathinfo =~ m%/(.*?)/?$% ? modpath_thaw $1 : ();
+         $modules = $pathinfo =~ m%/(.*?)/?$% ? modpath_thaw $1 : {};
 
          if ($request->header_in('Cookie') =~ /PAPP_1984=([0-9a-zA-Z.-]{22,22})/) {
             ($userid, undef, undef, $state{papp_cookie}) = unpack "VVVV", $cipher_d->decrypt(PApp::X64::dec $1);
@@ -1958,7 +2008,7 @@ sub _handler {
 
       1;
    } or do {
-      if (UNIVERSAL::isa $@, PApp::Upcall) {
+      if (UNIVERSAL::isa $@, PApp::Upcall::) {
          my $upcall = $@;
          eval { update_state };
          untie *STDOUT; open STDOUT, ">&1";
@@ -2011,7 +2061,7 @@ sub PApp::Catch_STDOUT::WRITE {
 
 =head1 SEE ALSO
 
-The C<macro/admin>-package on the distribution, the demo-applications
+The C<macro/admin>-package in the distribution, the demo-applications
 (.papp-files).
 
 =head1 AUTHOR

@@ -8,10 +8,7 @@
 <import pm="PApp::UserObs"/>
 <import src="macro/admin"/>
 <import pm="PApp::ECMAScript"/>
-<import src="simple-edit/simple-edit"/>
-
-<macro name="remote_edit*" args="$data $extension @surlargs"><pxml><![CDATA[<:
-:>]]></pxml></macro>
+<import src="macro/xpcse"/>
 
 <perl><![CDATA[
    use PApp::XSLT;
@@ -70,7 +67,6 @@
                      0 => __"[NEW]";
       :>
    <?ef_submit __"Go":>
-   <?ef_submit __"Blubb", -blubb => 1:>
    <?ef_end:>
 
 <:}:>
@@ -79,7 +75,6 @@
 
 <module name="edit_row" nosession="edit">
 <state keys="edit_table edit_id" local="yes"/>
-<state keys="edit_client" preferences="yes"/>
 <phtml><![CDATA[
 <html>
 
@@ -90,43 +85,18 @@
       || new PApp::DataRef 'DB_row',
                            table      => $A{table},
                            where      => [id => $S{edit_id}],
-                           preload    => 1,
                            autocommit => 0,
-                           delay      => 1,
-                           utf8       => 1,
+                           utf8       => 1;
+     
+     my $text = new PApp::DataRef 'Scalar', 
+        fetch => {: $_[0]{text} :}($row),
+        store => {: my ($row, undef, $text) = @_;
+                    $row->{text} = $text;
+                    $row->{mtime} = undef;
+                    $row->flush;
+                 :}($row)
+ 
 :>
-
-#if $S{edit_client}
-
-<?slink __"[NORMAL EDIT]", edit_client => undef, -row => $row:>
-
-<p>
-
-<:$row->flush:>
-<:$row->invalidate:>
-
-#if $A{blubb}
-<:abort_to "edit_client", -row => $row:>
-#endif
-
-<ol>
-<li><?slink __"edit file on client", "edit_client", -row => $row:></li>
-<li>__"leave editor, this will upload your changes"</li>
-<li>__"if necessary, repeat step 1."</li>
-</ol>
-
-</p>
-
-<p>__"To install the client-side editor, edit your <tt>/etc/mailcap</tt>
-or <tt>$HOME/.mailcap</tt> file and add this line:"</p>
-
-<tt>application/x-papp-edit; /path/to/PApp/simple-edit/x-papp-edit %s</tt>
-
-<p>__"You can edit this file in Netscape, too, under Preferences => Navigator => Applications => New."</p>
-
-#else
-
-<?slink __"[CLIENT SIDE EDIT]", edit_client => 1, -row => $row:>
 
 <?ef_begin -row => $row:>
 <?ef_submit __"Save", -save => 1:><br />
@@ -137,8 +107,9 @@ or <tt>$HOME/.mailcap</tt> file and add this line:"</p>
               ["id, name from style order by 1"],
               0 => __"[NONE]":><br />
 #endif
-<?ef_text \$row->{text}, 80:><br />
 <?ef_end:>
+<?client_edit_slink "[Seite bearbeiten (vi)]", $text, "text/tab-separated-values":><br/>
+<?client_edit_slink "[Seite ansehen (notepad)]", $text, "text/plain":>
 
 #if $A{save}
 <:$row->{mtime} = undef:>
@@ -149,22 +120,8 @@ or <tt>$HOME/.mailcap</tt> file and add this line:"</p>
 <:abort_to "edit":>
 #endif
 
-#endif
-
 </html>
 ]]></phtml></module>
-
-<module name="edit_client"><perl><![CDATA[
-   if ($A{save}) {
-      $A{row}{mtime} = undef;
-      $A{row}{text} = remote_edit_parse;
-      $A{row}->flush;
-      content_type "text/plain";
-      echo "document \"$A{row}{name}\" updated\n";
-   } else {
-      remote_edit $A{row}{text}, ".papp", "edit_client", -row => $A{row}, -save => 1;
-   }
-]]></perl></module>
 
 </domain></package>
 

@@ -5839,11 +5839,41 @@ static int agni_fetchput (stcxt_t *cxt, SV *sv, const char *key, int klen)
 
 static int store_agni_object(stcxt_t *cxt, SV *sv)
 {
-        SvRMAGICAL_off(sv);
+	SV **he;
+        unsigned long long gid;
+        I32 niv;
+
         PUTMARK(SX_AGNI_OBJECT);
-        agni_fetchput(cxt, sv, "_path", 5);
-        agni_fetchput(cxt, sv, "_gid",  4);
-        SvRMAGICAL_on(sv);
+
+        SvRMAGICAL_off (SvRV (sv));
+
+        he = hv_fetch((HV*)SvRV (sv), "_path", 5, 0);
+
+        if (!he)
+          croak ("PApp::Storable: agni object to be stored lacks _path");
+
+        if (!SvOK (*he))
+          croak ("PApp::Storable: agni object to be stored has undefined _path");
+
+        niv = (I32) htonl((I32) (SvIV (*he))); WRITE_I32 (niv);
+        
+        he = hv_fetch((HV*)SvRV (sv), "_gid", 4, 0);
+
+        if (!he)
+          croak ("PApp::Storable: agni object to be stored lacks _gid");
+
+        if (!SvOK (*he))
+          croak ("PApp::Storable: agni object to be stored has undefined _gid");
+
+        gid = strtoull (SvPV_nolen (*he), 0, 0);
+
+        if (!gid)
+          croak ("PApp::Storable: agni object to be stored has zero _gid");
+
+        niv = (I32) htonl((I32) (gid >> 32));        WRITE_I32 (niv);
+        niv = (I32) htonl((I32) (gid & 0xffffffff)); WRITE_I32 (niv);
+
+        SvRMAGICAL_on (SvRV (sv));
 
         return 0;
 }
@@ -5852,32 +5882,50 @@ static SV *retrieve_agni_object(stcxt_t *cxt, char *cname)
 {
         dSP;
         SV *sv;
-	unsigned long long u;
-        I32 l, h;
+	unsigned long long gid;
+        I32 path, l, h;
+        int count;
         char c[64];
+
+        {
+          static int already_loaded; /* did we try to load the module before? */
+
+          if (!already_loaded)
+            {
+              /* earlier in this file it says sv_2mortal is evil on load_import, so I removed it */
+              /* it's not as if hadn't cost me oh so many hours of debugging... */
+              load_module (PERL_LOADMOD_NOIMPORT, newSVpv ("Agni", 0), 0);
+              already_loaded = 1;
+            }
+        }
 
         PUSHMARK(SP);
 
-        READ_I32(h); READ_I32(l);
-        u =
-          (((unsigned long long)(U32)ntohl (h)) << 32) |
-            (unsigned long long)(U32)ntohl (l);
-        XPUSHs (sv_2mortal (newSVpvn (c, sprintf (c, "%llu", u))));
+        READ_I32(path);
+        path = ntohl (path);
+        XPUSHs (sv_2mortal (newSViv (path)));
         
         READ_I32(h); READ_I32(l);
-        u =
+        gid =
           (((unsigned long long)(U32)ntohl (h)) << 32) |
             (unsigned long long)(U32)ntohl (l);
-        XPUSHs (sv_2mortal (newSVpvn (c, sprintf (c, "%llu", u))));
+        XPUSHs (sv_2mortal (newSVpvn (c, sprintf (c, "%llu", gid))));
 
         PUTBACK;
-        l = call_pv ("Agni::storable_path_obj_by_gid", G_SCALAR|G_EVAL);
+        count = call_pv ("Agni::storable_path_obj_by_gid", G_SCALAR | G_EVAL);
         SPAGAIN;
 
-        if (l != 1)
+        if (SvTRUE (ERRSV))
+          croak (NULL);
+
+        if (count != 1)
           croak ("PApp::Storable: Agni::path_obj_by_gid did not return a single value");
 
         sv = SvREFCNT_inc (POPs);
+
+        if (!SvOK (sv))
+          fprintf (stderr, "WARNING: PApp::Storable: Agni::path_obj_by_gid (%d/%08lx:%08lx) did not return an object, probably harmless", path, h, l);
+
         PUTBACK;
 
         SEEN(sv, cname);

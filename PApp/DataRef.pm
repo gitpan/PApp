@@ -27,7 +27,7 @@ package PApp::DataRef;
 
 use Convert::Scalar ();
 
-$VERSION = 0.143;
+$VERSION = 0.2;
 
 =item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...
 
@@ -655,11 +655,12 @@ In other cases, DataRef reads and writes full rows:
    SELECT * FROM table WHERE id = ?
 
 When a row is being written and the id is C<undef> or zero, DataRef uses
-an INSERT followed by C<sql_insertid>, so your id volumn should better
-be defined as auto increment in your database. If the id is defined, the
-update is driver specific:
+the C<insertid> callback to create a new insertion id followed by an
+INSERT (if insretid is 1, it uses an INSERT followed by C<sql_insertid>,
+so your id volumn should better be defined as auto increment in your
+database). If the id is defined, the update is driver specific:
 
-for mysql:
+for mysql (if appropriate):
 
    REPLACE INTO table (...) VALUES (...)
 

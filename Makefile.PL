@@ -20,7 +20,14 @@ WriteMakefile(
     'LIBS'	=> [''],
     'DEFINE'	=> '',
     'INC'	=> '',
-    'EXE_FILES'	=> ['bin/papp-env', 'bin/papp-admin', 'xpcse/xpcse', 'xpcse/run-mailcap'],
+    'EXE_FILES'	=> [
+                    'bin/papp-env',
+                    'bin/papp-admin',
+                    'bin/papp-httpd',
+                    'bin/agni',
+                    'xpcse/xpcse',
+                    'xpcse/run-mailcap',
+                   ],
     'PM'	=> {
 		    'PApp.pm'		=> '$(INST_LIBDIR)/PApp.pm',
 		    'PApp/Apache.pm'	=> '$(INST_LIBDIR)/PApp/Apache.pm',
@@ -53,24 +60,27 @@ WriteMakefile(
 		    'PApp/Preprocessor.pm'	=> '$(INST_LIBDIR)/PApp/Preprocessor.pm',
 		    'PApp/XBox.pm'	=> '$(INST_LIBDIR)/PApp/XBox.pm',
 		    'PApp/MimeType.pm'	=> '$(INST_LIBDIR)/PApp/MimeType.pm',
+		    'Agni.pm'		=> '$(INST_LIBDIR)/Agni.pm',
                    },
     'PREREQ_PM'	=> {
-		    PApp::SQL		=> 0.14,
+		    PApp::SQL		=> 0.142,
                     Compress::LZF	=> 0.1045,
                     String::Similarity	=> 0.02,
                     Convert::Scalar	=> 0.09,
                     Crypt::Twofish2	=> 0.01,
 
-                    URI			=> 1.12,
-                    XML::Parser		=> 2.27,
-                    #mod_perl		=> 1.21, # not necessarily required anymore
-                    Storable		=> 0.702,
-                    DBI			=> 1.13,
+                    URI			=> 1.22,
+                    XML::Parser		=> 2.31,
+                    Storable		=> 2.05,
+                    DBI			=> 1.30,
                     Digest::SHA1	=> 1.01,
 
                     DBD::mysql		=> 2.04,
-                    CGI::SpeedyCGI	=> 1.8,  # speedycgi uses a broken numbering scheme
-                    #XML::Sablotron	=> 0.43, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
+
+                    # the following are more or less optional, but highly useful
+                    XML::Sablotron	=> 0.60, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
+                    #mod_perl		=> 1.21, # not necessarily required anymore
+                    #CGI::SpeedyCGI	=> 2.21,  # speedycgi uses a broken numbering scheme
                     #XML::LibXSLT	=> 0.0,  # gnome-xml, libxslt
 		   },
 );

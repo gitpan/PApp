@@ -12,109 +12,125 @@
 " the clutter high on the screen - mixing three languages is difficult
 " enough(!). PS: it is also slow.
 
-" pod is, btw, allowed everywhere, which is actually wrong :(
+" configurable variables
+" let papp_cdata_contains_perl = 1
 
-" For version 5.x: Clear all syntax items
-" For version 6.x: Quit when a syntax file was already loaded
-if version < 600
-  syntax clear
-elseif exists("b:current_syntax")
+syntax clear
+if exists("b:current_syntax")
   finish
 endif
 let s:papp_cpo_save = &cpo
 set cpo&vim
 
+syn case match
+
 " source is basically xml, with included html (this is common) and perl bits
-if version < 600
-  syn include @PAppPerl <sfile>:p:h/perl.vim
-else
-  syn include @PAppPerl syntax/perl.vim
-endif
+syn include @PAppPerl syntax/perl.vim
 unlet b:current_syntax
 
-if version < 600
-  so <sfile>:p:h/xml.vim
-else
-  runtime! syntax/xml.vim
-endif
-unlet b:current_syntax
+syn cluster papp contains=papp_gettext,papp_perl,papp_pre,papp_precond
 
-if v:version >= 600
-   syn cluster xmlRegionHook add=papp_perl,papp_xperl,papp_phtml,papp_pxml,papp_perlPOD
+" assume xml-style-text on toplevel, taken directly from syntax/xml.vim
+syn match xmlError "[<&]"
+
+syn region  xmlString contained start=+"+ end=+"+ contains=@papp,xmlEntity display
+syn region  xmlString contained start=+'+ end=+'+ contains=@papp,xmlEntity display
+syn match   xmlAttribPunct "[:.]" contained display
+syn match   xmlEqual "=" display
+syn match   xmlAttrib +[-'"<]\@<!\<[a-zA-Z:_][-.0-9a-zA-Z0-9:_]*\>\(['">]\@!\|$\)+ contained contains=xmlAttribPunct display
+syn match   xmlNamespace +\(<\|</\)\@<=[^ /!?<>"':]\+[:]\@=+ contained display 
+syn match   xmlTagName +[<]\@<=[^ /!?<>"']\++ contained contains=xmlNamespace,xmlAttribPunct
+syn region  xmlTag matchgroup=xmlTag start=+<[^ /!?<>"':]\@=+ matchgroup=xmlTag end=+>+ contains=xmlError,xmlTagName,xmlAttrib,xmlEqual,xmlString
+syn match   xmlEndTag +</[^ /!?<>"']\+>+ contains=xmlNamespace,xmlAttribPunct
+syn match   xmlEntity "&[^; \t]*;" contains=xmlEntityPunct
+syn match   xmlEntityPunct  contained "[&.;]"
+syn region  xmlComment start=+<!+ end=+>+ contains=xmlCommentPart,xmlCommentError extend
+syn match   xmlCommentError contained "[^><!]"
+syn region  xmlCommentPart start=+--+ end=+--+ contained contains=xmlTodo
+syn region  xmlCdata start=+<!\[CDATA\[+ end=+]]>+ contains=xmlCdataStart,xmlCdataEnd,@xmlCdataHook keepend extend
+syn match   xmlCdataStart +<!\[CDATA\[+  contained contains=xmlCdataCdata
+syn keyword xmlCdataCdata CDATA          contained
+syn match   xmlCdataEnd   +]]>+          contained
+
+syn cluster xmlCdataHook contains=@papp
+
+if exists("papp_cdata_contains_perl")
+   syn cluster xmlCdataHook add=@PAppPerl
 endif
 
 " translation entries
-syn region papp_gettext start=/__"/ end=/"/ contained contains=@papp_perlInterpDQ
-syn cluster PAppHtml add=papp_gettext,papp_prep
+syn region papp_gettext start=/__"/ end=/"/ contains=@perlInterpDQ
 
-" add special, paired xperl, perl and phtml tags
-syn region papp_perl  matchgroup=xmlTag start="<perl>"  end="</perl>"  contains=papp_CDATAp,@PAppPerl keepend fold extend
-syn region papp_xperl matchgroup=xmlTag start="<xperl>" end="</xperl>" contains=papp_CDATAp,@PAppPerl keepend fold extend
-syn region papp_phtml matchgroup=xmlTag start="<phtml>" end="</phtml>" contains=papp_CDATAh,papp_ph_perl,papp_ph_html,papp_ph_hint,@PAppHtml keepend fold extend
-syn region papp_pxml  matchgroup=xmlTag start="<pxml>"  end="</pxml>"  contains=papp_CDATAx,papp_ph_perl,papp_ph_xml,papp_ph_xint            keepend fold extend
-syn region papp_perlPOD start="^=[a-z]" end="^=cut" contains=@Pod,perlTodo keepend
-
-" cdata sections
-syn region papp_CDATAp matchgroup=xmlCdataStart start="<!\[CDATA\[" end="\]\]>" contains=@PAppPerl,papp_prep                              contained keepend extend
-syn region papp_CDATAh matchgroup=xmlCdataStart start="<!\[CDATA\[" end="\]\]>" contains=papp_prep,papp_ph_perl,papp_ph_html,papp_ph_hint,@PAppHtml contained keepend extend
-syn region papp_CDATAx matchgroup=xmlCdataStart start="<!\[CDATA\[" end="\]\]>" contains=papp_prep,papp_ph_perl,papp_ph_xml,papp_ph_xint            contained keepend extend
-
-syn region papp_ph_perl matchgroup=Delimiter start="<[:?]" end="[:?]>"me=e-2 nextgroup=papp_ph_html contains=@PAppPerl               contained keepend
-syn region papp_ph_html matchgroup=Delimiter start=":>"    end="<[:?]"me=e-2 nextgroup=papp_ph_perl contains=@PAppHtml               contained keepend
-syn region papp_ph_hint matchgroup=Delimiter start="?>"    end="<[:?]"me=e-2 nextgroup=papp_ph_perl contains=@perlInterpDQ,@PAppHtml contained keepend
-syn region papp_ph_xml  matchgroup=Delimiter start=":>"    end="<[:?]"me=e-2 nextgroup=papp_ph_perl contains=                        contained keepend
-syn region papp_ph_xint matchgroup=Delimiter start="?>"    end="<[:?]"me=e-2 nextgroup=papp_ph_perl contains=@perlInterpDQ           contained keepend
+" embedded perl sections
+syn region papp_perl matchgroup=papp_delim start="<[:?]" end="[:]>" keepend contains=papp_reference,papp_cb,@PAppPerl
 
 " preprocessor commands
-syn region papp_prep matchgroup=papp_prep start="^#\s*\(if\|elsif\)" end="$" keepend contains=@perlExpr contained nextgroup=papp_ph_html
-syn match papp_prep /^#\s*\(else\|endif\|??\).*$/ contained
+syn region papp_precond matchgroup=papp_pre excludenl oneline start="^#\s*\(if\|elif\|elsif\)" end="$" keepend contains=@perlExpr display
+syn match papp_pre /^#\s*\(else\|endif\|??\).*$/ excludenl display
 
-" synchronization is horrors!
+" callbacks
+syn region papp_cb matchgroup=papp_delim start="{:" end=":}" keepend contains=@PAppPerl contained
+
+" agni
+syn region papp_reference matchgroup=papp_delim start="\$\?{{" end="}}" keepend display containedin=@PAppPerl contained
+
 syn sync clear
-syn sync match pappSync grouphere papp_CDATAh "</\(perl\|xperl\|phtml\|macro\|module\)>"
-syn sync match pappSync grouphere papp_CDATAh "^# *\(if\|elsif\|else\|endif\)"
-syn sync match pappSync grouphere papp_CDATAh "</\(tr\|td\|table\|hr\|h1\|h2\|h3\)>"
-syn sync match pappSync grouphere NONE        "</\=\(module\|state\|macro\)>"
+"syn sync fromstart " maybe this is the only thing that works
+"syn sync linebreaks=3
 
-syn sync maxlines=300
-syn sync minlines=50
-
-" The default highlighting.
-
-hi def link papp_prep		preCondit
-hi def link papp_gettext	String
+syn sync match NONE groupthere papp_perl "^<[:?]"
 
 " The special highlighting of PApp core functions only in papp_ph_perl section
 
-if v:version >= 600
-  syn keyword pappCore surl slink sform cform suburl sublink retlink_p returl retlink
-        \ current_locals reference_url multipart_form parse_multipart_form
-        \ endform redirect internal_redirect abort_to content_type
-        \ abort_with setlocale
-        \ SURL_PUSH SURL_UNSHIFT SURL_POP SURL_SHIFT
-        \ SURL_EXEC SURL_SAVE_PREFS SURL_SET_LOCALE SURL_SUFFIX
-        \ surl_style
-        \ SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
-        \ reload_p switch_userid save_prefs getuid
-        \ dprintf dprint echo capture
-        \ language_selector preferences_url preferences_link
-        \ config_eval abort_with_file
-        \
-        \ ef_mbegin ef_sbegin ef_cbegin ef_begin ef_end
-        \ ef_edit ef_may_edit ef_submit ef_reset ef_field
-        \ ef_string ef_password ef_text ef_checkbox ef_radio
-        \ ef_button ef_hidden ef_selectbox ef_relation
-        \ ef_set ef_enum ef_file ef_constant ef_cb_begin
-        \ 
-        \ loginbox adminbox check_login force_login
-        \ 
-        \ plain_header access_page plain_footer
-        \
-	\ containedin=papp_ph_perl
+syn keyword papp_core containedin=papp_perl
+     \ surl slink echo
+     \ redirect internal_redirect abort_to content_type
+     \ abort_with_file abort_with setlocale
+     \ SURL_PUSH SURL_UNSHIFT SURL_POP SURL_SHIFT
+     \ SURL_EXEC SURL_SAVE_PREFS SURL_SET_LOCALE SURL_SUFFIX
+     \ SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
+     \
+     \ ef_mbegin ef_sbegin ef_cbegin ef_begin ef_end
+     \ ef_submit ef_reset ef_field ef_cb_begin ef_cb_end
+     \ ef_string ef_password ef_text ef_checkbox ef_radio
+     \ ef_button ef_hidden ef_selectbox ef_relation
+     \ ef_set ef_enum ef_file ef_constant
 
-  hi def link pappCore	 	Special
-endif
+" The default highlighting.
 
+hi def link papp_delim          Delimiter
+hi def link papp_pre		PreProc
+hi def link papp_gettext	String
+hi def link papp_reference	Type
+hi def link papp_core	 	Keyword
+
+hi def link xmlTag              Function
+hi def link xmlTagName          Function
+hi def link xmlEndTag           Identifier
+hi def link xmlNamespace        Tag
+hi def link xmlEntity           Statement
+hi def link xmlEntityPunct      Type
+
+hi def link xmlAttribPunct      Comment
+hi def link xmlAttrib           Type
+
+hi def link xmlString           String
+hi def link xmlComment          Comment
+hi def link xmlCommentPart      Comment
+hi def link xmlCommentError     Error
+hi def link xmlError            Error
+
+hi def link xmlProcessingDelim  Comment
+hi def link xmlProcessing       Type
+
+hi def link xmlCdata            String
+hi def link xmlCdataCdata       Statement
+hi def link xmlCdataStart       Type
+hi def link xmlCdataEnd         Type
+
+hi def link xmlDocTypeDecl      Function
+hi def link xmlDocTypeKeyword   Statement
+hi def link xmlInlineDTD        Function
 
 let b:current_syntax = "papp"
 
