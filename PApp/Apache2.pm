@@ -161,7 +161,7 @@ use PApp::Package;
 BEGIN {
    our @ISA = PApp::Base::;
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.95;
+   $VERSION = 1;
 }
 
 *PApp::OK = sub { OK };

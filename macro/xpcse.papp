@@ -86,8 +86,8 @@
          } else {
             my %outflags;
             $outflags{"Extension"}              = $flags{extension}
-                                                  or "." . (PApp::MimeType::by_mimetype($data->{mime})
-                                                            or PApp::MimeType::by_mimetype("application/octet-stream"))->extension;
+                                                  || ("." . (PApp::MimeType::by_mimetype($data->{mime})
+                                                             or PApp::MimeType::by_mimetype("application/octet-stream"))->extension);
             $outflags{"Url"}                    = $data->{url};
             $outflags{"Content-Type"}           = $data->{mime};
             $outflags{"Server-Date"}            = time2str();
@@ -174,7 +174,7 @@ Returns a surl for remote editing ref
                   Supported flags:
 
                       extension => ".png"
-                        file extension like ".txt" (or "txt"). If missing, a
+                        file extension like ".txt". If missing, a
                         suitable extension will be guessed (see
                         LIBDIR/etc/xpcse.extensions).
 

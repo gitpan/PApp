@@ -24,19 +24,18 @@ PApp::Apache - multi-page-state-preserving web applications
 
    # configure the perl module
    <Perl>
-      search_path PApp "/root/src/Fluffball/macro";
-      search_path PApp "/root/src/Fluffball";
+      # search_path PApp "/root/src/Fluffball/macro";
+      # search_path PApp "/root/src/Fluffball";
       configure PApp (
-         cipherkey => "f8da1b96e906bace04c96dbe562af9x31957b44e4c282a1658072f0cbe6ba44d",
-         pappdb    => "DBI:mysql:papp",
+         # cipherkey => "f8da1b96e906bace04c96dbe562af9x31957b44e4c282a1658072f0cbe6ba44d",
+         # pappdb    => "DBI:mysql:papp",
          checkdeps => 1,
       );
 
-      # mount an application (here: dbedit.papp)
-      mount_appset PApp (
-         location => "/dbedit",
-         src => "dbedit.papp"
-      );
+      # mount an application set
+      mount_appset PApp "default";
+
+      # mandatory for Apache
       configured PApp; # mandatory
    </Perl>
 
@@ -62,7 +61,7 @@ use PApp::Package;
 BEGIN {
    @ISA = PApp::Base::;
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.95;
+   $VERSION = 1;
 }
 
 *PApp::OK = \&Apache::Constants::OK;

@@ -42,7 +42,7 @@ AGNI_OBJ_STRING (SV *self)
   HE *path = hv_fetch_ent ((HV *)SvRV (self), PATHs, 0, PATHh);
   HE *gid  = hv_fetch_ent ((HV *)SvRV (self), GIDs , 0, GIDh);
 
-  sprintf (s, "%s/%s",
+  sprintf (s, "agni::%s::%s",
       path ? SvPV_nolen (HeVAL (path)) : "?",
       gid  ? SvPV_nolen (HeVAL (gid )) : "?");
 
@@ -109,7 +109,9 @@ agni_key2obj (SV *self, SV **key, int need_member)
       HV *hvt;
       HE *he;
 
+      SvRMAGICAL_off (SvRV (self));
       he = hv_fetch_ent ((HV *)SvRV (self), TYPEs, 0, TYPEh);
+      SvRMAGICAL_on (SvRV (self));
       if (!he)
         croak ("FATAL: object %s has no " TYPEp " member", AGNI_OBJ_STRING (self));
 
@@ -124,10 +126,17 @@ agni_key2obj (SV *self, SV **key, int need_member)
 
       tobj = HeVAL (he);
 
-      if (!sv_isobject (tobj))
+      if (!SvROK (tobj) || !SvOBJECT (SvRV (tobj)))
         croak ("type object for '%s' is not an object (bug in populate method?)", key_);
 
-      he = hv_fetch_ent ((HV *)SvRV (tobj), GIDs, 0, GIDh);
+      {
+        HV *hv = (HV *)SvRV (tobj);
+
+        SvRMAGICAL_off (hv);
+        he = hv_fetch_ent (hv, GIDs, 0, GIDh);
+        SvRMAGICAL_on (hv);
+      }
+
       if (!he)
         croak ("FATAL: type object for '%s' has no GID", key_);
 
@@ -137,11 +146,234 @@ agni_key2obj (SV *self, SV **key, int need_member)
   return tobj;
 }
 
+/* return a mortalized scalar or zero */
+static SV *
+agni_fetch (SV *self, SV *key)
+{
+  static int recurse;
+
+  dSP;
+  HE *he;
+  SV *ret = 0;
+  HV *hv = (HV *)SvRV (self);
+
+  if (recurse++ > 1000)
+    croak ("deep recursion in PApp::agni_fetch, aborting");
+
+  /* _-keys go into $self, non-_-keys are store'ed immediately */
+  if (SvPV_nolen (key)[0] == '_')
+    {
+      SvRMAGICAL_off (hv);
+      HE *he = hv_fetch_ent (hv, key, 0, 0);
+      SvRMAGICAL_on (hv);
+
+      if (he)
+        ret = sv_mortalcopy (HeVAL (he));
+    }
+  else
+    {
+      SV *tobj = agni_key2obj (self, &key, 0);
+
+      if (tobj)
+        {
+          HE *he;
+          HV *hvc;
+          
+          SvRMAGICAL_off (hv);
+          he = hv_fetch_ent (hv, CACHEs, 0, CACHEh);
+          SvRMAGICAL_on (hv);
+
+          if (!he)
+            croak ("FATAL: FETCH called on an object without _cache");
+
+          hvc = (HV *)SvRV (HeVAL (he));
+          he = hv_fetch_ent (hvc, key, 0, 0);
+
+          /* if cached, do not call fetch */
+          if (he)
+            ret = sv_mortalcopy (HeVAL (he));
+          else
+            {
+              SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
+              SV *data;
+              int c;
+
+              /* $tobj->fetch($self) */
+              PUSHMARK (SP); EXTEND (SP, 2); PUSHs (tobj); PUSHs (self); PUTBACK;
+              c = call_method ("fetch", G_SCALAR | G_EVAL);
+              SPAGAIN;
+              if (SvTRUE (ERRSV))
+                croak (0);
+
+              if (c == 1)
+                data = POPs;
+              else if (c == 0)
+                data = &PL_sv_undef;
+              else
+                croak ("TYPE->fetch must return at most one return value");
+
+              /* $tobj->thaw($data) */
+              PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (data); PUSHs (self); PUTBACK;
+              c = call_method ("thaw", G_SCALAR | G_EVAL);
+              SPAGAIN;
+              if (SvTRUE (ERRSV))
+                croak (0);
+
+              if (c < 0 || c > 1)
+                croak ("TYPE->thaw must return at most one return value");
+
+              /* reuse thaw return values for ourselves. */
+
+              if (saveerr)
+                sv_setsv (ERRSV, saveerr);
+
+              ret = POPs;
+            }
+        }
+    }
+
+  --recurse;
+
+  PUTBACK;
+  return ret;
+}
+
+static void
+agni_store (SV *self, SV *key, SV *value)
+{
+  dSP;
+
+  HE *he;
+  HV *hv = (HV*) SvRV (self);
+
+  /* _-keys go into $self, non-_-keys are store'ed immediately */
+  if (SvPV_nolen (key)[0] == '_')
+    {
+      SvRMAGICAL_off (hv);
+      hv_store_ent (hv, key, newSVsv (value), 0);
+      SvRMAGICAL_on (hv);
+    }
+  else
+    {
+      SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
+      SV *data;
+      HV *hvc;
+      int c;
+
+      SV *tobj = agni_key2obj (self, &key, 1);
+
+      SvRMAGICAL_off (hv);
+      hvc = (HV *)SvRV (HeVAL (hv_fetch_ent (hv, CACHEs, 0, CACHEh)));
+      SvRMAGICAL_on (hv);
+      he = hv_fetch_ent (hvc, key, 0, 0);
+
+      if (he)
+        {
+          /* always update cache, if it exists */
+          SvREFCNT_dec (HeVAL (he));
+          HeVAL (he) = newSVsv (value);
+        }
+
+      PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (value); PUSHs (self); PUTBACK;
+      c = call_method ("freeze", G_SCALAR | G_EVAL);
+      SPAGAIN;
+
+      if (SvTRUE (ERRSV))
+        croak (0);
+
+      if (c == 1)
+        data = POPs;
+      else if (c == 0)
+        data = &PL_sv_undef;
+      else
+        croak ("TYPE->freeze must return at most one return value");
+
+      PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (self); PUSHs (data); PUTBACK;
+      call_method ("store", G_VOID | G_DISCARD | G_EVAL);
+      SPAGAIN;
+
+      if (SvTRUE (ERRSV))
+        croak (0);
+
+      if (saveerr)
+        sv_setsv (ERRSV, saveerr);
+    }
+}
+
+static OP *
+agni_fetch_op (pTHX)
+{
+  dSP;
+  MAGIC *mg;
+
+  if (PL_op->op_flags & ~(OPf_WANT | OPf_KIDS)
+      || PL_op->op_private & (OPpDEREF | OPpLVAL_DEFER)
+      || !SvRMAGICAL (TOPm1s)
+      || !(mg = mg_find (TOPm1s, PERL_MAGIC_tied))
+      || mg->mg_virtual != &vtbl_agni_object)
+    return Perl_pp_helem (aTHX);
+
+  {
+    SV *sv = POPs;
+    HV *hv = (HV *)POPs;
+
+    ENTER;
+    PUTBACK;
+    PUSHSTACKi (PERLSI_MAGIC);
+    sv = agni_fetch (SvTIED_obj ((SV *)hv, mg), sv); /* newmortal, but.. */
+    POPSTACK;
+    SPAGAIN;
+    LEAVE;
+
+    XPUSHs (sv ? sv_2mortal (newSVsv (sv)) : &PL_sv_undef);
+  }
+
+  RETURN;
+}
+
+static OP *
+agni_store_op (pTHX)
+{
+  return Perl_pp_helem (aTHX);
+}
+
+static void
+agni_try_patch (OP *(CPERLscope(*search))(pTHX), OP *(CPERLscope(*replace))(pTHX))
+{
+  /* dynamically find the op (horrors) and possibly PATCH it */
+  {
+    int ix = PL_savestack_ix;
+
+    while (ix > 0)
+      switch (PL_savestack[--ix].any_i32)
+        {
+          case SAVEt_INT:
+            ix -= 2;
+            break;
+          case SAVEt_OP:
+            {
+              OP *op = (OP*)PL_savestack[--ix].any_ptr;
+
+              if (op->op_ppaddr != search)
+                return;
+
+              op->op_ppaddr = replace;
+            }
+            return;
+          default:
+            /*printf ("unknown saveop %d\n", PL_savestack[ix].any_i32);*/
+            return;
+        }
+notfound:
+    ;
+  }
+}
+
 /* papp */
 
 /*
  * return wether the given sv really is a "scalar value" (i.e. something
- * we can cann setsv on without getting a headache.)
+ * we can setsv on without getting a headache.)
  */
 #define sv_is_scalar_type(sv)	\
 	(SvTYPE (sv) != SVt_PVAV \
@@ -1419,146 +1651,23 @@ DESTROY(SV *rv)
 void
 FETCH(SV *self, SV *key)
         PPCODE:
-        HV *hv = (HV *)SvRV (self);
-        HE *he;
-        
-        SvRMAGICAL_off (hv);
-
-        /* _-keys go into $self, non-_-keys are store'ed immediately */
-        if (SvPV_nolen (key)[0] == '_')
-          {
-            he = hv_fetch_ent (hv, key, 0, 0);
-            SvRMAGICAL_on (hv);
-
-            if (he)
-              XPUSHs (sv_mortalcopy (HeVAL (he)));
-          }
-        else
-          {
-            SV *tobj = agni_key2obj (self, &key, 0);
-
-            if (tobj)
-              {
-                HE *he;
-                HV *hvc;
-                
-                he = hv_fetch_ent (hv, CACHEs, 0, CACHEh);
-
-                if (!he)
-                  croak ("FATAL: FETCH called on an object without _cache");
-
-                hvc = (HV *)SvRV (HeVAL (he));
-                he = hv_fetch_ent (hvc, key, 0, 0);
-                
-                SvRMAGICAL_on (hv);
-
-                /* if cached, do not call fetch */
-                if (he)
-                  XPUSHs (sv_mortalcopy (HeVAL (he)));
-                else
-                  {
-#if PERLVERS <  MAKEVERS(5,8,1)
-                    SV *save_mh = HeVAL (&PL_hv_fetch_ent_mh); /* perl bug, FETCH recursively clobbers PL_hv..mh */
-#endif
-                    SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
-                    SV *data;
-                    int c;
-
-                    /* $tobj->fetch($self) */
-                    PUSHMARK (SP); EXTEND (SP, 2); PUSHs (tobj); PUSHs (self); PUTBACK;
-                    c = call_method ("fetch", G_SCALAR | G_EVAL);
-                    SPAGAIN;
-#if PERLVERS <  MAKEVERS(5,8,1)
-                    HeVAL (&PL_hv_fetch_ent_mh) = save_mh;
-#endif
-                    if (SvTRUE (ERRSV))
-                      croak (0);
-
-                    if (c == 1)
-                      data = POPs;
-                    else if (c == 0)
-                      data = &PL_sv_undef;
-                    else
-                      croak ("TYPE->fetch must return at most one return value");
-
-                    /* $tobj->thaw($data) */
-                    PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (data); PUSHs (self); PUTBACK;
-                    c = call_method ("thaw", G_SCALAR | G_EVAL);
-                    SPAGAIN;
-#if PERLVERS <  MAKEVERS(5,8,1)
-                    HeVAL (&PL_hv_fetch_ent_mh) = save_mh;
-#endif
-                    if (SvTRUE (ERRSV))
-                      croak (0);
-
-                    if (c < 0 || c > 1)
-                      croak ("TYPE->thaw must return at most one return value");
-
-                    /* reuse thaw return values for ourselves. */
-
-                    if (saveerr)
-                      sv_setsv (ERRSV, saveerr);
-                  }
-              }
-            else
-              SvRMAGICAL_on (hv);
-          }
+        agni_try_patch (Perl_pp_helem, agni_fetch_op);
+{
+        SV *ret;
+        PUTBACK;
+        ret = agni_fetch (self, key);
+        SPAGAIN;
+        if (ret)
+          XPUSHs (ret);
+}
 
 void
 STORE(SV *self, SV *key, SV *value)
         PPCODE:
-        HV *hv = (HV*) SvRV (self);
-        SvRMAGICAL_off (hv);
-
-        /* _-keys go into $self, non-_-keys are store'ed immediately */
-        if (SvPV_nolen (key)[0] == '_')
-          {
-            hv_store_ent (hv, key, newSVsv (value), 0);
-            SvRMAGICAL_on (hv);
-          }
-        else
-          {
-            SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
-            SV *data;
-            int c;
-
-            SV *tobj = agni_key2obj (self, &key, 1);
-            HV *hvc = (HV *)SvRV (HeVAL (hv_fetch_ent (hv, CACHEs, 0, CACHEh)));
-            HE *he = hv_fetch_ent (hvc, key, 0, 0);
-
-            SvRMAGICAL_on (hv);
-
-            if (he)
-              {
-                /* always update cache, if it exists */
-                SvREFCNT_dec (HeVAL (he));
-                HeVAL (he) = newSVsv (value);
-              }
-
-            PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (value); PUSHs (self); PUTBACK;
-            c = call_method ("freeze", G_SCALAR | G_EVAL);
-            SPAGAIN;
-
-            if (SvTRUE (ERRSV))
-              croak (0);
-
-            if (c == 1)
-              data = POPs;
-            else if (c == 0)
-              data = &PL_sv_undef;
-            else
-              croak ("TYPE->freeze must return at most one return value");
-
-            PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (self); PUSHs (data); PUTBACK;
-            call_method ("store", G_VOID | G_DISCARD | G_EVAL);
-            SPAGAIN;
-
-            if (SvTRUE (ERRSV))
-              croak (0);
-
-            if (saveerr)
-              sv_setsv (ERRSV, saveerr);
-          }
+        agni_try_patch (Perl_pp_helem, agni_store_op);
+        PUTBACK;
+        agni_store (self, key, value);
+        SPAGAIN;
 
 void
 EXISTS(SV *self, SV *key)

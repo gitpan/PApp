@@ -1,5 +1,15 @@
 Revision history for Perl extension PApp
 
+1.0  Tue Nov 23 18:08:14 CET 2004
+	- check obj_gidseq validity after every import.
+	- various exceptions could cause an agni object to become
+          highly unmagical.
+	- initial speed-up patch for Agni by dynamically patching
+          helem opcodes.
+        - {{..}}-references will do a hash lookup before calling "obj",
+          increasing speed by avoiding a function call.
+        - new function: PApp::insert_fixup.
+
 0.95 Sat Apr 24 09:14:54 CEST 2004
 	- "use strict" by default in Agni methods.
 	- improved ef_password.

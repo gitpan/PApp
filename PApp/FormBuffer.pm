@@ -39,7 +39,7 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.95;
+$VERSION = 1;
 
 no utf8;
 use bytes;

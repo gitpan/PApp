@@ -65,7 +65,7 @@ WriteMakefile(
                    },
     'PREREQ_PM'	=> {
 		    PApp::SQL		=> 0.142,
-                    Compress::LZF	=> 0.1045,
+                    Compress::LZF	=> 1.0,
                     String::Similarity	=> 0.02,
                     Convert::Scalar	=> 0.1,
                     Crypt::Twofish2	=> 0.01,

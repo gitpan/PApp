@@ -1,11 +1,11 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         PApp
-version:      0.95
+version:      1
 version_from: PApp.pm
 installdirs:  site
 requires:
-    Compress::LZF:                 0.1045
+    Compress::LZF:                 1
     Convert::Scalar:               0.1
     Crypt::Twofish2:               0.01
     DBD::mysql:                    2.04
@@ -19,4 +19,4 @@ requires:
     XML::Sablotron:                0.98
 
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.21
+generated_by: ExtUtils::MakeMaker version 6.17

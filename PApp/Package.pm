@@ -23,7 +23,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 0.95;
+$VERSION = 1;
 
 package PApp::Package;
 
@@ -324,7 +324,7 @@ use PApp::Util (); # nothing yet
    );
 
    for my $type (qw(request cleanup newuser newsession)) {
-      my $cb = join ";\n", PApp::Util::uniq $code->{cb}{$type};
+      my $cb = join ";\n", PApp::Util::uniq @{ $code->{cb}{$type} };
       $ppkg->{cb}{$type} = $ppkg->_eval("sub { $cb }");
    }
 

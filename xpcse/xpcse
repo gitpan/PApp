@@ -45,7 +45,7 @@ certain content types.
 For example, to use a different program to edit jpeg files with xpcse 
 than the one defined in the standard mailcap file, use this line;
 
-  image/jpeg;xv -maxpect '%s'; edit=/location/of/program/to/edit '%s'
+  image/jpeg; xv -maxpect '%s'; edit=/location/of/program/to/edit '%s'
 
 =back
 
@@ -239,7 +239,7 @@ if (0 == ($editpid = fork)) {
    if ($hdr{'content-type'} eq "text/plain") {
       exec "$TERMINAL $EDITOR $line $TEMP";
    } else {
-      local $ENV{MAILCAPS} = "$ENV{HOME}/.mailcap.xpcse:/etc/mailcap.xpcse:$ENV{MAILCAPS}";
+      local $ENV{MAILCAPS} = "$ENV{HOME}/.mailcap.xpcse:$ENV{HOME}/.mailcap:$ENV{MAILCAPS}:/etc/mailcap.xpcse:/etc/mailcap";
       my $rm = -x "$Config{sitebin}/run-mailcap" ? "$Config{sitebin}/run-mailcap" : "run-mailcap";
       exec "$TERMINAL $rm --action=edit $hdr{'content-type'}:$TEMP";
    }

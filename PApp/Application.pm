@@ -39,7 +39,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.95;
+$VERSION = 1;
 
 =item $papp = new PApp::Application args...
 
@@ -242,18 +242,19 @@ sub files($;$) {
 
 "Run" the application, i.e. find the current package & module and execute it.
 
-=item $papp->callback_exception
+=item $papp->uncaught_exception ($exception, $callback)
 
-This method is called when a surl callback die's. The cause is still in
-C<$@>. This method is free to call C<abort_to> or other functions. If it
-returns, the exception will be ignored.
+This method is called when a surl callback dies ($callback true) or
+another exception is caught by papp ($callback false).This method is free
+to call C<abort_to> or other functions. If it returns, the exception will
+be ignored.
 
 The default implementation just rethrows.
 
 =cut
 
-sub callback_exception {
-   die;
+sub uncaught_exception {
+   PApp::handle_error ($_[0]);
 }
 
 =item $papp->new_package(same arguments as PApp::Package->new)
@@ -437,7 +438,7 @@ sub load_code {
    });
 
    for my $type (qw(init childinit childexit)) {
-      my $cb = join ";", PApp::Util::uniq delete $self->{cb_src}{$type};
+      my $cb = join ";", PApp::Util::uniq @{ delete $self->{cb_src}{$type} };
       $self->{cb}{$type} = eval "use utf8; no bytes; sub {\n$cb\n}";
       fancydie "error while compiling application callback", $@,
                info => [name => $self->{name}],
@@ -544,14 +545,14 @@ sub run {
    $papp->{obj}->show;
 }
 
-=item $papp->callback_exception
+=item $papp->uncaught_exception
 
-The Agni-specific version of this method calls the C<callback_exception>
+The Agni-specific version of this method calls the C<uncaught_exception>
 method of the mounted application.
 
 =cut
 
-sub callback_exception {
+sub uncaught_exception {
    package PApp;
 
    local $papp    = shift;
@@ -561,7 +562,7 @@ sub callback_exception {
    local $PApp::SQL::Database = $PApp::Config::Database;
    local $PApp::SQL::DBH      = $PApp::Config::DBH;
 
-   $papp->{obj}->callback_exception;
+   $papp->{obj}->uncaught_exception ($_[0], $_[1]);
 }
 
 1;

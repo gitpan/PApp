@@ -154,7 +154,7 @@ PApp::Config - hold common configuration settings
 
 use PApp::SQL;
 
-$VERSION = 0.95;
+$VERSION = 1;
 
 require Exporter;
 

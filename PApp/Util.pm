@@ -29,7 +29,7 @@ use URI;
 use base 'Exporter';
 
 BEGIN {
-   $VERSION = 0.95;
+   $VERSION = 1;
    @EXPORT_OK = qw(
          format_source dumpval sv_peek sv_dump
          digest
@@ -131,22 +131,17 @@ sub append_string_hash($$) {
    $h1;
 }
 
-=item @ = uniq @array/$arrayref
+=item @ = uniq @array
 
-Returns all the elements that are unique inside the array/arrayref. The
-elements must be strings, or at least must stringify sensibly (to make
-sure the results are predictable, always pass in an arrayref).
+Returns all the elements that are unique inside the array. The elements
+must be strings, or at least must stringify sensibly.
 
 =cut
 
 sub uniq {
    my %seen;
-   my @res;
-   for (ref $_[0] ? @{$_[0]} : @_) {
-      next if $seen{$_}++;
-      push @res, $_;
-   }
-   @res;
+
+   grep !$seen{$_}++, @_
 }
 
 =item sv_peek $sv

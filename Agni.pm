@@ -20,7 +20,7 @@ Agni - persistent data and objects
 
 =head1 DESCRIPTION
 
-Agni is a germanic god of fire. The rest is obvious...
+Agni is the God of the Sun and Fire. The rest is obvious...
 
 Most of these functions are low-level stuff. Better look at the methods
 of the agni root object (本) first, which has most of the functionality
@@ -69,6 +69,8 @@ BEGIN {
       path_obj_by_gid gid obj_of
 
       %pathid @pathname @pathmask @subpathmask @parpathmask @parpath
+
+      agni_exec agni_refresh
 );
 
 @EXPORT_OK = (@EXPORT, qw(
@@ -80,8 +82,8 @@ use PApp::HTML;
 
 our %obj_cache; # obj_cache{$gid}[$pathid]
 
-my @agni_bootns; # boot namespace objects
-my %ns_cache;    # the namespace object cache
+my @agni_bootns; # boot package objects
+my %ns_cache;    # the package object cache
 
 our %pathid;      # name => id
 our @parpath;     # id => id
@@ -122,9 +124,11 @@ $OID_ISA		= 33; # the data/method parent for lookups
 $OID_ISA_METHOD		= 5100001742; # the gids start to get ugly here
 $OID_ISA_DATA		= 5100001741;
 $OID_CMDLINE_HANDLER    = 21474836484; # util::cmdline
-$OID_META_NAMESPACE	= 4295048763;
-$OID_NAMESPACE_AGNI     = 4295049779; # lots of special-casing for that one
+$OID_META_PACKAGE	= 4295048763;
+$OID_PACKAGE_DEFAULT	= 4295049779; # lots of special-casing for that one
 $OID_META_PARCEL	= 5100000280;
+$OID_NAMESPACES         = 5100003444; # circular reference of namespace_base to namespace
+$OID_ISA_NAMESPACE      = 5100003446;
 
 our %BOOTSTRAP_LEVEL; # indexed by {gid}
 
@@ -181,6 +185,8 @@ our @sqlcol = (
    "d_blob",
    "d_fulltext",
 );
+
+our %sqlcol = map +($_ => 1), @sqlcol;
 
 our %sqlcol_is_numeric = (
    d_double => 1,
@@ -366,104 +372,26 @@ sub register_callback_info {
    }
 }
 
-# $NAMESPACE; # the current compilation namespace (NOT our because that's visible inside eval's!!!)
+use vars '$PACKAGE'; # the current compilation package (NOT our because that's visible inside eval's!!!)
 
-BEGIN {
-   $objtag_start    = "\x{10f101}";
-   $objtag_type_lo  = "\x{10f102}";
-   $objtag_obj      = "\x{10f102}"; # inline object
-   $objtag_obj_gid  = "\x{10f103}"; # inline object gid
-   $objtag_obj_show = "\x{10f104}"; # inline show call on obj
-   $objtag_type_hi  = "\x{10f1ed}";
-   $objtag_end      = "\x{10f1fe}";
-}
-
-# compile code into the current namespace... also expands the special method gids
-
-sub compile {
-   #local $SIG{__DIE__}; local $SIG{__WARN__}; # speed, among others
-   my $code = $_[0];
-
-   $code =~ s{
-      $objtag_start([$objtag_type_lo-$objtag_type_hi])([^$objtag_end]*)$objtag_end
-   }{
-      my ($type, $content) = ($1, $2);
-      if ($type eq $objtag_obj) {
-         "+(obj\"$content\")";
-      } elsif ($type eq $objtag_obj_gid) {
-         "'$content'";
-      #} elsif ($type eq $objtag_obj_show) {
-      #   "<\:(obj '$1')->show:\>";
-      } else {
-         warn "unknown method tag " . ((ord $type) - (ord $objtag_type_lo) + 2) . ", maybe you need a newer version of agni?\n";
-         "";
-      }
-   }ogex;
-
-   eval "package $NAMESPACE->{_package}; use strict; $code";
-}
-
-sub compile_method_perl {
-   my ($self, $name, $args, $code) = @_;
-
-   my $args = join ",", '$self', split /[ \t,]+/, $args;
-
-   my $class     = ref $self;
-   my $isa_class = ref $self->{_isa};
-
-   $code =~ s/->SUPER::/"->$isa_class\::"/ge;
-   $code =~ s/->SUPER(?!\w)/"->$isa_class\::$name"/ge;
-
-   my $err = eval {
-      compile "sub $class\::$name { my ($args) = \@_;\n"
-            . "#line 1 \"$class\::$name\"\n"
-            . "$code\n"
-            . "}";
-      $@;
-   } || $@;
-
-   if ($err) {
-      *{"$class\::$name"} = sub {
-         fancydie "can't call method $name because of compilation errors", $err, abridged => 1;
-      };
-
-      $last_compile_status = $err;
-      warn $err;
-   }
-}
-
-sub Agni::BootNamespace::eval {
-   local $NAMESPACE = $_[0];
-   compile $_[1];
-}
-
-sub Agni::BootNamespace::initialize {
-   my $self = shift;
-   # might be called multiple times
-   $self->{_initialized} ||= do {
-      # nop, for now
-      1;
-   };
-}
-
-sub get_namespace {
+sub get_package {
    my ($path, $gid) = @_;
 
    $ns_cache{$path, $gid} ||= do {
-      my $namespace;
+      my $package;
 
-      # during bootstrap, everything is put into the agni namespace. oh yes!!
+      # during bootstrap, everything is put into the default package. oh yes!!
       if ($bootstrap) {
          return $agni_bootns[$path] if $agni_bootns[$path];
-         $namespace = $agni_bootns[$path] = bless {
+         $package = $agni_bootns[$path] = bless {
             _path  => $path,
             _gid   => $gid,
-         }, Agni::BootNamespace::;
+         }, Agni::BootPackage::;
       } else {
-         $namespace = path_obj_by_gid $path, $gid;
+         $package = path_obj_by_gid $path, $gid;
       }
 
-      $namespace->{_package} = "ns::$namespace->{_path}::$namespace->{_gid}";
+      $package->{_package_name} = "ns::$package->{_path}::$package->{_gid}";
 
       my $init_code = q~
          use Carp;
@@ -483,7 +411,7 @@ sub get_namespace {
 
          use Agni qw(*env *app path_obj_by_gid gid obj_of);
 
-         use vars qw($PATH $NAMESPACE);
+         use vars qw($PATH $PACKAGE);
 
          sub obj($) {
             ref $_[0] ? $_[0] : path_obj_by_gid PATH, $_[0];
@@ -510,27 +438,122 @@ sub get_namespace {
          # HACK END
       ~;
 
-      ${"$namespace->{_package}::PATH"}      = $path;
-      ${"$namespace->{_package}::NAMESPACE"} = $namespace;
+      ${"$package->{_package_name}::PATH"}    = $path;
+      ${"$package->{_package_name}::PACKAGE"} = $package;
 
-      $namespace->eval(qq~
+      $package->eval(qq~
             sub PATH() { $path }
             $init_code;
          ~);
       die if $@;
 
-      $namespace->initialize;
+      $package->initialize;
 
-      # don't cache the bootnamespace
-      return $namespace if Agni::BootNamespace:: eq ref $namespace;
-      $namespace;
+      # don't cache the bootpackage
+      return $package if Agni::BootPackage:: eq ref $package;
+      $package;
   }
+}
+
+BEGIN {
+   $objtag_start    = "\x{10f101}";
+   $objtag_type_lo  = "\x{10f102}";
+   $objtag_obj      = "\x{10f102}"; # inline object
+   $objtag_obj_gid  = "\x{10f103}"; # inline object gid
+   $objtag_obj_show = "\x{10f104}"; # call show, used by content::dynamic::xml
+   $objtag_type_hi  = "\x{10f1ed}";
+   $objtag_end      = "\x{10f1fe}";
+}
+
+# compile code into the current package... also expands the special method gids
+
+sub compile {
+   my $code = $_[0];
+
+   $code =~ s{
+      $objtag_start([$objtag_type_lo-$objtag_type_hi])([^$objtag_end]*)$objtag_end
+   }{
+      my ($type, $content) = ($1, $2);
+      if ($type eq $objtag_obj) {
+         "+(\$Agni::obj_cache{'$content'}[$PACKAGE->{_path}] || obj '$content')";
+      } elsif ($type eq $objtag_obj_gid) {
+         "'$content'";
+      } else {
+         warn "unknown method tag " . ((ord $type) - (ord $objtag_type_lo) + 2) . " with content '$content', maybe you need a newer version of agni?\n";
+         "";
+      }
+   }ogex;
+
+   local $SIG{__DIE__};
+   eval "package $PACKAGE->{_package_name}; use strict; $code";
+}
+
+sub compile_method_perl {
+   my ($self, $name, $args, $code) = @_;
+
+   my $args = join ",", '$self', split /[ \t,]+/, $args;
+
+   my $class     = ref $self;
+   my $isa_class = ref $self->{_isa};
+
+   $code =~ s/->SUPER::/->$isa_class\::/g;
+   $code =~ s/->SUPER(?!\w)/->$isa_class\::$name/g;
+
+   #d# make the "3" in the next line configurable
+   compile "sub $class\::$name { my ($args) = \@_;\n"
+         . "#line 3 \"{$pathname[$self->{_path}]$self->{_gid}::$name}\"\n"
+         . "$code\n"
+         . "}";
+
+   if (my $err = $@) {
+      *{"$class\::$name"} = sub {
+         fancydie "can't call method $name because of compilation errors", $err, abridged => 1;
+      };
+
+      $last_compile_status = $err;
+      warn "error while compiling $self->{_path}/$self->{_gid}->$name: $err";
+   }
+}
+
+sub compile_method_environment {
+   my ($self, $cb) = @_;
+
+   $self->{_package}
+      or croak "unable to compile method: no package in object $self->{_path}/$self->{_gid}";
+
+   local $PACKAGE = get_package $self->{_path}, $self->{_package};
+   local $PApp::PCode::register_callback = register_callback_info $self;
+
+   if ((ref $self) eq (ref $self->{_isa})) {
+      my $class = "agni::$self->{_path}::$self->{_gid}";
+
+      @{"$class\::ISA"} = ref $self;
+
+      update_isa_class ($self, $class);
+   }
+
+   &$cb;
 }
 
 # the toplevel object, can't be edited etc.. but it exists ;)
 our $toplevel_object = Agni::agnibless { }, agni::object::;
 
 exists $toplevel_object->{_type} or die; # magic?
+
+sub Agni::BootPackage::eval {
+   local $PACKAGE = $_[0];
+
+   compile $_[1];
+}
+
+sub Agni::BootPackage::initialize {
+   my $self = shift;
+   # might be called multiple times
+   $self->{_initialized} ||= do {
+      # nop, for now
+      1;
+   };
+}
 
 # a very complicated thing happens here: the initial loading of the
 # objects necessary to work properly - during bootstrap, only string
@@ -542,30 +565,31 @@ sub agni_bootstrap($) {
       or fancydie "bootstrapping error", "tried to bootstrap path '$path', which is not a valid path";
 
    local $bootstrap = 1;
+   local %bootstrap;
    local %bootstrap_cache;
 
    # Load the absolute minimum set of objects that allows
    # loading of arbitrary other objects. These objects
    # will only load partially(!)
-   for my $gid ($OID_OBJECT, $OID_NAMESPACE_AGNI,
+   for my $gid ($OID_OBJECT, $OID_PACKAGE_DEFAULT,
                 $OID_ROOTSET, $OID_ISA_DATA, $OID_ISA_METHOD,
-                $OID_META_PARCEL) {
+                $OID_META_PARCEL, $OID_NAMESPACES) {
       path_obj_by_gid $path, $gid;
       $BOOTSTRAP_LEVEL{$gid} ||= $bootstrap;
    }
 
    ####################
 
-   # the namespace must be loaded now... or is it not?
-   my $namespace = $obj_cache{$OID_NAMESPACE_AGNI}[$path]
-      or die "FATAL 20: boot namespace for path $path not loaded after bootstrapping";
+   # the default package must be loaded now... or is it not?
+   my $package = $obj_cache{$OID_PACKAGE_DEFAULT}[$path]
+      or die "FATAL 20: boot package for path $path not loaded after bootstrapping";
 
-   $ns_cache{$namespace->{_path}, $namespace->{_gid}} = $namespace;
+   $ns_cache{$package->{_path}, $package->{_gid}} = $package;
    delete $agni_bootns[$path]
-      or die "FATAL 21: no bootnamespace for path $path after bootstrapping";
+      or die "FATAL 21: no bootpackage for path $path after bootstrapping";
 
-   $namespace->{_package} = "ns::$namespace->{_path}::$namespace->{_gid}";
-   $namespace->initialize;
+   $package->{_package_name} = "ns::$package->{_path}::$package->{_gid}";
+   $package->initialize;
 
    ####################
 
@@ -573,8 +597,8 @@ sub agni_bootstrap($) {
    while (%bootstrap) {
       $bootstrap++;
       my @bs = values %bootstrap; %bootstrap = ();
-      for my $self (@bs) {
-         my $postponed = delete $self->{_postponed};
+      for (@bs) {
+         my ($self, $postponed) = @$_;
 
          $self->{_path} == $path
             or die "FATAL 23: path mismatch, path $path needs object $self->{_path}/$self->{_gid}??";
@@ -588,7 +612,7 @@ sub agni_bootstrap($) {
             eval {
                $tobj->populate ($self, $data);
             };
-            warn $@ if $@;
+            warn "(bootstrap) unable to populate agni::$self->{_path}::$self->{_gid} with attribute $type: $@" if $@;
          }
       }
    }
@@ -617,6 +641,13 @@ sub update_isa_class($$) {
             }
          }
       }
+
+      # "try" to nuke perl's ISA caches. simply
+      # assigning to ISA does not necessarily work.
+      no strict refs;
+      eval "sub Agni::nukeme { }";
+      my $stash = *{main::Agni::}{HASH};
+      my $sub = delete $stash->{nukeme};
    }
 }
 
@@ -693,12 +724,12 @@ sub update_class($) {
    # use populate for these, too! #d# #FIXME#
    update_isa_mem $self, delete $data{$OID_ISA};
 
-   if (exists $data{$OID_META_NAMESPACE}) {
-      $self->{_namespace} = delete $data{$OID_META_NAMESPACE};
+   if (exists $data{$OID_META_PACKAGE}) {
+      $self->{_package} = delete $data{$OID_META_PACKAGE};
    }
 
    if ($bootstrap) {
-      $bootstrap{$self} = $self;
+      $bootstrap{$self} = [$self, my $postponed = {}];
 
       # now load some data and method types
       while (my ($type, $data) = each %data) {
@@ -717,10 +748,10 @@ sub update_class($) {
             ]};
 
          if ($ismethod) { # if it has an args attribute...
-            $self->{_namespace} eq $OID_NAMESPACE_AGNI
-               or die "FATAL 31: bootstrapping object $self->{_path}/$self->{_gid} needs non-agni namespace $self->{_namespace}";
+            $self->{_package} eq $OID_PACKAGE_DEFAULT
+               or die "FATAL 31: bootstrapping object $self->{_path}/$self->{_gid} needs non-agni package $self->{_package}";
 
-            $self->_compile_method_environment (sub {
+            compile_method_environment $self, sub {
                if ($superclass eq $OID_METHOD_PERL) {
                   compile_method_perl $self, $name, $args, pcode2perl perl2pcode utf8_on $data;
                } else {
@@ -730,9 +761,9 @@ sub update_class($) {
                   my $class = ref $self;
                   *{"$class\::$name"} = sub { die "non-bootstrap method $class->$name ($args) called during bootstrap" };
 
-                  $self->{_postponed}{$type} = $data;
+                  $postponed->{$type} = $data;
                }
-            });
+            };
 
          } elsif ($isnamed) { # no args attribute but named, must be data
             # pretend to be able to handle descendents of OID_DATA_STRING and nothing else.
@@ -742,27 +773,28 @@ sub update_class($) {
             $self->{_type}{$name} = bless { _gid => $type }, 
                                     "non-bootstrap data access during bootstrap ($self->{_path}/$self->{_gid}\{$type=$name}";
 
-            $self->{_postponed}{$type} = $data;
+            $postponed->{$type} = $data;
          } else {
-            $self->{_postponed}{$type} = $data;
+            $postponed->{$type} = $data;
          }
       }
    } else {
       while (my ($type, $data) = each %data) {
          # undef data must be populated, too...
-         my $tobj = path_obj_by_gid($self->{_path}, $type);
+         my $tobj = path_obj_by_gid ($self->{_path}, $type)
+            or warn "object agni::$self->{_path}::$self->{_gid} refers to nonloadable type $type";
          eval {
             $tobj->populate ($self, $data);
          };
-         warn $@ if $@;
+         warn "unable to populate agni::$self->{_path}::$self->{_gid} with attribute $type: $@" if $@;
       }
 
       # cannot happen during bootstrap
       for (keys %{$self->{_attr}}) {
          unless (exists $type{$_}) {
-            my $tobj = path_obj_by_gid($self->{_path}, $_)
-               or croak "$self->{_path}/$self->{_gid}: unable to load type object $_, unable to depopulate\n";
-            $tobj->depopulate($self);
+            my $tobj = path_obj_by_gid ($self->{_path}, $_)
+               or croak "agni::$self->{_path}::$self->{_gid}: unable to load type object $_, unable to depopulate\n";
+            $tobj->depopulate ($self);
          }
       }
    }
@@ -817,26 +849,6 @@ sub split_obj {
    $newid;
 }
 
-sub agni::object::_compile_method_environment {
-   my ($self, $cb) = @_;
-
-   $self->{_namespace}
-      or croak "unable to compile method $self->{name}: no namespace in object $self->{_path}/$self->{_gid}";
-
-   local $NAMESPACE = get_namespace $self->{_path}, $self->{_namespace};
-   local $PApp::PCode::register_callback = register_callback_info $self;
-
-   if ((ref $self) eq (ref $self->{_isa})) {
-      my $class = "agni::$self->{_path}::$self->{_gid}";
-
-      @{"$class\::ISA"} = ref $self;
-
-      update_isa_class $self, $class;
-   }
-
-   &$cb;
-}
-
 sub agni::object::copy_to_path {
    my ($self, $target) = @_;
 
@@ -856,6 +868,7 @@ sub agni::object::copy_to_path {
    }
 }
 
+# these are rarely shown and only defined for completeness
 sub agni::object::name     { "\x{4e0a}" }
 sub agni::object::fullname { "\x{4e0a}" }
 
@@ -877,8 +890,9 @@ sub agni::object::obj {
 
 =item path_gid2name $path, $gid
 
-Tries to return the name of the object, or some descriptive string, in
-case the object lacks a name. Does not load the object into memory.
+Tries to return the name of the object, or some other descriptive string, in
+case the object lacks a name. Does not load the object into memory, but
+might load other objects in memory.
 
 =cut
 
@@ -887,25 +901,43 @@ sub path_gid2name($$) {
    if (my $obj = $obj_cache[$path]{$gid}) {
       return $obj->name;
    } else {
-      sql_fetch \my($parcel, $namespace, $name, $name2, $isa),
-                "select p.data, s.data, n.data, o.data, i.data
-                 from obj
-                    left join d_int    p on obj.id = p.id and p.type = $OID_META_PARCEL
-                    left join d_int    s on obj.id = s.id and s.type = $OID_META_NAMESPACE
-                    left join d_string n on obj.id = n.id and n.type = $OID_META_NAME
-                    left join d_string o on obj.id = o.id and o.type = $OID_ATTR_NAME
-                    left join d_int    i on obj.id = i.id and i.type = $OID_ISA
-                 where obj.paths & (1 << ?) <> 0 and obj.gid = ?",
-                $path, $gid;
-      $namespace &&= (path_obj_by_gid $path, $namespace)->name . "/";
-      $parcel and $namespace = "(" . (path_obj_by_gid $path, $parcel)->name . ")$namespace";
-      $name2 and $name ||= "#$name2";
-      if ($name) {
-         return $namespace . Convert::Scalar::utf8_on $name;
-      } elsif ($isa) {
-         $namespace . (path_obj_by_gid $path, $isa)->name . "(#$gid)";
+      my $st = sql_exec \my ($nsname, $oname),
+                        "select ns_name.data, attr_ns.data
+                         from obj
+                            inner join d_string attr_ns on (obj.id = attr_ns.id)
+                            inner join obj obj_ns on (obj_ns.gid = attr_ns.type)
+                            inner join d_int isa_ns on (isa_ns.id = obj_ns.id and isa_ns.type = $OID_ISA_NAMESPACE)
+                            inner join d_string ns_name on (ns_name.id = obj_ns.id and ns_name.type = $OID_NAMESPACES)
+
+                         where
+                            obj.gid = ?
+                            and obj.paths & (1 << ?) <> 0
+                            and obj_ns.paths & (1 << ?) <> 0
+                         limit 1",
+                        $gid, $path, $path;
+
+      if ($st->fetch) {
+         utf8_on $nsname;
+         utf8_on $oname;
+         return "$nsname/$oname";
+      } elsif (my $isa = sql_fetch "select isa.data
+                                    from obj inner join d_int isa on (isa.id = obj.id and isa.type = $OID_ISA)
+                                    where gid = ? and paths & (1 << ?) <> 0",
+                                   $gid, $path) {
+         my $aname = sql_fetch
+                        "select attr_name.data
+                         from obj
+                            inner join d_string attr_name on (attr_name.id = obj.id and attr_name.type = $OID_ATTR_NAME)
+                         where
+                            obj.gid = ?
+                            and obj.paths & (1 << ?) <> 0
+                            and attr_name.data is not null",
+                       $gid, $path;
+         utf8_on $aname;
+
+         (path_gid2name ($path, $isa)) . ">" . ($aname ? "#$aname" : $gid);
       } else {
-         "$namespace#$gid";
+         "#$gid";
       }
    }
 }
@@ -969,7 +1001,7 @@ sub commit_objs {
                               $src, $obj_gid;
             }
 
-            if ($wantlog) {
+            if ($wantlog && 0) {#d#
                my $name = sql_fetch "select coalesce(name1.data, concat('#', name2.data), concat('#', gid))
                                      from obj
                                         left join d_string name1 on (obj.id = name1.id and name1.type = $OID_META_NAME)
@@ -1051,6 +1083,14 @@ sub commit_objs {
       }
 
    };
+}
+
+sub check_gidseq {
+   my $seq = sql_fetch "select seq from obj_gidseq";
+   my $max = sql_fetch "select max(gid) from obj where gid < (? | 0xffffffff)", $seq;
+
+   $seq > $max
+      or die "FATAL, DATABASE OR IMAGE CORRUPTION: obj_gidseq points to allocated objects. Duplicate SYSID?\n";
 }
 
 sub import_objs {
@@ -1145,6 +1185,8 @@ sub import_objs {
       Agni::update @event;
    };
 
+   check_gidseq;
+
    sql_exec "unlock tables";
 
    die if $@;
@@ -1202,7 +1244,7 @@ sub find_dead_objects {
       grep !defined $_, values %isac and croak "isac not a subset of isai, check type tree!";
 
       # the root-set of alive objects (currently only the rootset)
-      push @$seed, sql_fetchall "select id from obj where gid = $OID_ROOTSET";
+      $seed = [ sql_fetchall "select id from obj where gid = $OID_ROOTSET" ];
 
       while (@$seed) {
          $next = [];
@@ -1259,20 +1301,24 @@ sub find_dead_objects {
                      my $tobj = path_obj_by_gid $path, $tgid
                         or croak "FATAL: garbage_collect cannot load type object ({$paths}/$tgid)";
 
-                     my $data =
-                        sql_fetch "select data
-                                   from $tobj->{sqlcol} attr where id = ? and type = ?",
-                                  $id, $tgid;
+                     if  ($sqlcol{$tobj->{sqlcol}}) {
+                        my $data =
+                           sql_fetch "select data
+                                      from $tobj->{sqlcol} as attr where id = ? and type = ?",
+                                     $id, $tgid;
 
-                     my $gids = $tobj->attr_enum_gid($data);
+                        my $gids = $tobj->attr_enum_gid ($data);
 
-                     if (@$gids) {
-                        my $st = sql_exec \my($id), "select id from obj
-                                                     where gid in (".(join ",", @$gids).") and paths & (1 << ?) <> 0",
-                                                    $path;
-                        while ($st->fetch) {
-                           push @$next, $id if delete $dead{$id};
+                        if (@$gids) {
+                           my $st = sql_exec \my($id), "select id from obj
+                                                        where gid in (".(join ",", @$gids).") and paths & (1 << ?) <> 0",
+                                                       $path;
+                           while ($st->fetch) {
+                              push @$next, $id if delete $dead{$id};
+                           }
                         }
+                     } else {
+                        warn "WARNING: type object $path/$tgid in use but has invalid sqlcol\n";
                      }
                   }
                }
@@ -1419,6 +1465,44 @@ PApp::Event::on agni_update => sub {
       }
    }
 };
+
+=item agni_exec { BLOCK };
+
+Execute the given perl block in an agni-environment (i.e. database set up
+correctly etc.).
+
+=item agni_refresh
+
+Refresh the database connection and the $PApp::NOW timestamp, and also
+checks for events (e.g. write accesses) done by other agni processes.
+Usually called within C<agni_exec> after some time has progressed.
+
+Might do other things in the future.
+
+=cut
+
+sub agni_refresh {
+   $PApp::NOW = time;
+   $PApp::SQL::DBH = PApp::Config::DBH;
+
+   %PApp::temporary = ();
+
+   PApp::Event::check;
+}
+
+sub agni_exec(&) {
+   my $cb = shift;
+
+   local $PApp::SQL::Database = $PApp::Config::Database;
+   local $PApp::NOW;
+   local $PApp::SQL::DBH;
+   local %PApp::state;
+   local %PApp::temporary;
+
+   agni_refresh;
+
+   &$cb;
+}
 
 #############################################################################
 

@@ -100,5 +100,37 @@ language at that point.
 
 </section>
 
+<section title='Maintainance'>
+
+<qa q='My machine crashed and my application complains about the state database. I am running MySQL'>
+
+This means that a table in your database is corrupt. Because the
+state table is the most active one, it is also the most likely to be
+corrupted.
+
+You should inqure further about the circumstances that lead to this
+corruption and should ask a qualified database engineer to have a look
+at the problem and decide about ways to repair it.
+
+However, if it is necessary to bring the system back online immediately
+and you don't care about loosing the state information of logged in
+users (everybody will have to log in again after this!), you can try the
+following this procedure at your own risk: 
+
+WARNING: Never do this with any other table save for the state table!!!
+
+  mysql papp
+
+  ( repair table state; /* You can try this step - it might work without
+    having to delete everything */ )
+
+  delete from state;
+
+  quit
+
+</qa>
+
+</section>
+
 </faq>
 

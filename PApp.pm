@@ -159,7 +159,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 0.95;
+   $VERSION = 1;
 
    use base Exporter;
 
@@ -169,7 +169,7 @@ BEGIN {
          surl slink sform cform suburl sublink retlink_p returl retlink
          current_locals reference_url multipart_form parse_multipart_form
          endform redirect internal_redirect abort_to content_type
-         abort_with setlocale fixup_marker
+         abort_with setlocale fixup_marker insert_fixup
 
          SURL_PUSH SURL_UNSHIFT SURL_POP SURL_SHIFT
          SURL_EXEC SURL_SAVE_PREFS SURL_SET_LOCALE SURL_SUFFIX
@@ -381,7 +381,7 @@ prefixing parameter names with a minus sign (i.e. "-switch").
 
 Similar to C<%A>, but it instead contains the parameters from
 forms submitted via GET or POST (C<see parse_multipart_form>,
-however). Everything in this hash is insecure by nature and must should be
+however). Everything in this hash is insecure by nature and must be
 used carefully.
 
 Normally, the values stored in C<%P> are plain strings (in utf-8,
@@ -990,11 +990,15 @@ sub retlink {
    alink shift, &returl;
 }
 
-=item my ($marker, $ref) = fixup_marker [$initial_content]
+=item ($marker, $ref) = fixup_marker [$initial_content]
 
 Create a new fixup marker and return a scalar reference to it's
 replacement text (initially empty if not specified). At page output time
 any fixup markers in the document are replaced by this scalar.
+
+=item $ref = insert_fixup [$initial_content]
+
+Similar to C<fixup_marker>, but inserts the marker into the current output stream.
 
 =cut
 
@@ -1004,6 +1008,12 @@ sub fixup_marker {
       (sprintf "\x{fc00}%06d", $#fixup),
       \$fixup[-1],
    );
+}
+
+sub insert_fixup {
+   my ($marker, $ref) = fixup_marker $_[0];
+   $PApp::output .= $marker;
+   $ref;
 }
 
 =item sform [\%attrs,] [module,] arg => value, ...
@@ -1890,7 +1900,7 @@ sub handle_error($) {
    eval { update_state };
    eval { flush_cvt };
    if ($request) {
-      $request->log_reason($exc, $request->filename);
+      $request->log_reason ($exc, $request->filename);
    } else {
       print STDERR $exc;
    }
@@ -2046,7 +2056,7 @@ sub _handler {
             (shift @{$state{papp_execonce}})->() while @{$state{papp_execonce}};
             1;
          } or (UNIVERSAL::isa $@, PApp::Upcall:: and die)
-           or $papp->callback_exception;
+           or $papp->uncaught_exception ($@, 1);
       }
       delete $state{papp_execonce};
 
@@ -2055,7 +2065,9 @@ sub _handler {
          set_cookie;
       }
 
-      $papp->run;
+      eval { $papp->run; 1; }
+         or (UNIVERSAL::isa $@, PApp::Upcall:: and die)
+         or $papp->uncaught_exception ($@, 0);
 
       flush_cvt;
 
@@ -2070,7 +2082,7 @@ sub _handler {
          untie *STDOUT; open STDOUT, ">&1";
          return &$upcall;
       } else {
-         handle_error($@);
+         handle_error $@;
       }
    };
 

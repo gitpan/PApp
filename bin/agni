@@ -1,5 +1,154 @@
 #!/opt/bin/perl
 
+=head1 NAME
+
+agni - commandline access to the I<PApp!Agni System>.
+
+=head1 SYNOPSIS
+
+agni [option]...
+
+=head1 DESCRIPTION
+
+agni works as a shell interface to the I<PApp!Agni System>.
+
+=head1 OPTIONS
+
+=over 4
+
+=item --file B<file>
+
+write output to file or read input from B<file>
+
+=back
+
+=head2 Daemon Mode
+
+=over 6
+
+=item --daemon
+
+go into daemon mode
+
+=item -i | --interval B<seconds>
+
+sleep interval for daemon mode
+
+=back
+
+=head2 Handling ex/import of data from a specific path
+
+=over 6
+
+=item --export-path B<path>
+
+write B<path> to file (or stdout)
+
+=item --import-path B<path>
+
+import B<path> from file
+
+=back
+
+=head2 Handling whole images for backup purposes
+
+=over 6
+
+=item --load-image B<file>
+
+load a saved backup file B<file>
+
+=item --save-image B<file>
+
+save a backup file B<file>
+
+=back
+
+=over 4
+
+=item --gar
+
+starts garbagecollector
+
+=item --paths
+
+show paths
+
+=item --newpath B<path>
+
+creates a new Bpath
+   
+=item -e, --exec-cmd B<path> B<command>
+
+executes a B<command> as defined in util::cmdline
+B<path> specifies the path to the object.
+
+ agni -e root/agni/ help (-v)
+
+gives you a list of available B<commands>.
+
+=back
+
+=head1 EXAMPLES
+
+=head2 Exporting Data from your applications data path
+
+	agni --file /tmp/config.xml --export-path root/agni/staging/data/
+
+After executing this command you can find a dump of all the objects from
+the B<agni-path> F<root/agni/staging/data/> (don't forget the trailing
+slash!) in the file F</tmp/config.xml>. Beware though: agni applications
+usually reside in separate paths from their data!
+
+=head2 Importing Data to an application path
+
+	agni --file /tmp/config.xml --import-path root/agni/staging/data/
+
+This command imports the data that we previously exported back into agni
+with the same path information.
+
+=head2 Exporting whole images for backup purposes
+
+	agni --save-image /backuppath/backup.xml
+
+This exports a complete backup of the running system to an image file
+F</backuppath/backup.xml>.
+
+Please take into account that some distributions clear their F<tmp>
+directories after a reboot and thereby render F</tmp> an unwise choice
+for the backup directory!
+
+=head2 Importing the previously created backup
+
+	agni --load-image /backuppath/backup.xml
+
+This command imports the previously saved image into agni, overwriting
+all existing data.
+
+=head2 Executing a command inside agni
+
+	agni -e root/agni/staging/data/ call ra/settings::class ra_upgrade
+
+This command calls a method in object F<ra/settings::class>, agni-path
+B<root/agni/staging/data/> called B<ra_upgrade>. Use this feature with
+caution! 
+
+=head1 COPYRIGHT
+
+Copyright (C) 2003,2004 nethype GmbH, Franz-Werfel-Str. 11, S<74078
+Heilbronn>.
+
+This Program is part of the PApp!Agni Distribution. Usage
+requires a valid license.
+
+=head1 AUTHOR
+
+Marc Lehmann <marc@nethype.de>,
+Marco Maisenhelder <marco@nethype.de>,
+L<http://www.nethype.de/agni>
+
+=cut
+
 use Getopt::Long;
 
 use PApp;
@@ -185,7 +334,7 @@ sub save_image {
                   map $map_path[$_],
                      grep { Agni::and64 $paths, Agni::bit64 $_ } sort @pathids;
 
-      print $fh xml_tag("o", gid => $gid, paths => $paths);
+      print $fh "<o gid=\"$gid\" paths=\"$paths\">";
       for my $table (@Agni::sqlcol) {
          my $st = sql_exec \my($type, $data),
                            "select type, data
@@ -265,6 +414,8 @@ sub load_image {
       sql_exec "optimize table $table";
    }
 
+   Agni::check_gidseq;
+
    sql_exec "unlock tables";
 }
 
@@ -289,7 +440,7 @@ sub export_path {
                      $pathid{$path}, $parpathmask[$pathid{$path}];
 
    while($st->fetch) {
-      print $fh xml_tag("o", gid => $gid);
+      print $fh "<o gid=\"$gid\">";
       for my $table (@Agni::sqlcol) {
          my $st = sql_exec \my($type,$data),
                            "select type, data
@@ -360,12 +511,14 @@ sub usage {
    print STDERR <<EOF;
 Usage: $0 ...
 
-   --app id|name                 use specified application instead of "mercury"
-   --file file                   write output to file or read input from file
+   --file <file>                 write output to file or read input from file
    --daemon            	         go into daemon mode
-   -i | --interval <seconds>
+   -i | --interval <seconds>     sleep interval for daemon mode
    --export-path path            write path to file (or stdout)
    --import-path path            import path from file
+
+   --load-image <file>           load a saved backup file <file>
+   --save-image <file>           save a backup file <file>
 
    --gar                         starts garbagecollector
 
@@ -379,7 +532,7 @@ EOF
    exit 1;
 }
 
-Getopt::Long::Configure ("bundling", "no_ignore_case");
+Getopt::Long::Configure ("bundling", "no_ignore_case", "require_order");
 
 my @exec;
 my $fn;
@@ -431,7 +584,7 @@ GetOptions(
 
 @exec or usage;
 
-local $PApp::SQL::Database = PApp::Config::Database;
+local $PApp::SQL::Database = $PApp::Config::Database;
 local $PApp::SQL::DBH      = PApp::Config::DBH;
 
 &{shift @exec} while @exec;
