@@ -11,132 +11,106 @@ msgstr ""
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Sjinees (eenvoudige)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Tsjeggies"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Deens"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Nederlands"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Engels"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estnies"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Fins"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Frans"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Duits"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grieks"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebreeus"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Hongaars"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Yslands"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italiaans"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japannees"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Koreaans"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Letties"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Litaus"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Noors"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Pools"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugees"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Romeens"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Russies"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Spaans"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Sweeds"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Sjinees (tradisioneel)"
@@ -145,409 +119,330 @@ msgstr "Sjinees (tradisioneel)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "Ð\x00Ð¸Ñ\x00Ð°Ð¹Ñ\x00ÐºÐ¸ (Ð\x00Ð¿Ñ\x00Ð¾Ñ\x00Ñ\x00ÐµÐ½)"
+msgstr "Китайски (Опростен)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ð§ÐµÑ\x00ÐºÐ¸"
+msgstr "Чешки"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "Ð\x00Ð°Ð½Ð¸Ñ\x00"
+msgstr "Дания"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "XÐ¾Ð»Ð°Ð½Ð´Ñ\x00ÐºÐ¸"
+msgstr "Xоландски"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "Ð\x00Ð½Ð³Ð»Ð¸Ð¹Ñ\x00ÐºÐ¸"
+msgstr "Английски"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "Ð\x00Ñ\x00Ñ\x00Ð¾Ð½Ñ\x00ÐºÐ¸"
+msgstr "Естонски"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "Ð¤Ð¸Ð½Ð»Ð°Ð½Ð´Ñ\x00ÐºÐ¸"
+msgstr "Финландски"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "Ð¤Ñ\x00ÐµÐ½Ñ\x00ÐºÐ¸"
+msgstr "Френски"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "Ð\x00ÐµÐ¼Ñ\x00ÐºÐ¸"
+msgstr "Немски"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Ð\x00Ñ\x00Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Гръцки"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "Ð\x00Ð²Ñ\x00ÐµÐ¹Ñ\x00ÐºÐ¸"
+msgstr "Еврейски"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "Ð£Ð½Ð³Ð°Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Унгарски"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ð\x00Ñ\x00Ð»Ð°Ð½Ð´Ñ\x00ÐºÐ¸"
+msgstr "Исландски"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "Ð\x00Ñ\x00Ð°Ð»Ð¸Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Италиански"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "Ð¯Ð¿Ð¾Ð½Ñ\x00ÐºÐ¸"
+msgstr "Японски"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "Ð\x00Ð¾Ñ\x00ÐµÐ¹Ñ\x00ÐºÐ¸"
+msgstr "Корейски"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "Ð\x00Ð°Ñ\x00Ð²Ð¸Ð¹Ñ\x00ÐºÐ¸"
+msgstr "Латвийски"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Ð\x00Ð¸Ñ\x00Ð¾Ð²Ñ\x00ÐºÐ¸"
+msgstr "Литовски"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "Ð\x00Ð¾Ñ\x00Ð²ÐµÐ¶ÐºÐ¸"
+msgstr "Норвежки"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "Ð\x00Ð¾Ð»Ñ\x00ÐºÐ¸"
+msgstr "Полски"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "Ð\x00Ð¾Ñ\x00Ñ\x00Ñ\x00Ð³Ð°Ð»Ñ\x00ÐºÐ¸"
+msgstr "Португалски"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "Ð Ñ\x00Ð¼Ñ\x00Ð½Ñ\x00ÐºÐ¸"
+msgstr "Румънски"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "Ð Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Руски"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Ð\x00Ñ\x00Ð¿Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Испански"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Ð¨Ð²ÐµÐ´Ñ\x00ÐºÐ¸"
+msgstr "Шведски"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "Ð\x00Ð¸Ñ\x00Ð°Ð¹Ñ\x00ÐºÐ¸ (Ð¢Ñ\x00Ð°Ð´Ð¸Ñ\x00Ð¸Ð¾Ð½ÐµÐ½)"
+msgstr "Китайски (Традиционен)"
 
 #$lang=cat
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "XinÃ¨s (simplificat)"
+msgstr "Xinès (simplificat)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Txec"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "DanÃ¨s"
+msgstr "Danès"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "HolandÃ¨s"
+msgstr "Holandès"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "AnglÃ¨s"
+msgstr "Anglès"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "EstoniÃ "
+msgstr "Estonià"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "FinÃ¨s"
+msgstr "Finès"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "FrancÃ¨s"
+msgstr "Francès"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Alemany"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grec"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebreu"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "HongarÃ¨s"
+msgstr "Hongarès"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "IslandÃ¨s"
+msgstr "Islandès"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "ItaliÃ "
+msgstr "Italià"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "JaponÃ¨s"
+msgstr "Japonès"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "CoreÃ "
+msgstr "Coreà"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "LetÃ³"
+msgstr "Letó"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "LituÃ "
+msgstr "Lituà"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Noruec"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "PolonÃ¨s"
+msgstr "Polonès"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "PortuguÃ¨s"
+msgstr "Portuguès"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "RomanÃ¨s"
+msgstr "Romanès"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Rus"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Espanyol"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Suec"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "XinÃ¨s (tradicional)"
+msgstr "Xinès (tradicional)"
 
 #$lang=ces
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "Ä\x00Ã­nsky (zjednoduÅ¡enÄ\x00)"
+msgstr "čínsky (zjednodušeně)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ä\x00esky"
+msgstr "česky"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "dÃ¡nÄ\x00tinÄ\x00"
+msgstr "dánątině"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "holandÄ\x00tinÄ\x00"
+msgstr "holandątině"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "anglicky"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "estonsky"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "fin?tinÄ\x00"
+msgstr "fin?tině"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "francouzÄ\x00tinÄ\x00"
+msgstr "francouzątině"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "nÄ\x00mÄ\x00inÄ\x00"
+msgstr "němčině"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Å\x00ecky"
+msgstr "řecky"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "hebrejsky"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "maÄ\x00arsky"
+msgstr "maďarsky"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "islandsky"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "italÄ\x00tinÄ\x00"
+msgstr "italątině"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "japonsky"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "korejsky"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "lotyÅ¡sky"
+msgstr "lotyšsky"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "litevsky"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "norÄ\x00tinÄ\x00"
+msgstr "norątině"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "polsky"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "portugalÄ\x00tinÄ\x00"
+msgstr "portugalątině"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "rumunsky"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "rusky"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Ä\x00panÄ\x00lÄ\x00tinÄ\x00"
+msgstr "ąpanělątině"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Å¡vÃ©dsky"
+msgstr "švédsky"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "Ä\x00Ã­nsky (tradiÄ\x00nÄ\x00)"
+msgstr "čínsky (tradičně)"
 
 #$lang=cym
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:89
 #$lang=eng
 msgid "Welsh"
 msgstr "cymraeg"
@@ -556,132 +451,106 @@ msgstr "cymraeg"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Kinesisk (simplificeret)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Tjekkisk"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Dansk"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Hollandsk"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Engelsk"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estisk"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Finsk"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Fransk"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Tysk"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "GrÃ¦sk"
+msgstr "Græsk"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebraisk"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Ungarsk"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandsk"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italiensk"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japansk"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Koreansk"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Lettisk"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Litauisk"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norsk"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Polsk"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugisisk"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "RumÃ¦nsk"
+msgstr "Rumænsk"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Russisk"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Spansk"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Svensk"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Kinesisk (traditionelt)"
@@ -690,887 +559,710 @@ msgstr "Kinesisk (traditionelt)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:2
 #$lang=eng
 msgid "Abkhazian"
 msgstr "Aserbeidschan"
 
-# DBI:mysql:papp/iso639.name:3
 #$lang=eng
 msgid "Achinese"
 msgstr "Achinesisch"
 
-# DBI:mysql:papp/iso639.name:4
 #$lang=eng
 msgid "Acoli"
 msgstr "Acolisch"
 
-# DBI:mysql:papp/iso639.name:5
 #$lang=eng
 msgid "Adangme"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:1
 #$lang=eng
 msgid "Afar"
 msgstr "Afrika"
 
-# DBI:mysql:papp/iso639.name:7
 #$lang=eng
 msgid "Afrihili"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:8
 #$lang=eng
 msgid "Afrikaans"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:6
 #$lang=eng
 msgid "Afro-Asiatic (Other)"
 msgstr "Sonstige afro-asiatische Sprachen"
 
-# DBI:mysql:papp/iso639.name:9
 #$lang=eng
 msgid "Akan"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:10
 #$lang=eng
 msgid "Akkadian"
 msgstr "Akkadianisch"
 
-# DBI:mysql:papp/iso639.name:11
 #$lang=eng
 msgid "Aleut"
 msgstr "Aleutisch"
 
-# DBI:mysql:papp/iso639.name:12
 #$lang=eng
 msgid "Algonquian languages"
 msgstr "Alonquinische Sprachen"
 
-# DBI:mysql:papp/iso639.name:399
 #$lang=eng
 msgid "Altaic (Other)"
 msgstr "Sonstige altaische Sprachen"
 
-# DBI:mysql:papp/iso639.name:13
 #$lang=eng
 msgid "Amharic"
 msgstr "Amharisch"
 
-# DBI:mysql:papp/iso639.name:15
 #$lang=eng
 msgid "Apache languages"
 msgstr "Apachensprachen"
 
-# DBI:mysql:papp/iso639.name:16
 #$lang=eng
 msgid "Arabic"
 msgstr "Arabisch"
 
-# DBI:mysql:papp/iso639.name:17
 #$lang=eng
 msgid "Aramaic"
-msgstr "AramÃ¤isch"
+msgstr "Aramäisch"
 
-# DBI:mysql:papp/iso639.name:19
 #$lang=eng
 msgid "Arapaho"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:18
 #$lang=eng
 msgid "Araucanian"
 msgstr "Araucanisch"
 
-# DBI:mysql:papp/iso639.name:21
 #$lang=eng
 msgid "Arawak"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:20
 #$lang=eng
 msgid "Artificial (Other)"
 msgstr "Sonstige Kunstsprachen"
 
-# DBI:mysql:papp/iso639.name:22
 #$lang=eng
 msgid "Assamese"
 msgstr "Assamesisch"
 
-# DBI:mysql:papp/iso639.name:23
 #$lang=eng
 msgid "Athapascan languages"
 msgstr "Athapaskan-Sprachen"
 
-# DBI:mysql:papp/iso639.name:24
 #$lang=eng
 msgid "Australian languages"
 msgstr "Australische Sprachen"
 
-# DBI:mysql:papp/iso639.name:241
 #$lang=eng
 msgid "Austronesian (Other)"
 msgstr "Sonstige austronesische Sprachen"
 
-# DBI:mysql:papp/iso639.name:25
 #$lang=eng
 msgid "Avaric"
 msgstr "Awarisch"
 
-# DBI:mysql:papp/iso639.name:26
 #$lang=eng
 msgid "Avestan"
 msgstr "Avestanisch"
 
-# DBI:mysql:papp/iso639.name:27
 #$lang=eng
 msgid "Awadhi"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:28
 #$lang=eng
 msgid "Aymara"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:29
 #$lang=eng
 msgid "Azerbaijani"
 msgstr "Aserbeidschanisch"
 
-# DBI:mysql:papp/iso639.name:35
 #$lang=eng
 msgid "Balinese"
 msgstr "Balinesisch"
 
-# DBI:mysql:papp/iso639.name:37
 #$lang=eng
 msgid "Baltic (Other)"
 msgstr "Sonstige baltische Sprachen"
 
-# DBI:mysql:papp/iso639.name:33
 #$lang=eng
 msgid "Baluchi"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:34
 #$lang=eng
 msgid "Bambara"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:31
 #$lang=eng
 msgid "Bamileke languages"
 msgstr "Bamileken-Sprachen"
 
-# DBI:mysql:papp/iso639.name:30
 #$lang=eng
 msgid "Banda"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:49
 #$lang=eng
 msgid "Bantu (Other)"
 msgstr "Sonstige Bantusprachen"
 
-# DBI:mysql:papp/iso639.name:36
 #$lang=eng
 msgid "Basa"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:32
 #$lang=eng
 msgid "Bashkir"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:114
 #$lang=eng
 msgid "Basque"
 msgstr "Baskisch"
 
-# DBI:mysql:papp/iso639.name:54
 #$lang=eng
 msgid "Batak (Indonesia)"
 msgstr "Batak (Indonesien)"
 
-# DBI:mysql:papp/iso639.name:38
 #$lang=eng
 msgid "Beja"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:39
 #$lang=eng
 msgid "Belarusian"
 msgstr "Weissrussisch"
 
-# DBI:mysql:papp/iso639.name:40
 #$lang=eng
 msgid "Bemba"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:41
 #$lang=eng
 msgid "Bengali"
 msgstr "Bengalisch"
 
-# DBI:mysql:papp/iso639.name:42
 #$lang=eng
 msgid "Berber (Other)"
 msgstr "Sonstige Berbersprachen"
 
-# DBI:mysql:papp/iso639.name:43
 #$lang=eng
 msgid "Bhojpuri"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:44
 #$lang=eng
 msgid "Bihari"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:45
 #$lang=eng
 msgid "Bikol"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:46
 #$lang=eng
 msgid "Bini"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:47
 #$lang=eng
 msgid "Bislama"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:51
 #$lang=eng
 msgid "Bosnian"
 msgstr "Bosnisch"
 
-# DBI:mysql:papp/iso639.name:52
 #$lang=eng
 msgid "Braj"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:53
 #$lang=eng
 msgid "Breton"
 msgstr "Bretonisch"
 
-# DBI:mysql:papp/iso639.name:56
 #$lang=eng
 msgid "Buginese"
 msgstr "Buginesisch"
 
-# DBI:mysql:papp/iso639.name:57
 #$lang=eng
 msgid "Bulgarian"
 msgstr "Bulgarisch"
 
-# DBI:mysql:papp/iso639.name:55
 #$lang=eng
 msgid "Buriat"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:58
 #$lang=eng
 msgid "Caddo"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:60
 #$lang=eng
 msgid "Carib"
 msgstr "Karibisch"
 
-# DBI:mysql:papp/iso639.name:61
 #$lang=eng
 msgid "Catalan"
 msgstr "Katalanisch"
 
-# DBI:mysql:papp/iso639.name:62
 #$lang=eng
 msgid "Caucasian (Other)"
 msgstr "Sonstige kaukasische Sprachen"
 
-# DBI:mysql:papp/iso639.name:63
 #$lang=eng
 msgid "Cebuano"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:64
 #$lang=eng
 msgid "Celtic (Other)"
 msgstr "Sonstige keltische Sprachen"
 
-# DBI:mysql:papp/iso639.name:59
 #$lang=eng
 msgid "Central American Indian (Other)"
 msgstr "Sonstige zentralamerikanische Indianersprachen"
 
-# DBI:mysql:papp/iso639.name:69
 #$lang=eng
 msgid "Chagatai"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:79
 #$lang=eng
 msgid "Chamic languages"
 msgstr "Sonstige Samisprachen"
 
-# DBI:mysql:papp/iso639.name:66
 #$lang=eng
 msgid "Chamorro"
 msgstr "Kamerun"
 
-# DBI:mysql:papp/iso639.name:68
 #$lang=eng
 msgid "Chechen"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:75
 #$lang=eng
 msgid "Cherokee"
 msgstr "hier"
 
-# DBI:mysql:papp/iso639.name:67
 #$lang=eng
 msgid "Chibcha"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Chinesisch (Vereinfacht)"
 
-# DBI:mysql:papp/iso639.name:76
 #$lang=eng
 msgid "Church Slavic"
 msgstr "Kirchenslawisch"
 
-# DBI:mysql:papp/iso639.name:70
 #$lang=eng
 msgid "Chuukese"
 msgstr "Chuukesisch"
 
-# DBI:mysql:papp/iso639.name:80
 #$lang=eng
 msgid "Coptic"
 msgstr "Koptisch"
 
-# DBI:mysql:papp/iso639.name:81
 #$lang=eng
 msgid "Cornish"
 msgstr "Kornisch"
 
-# DBI:mysql:papp/iso639.name:82
 #$lang=eng
 msgid "Corsican"
 msgstr "Korsisch"
 
-# DBI:mysql:papp/iso639.name:86
 #$lang=eng
 msgid "Cree"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:87
 #$lang=eng
 msgid "Creoles and pidgins (Other)"
 msgstr "Sonstige Kreol- und Pidginsprachen"
 
-# DBI:mysql:papp/iso639.name:83
 #$lang=eng
 msgid "Creoles and pidgins, English based (Other)"
 msgstr "Sonstige Kreol- und Pidginsprachen (englischbasierend)"
 
-# DBI:mysql:papp/iso639.name:84
 #$lang=eng
 msgid "Creoles and pidgins, French-based (Other)"
-msgstr "Sonstige Kreol- und Pidginsprachen (franzÃ¶sischbasierend)"
+msgstr "Sonstige Kreol- und Pidginsprachen (französischbasierend)"
 
-# DBI:mysql:papp/iso639.name:85
 #$lang=eng
 msgid "Creoles and pidgins, Portuguese-based (Other)"
 msgstr "Sonstige Kreol- und Pidginsprachen (portugiesischbasierend)"
 
-# DBI:mysql:papp/iso639.name:88
 #$lang=eng
 msgid "Cushitic (Other)"
 msgstr "Sonstige kuschitische Sprachen"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Tschechisch"
 
-# DBI:mysql:papp/iso639.name:90
 #$lang=eng
 msgid "Dakota"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "DÃ¤nisch"
+msgstr "Dänisch"
 
-# DBI:mysql:papp/iso639.name:92
 #$lang=eng
 msgid "Dayak"
 msgstr "Tag"
 
-# DBI:mysql:papp/iso639.name:99
 #$lang=eng
 msgid "Dogri"
 msgstr "Login"
 
-# DBI:mysql:papp/iso639.name:100
 #$lang=eng
 msgid "Dravidian (Other)"
 msgstr "Sonstige drawidische Sprachen"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "NiederlÃ¤ndisch"
+msgstr "Niederländisch"
 
-# DBI:mysql:papp/iso639.name:102
 #$lang=eng
 msgid "Dutch, Middle (ca. 1050-1350)"
-msgstr "MittelfranzÃ¶sisch (ca. 1400-1600)"
+msgstr "Mittelfranzösisch (ca. 1400-1600)"
 
-# DBI:mysql:papp/iso639.name:106
 #$lang=eng
 msgid "Egyptian (Ancient)"
-msgstr "AltÃ¤gyptisch"
+msgstr "Altägyptisch"
 
-# DBI:mysql:papp/iso639.name:109
 #$lang=eng
 msgid "Elamite"
 msgstr "Elamitisch"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Englisch"
 
-# DBI:mysql:papp/iso639.name:111
 #$lang=eng
 msgid "English, Middle (1100-1500)"
 msgstr "Englisch, Mittelalter (ca. 1100-1500)"
 
-# DBI:mysql:papp/iso639.name:14
 #$lang=eng
 msgid "English, Old (ca. 450-1100)"
 msgstr "Altenglisch (ca. 450-1100)"
 
-# DBI:mysql:papp/iso639.name:112
 #$lang=eng
 msgid "Esperanto"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estnisch"
 
-# DBI:mysql:papp/iso639.name:117
 #$lang=eng
 msgid "Fang"
 msgstr "Sprache"
 
-# DBI:mysql:papp/iso639.name:120
 #$lang=eng
 msgid "Fanti"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:118
 #$lang=eng
 msgid "Faroese"
-msgstr "FarÃ¶esisch"
+msgstr "Faröesisch"
 
-# DBI:mysql:papp/iso639.name:121
 #$lang=eng
 msgid "Fijian"
 msgstr "Fidschianisch"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Finnisch"
 
-# DBI:mysql:papp/iso639.name:123
 #$lang=eng
 msgid "Finno-Ugrian (Other)"
 msgstr "Sonstige finno-ugaritische Sprachen"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "FranzÃ¶sisch"
+msgstr "Französisch"
 
-# DBI:mysql:papp/iso639.name:126
 #$lang=eng
 msgid "French, Middle (ca. 1400-1600)"
-msgstr "MittelfranzÃ¶sisch (ca. 1400-1600)"
+msgstr "Mittelfranzösisch (ca. 1400-1600)"
 
-# DBI:mysql:papp/iso639.name:127
 #$lang=eng
 msgid "French, Old (842-ca. 1400)"
-msgstr "AltfranzÃ¶sisch (842-ca. 1400)"
+msgstr "Altfranzösisch (842-ca. 1400)"
 
-# DBI:mysql:papp/iso639.name:128
 #$lang=eng
 msgid "Frisian"
 msgstr "Friesisch"
 
-# DBI:mysql:papp/iso639.name:130
 #$lang=eng
 msgid "Friulian"
 msgstr "Friaulisch"
 
-# DBI:mysql:papp/iso639.name:129
 #$lang=eng
 msgid "Fulah"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:131
 #$lang=eng
 msgid "Ga"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:137
 #$lang=eng
 msgid "Gaelic (Scots)"
 msgstr "Gaelisch (Schottisch)"
 
-# DBI:mysql:papp/iso639.name:132
 #$lang=eng
 msgid "Gayo"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:135
 #$lang=eng
 msgid "Geez"
 msgstr "Griechenland"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Deutsch"
 
-# DBI:mysql:papp/iso639.name:141
 #$lang=eng
 msgid "German, Middle High (ca. 1050-1500)"
 msgstr "Mittelhochdeutsch (ca. 1050-1500)"
 
-# DBI:mysql:papp/iso639.name:142
 #$lang=eng
 msgid "German, Old High (ca. 750-1050)"
 msgstr "Althochdeutsch (ca. 750-1050)"
 
-# DBI:mysql:papp/iso639.name:134
 #$lang=eng
 msgid "Germanic (Other)"
 msgstr "Sonstige germanische Sprachen"
 
-# DBI:mysql:papp/iso639.name:143
 #$lang=eng
 msgid "Gondi"
 msgstr "Indien"
 
-# DBI:mysql:papp/iso639.name:145
 #$lang=eng
 msgid "Gothic"
 msgstr "Gotisch"
 
-# DBI:mysql:papp/iso639.name:147
 #$lang=eng
 msgid "Greek, Ancient (to 1453)"
 msgstr "Altgriechisch (bis 1453)"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Griechisch"
 
-# DBI:mysql:papp/iso639.name:148
 #$lang=eng
 msgid "Guarani"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:149
 #$lang=eng
 msgid "Gujarati"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:151
 #$lang=eng
 msgid "Haida"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:152
 #$lang=eng
 msgid "Hausa"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:153
 #$lang=eng
 msgid "Hawaiian"
 msgstr "Hawaianisch"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "HebrÃ¤isch"
+msgstr "Hebräisch"
 
-# DBI:mysql:papp/iso639.name:155
 #$lang=eng
 msgid "Herero"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Ungarisch"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "IslÃ¤ndisch"
+msgstr "Isländisch"
 
-# DBI:mysql:papp/iso639.name:173
 #$lang=eng
 msgid "Indic (Other)"
 msgstr "Sonstige indische Sprachen"
 
-# DBI:mysql:papp/iso639.name:175
 #$lang=eng
 msgid "Indo-European (Other)"
-msgstr "Sonstige indoeuropÃ¤ische Sprachen"
+msgstr "Sonstige indoeuropäische Sprachen"
 
-# DBI:mysql:papp/iso639.name:172
 #$lang=eng
 msgid "Interlingua (International Auxiliary Language Association)"
 msgstr "Interlingua (IALA)"
 
-# DBI:mysql:papp/iso639.name:170
 #$lang=eng
 msgid "Interlingue"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:177
 #$lang=eng
 msgid "Iranian (Other)"
 msgstr "Sonstige iranische Sprachen"
 
-# DBI:mysql:papp/iso639.name:138
 #$lang=eng
 msgid "Irish"
 msgstr "Irisch"
 
-# DBI:mysql:papp/iso639.name:178
 #$lang=eng
 msgid "Iroquoian languages"
 msgstr "Australische Sprachen"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italienisch"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japanisch"
 
-# DBI:mysql:papp/iso639.name:197
 #$lang=eng
 msgid "Khoisan (Other)"
 msgstr "Sonstige Khoisansprachen"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Koreanisch"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Lettisch"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Litauisch"
 
-# DBI:mysql:papp/iso639.name:276
 #$lang=eng
 msgid "Low German; Low Saxon; German, Low; Saxon, Low"
-msgstr "NiedersÃ¤chsisch"
+msgstr "Niedersächsisch"
 
-# DBI:mysql:papp/iso639.name:256
 #$lang=eng
 msgid "Manobo languages"
 msgstr "Manobo-Sprachen"
 
-# DBI:mysql:papp/iso639.name:140
 #$lang=eng
 msgid "Manx"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:268
 #$lang=eng
 msgid "Mayan languages"
 msgstr "Mayan-Sprachen"
 
-# DBI:mysql:papp/iso639.name:249
 #$lang=eng
 msgid "Miscellaneous languages"
 msgstr "Sonstige Sprachen"
 
-# DBI:mysql:papp/iso639.name:251
 #$lang=eng
 msgid "Mon-Khmer (Other)"
 msgstr "Sonstige Mon-Khmer-Sprachen"
 
-# DBI:mysql:papp/iso639.name:263
 #$lang=eng
 msgid "Multiple languages"
 msgstr "Mehrsprachlich"
 
-# DBI:mysql:papp/iso639.name:264
 #$lang=eng
 msgid "Munda languages"
 msgstr "Munda-Sprachen"
 
-# DBI:mysql:papp/iso639.name:280
 #$lang=eng
 msgid "Niger-Kordofanian (Other)"
 msgstr "Sonstige iranische Sprachen"
 
-# DBI:mysql:papp/iso639.name:364
 #$lang=eng
 msgid "Nilo-Saharan (Other)"
 msgstr "Sonstige finno-ugaritische Sprachen"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-# DBI:mysql:papp/iso639.name:288
 #$lang=eng
 msgid "Nubian languages"
 msgstr "Nubische Sprachen"
 
-# DBI:mysql:papp/iso639.name:301
 #$lang=eng
 msgid "Otomian languages"
 msgstr "Otomanische Sprachen"
 
-# DBI:mysql:papp/iso639.name:302
 #$lang=eng
 msgid "Papuan (Other)"
 msgstr "Sonstige Papuansprachen"
 
-# DBI:mysql:papp/iso639.name:119
 #$lang=eng
 msgid "Persian"
 msgstr "Persisch"
 
-# DBI:mysql:papp/iso639.name:310
 #$lang=eng
 msgid "Philippine (Other)"
 msgstr "Sonstige philippinische Sprachen"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Polnisch"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-# DBI:mysql:papp/iso639.name:315
 #$lang=eng
 msgid "Prakrit languages"
 msgstr "Australische Sprachen"
 
-# DBI:mysql:papp/iso639.name:322
 #$lang=eng
 msgid "Romance (Other)"
 msgstr "Sonstige germanische Sprachen"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "RumÃ¤nisch"
+msgstr "Rumänisch"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Russisch"
 
-# DBI:mysql:papp/iso639.name:350
 #$lang=eng
 msgid "Sami languages (Other)"
 msgstr "Sonstige Samisprachen"
 
-# DBI:mysql:papp/iso639.name:338
 #$lang=eng
 msgid "Semitic (Other)"
 msgstr "Sonstige semitische Sprachen"
 
-# DBI:mysql:papp/iso639.name:48
 #$lang=eng
 msgid "Siksika"
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:345
 #$lang=eng
 msgid "Sino-Tibetan (Other)"
 msgstr "Sonstige sino-tibetische Sprachen"
 
-# DBI:mysql:papp/iso639.name:346
 #$lang=eng
 msgid "Slavic (Other)"
 msgstr "Sonstige slawische Sprachen"
 
-# DBI:mysql:papp/iso639.name:330
 #$lang=eng
 msgid "South American Indian (Other)"
 msgstr "Sonstige zentralamerikanische Indianersprachen"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Spanisch"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Schwedisch"
 
-# DBI:mysql:papp/iso639.name:374
 #$lang=eng
 msgid "Tai (Other)"
 msgstr "Sonstige Tai-Sprachen"
 
-# DBI:mysql:papp/iso639.name:50
 #$lang=eng
 msgid "Tibetan"
 msgstr "Tibetisch"
 
-# DBI:mysql:papp/iso639.name:89
 #$lang=eng
 msgid "Welsh"
 msgstr "Walisisch"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Chinesisch (Traditionell)"
@@ -1579,141 +1271,114 @@ msgstr "Chinesisch (Traditionell)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "Î\x00Î¹Î½Î­Î¶Î¹ÎºÎ± (Î±Ï\x00Î»Î¿Ï\x00Î¿Î¹Î·Î¼Î­Î½Î±)"
+msgstr "Κινέζικα (απλοποιημένα)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Î¤Ï\x00Î­Ï\x00Î¹ÎºÎ±"
+msgstr "Τσέχικα"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "Î\x00Î±Î½Î¹ÎºÎ¬"
+msgstr "Δανικά"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "Î\x00Î»Î»Î±Î½Î´Î¹ÎºÎ¬"
+msgstr "Ολλανδικά"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "Î\x00Î³Î³Î»Î¹ÎºÎ¬"
+msgstr "Αγγλικά"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "Î\x00Ï\x00Î¸Î¿Î½Î­Î¶Î¹ÎºÎ±"
+msgstr "Εσθονέζικα"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "Î¦Î¹Î»Î±Î½Î´Î¹ÎºÎ¬"
+msgstr "Φιλανδικά"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "Î\x00Î±Î»Î»Î¹ÎºÎ¬"
+msgstr "Γαλλικά"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "Î\x00ÎµÏ\x00Î¼Î±Î½Î¹ÎºÎ¬"
+msgstr "Γερμανικά"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Î\x00Î»Î»Î·Î½Î¹ÎºÎ¬"
+msgstr "Ελληνικά"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "Î\x00Î²Ï\x00Î±Ï\x00ÎºÎ¬"
+msgstr "Εβραϊκά"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "Î\x00Ï\x00Î³ÎºÏ\x00Î¹ÎºÎ¬"
+msgstr "Ουγκρικά"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Î\x00Ï\x00Î»Î±Î½Î´Î¹ÎºÎ¬"
+msgstr "Ισλανδικά"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "Î\x00Ï\x00Î±Î»Î¹ÎºÎ¬"
+msgstr "Ιταλικά"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "Î\x00Î±Ï\x00Ï\x00Î½Î¹ÎºÎ¬"
+msgstr "Ιαπωνικά"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "Î\x00Î¿Ï\x00ÎµÎ¬Ï\x00Î¹ÎºÎ±"
+msgstr "Κορεάτικα"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "Î\x00Î±Ï\x00Î²Î¹Î±ÎºÎ¬"
+msgstr "Λατβιακά"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Î\x00Î¹Î¸Î¿Ï\x00Î¬Î½Î¹ÎºÎ±"
+msgstr "Λιθουάνικα"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "Î\x00Î¿Ï\x00Î²Î·Î³Î¹ÎºÎ¬"
+msgstr "Νορβηγικά"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "Î Î¿Î»Ï\x00Î½Î¹ÎºÎ¬"
+msgstr "Πολωνικά"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "Î Î¿Ï\x00Ï\x00Î¿Î³Î±Î»Î¹ÎºÎ¬"
+msgstr "Πορτογαλικά"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "Î¡Î¿Ï\x00Î¼Î±Î½Î¹ÎºÎ¬"
+msgstr "Ρουμανικά"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "Î¡Ï\x00Ï\x00Î¹ÎºÎ±"
+msgstr "Ρώσικα"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Î\x00Ï\x00Ï\x00Î±Î½Î¹ÎºÎ¬"
+msgstr "Ισπανικά"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Î£Î¿Ï\x00Î·Î´Î¹ÎºÎ¬"
+msgstr "Σουηδικά"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "Î\x00Î¹Î½Î­Î¶Î¹ÎºÎ± (Ï\x00Î±Ï\x00Î±Î´Î¿Ï\x00Î¹Î±ÎºÎ¬)"
+msgstr "Κινέζικα (παραδοσιακά)"
 
 #$lang=epo
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:112
 #$lang=eng
 msgid "Esperanto"
 msgstr "esperanto"
@@ -1722,132 +1387,106 @@ msgstr "esperanto"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Hiina (Lihtsustatud)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "TÅ¡ehhi"
+msgstr "Tšehhi"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Taani"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Hollandi"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Inglise"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Eesti"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Soome"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Prantsuse"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Saksa"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Kreeka"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Heebrea"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Hungari"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandi"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Itaalia"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Jaapani"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Korea"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "LÃ¤ti"
+msgstr "Läti"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Leedu"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norra"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Poola"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugali"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Romaania"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Vene"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Hispaania"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Rootsi"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Hiina (Traditsiooniline)"
@@ -1856,7 +1495,6 @@ msgstr "Hiina (Traditsiooniline)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:114
 #$lang=eng
 msgid "Basque"
 msgstr "euskaraz"
@@ -1865,132 +1503,106 @@ msgstr "euskaraz"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "kiina (yksinkertaistettu)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "tsekki"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "tanska"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "hollanti"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "englanti"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "viro"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "suomi"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "ranska"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "saksa"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "kreikka"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "heprea"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "unkari"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "islanti"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "italia"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "japani"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "korea"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "latvia"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "liettua"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "norja"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "puola"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "portugali"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "romania"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "venÃ¤jÃ¤"
+msgstr "venäjä"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "espanja"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "ruotsi"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "kiina (perinteinen)"
@@ -1999,2271 +1611,1724 @@ msgstr "kiina (perinteinen)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:2
 #$lang=eng
 msgid "Abkhazian"
 msgstr "abkhaze"
 
-# DBI:mysql:papp/iso639.name:3
 #$lang=eng
 msgid "Achinese"
 msgstr "aceh"
 
-# DBI:mysql:papp/iso639.name:4
 #$lang=eng
 msgid "Acoli"
 msgstr "acoli"
 
-# DBI:mysql:papp/iso639.name:5
 #$lang=eng
 msgid "Adangme"
 msgstr "adangme"
 
-# DBI:mysql:papp/iso639.name:1
 #$lang=eng
 msgid "Afar"
 msgstr "afar"
 
-# DBI:mysql:papp/iso639.name:7
 #$lang=eng
 msgid "Afrihili"
 msgstr "afrihili"
 
-# DBI:mysql:papp/iso639.name:8
 #$lang=eng
 msgid "Afrikaans"
 msgstr "afrikaans"
 
-# DBI:mysql:papp/iso639.name:6
 #$lang=eng
 msgid "Afro-Asiatic (Other)"
 msgstr "afro-asiatiques, autres langues"
 
-# DBI:mysql:papp/iso639.name:9
 #$lang=eng
 msgid "Akan"
 msgstr "akan"
 
-# DBI:mysql:papp/iso639.name:10
 #$lang=eng
 msgid "Akkadian"
 msgstr "akkadien"
 
-# DBI:mysql:papp/iso639.name:360
 #$lang=eng
 msgid "Albanian"
 msgstr "albanais"
 
-# DBI:mysql:papp/iso639.name:11
 #$lang=eng
 msgid "Aleut"
-msgstr "alÃ©oute"
+msgstr "aléoute"
 
-# DBI:mysql:papp/iso639.name:12
 #$lang=eng
 msgid "Algonquian languages"
 msgstr "algonquines, langues"
 
-# DBI:mysql:papp/iso639.name:399
 #$lang=eng
 msgid "Altaic (Other)"
-msgstr "altaÃ¯ques, autres langues"
+msgstr "altaïques, autres langues"
 
-# DBI:mysql:papp/iso639.name:13
 #$lang=eng
 msgid "Amharic"
 msgstr "amharique"
 
-# DBI:mysql:papp/iso639.name:15
 #$lang=eng
 msgid "Apache languages"
 msgstr "apache"
 
-# DBI:mysql:papp/iso639.name:16
 #$lang=eng
 msgid "Arabic"
 msgstr "arabe"
 
-# DBI:mysql:papp/iso639.name:17
 #$lang=eng
 msgid "Aramaic"
-msgstr "aramÃ©en"
+msgstr "araméen"
 
-# DBI:mysql:papp/iso639.name:19
 #$lang=eng
 msgid "Arapaho"
 msgstr "arapaho"
 
-# DBI:mysql:papp/iso639.name:18
 #$lang=eng
 msgid "Araucanian"
 msgstr "araucan"
 
-# DBI:mysql:papp/iso639.name:21
 #$lang=eng
 msgid "Arawak"
 msgstr "arawak"
 
-# DBI:mysql:papp/iso639.name:165
 #$lang=eng
 msgid "Armenian"
-msgstr "armÃ©nien"
+msgstr "arménien"
 
-# DBI:mysql:papp/iso639.name:20
 #$lang=eng
 msgid "Artificial (Other)"
 msgstr "artificielles, autres langues"
 
-# DBI:mysql:papp/iso639.name:22
 #$lang=eng
 msgid "Assamese"
 msgstr "assamais"
 
-# DBI:mysql:papp/iso639.name:23
 #$lang=eng
 msgid "Athapascan languages"
 msgstr "athapascanes, langues"
 
-# DBI:mysql:papp/iso639.name:24
 #$lang=eng
 msgid "Australian languages"
 msgstr "australiennes, langues"
 
-# DBI:mysql:papp/iso639.name:241
 #$lang=eng
 msgid "Austronesian (Other)"
-msgstr "malayo-polynÃ©siennes, autres langues"
+msgstr "malayo-polynésiennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:25
 #$lang=eng
 msgid "Avaric"
 msgstr "avar"
 
-# DBI:mysql:papp/iso639.name:26
 #$lang=eng
 msgid "Avestan"
 msgstr "avestique"
 
-# DBI:mysql:papp/iso639.name:27
 #$lang=eng
 msgid "Awadhi"
 msgstr "awadhi"
 
-# DBI:mysql:papp/iso639.name:28
 #$lang=eng
 msgid "Aymara"
 msgstr "aymara"
 
-# DBI:mysql:papp/iso639.name:29
 #$lang=eng
 msgid "Azerbaijani"
-msgstr "azÃ©ri"
+msgstr "azéri"
 
-# DBI:mysql:papp/iso639.name:35
 #$lang=eng
 msgid "Balinese"
 msgstr "balinais"
 
-# DBI:mysql:papp/iso639.name:37
 #$lang=eng
 msgid "Baltic (Other)"
 msgstr "baltiques, autres langues"
 
-# DBI:mysql:papp/iso639.name:33
 #$lang=eng
 msgid "Baluchi"
 msgstr "baloutchi"
 
-# DBI:mysql:papp/iso639.name:34
 #$lang=eng
 msgid "Bambara"
 msgstr "bambara"
 
-# DBI:mysql:papp/iso639.name:31
 #$lang=eng
 msgid "Bamileke languages"
-msgstr "bamilÃ©kÃ©s, langues"
+msgstr "bamilékés, langues"
 
-# DBI:mysql:papp/iso639.name:30
 #$lang=eng
 msgid "Banda"
 msgstr "banda"
 
-# DBI:mysql:papp/iso639.name:49
 #$lang=eng
 msgid "Bantu (Other)"
 msgstr "bantoues, autres langues"
 
-# DBI:mysql:papp/iso639.name:36
 #$lang=eng
 msgid "Basa"
 msgstr "basa"
 
-# DBI:mysql:papp/iso639.name:32
 #$lang=eng
 msgid "Bashkir"
 msgstr "bachkir"
 
-# DBI:mysql:papp/iso639.name:114
 #$lang=eng
 msgid "Basque"
 msgstr "basque"
 
-# DBI:mysql:papp/iso639.name:54
 #$lang=eng
 msgid "Batak (Indonesia)"
-msgstr "batak (IndonÃ©sie)"
+msgstr "batak (Indonésie)"
 
-# DBI:mysql:papp/iso639.name:38
 #$lang=eng
 msgid "Beja"
 msgstr "bedja"
 
-# DBI:mysql:papp/iso639.name:39
 #$lang=eng
 msgid "Belarusian"
-msgstr "biÃ©lorusse"
+msgstr "biélorusse"
 
-# DBI:mysql:papp/iso639.name:40
 #$lang=eng
 msgid "Bemba"
 msgstr "bemba"
 
-# DBI:mysql:papp/iso639.name:41
 #$lang=eng
 msgid "Bengali"
 msgstr "bengali"
 
-# DBI:mysql:papp/iso639.name:42
 #$lang=eng
 msgid "Berber (Other)"
-msgstr "berbÃ¨res, autres langues"
+msgstr "berbères, autres langues"
 
-# DBI:mysql:papp/iso639.name:43
 #$lang=eng
 msgid "Bhojpuri"
 msgstr "bhojpuri"
 
-# DBI:mysql:papp/iso639.name:44
 #$lang=eng
 msgid "Bihari"
 msgstr "bihari"
 
-# DBI:mysql:papp/iso639.name:45
 #$lang=eng
 msgid "Bikol"
 msgstr "bikol"
 
-# DBI:mysql:papp/iso639.name:46
 #$lang=eng
 msgid "Bini"
 msgstr "bini"
 
-# DBI:mysql:papp/iso639.name:47
 #$lang=eng
 msgid "Bislama"
 msgstr "bichlamar"
 
-# DBI:mysql:papp/iso639.name:51
 #$lang=eng
 msgid "Bosnian"
 msgstr "bosniaque"
 
-# DBI:mysql:papp/iso639.name:52
 #$lang=eng
 msgid "Braj"
 msgstr "braj"
 
-# DBI:mysql:papp/iso639.name:53
 #$lang=eng
 msgid "Breton"
 msgstr "breton"
 
-# DBI:mysql:papp/iso639.name:56
 #$lang=eng
 msgid "Buginese"
 msgstr "bugi"
 
-# DBI:mysql:papp/iso639.name:57
 #$lang=eng
 msgid "Bulgarian"
 msgstr "bulgare"
 
-# DBI:mysql:papp/iso639.name:55
 #$lang=eng
 msgid "Buriat"
 msgstr "bouriate"
 
-# DBI:mysql:papp/iso639.name:267
 #$lang=eng
 msgid "Burmese"
 msgstr "birman"
 
-# DBI:mysql:papp/iso639.name:58
 #$lang=eng
 msgid "Caddo"
 msgstr "caddo"
 
-# DBI:mysql:papp/iso639.name:60
 #$lang=eng
 msgid "Carib"
 msgstr "caribe"
 
-# DBI:mysql:papp/iso639.name:61
 #$lang=eng
 msgid "Catalan"
 msgstr "catalan"
 
-# DBI:mysql:papp/iso639.name:62
 #$lang=eng
 msgid "Caucasian (Other)"
 msgstr "caucasiennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:63
 #$lang=eng
 msgid "Cebuano"
 msgstr "cebuano"
 
-# DBI:mysql:papp/iso639.name:64
 #$lang=eng
 msgid "Celtic (Other)"
 msgstr "celtiques, autres langues"
 
-# DBI:mysql:papp/iso639.name:59
 #$lang=eng
 msgid "Central American Indian (Other)"
-msgstr "indiennes d'AmÃ©rique centrale, autres langues"
+msgstr "indiennes d'Amérique centrale, autres langues"
 
-# DBI:mysql:papp/iso639.name:69
 #$lang=eng
 msgid "Chagatai"
-msgstr "djaghataÃ¯"
+msgstr "djaghataï"
 
-# DBI:mysql:papp/iso639.name:79
 #$lang=eng
 msgid "Chamic languages"
 msgstr "chames, langues"
 
-# DBI:mysql:papp/iso639.name:66
 #$lang=eng
 msgid "Chamorro"
 msgstr "chamorro"
 
-# DBI:mysql:papp/iso639.name:68
 #$lang=eng
 msgid "Chechen"
-msgstr "tchetchÃ¨ne"
+msgstr "tchetchène"
 
-# DBI:mysql:papp/iso639.name:75
 #$lang=eng
 msgid "Cherokee"
 msgstr "cherokee"
 
-# DBI:mysql:papp/iso639.name:78
 #$lang=eng
 msgid "Cheyenne"
 msgstr "cheyenne"
 
-# DBI:mysql:papp/iso639.name:67
 #$lang=eng
 msgid "Chibcha"
 msgstr "chibcha"
 
-# DBI:mysql:papp/iso639.name:289
 #$lang=eng
 msgid "Chichewa; Nyanja"
 msgstr "chichewa; nyanja"
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "Chinois (simplifiÃ©)"
+msgstr "Chinois (simplifié)"
 
-# DBI:mysql:papp/iso639.name:72
 #$lang=eng
 msgid "Chinook jargon"
 msgstr "chinook, jargon"
 
-# DBI:mysql:papp/iso639.name:74
 #$lang=eng
 msgid "Chipewyan"
 msgstr "chipewyan"
 
-# DBI:mysql:papp/iso639.name:73
 #$lang=eng
 msgid "Choctaw"
 msgstr "choctaw"
 
-# DBI:mysql:papp/iso639.name:76
 #$lang=eng
 msgid "Church Slavic"
-msgstr "slavon d'Ã©glise"
+msgstr "slavon d'église"
 
-# DBI:mysql:papp/iso639.name:70
 #$lang=eng
 msgid "Chuukese"
 msgstr "chuuk"
 
-# DBI:mysql:papp/iso639.name:77
 #$lang=eng
 msgid "Chuvash"
 msgstr "tchouvache"
 
-# DBI:mysql:papp/iso639.name:80
 #$lang=eng
 msgid "Coptic"
 msgstr "copte"
 
-# DBI:mysql:papp/iso639.name:81
 #$lang=eng
 msgid "Cornish"
 msgstr "cornique"
 
-# DBI:mysql:papp/iso639.name:82
 #$lang=eng
 msgid "Corsican"
 msgstr "corse"
 
-# DBI:mysql:papp/iso639.name:86
 #$lang=eng
 msgid "Cree"
 msgstr "cree"
 
-# DBI:mysql:papp/iso639.name:265
 #$lang=eng
 msgid "Creek"
 msgstr "muskogee"
 
-# DBI:mysql:papp/iso639.name:87
 #$lang=eng
 msgid "Creoles and pidgins (Other)"
-msgstr "crÃ©oles et pidgins divers"
+msgstr "créoles et pidgins divers"
 
-# DBI:mysql:papp/iso639.name:83
 #$lang=eng
 msgid "Creoles and pidgins, English based (Other)"
-msgstr "crÃ©oles et pidgins anglais, autres"
+msgstr "créoles et pidgins anglais, autres"
 
-# DBI:mysql:papp/iso639.name:84
 #$lang=eng
 msgid "Creoles and pidgins, French-based (Other)"
-msgstr "crÃ©oles et pidgins franÃ§ais, autres"
+msgstr "créoles et pidgins français, autres"
 
-# DBI:mysql:papp/iso639.name:85
 #$lang=eng
 msgid "Creoles and pidgins, Portuguese-based (Other)"
-msgstr "crÃ©oles et pidgins portugais, autres"
+msgstr "créoles et pidgins portugais, autres"
 
-# DBI:mysql:papp/iso639.name:162
 #$lang=eng
 msgid "Croatian"
 msgstr "croate"
 
-# DBI:mysql:papp/iso639.name:88
 #$lang=eng
 msgid "Cushitic (Other)"
 msgstr "couchitiques, autres langues"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "TchÃ¨que"
+msgstr "Tchèque"
 
-# DBI:mysql:papp/iso639.name:90
 #$lang=eng
 msgid "Dakota"
 msgstr "dakota"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Danois"
 
-# DBI:mysql:papp/iso639.name:92
 #$lang=eng
 msgid "Dayak"
 msgstr "dayak"
 
-# DBI:mysql:papp/iso639.name:93
 #$lang=eng
 msgid "Delaware"
 msgstr "delaware"
 
-# DBI:mysql:papp/iso639.name:97
 #$lang=eng
 msgid "Dinka"
 msgstr "dinka"
 
-# DBI:mysql:papp/iso639.name:98
 #$lang=eng
 msgid "Divehi"
 msgstr "maldivien"
 
-# DBI:mysql:papp/iso639.name:99
 #$lang=eng
 msgid "Dogri"
 msgstr "dogri"
 
-# DBI:mysql:papp/iso639.name:96
 #$lang=eng
 msgid "Dogrib"
 msgstr "dogrib"
 
-# DBI:mysql:papp/iso639.name:100
 #$lang=eng
 msgid "Dravidian (Other)"
 msgstr "dravidiennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:101
 #$lang=eng
 msgid "Duala"
 msgstr "douala"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "NÃ©erlandais"
+msgstr "Néerlandais"
 
-# DBI:mysql:papp/iso639.name:102
 #$lang=eng
 msgid "Dutch, Middle (ca. 1050-1350)"
-msgstr "nÃ©erlandais moyen (ca. 1050-1350)"
+msgstr "néerlandais moyen (ca. 1050-1350)"
 
-# DBI:mysql:papp/iso639.name:103
 #$lang=eng
 msgid "Dyula"
 msgstr "dioula"
 
-# DBI:mysql:papp/iso639.name:104
 #$lang=eng
 msgid "Dzongkha"
 msgstr "dzongkha"
 
-# DBI:mysql:papp/iso639.name:105
 #$lang=eng
 msgid "Efik"
 msgstr "efik"
 
-# DBI:mysql:papp/iso639.name:106
 #$lang=eng
 msgid "Egyptian (Ancient)"
-msgstr "Ã©gyptien"
+msgstr "égyptien"
 
-# DBI:mysql:papp/iso639.name:107
 #$lang=eng
 msgid "Ekajuk"
 msgstr "ekajuk"
 
-# DBI:mysql:papp/iso639.name:109
 #$lang=eng
 msgid "Elamite"
-msgstr "Ã©lamite"
+msgstr "élamite"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Anglais"
 
-# DBI:mysql:papp/iso639.name:111
 #$lang=eng
 msgid "English, Middle (1100-1500)"
 msgstr "anglais moyen (1100-1500)"
 
-# DBI:mysql:papp/iso639.name:14
 #$lang=eng
 msgid "English, Old (ca. 450-1100)"
 msgstr "anglo-saxon (ca. 450-1100)"
 
-# DBI:mysql:papp/iso639.name:112
 #$lang=eng
 msgid "Esperanto"
-msgstr "espÃ©ranto"
+msgstr "espéranto"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estonien"
 
-# DBI:mysql:papp/iso639.name:115
 #$lang=eng
 msgid "Ewe"
-msgstr "Ã©wÃ©"
+msgstr "éwé"
 
-# DBI:mysql:papp/iso639.name:116
 #$lang=eng
 msgid "Ewondo"
-msgstr "Ã©wondo"
+msgstr "éwondo"
 
-# DBI:mysql:papp/iso639.name:117
 #$lang=eng
 msgid "Fang"
 msgstr "fang"
 
-# DBI:mysql:papp/iso639.name:120
 #$lang=eng
 msgid "Fanti"
 msgstr "fanti"
 
-# DBI:mysql:papp/iso639.name:118
 #$lang=eng
 msgid "Faroese"
-msgstr "fÃ©roÃ¯en"
+msgstr "féroïen"
 
-# DBI:mysql:papp/iso639.name:121
 #$lang=eng
 msgid "Fijian"
 msgstr "fidjien"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Finnois"
 
-# DBI:mysql:papp/iso639.name:123
 #$lang=eng
 msgid "Finno-Ugrian (Other)"
 msgstr "finno-ougriennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:124
 #$lang=eng
 msgid "Fon"
 msgstr "fon"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "FranÃ§ais"
+msgstr "Français"
 
-# DBI:mysql:papp/iso639.name:126
 #$lang=eng
 msgid "French, Middle (ca. 1400-1600)"
-msgstr "franÃ§ais moyen (1400-1600)"
+msgstr "français moyen (1400-1600)"
 
-# DBI:mysql:papp/iso639.name:127
 #$lang=eng
 msgid "French, Old (842-ca. 1400)"
-msgstr "franÃ§ais ancien (842-ca. 1400)"
+msgstr "français ancien (842-ca. 1400)"
 
-# DBI:mysql:papp/iso639.name:128
 #$lang=eng
 msgid "Frisian"
 msgstr "frison"
 
-# DBI:mysql:papp/iso639.name:130
 #$lang=eng
 msgid "Friulian"
 msgstr "frioulan"
 
-# DBI:mysql:papp/iso639.name:129
 #$lang=eng
 msgid "Fulah"
 msgstr "peul"
 
-# DBI:mysql:papp/iso639.name:131
 #$lang=eng
 msgid "Ga"
 msgstr "ga"
 
-# DBI:mysql:papp/iso639.name:137
 #$lang=eng
 msgid "Gaelic (Scots)"
-msgstr "gaÃ©lique d'Ecosse"
+msgstr "gaélique d'Ecosse"
 
-# DBI:mysql:papp/iso639.name:139
 #$lang=eng
 msgid "Gallegan"
 msgstr "galicien"
 
-# DBI:mysql:papp/iso639.name:229
 #$lang=eng
 msgid "Ganda"
 msgstr "ganda"
 
-# DBI:mysql:papp/iso639.name:132
 #$lang=eng
 msgid "Gayo"
 msgstr "gayo"
 
-# DBI:mysql:papp/iso639.name:133
 #$lang=eng
 msgid "Gbaya"
 msgstr "gbaya"
 
-# DBI:mysql:papp/iso639.name:135
 #$lang=eng
 msgid "Geez"
-msgstr "guÃ¨ze"
+msgstr "guèze"
 
-# DBI:mysql:papp/iso639.name:192
 #$lang=eng
 msgid "Georgian"
-msgstr "gÃ©orgien"
+msgstr "géorgien"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Allemand"
 
-# DBI:mysql:papp/iso639.name:141
 #$lang=eng
 msgid "German, Middle High (ca. 1050-1500)"
 msgstr "allemand, moyen haut (ca. 1050-1500)"
 
-# DBI:mysql:papp/iso639.name:142
 #$lang=eng
 msgid "German, Old High (ca. 750-1050)"
 msgstr "allemand, vieux haut (ca. 750-1050)"
 
-# DBI:mysql:papp/iso639.name:134
 #$lang=eng
 msgid "Germanic (Other)"
 msgstr "germaniques, autres langues"
 
-# DBI:mysql:papp/iso639.name:136
 #$lang=eng
 msgid "Gilbertese"
 msgstr "kiribati"
 
-# DBI:mysql:papp/iso639.name:143
 #$lang=eng
 msgid "Gondi"
 msgstr "gond"
 
-# DBI:mysql:papp/iso639.name:144
 #$lang=eng
 msgid "Gorontalo"
 msgstr "gorontalo"
 
-# DBI:mysql:papp/iso639.name:145
 #$lang=eng
 msgid "Gothic"
 msgstr "gothique"
 
-# DBI:mysql:papp/iso639.name:146
 #$lang=eng
 msgid "Grebo"
 msgstr "grebo"
 
-# DBI:mysql:papp/iso639.name:147
 #$lang=eng
 msgid "Greek, Ancient (to 1453)"
-msgstr "grec ancien (jusqu'Ã  1453)"
+msgstr "grec ancien (jusqu'à 1453)"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grec"
 
-# DBI:mysql:papp/iso639.name:148
 #$lang=eng
 msgid "Guarani"
 msgstr "guarani"
 
-# DBI:mysql:papp/iso639.name:149
 #$lang=eng
 msgid "Gujarati"
 msgstr "goudjrati"
 
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "GwichÂ´in"
-msgstr "gwichÂ´in"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "GwichÃ\x00Â´in"
-msgstr "gwichÃ\x00Â´in"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "GwichÃÂ´in"
-msgstr "gwichÃÂ´in"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "GwichÃ\x00Ã\x00Â´in"
-msgstr "gwichÃ\x00Ã\x00Â´in"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Gwich´in"
-msgstr "gwich´in"
-
-# DBI:mysql:papp/iso639.name:151
 #$lang=eng
 msgid "Haida"
 msgstr "haida"
 
-# DBI:mysql:papp/iso639.name:152
 #$lang=eng
 msgid "Hausa"
 msgstr "haoussa"
 
-# DBI:mysql:papp/iso639.name:153
 #$lang=eng
 msgid "Hawaiian"
-msgstr "hawaÃ¯en"
+msgstr "hawaïen"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "HÃ©breu"
+msgstr "Hébreu"
 
-# DBI:mysql:papp/iso639.name:155
 #$lang=eng
 msgid "Herero"
 msgstr "herero"
 
-# DBI:mysql:papp/iso639.name:156
 #$lang=eng
 msgid "Hiligaynon"
 msgstr "hiligaynon"
 
-# DBI:mysql:papp/iso639.name:157
 #$lang=eng
 msgid "Himachali"
 msgstr "himachali"
 
-# DBI:mysql:papp/iso639.name:158
 #$lang=eng
 msgid "Hindi"
 msgstr "hindi"
 
-# DBI:mysql:papp/iso639.name:161
 #$lang=eng
 msgid "Hiri Motu"
 msgstr "hiri motu"
 
-# DBI:mysql:papp/iso639.name:159
 #$lang=eng
 msgid "Hittite"
 msgstr "hittite"
 
-# DBI:mysql:papp/iso639.name:160
 #$lang=eng
 msgid "Hmong"
 msgstr "hmong"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Hongrois"
 
-# DBI:mysql:papp/iso639.name:164
 #$lang=eng
 msgid "Hupa"
 msgstr "hupa"
 
-# DBI:mysql:papp/iso639.name:166
 #$lang=eng
 msgid "Iban"
 msgstr "iban"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandais"
 
-# DBI:mysql:papp/iso639.name:167
 #$lang=eng
 msgid "Igbo"
 msgstr "igbo"
 
-# DBI:mysql:papp/iso639.name:168
 #$lang=eng
 msgid "Ijo"
 msgstr "ijo"
 
-# DBI:mysql:papp/iso639.name:171
 #$lang=eng
 msgid "Iloko"
 msgstr "ilocano"
 
-# DBI:mysql:papp/iso639.name:173
 #$lang=eng
 msgid "Indic (Other)"
 msgstr "indo-aryennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:175
 #$lang=eng
 msgid "Indo-European (Other)"
-msgstr "indo-europÃ©ennes, autres langues"
+msgstr "indo-européennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:174
 #$lang=eng
 msgid "Indonesian"
-msgstr "indonÃ©sien"
+msgstr "indonésien"
 
-# DBI:mysql:papp/iso639.name:172
 #$lang=eng
 msgid "Interlingua (International Auxiliary Language Association)"
 msgstr "interlingua (langue auxiliaire internationale)"
 
-# DBI:mysql:papp/iso639.name:170
 #$lang=eng
 msgid "Interlingue"
 msgstr "interlingue"
 
-# DBI:mysql:papp/iso639.name:169
 #$lang=eng
 msgid "Inuktitut"
 msgstr "inuktitut"
 
-# DBI:mysql:papp/iso639.name:176
 #$lang=eng
 msgid "Inupiaq"
 msgstr "inupiaq"
 
-# DBI:mysql:papp/iso639.name:177
 #$lang=eng
 msgid "Iranian (Other)"
 msgstr "iraniennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:138
 #$lang=eng
 msgid "Irish"
 msgstr "irlandais"
 
-# DBI:mysql:papp/iso639.name:246
 #$lang=eng
 msgid "Irish, Middle (900-1200)"
 msgstr "irlandais moyen (900-1200)"
 
-# DBI:mysql:papp/iso639.name:339
 #$lang=eng
 msgid "Irish, Old (to 900)"
-msgstr "irlandais ancien (jusqu'Ã  900)"
+msgstr "irlandais ancien (jusqu'à 900)"
 
-# DBI:mysql:papp/iso639.name:178
 #$lang=eng
 msgid "Iroquoian languages"
 msgstr "iroquoises, langues (famille)"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italien"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japonais"
 
-# DBI:mysql:papp/iso639.name:181
 #$lang=eng
 msgid "Javanese"
 msgstr "javanais"
 
-# DBI:mysql:papp/iso639.name:183
 #$lang=eng
 msgid "Judeo-Persian"
-msgstr "judÃ©o-persan"
+msgstr "judéo-persan"
 
-# DBI:mysql:papp/iso639.name:185
 #$lang=eng
 msgid "Kabyle"
 msgstr "kabyle"
 
-# DBI:mysql:papp/iso639.name:186
 #$lang=eng
 msgid "Kachin"
 msgstr "kachin"
 
-# DBI:mysql:papp/iso639.name:187
 #$lang=eng
 msgid "Kalaallisut"
 msgstr "groenlandais"
 
-# DBI:mysql:papp/iso639.name:188
 #$lang=eng
 msgid "Kamba"
 msgstr "kamba"
 
-# DBI:mysql:papp/iso639.name:189
 #$lang=eng
 msgid "Kannada"
 msgstr "kannada"
 
-# DBI:mysql:papp/iso639.name:193
 #$lang=eng
 msgid "Kanuri"
 msgstr "kanouri"
 
-# DBI:mysql:papp/iso639.name:184
 #$lang=eng
 msgid "Kara-Kalpak"
 msgstr "karakalpak"
 
-# DBI:mysql:papp/iso639.name:190
 #$lang=eng
 msgid "Karen"
 msgstr "karen"
 
-# DBI:mysql:papp/iso639.name:191
 #$lang=eng
 msgid "Kashmiri"
 msgstr "kashmiri"
 
-# DBI:mysql:papp/iso639.name:194
 #$lang=eng
 msgid "Kawi"
 msgstr "kawi"
 
-# DBI:mysql:papp/iso639.name:195
 #$lang=eng
 msgid "Kazakh"
 msgstr "kazakh"
 
-# DBI:mysql:papp/iso639.name:196
 #$lang=eng
 msgid "Khasi"
 msgstr "khasi"
 
-# DBI:mysql:papp/iso639.name:198
 #$lang=eng
 msgid "Khmer"
 msgstr "khmer"
 
-# DBI:mysql:papp/iso639.name:197
 #$lang=eng
 msgid "Khoisan (Other)"
 msgstr "khoisan, autres langues"
 
-# DBI:mysql:papp/iso639.name:199
 #$lang=eng
 msgid "Khotanese"
 msgstr "khotanais"
 
-# DBI:mysql:papp/iso639.name:200
 #$lang=eng
 msgid "Kikuyu"
 msgstr "kikuyu"
 
-# DBI:mysql:papp/iso639.name:203
 #$lang=eng
 msgid "Kimbundu"
 msgstr "kimbundu"
 
-# DBI:mysql:papp/iso639.name:201
 #$lang=eng
 msgid "Kinyarwanda"
 msgstr "rwanda"
 
-# DBI:mysql:papp/iso639.name:202
 #$lang=eng
 msgid "Kirghiz"
 msgstr "kirghize"
 
-# DBI:mysql:papp/iso639.name:205
 #$lang=eng
 msgid "Komi"
 msgstr "kom"
 
-# DBI:mysql:papp/iso639.name:206
 #$lang=eng
 msgid "Kongo"
 msgstr "kongo"
 
-# DBI:mysql:papp/iso639.name:204
 #$lang=eng
 msgid "Konkani"
 msgstr "konkani"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "CorÃ©en"
+msgstr "Coréen"
 
-# DBI:mysql:papp/iso639.name:208
 #$lang=eng
 msgid "Kosraean"
 msgstr "kosrae"
 
-# DBI:mysql:papp/iso639.name:209
 #$lang=eng
 msgid "Kpelle"
-msgstr "kpellÃ©"
+msgstr "kpellé"
 
-# DBI:mysql:papp/iso639.name:210
 #$lang=eng
 msgid "Kru"
 msgstr "krou"
 
-# DBI:mysql:papp/iso639.name:212
 #$lang=eng
 msgid "Kumyk"
 msgstr "koumyk"
 
-# DBI:mysql:papp/iso639.name:213
 #$lang=eng
 msgid "Kurdish"
 msgstr "kurde"
 
-# DBI:mysql:papp/iso639.name:211
 #$lang=eng
 msgid "Kurukh"
 msgstr "kurukh"
 
-# DBI:mysql:papp/iso639.name:214
 #$lang=eng
 msgid "Kutenai"
 msgstr "kutenai"
 
-# DBI:mysql:papp/iso639.name:215
 #$lang=eng
 msgid "Ladino"
-msgstr "judÃ©o-espagnol"
+msgstr "judéo-espagnol"
 
-# DBI:mysql:papp/iso639.name:216
 #$lang=eng
 msgid "Lahnda"
 msgstr "lahnda"
 
-# DBI:mysql:papp/iso639.name:217
 #$lang=eng
 msgid "Lamba"
 msgstr "lamba"
 
-# DBI:mysql:papp/iso639.name:218
 #$lang=eng
 msgid "Lao"
 msgstr "lao"
 
-# DBI:mysql:papp/iso639.name:219
 #$lang=eng
 msgid "Latin"
 msgstr "latin"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Letton"
 
-# DBI:mysql:papp/iso639.name:226
 #$lang=eng
 msgid "Letzeburgesch"
 msgstr "luxembourgeois"
 
-# DBI:mysql:papp/iso639.name:221
 #$lang=eng
 msgid "Lezghian"
 msgstr "lezghien"
 
-# DBI:mysql:papp/iso639.name:222
 #$lang=eng
 msgid "Lingala"
 msgstr "lingala"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Lithuanien"
 
-# DBI:mysql:papp/iso639.name:276
 #$lang=eng
 msgid "Low German; Low Saxon; German, Low; Saxon, Low"
 msgstr "bas allemand; bas saxon; allemand, bas; saxon, bas"
 
-# DBI:mysql:papp/iso639.name:225
 #$lang=eng
 msgid "Lozi"
 msgstr "lozi"
 
-# DBI:mysql:papp/iso639.name:228
 #$lang=eng
 msgid "Luba-Katanga"
 msgstr "luba-katanga"
 
-# DBI:mysql:papp/iso639.name:227
 #$lang=eng
 msgid "Luba-Lulua"
 msgstr "luba-lulua"
 
-# DBI:mysql:papp/iso639.name:230
 #$lang=eng
 msgid "Luiseno"
 msgstr "luiseno"
 
-# DBI:mysql:papp/iso639.name:231
 #$lang=eng
 msgid "Lunda"
 msgstr "lunda"
 
-# DBI:mysql:papp/iso639.name:232
 #$lang=eng
 msgid "Luo (Kenya and Tanzania)"
 msgstr "luo (Kenya et Tanzanie)"
 
-# DBI:mysql:papp/iso639.name:233
 #$lang=eng
 msgid "lushai"
 msgstr "Lushai"
 
-# DBI:mysql:papp/iso639.name:250
 #$lang=eng
 msgid "Macedonian"
-msgstr "macÃ©donien"
+msgstr "macédonien"
 
-# DBI:mysql:papp/iso639.name:234
 #$lang=eng
 msgid "Madurese"
 msgstr "madourais"
 
-# DBI:mysql:papp/iso639.name:235
 #$lang=eng
 msgid "Magahi"
 msgstr "magahi"
 
-# DBI:mysql:papp/iso639.name:237
 #$lang=eng
 msgid "Maithili"
 msgstr "maithili"
 
-# DBI:mysql:papp/iso639.name:238
 #$lang=eng
 msgid "Makasar"
 msgstr "makassar"
 
-# DBI:mysql:papp/iso639.name:252
 #$lang=eng
 msgid "Malagasy"
 msgstr "malgache"
 
-# DBI:mysql:papp/iso639.name:262
 #$lang=eng
 msgid "Malay"
 msgstr "malais"
 
-# DBI:mysql:papp/iso639.name:239
 #$lang=eng
 msgid "Malayalam"
 msgstr "malayalam"
 
-# DBI:mysql:papp/iso639.name:253
 #$lang=eng
 msgid "Maltese"
 msgstr "maltais"
 
-# DBI:mysql:papp/iso639.name:254
 #$lang=eng
 msgid "Manchu"
 msgstr "mandchou"
 
-# DBI:mysql:papp/iso639.name:244
 #$lang=eng
 msgid "Mandar"
 msgstr "mandar"
 
-# DBI:mysql:papp/iso639.name:240
 #$lang=eng
 msgid "Mandingo"
 msgstr "mandingue"
 
-# DBI:mysql:papp/iso639.name:255
 #$lang=eng
 msgid "Manipuri"
 msgstr "manipuri"
 
-# DBI:mysql:papp/iso639.name:256
 #$lang=eng
 msgid "Manobo languages"
 msgstr "manobo, langues"
 
-# DBI:mysql:papp/iso639.name:140
 #$lang=eng
 msgid "Manx"
 msgstr "manx"
 
-# DBI:mysql:papp/iso639.name:261
 #$lang=eng
 msgid "Maori"
 msgstr "maori"
 
-# DBI:mysql:papp/iso639.name:242
 #$lang=eng
 msgid "Marathi"
 msgstr "marathe"
 
-# DBI:mysql:papp/iso639.name:71
 #$lang=eng
 msgid "Mari"
 msgstr "mari"
 
-# DBI:mysql:papp/iso639.name:236
 #$lang=eng
 msgid "Marshall"
 msgstr "marshall"
 
-# DBI:mysql:papp/iso639.name:266
 #$lang=eng
 msgid "Marwari"
 msgstr "marvari"
 
-# DBI:mysql:papp/iso639.name:243
 #$lang=eng
 msgid "Masai"
-msgstr "massaÃ¯"
+msgstr "massaï"
 
-# DBI:mysql:papp/iso639.name:268
 #$lang=eng
 msgid "Mayan languages"
 msgstr "maya, langues"
 
-# DBI:mysql:papp/iso639.name:245
 #$lang=eng
 msgid "Mende"
-msgstr "mendÃ©"
+msgstr "mendé"
 
-# DBI:mysql:papp/iso639.name:247
 #$lang=eng
 msgid "Micmac"
 msgstr "micmac"
 
-# DBI:mysql:papp/iso639.name:248
 #$lang=eng
 msgid "Minangkabau"
 msgstr "minangkabau"
 
-# DBI:mysql:papp/iso639.name:249
 #$lang=eng
 msgid "Miscellaneous languages"
 msgstr "diverses, langues"
 
-# DBI:mysql:papp/iso639.name:257
 #$lang=eng
 msgid "Mohawk"
 msgstr "mohawk"
 
-# DBI:mysql:papp/iso639.name:258
 #$lang=eng
 msgid "Moldavian"
 msgstr "moldave"
 
-# DBI:mysql:papp/iso639.name:251
 #$lang=eng
 msgid "Mon-Khmer (Other)"
-msgstr "mÃ´n-khmer, autres langues"
+msgstr "môn-khmer, autres langues"
 
-# DBI:mysql:papp/iso639.name:224
 #$lang=eng
 msgid "Mongo"
 msgstr "mongo"
 
-# DBI:mysql:papp/iso639.name:259
 #$lang=eng
 msgid "Mongolian"
 msgstr "mongol"
 
-# DBI:mysql:papp/iso639.name:260
 #$lang=eng
 msgid "Mossi"
-msgstr "morÃ©"
+msgstr "moré"
 
-# DBI:mysql:papp/iso639.name:263
 #$lang=eng
 msgid "Multiple languages"
 msgstr "multilingue"
 
-# DBI:mysql:papp/iso639.name:264
 #$lang=eng
 msgid "Munda languages"
 msgstr "mounda, langues"
 
-# DBI:mysql:papp/iso639.name:269
 #$lang=eng
 msgid "Nahuatl"
 msgstr "nahuatl"
 
-# DBI:mysql:papp/iso639.name:271
 #$lang=eng
 msgid "Nauru"
 msgstr "nauruan"
 
-# DBI:mysql:papp/iso639.name:272
 #$lang=eng
 msgid "Navajo"
 msgstr "navaho"
 
-# DBI:mysql:papp/iso639.name:274
 #$lang=eng
 msgid "Ndebele, North"
-msgstr "ndÃ©bÃ©lÃ© du Nord"
+msgstr "ndébélé du Nord"
 
-# DBI:mysql:papp/iso639.name:273
 #$lang=eng
 msgid "Ndebele, South"
-msgstr "ndÃ©bÃ©lÃ© du Sud"
+msgstr "ndébélé du Sud"
 
-# DBI:mysql:papp/iso639.name:275
 #$lang=eng
 msgid "Ndonga"
 msgstr "ndonga"
 
-# DBI:mysql:papp/iso639.name:277
 #$lang=eng
 msgid "Nepali"
-msgstr "nÃ©palais"
+msgstr "népalais"
 
-# DBI:mysql:papp/iso639.name:278
 #$lang=eng
 msgid "Newari"
 msgstr "newari"
 
-# DBI:mysql:papp/iso639.name:279
 #$lang=eng
 msgid "Nias"
 msgstr "nias"
 
-# DBI:mysql:papp/iso639.name:280
 #$lang=eng
 msgid "Niger-Kordofanian (Other)"
-msgstr "nigÃ©ro-congolaises, autres langues"
+msgstr "nigéro-congolaises, autres langues"
 
-# DBI:mysql:papp/iso639.name:364
 #$lang=eng
 msgid "Nilo-Saharan (Other)"
 msgstr "nilo-sahariennes, autres langues"
 
-# DBI:mysql:papp/iso639.name:281
 #$lang=eng
 msgid "Niuean"
-msgstr "niuÃ©"
+msgstr "niué"
 
-# DBI:mysql:papp/iso639.name:285
 #$lang=eng
 msgid "Norse, Old"
 msgstr "norrois, vieux"
 
-# DBI:mysql:papp/iso639.name:270
 #$lang=eng
 msgid "North American Indian"
-msgstr "indiennes d'AmÃ©rique du Nord, autres langues"
+msgstr "indiennes d'Amérique du Nord, autres langues"
 
-# DBI:mysql:papp/iso639.name:349
 #$lang=eng
 msgid "Northern Sami"
 msgstr "sami du Nord"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "NorvÃ©gien"
+msgstr "Norvégien"
 
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Norwegian BokmÃÂ¥l"
-msgstr "norvÃÂ©gien bokmÃÂ¥l"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Norwegian BokmÃ\x00Â¥l"
-msgstr "norvÃ\x00Â©gien bokmÃ\x00Â¥l"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Norwegian BokmÃ\x00Ã\x00Â¥l"
-msgstr "norvÃ\x00Ã\x00Â©gien bokmÃ\x00Ã\x00Â¥l"
-
-# DBI:mysql:papp/iso639.name:284
-#$lang=eng
-#$flags=2
-msgid "Norwegian BokmÃ¥l"
-msgstr "norvÃ©gien nynorsk"
-
-# DBI:mysql:papp/iso639.name:284
 #$lang=eng
 #$flags=2
 msgid "Norwegian Bokmål"
 msgstr "norvégien nynorsk"
 
-# DBI:mysql:papp/iso639.name:283
 #$lang=eng
 msgid "Norwegian Nynorsk"
-msgstr "norvÃ©gien nynorsk"
+msgstr "norvégien nynorsk"
 
-# DBI:mysql:papp/iso639.name:288
 #$lang=eng
 msgid "Nubian languages"
 msgstr "nubiennes, langues"
 
-# DBI:mysql:papp/iso639.name:290
 #$lang=eng
 msgid "Nyamwezi"
 msgstr "nyamwezi"
 
-# DBI:mysql:papp/iso639.name:291
 #$lang=eng
 msgid "Nyankole"
-msgstr "nyankolÃ©"
+msgstr "nyankolé"
 
-# DBI:mysql:papp/iso639.name:292
 #$lang=eng
 msgid "Nyoro"
 msgstr "nyoro"
 
-# DBI:mysql:papp/iso639.name:293
 #$lang=eng
 msgid "Nzima"
 msgstr "nzema"
 
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Occitan (post 1500); ProvenÃÂ§al"
-msgstr "occitan (aprÃÂ¨s 1500); provenÃÂ§al"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Occitan (post 1500); ProvenÃ\x00Â§al"
-msgstr "occitan (aprÃ\x00Â¨s 1500); provenÃ\x00Â§al"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Occitan (post 1500); ProvenÃ\x00Ã\x00Â§al"
-msgstr "occitan (aprÃ\x00Ã\x00Â¨s 1500); provenÃ\x00Ã\x00Â§al"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Occitan (post 1500); ProvenÃ§al"
-msgstr "occitan (aprÃ¨s 1500); provenÃ§al"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Occitan (post 1500); Provençal"
-msgstr "occitan (après 1500); provençal"
-
-# DBI:mysql:papp/iso639.name:295
 #$lang=eng
 msgid "Ojibwa"
 msgstr "ojibwa"
 
-# DBI:mysql:papp/iso639.name:296
 #$lang=eng
 msgid "Oriya"
 msgstr "oriya"
 
-# DBI:mysql:papp/iso639.name:297
 #$lang=eng
 msgid "Oromo"
 msgstr "galla"
 
-# DBI:mysql:papp/iso639.name:298
 #$lang=eng
 msgid "Osage"
 msgstr "osage"
 
-# DBI:mysql:papp/iso639.name:299
 #$lang=eng
 msgid "Ossetian; Ossetic"
-msgstr "ossÃ¨te"
+msgstr "ossète"
 
-# DBI:mysql:papp/iso639.name:301
 #$lang=eng
 msgid "Otomian languages"
 msgstr "otomangue, langues"
 
-# DBI:mysql:papp/iso639.name:304
 #$lang=eng
 msgid "Pahlavi"
 msgstr "pahlavi"
 
-# DBI:mysql:papp/iso639.name:308
 #$lang=eng
 msgid "Palauan"
 msgstr "palau"
 
-# DBI:mysql:papp/iso639.name:311
 #$lang=eng
 msgid "Pali"
 msgstr "pali"
 
-# DBI:mysql:papp/iso639.name:305
 #$lang=eng
 msgid "Pampanga"
 msgstr "pampangan"
 
-# DBI:mysql:papp/iso639.name:303
 #$lang=eng
 msgid "Pangasinan"
 msgstr "pangasinan"
 
-# DBI:mysql:papp/iso639.name:306
 #$lang=eng
 msgid "Panjabi"
 msgstr "pendjabi"
 
-# DBI:mysql:papp/iso639.name:307
 #$lang=eng
 msgid "Papiamento"
 msgstr "papiamento"
 
-# DBI:mysql:papp/iso639.name:302
 #$lang=eng
 msgid "Papuan (Other)"
 msgstr "papoues, autres langues"
 
-# DBI:mysql:papp/iso639.name:119
 #$lang=eng
 msgid "Persian"
 msgstr "persan"
 
-# DBI:mysql:papp/iso639.name:309
 #$lang=eng
 msgid "Persian, Old (ca. 600-400 b.c.)"
 msgstr "perse, vieux (ca. 600-400 av. j.-c.)"
 
-# DBI:mysql:papp/iso639.name:310
 #$lang=eng
 msgid "Philippine (Other)"
 msgstr "philippines, autres langues"
 
-# DBI:mysql:papp/iso639.name:313
 #$lang=eng
 msgid "Pohnpeian"
 msgstr "pohnpei"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Polonais"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugais"
 
-# DBI:mysql:papp/iso639.name:315
 #$lang=eng
 msgid "Prakrit languages"
-msgstr "prÃ¢krit"
+msgstr "prâkrit"
 
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "ProvenÃÂ§al, Old (to 1500)"
-msgstr "provenÃÂ§al ancien (jusqu'ÃÂ  1500)"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "ProvenÃ\x00Â§al, Old (to 1500)"
-msgstr "provenÃ\x00Â§al ancien (jusqu'Ã\x00Â  1500)"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "ProvenÃ\x00Ã\x00Â§al, Old (to 1500)"
-msgstr "provenÃ\x00Ã\x00Â§al ancien (jusqu'Ã\x00Ã\x00Â  1500)"
-
-# DBI:mysql:papp/iso639.name:316
-#$lang=eng
-#$flags=2
-msgid "ProvenÃ§al, Old (to 1500)"
-msgstr "irlandais ancien (jusqu'Ã  900)"
-
-# DBI:mysql:papp/iso639.name:316
 #$lang=eng
 #$flags=2
 msgid "Provençal, Old (to 1500)"
 msgstr "irlandais ancien (jusqu'à 900)"
 
-# DBI:mysql:papp/iso639.name:317
 #$lang=eng
 msgid "Pushto"
 msgstr "pachto"
 
-# DBI:mysql:papp/iso639.name:318
 #$lang=eng
 msgid "Quechua"
 msgstr "quechua"
 
-# DBI:mysql:papp/iso639.name:319
 #$lang=eng
 msgid "Rajasthani"
 msgstr "rajasthani"
 
-# DBI:mysql:papp/iso639.name:320
 #$lang=eng
 msgid "Rapanui"
 msgstr "rapanui"
 
-# DBI:mysql:papp/iso639.name:321
 #$lang=eng
 msgid "Rarotongan"
 msgstr "rarotonga"
 
-# DBI:mysql:papp/iso639.name:322
 #$lang=eng
 msgid "Romance (Other)"
 msgstr "romanes, autres langues"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Roumain"
 
-# DBI:mysql:papp/iso639.name:323
 #$lang=eng
 msgid "Romany"
 msgstr "tsigane"
 
-# DBI:mysql:papp/iso639.name:325
 #$lang=eng
 msgid "Rundi"
 msgstr "rundi"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Russe"
 
-# DBI:mysql:papp/iso639.name:331
 #$lang=eng
 msgid "Salishan languages"
 msgstr "salish, langues"
 
-# DBI:mysql:papp/iso639.name:332
 #$lang=eng
 msgid "Samaritan Aramaic"
 msgstr "samaritain"
 
-# DBI:mysql:papp/iso639.name:350
 #$lang=eng
 msgid "Sami languages (Other)"
 msgstr "sami, autres langues"
 
-# DBI:mysql:papp/iso639.name:351
 #$lang=eng
 msgid "Samoan"
 msgstr "samoan"
 
-# DBI:mysql:papp/iso639.name:327
 #$lang=eng
 msgid "Sandawe"
 msgstr "sandawe"
 
-# DBI:mysql:papp/iso639.name:328
 #$lang=eng
 msgid "Sango"
 msgstr "sango"
 
-# DBI:mysql:papp/iso639.name:333
 #$lang=eng
 msgid "Sanskrit"
 msgstr "sanskrit"
 
-# DBI:mysql:papp/iso639.name:335
 #$lang=eng
 msgid "Santali"
 msgstr "santal"
 
-# DBI:mysql:papp/iso639.name:361
 #$lang=eng
 msgid "Sardinian"
 msgstr "sarde"
 
-# DBI:mysql:papp/iso639.name:334
 #$lang=eng
 msgid "Sasak"
 msgstr "sasak"
 
-# DBI:mysql:papp/iso639.name:336
 #$lang=eng
 msgid "Scots"
-msgstr "Ã©cossais"
+msgstr "écossais"
 
-# DBI:mysql:papp/iso639.name:337
 #$lang=eng
 msgid "Selkup"
 msgstr "selkoupe"
 
-# DBI:mysql:papp/iso639.name:338
 #$lang=eng
 msgid "Semitic (Other)"
-msgstr "sÃ©mitiques, autres langues"
+msgstr "sémitiques, autres langues"
 
-# DBI:mysql:papp/iso639.name:362
 #$lang=eng
 msgid "Serbian"
 msgstr "serbe"
 
-# DBI:mysql:papp/iso639.name:363
 #$lang=eng
 msgid "Serer"
-msgstr "sÃ©rÃ¨re"
+msgstr "sérère"
 
-# DBI:mysql:papp/iso639.name:341
 #$lang=eng
 msgid "Shan"
 msgstr "chan"
 
-# DBI:mysql:papp/iso639.name:352
 #$lang=eng
 msgid "Shona"
 msgstr "shona"
 
-# DBI:mysql:papp/iso639.name:342
 #$lang=eng
 msgid "Sidamo"
 msgstr "sidamo"
 
-# DBI:mysql:papp/iso639.name:340
 #$lang=eng
 msgid "Sign Languages"
 msgstr "langues des signes"
 
-# DBI:mysql:papp/iso639.name:48
 #$lang=eng
 msgid "Siksika"
 msgstr "blackfoot"
 
-# DBI:mysql:papp/iso639.name:353
 #$lang=eng
 msgid "Sindhi"
 msgstr "sindhi"
 
-# DBI:mysql:papp/iso639.name:343
 #$lang=eng
 msgid "Sinhalese"
 msgstr "singhalais"
 
-# DBI:mysql:papp/iso639.name:345
 #$lang=eng
 msgid "Sino-Tibetan (Other)"
-msgstr "sino-tibÃ©taines, autres langues"
+msgstr "sino-tibétaines, autres langues"
 
-# DBI:mysql:papp/iso639.name:344
 #$lang=eng
 msgid "Siouan languages"
 msgstr "sioux, langues"
 
-# DBI:mysql:papp/iso639.name:94
 #$lang=eng
 msgid "Slave (Athapascan)"
 msgstr "esclave (athapascan)"
 
-# DBI:mysql:papp/iso639.name:346
 #$lang=eng
 msgid "Slavic (Other)"
 msgstr "slaves, autres langues"
 
-# DBI:mysql:papp/iso639.name:347
 #$lang=eng
 msgid "Slovak"
 msgstr "slovaque"
 
-# DBI:mysql:papp/iso639.name:348
 #$lang=eng
 msgid "Slovenian"
-msgstr "slovÃ¨ne"
+msgstr "slovène"
 
-# DBI:mysql:papp/iso639.name:355
 #$lang=eng
 msgid "Sogdian"
 msgstr "sogdien"
 
-# DBI:mysql:papp/iso639.name:356
 #$lang=eng
 msgid "Somali"
 msgstr "somali"
 
-# DBI:mysql:papp/iso639.name:357
 #$lang=eng
 msgid "Songhai"
 msgstr "songhai"
 
-# DBI:mysql:papp/iso639.name:354
 #$lang=eng
 msgid "Soninke"
-msgstr "soninkÃ©"
+msgstr "soninké"
 
-# DBI:mysql:papp/iso639.name:419
 #$lang=eng
 msgid "Sorbian languages"
 msgstr "sorabes, langues"
 
-# DBI:mysql:papp/iso639.name:287
 #$lang=eng
 msgid "Sotho, Northern"
 msgstr "sotho du Sud"
 
-# DBI:mysql:papp/iso639.name:358
 #$lang=eng
 msgid "Sotho, Southern"
 msgstr "sotho du Sud"
 
-# DBI:mysql:papp/iso639.name:330
 #$lang=eng
 msgid "South American Indian (Other)"
-msgstr "indiennes d'AmÃ©rique du Sud, autres langues"
+msgstr "indiennes d'Amérique du Sud, autres langues"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Espagnol"
 
-# DBI:mysql:papp/iso639.name:366
 #$lang=eng
 msgid "Sukuma"
 msgstr "sukuma"
 
-# DBI:mysql:papp/iso639.name:369
 #$lang=eng
 msgid "Sumerian"
-msgstr "sumÃ©rien"
+msgstr "sumérien"
 
-# DBI:mysql:papp/iso639.name:367
 #$lang=eng
 msgid "Sundanese"
 msgstr "soundanais"
 
-# DBI:mysql:papp/iso639.name:368
 #$lang=eng
 msgid "Susu"
 msgstr "soussou"
 
-# DBI:mysql:papp/iso639.name:370
 #$lang=eng
 msgid "Swahili"
 msgstr "swahili"
 
-# DBI:mysql:papp/iso639.name:365
 #$lang=eng
 msgid "Swati"
 msgstr "swati"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "SuÃ©dois"
+msgstr "Suédois"
 
-# DBI:mysql:papp/iso639.name:372
 #$lang=eng
 msgid "Syriac"
 msgstr "syriaque"
 
-# DBI:mysql:papp/iso639.name:382
 #$lang=eng
 msgid "Tagalog"
 msgstr "tagalog"
 
-# DBI:mysql:papp/iso639.name:373
 #$lang=eng
 msgid "Tahitian"
 msgstr "tahitien"
 
-# DBI:mysql:papp/iso639.name:374
 #$lang=eng
 msgid "Tai (Other)"
-msgstr "thaÃ¯es, autres langues"
+msgstr "thaïes, autres langues"
 
-# DBI:mysql:papp/iso639.name:381
 #$lang=eng
 msgid "Tajik"
 msgstr "tadjik"
 
-# DBI:mysql:papp/iso639.name:389
 #$lang=eng
 msgid "Tamashek"
 msgstr "tamacheq"
 
-# DBI:mysql:papp/iso639.name:375
 #$lang=eng
 msgid "Tamil"
 msgstr "tamoul"
 
-# DBI:mysql:papp/iso639.name:376
 #$lang=eng
 msgid "Tatar"
 msgstr "tatar"
 
-# DBI:mysql:papp/iso639.name:377
 #$lang=eng
 msgid "Telugu"
-msgstr "tÃ©lougou"
+msgstr "télougou"
 
-# DBI:mysql:papp/iso639.name:379
 #$lang=eng
 msgid "Tereno"
 msgstr "tereno"
 
-# DBI:mysql:papp/iso639.name:380
 #$lang=eng
 msgid "Tetum"
 msgstr "tetum"
 
-# DBI:mysql:papp/iso639.name:383
 #$lang=eng
 msgid "Thai"
-msgstr "thaÃ¯"
+msgstr "thaï"
 
-# DBI:mysql:papp/iso639.name:50
 #$lang=eng
 msgid "Tibetan"
-msgstr "tibÃ©tain"
+msgstr "tibétain"
 
-# DBI:mysql:papp/iso639.name:384
 #$lang=eng
 msgid "Tigre"
-msgstr "tigrÃ©"
+msgstr "tigré"
 
-# DBI:mysql:papp/iso639.name:385
 #$lang=eng
 msgid "Tigrinya"
 msgstr "tigrigna"
 
-# DBI:mysql:papp/iso639.name:378
 #$lang=eng
 msgid "Timne"
 msgstr "temne"
 
-# DBI:mysql:papp/iso639.name:386
 #$lang=eng
 msgid "Tiv"
 msgstr "tiv"
 
-# DBI:mysql:papp/iso639.name:388
 #$lang=eng
 msgid "Tlingit"
 msgstr "tlingit"
 
-# DBI:mysql:papp/iso639.name:392
 #$lang=eng
 msgid "Tok Pisin"
 msgstr "tok pisin"
 
-# DBI:mysql:papp/iso639.name:387
 #$lang=eng
 msgid "Tokelau"
 msgstr "tokelau"
 
-# DBI:mysql:papp/iso639.name:390
 #$lang=eng
 msgid "Tonga (Nyasa)"
 msgstr "tonga (Nyasa)"
 
-# DBI:mysql:papp/iso639.name:391
 #$lang=eng
 msgid "Tonga (Tonga Islands)"
-msgstr "tongan (Ã\x00les Tonga)"
+msgstr "tongan (Îles Tonga)"
 
-# DBI:mysql:papp/iso639.name:393
 #$lang=eng
 msgid "Tsimshian"
 msgstr "tsimshian"
 
-# DBI:mysql:papp/iso639.name:395
 #$lang=eng
 msgid "Tsonga"
 msgstr "tsonga"
 
-# DBI:mysql:papp/iso639.name:394
 #$lang=eng
 msgid "Tswana"
 msgstr "tswana"
 
-# DBI:mysql:papp/iso639.name:397
 #$lang=eng
 msgid "Tumbuka"
 msgstr "tumbuka"
 
-# DBI:mysql:papp/iso639.name:398
 #$lang=eng
 msgid "Turkish"
 msgstr "turc"
 
-# DBI:mysql:papp/iso639.name:300
 #$lang=eng
 msgid "Turkish, Ottoman (1500-1928)"
 msgstr "turc ottoman (1500-1928)"
 
-# DBI:mysql:papp/iso639.name:396
 #$lang=eng
 msgid "Turkmen"
-msgstr "turkmÃ¨ne"
+msgstr "turkmène"
 
-# DBI:mysql:papp/iso639.name:400
 #$lang=eng
 msgid "Tuvalu"
 msgstr "tuvalu"
 
-# DBI:mysql:papp/iso639.name:402
 #$lang=eng
 msgid "Tuvinian"
 msgstr "touva"
 
-# DBI:mysql:papp/iso639.name:401
 #$lang=eng
 msgid "Twi"
 msgstr "twi"
 
-# DBI:mysql:papp/iso639.name:403
 #$lang=eng
 msgid "Ugaritic"
 msgstr "ougaritique"
 
-# DBI:mysql:papp/iso639.name:404
 #$lang=eng
 msgid "Uighur"
-msgstr "ouÃ¯gour"
+msgstr "ouïgour"
 
-# DBI:mysql:papp/iso639.name:405
 #$lang=eng
 msgid "Ukrainian"
 msgstr "ukrainien"
 
-# DBI:mysql:papp/iso639.name:406
 #$lang=eng
 msgid "Umbundu"
 msgstr "umbundu"
 
-# DBI:mysql:papp/iso639.name:407
 #$lang=eng
 msgid "Undetermined"
-msgstr "indÃ©terminÃ©e"
+msgstr "indéterminée"
 
-# DBI:mysql:papp/iso639.name:408
 #$lang=eng
 msgid "Urdu"
 msgstr "ourdou"
 
-# DBI:mysql:papp/iso639.name:409
 #$lang=eng
 msgid "Uzbek"
 msgstr "ouszbek"
 
-# DBI:mysql:papp/iso639.name:410
 #$lang=eng
 msgid "Vai"
-msgstr "vaÃ¯"
+msgstr "vaï"
 
-# DBI:mysql:papp/iso639.name:411
 #$lang=eng
 msgid "Venda"
 msgstr "venda"
 
-# DBI:mysql:papp/iso639.name:412
 #$lang=eng
 msgid "Vietnamese"
 msgstr "vietnamien"
 
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "VolapÃÂ¼k"
-msgstr "volapÃÂ¼k"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "VolapÃ\x00Â¼k"
-msgstr "volapÃ\x00Â¼k"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "VolapÃ\x00Ã\x00Â¼k"
-msgstr "volapÃ\x00Ã\x00Â¼k"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "VolapÃ¼k"
-msgstr "volapÃ¼k"
-
-# DBI:mysql:papp/iso639.name
-#$lang=eng
-msgid "Volapük"
-msgstr "volapük"
-
-# DBI:mysql:papp/iso639.name:414
 #$lang=eng
 msgid "Votic"
 msgstr "vote"
 
-# DBI:mysql:papp/iso639.name:415
 #$lang=eng
 msgid "Wakashan languages"
 msgstr "wakashennes, langues"
 
-# DBI:mysql:papp/iso639.name:416
 #$lang=eng
 msgid "Walamo"
 msgstr "walamo"
 
-# DBI:mysql:papp/iso639.name:417
 #$lang=eng
 msgid "Waray"
 msgstr "waray"
 
-# DBI:mysql:papp/iso639.name:418
 #$lang=eng
 msgid "Washo"
 msgstr "washo"
 
-# DBI:mysql:papp/iso639.name:89
 #$lang=eng
 msgid "Welsh"
 msgstr "gallois"
 
-# DBI:mysql:papp/iso639.name:420
 #$lang=eng
 msgid "Wolof"
 msgstr "wolof"
 
-# DBI:mysql:papp/iso639.name:421
 #$lang=eng
 msgid "Xhosa"
 msgstr "xhosa"
 
-# DBI:mysql:papp/iso639.name:329
 #$lang=eng
 msgid "Yakut"
 msgstr "iakoute"
 
-# DBI:mysql:papp/iso639.name:422
 #$lang=eng
 msgid "Yao"
 msgstr "yao"
 
-# DBI:mysql:papp/iso639.name:423
 #$lang=eng
 msgid "Yapese"
 msgstr "yapois"
 
-# DBI:mysql:papp/iso639.name:424
 #$lang=eng
 msgid "Yiddish"
 msgstr "yiddish"
 
-# DBI:mysql:papp/iso639.name:425
 #$lang=eng
 msgid "Yoruba"
 msgstr "yoruba"
 
-# DBI:mysql:papp/iso639.name:426
 #$lang=eng
 msgid "Yupik languages"
 msgstr "yupik, langues"
 
-# DBI:mysql:papp/iso639.name:431
 #$lang=eng
 msgid "Zande"
-msgstr "zandÃ©"
+msgstr "zandé"
 
-# DBI:mysql:papp/iso639.name:427
 #$lang=eng
 msgid "Zapotec"
-msgstr "zapotÃ¨que"
+msgstr "zapotèque"
 
-# DBI:mysql:papp/iso639.name:428
 #$lang=eng
 msgid "Zenaga"
 msgstr "zenaga"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Chinois (traditionnel)"
 
-# DBI:mysql:papp/iso639.name:432
 #$lang=eng
 msgid "Zulu"
 msgstr "zoulou"
 
-# DBI:mysql:papp/iso639.name:433
 #$lang=eng
 msgid "Zuni"
 msgstr "zuni"
@@ -4272,7 +3337,6 @@ msgstr "zuni"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:137
 #$lang=eng
 msgid "Gaelic (Scots)"
 msgstr "gaeilge"
@@ -4281,345 +3345,278 @@ msgstr "gaeilge"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "SÃ­nis (Simplithe)"
+msgstr "Sínis (Simplithe)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Seicis"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Danmhairgis"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Ollainis"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "BÃ©arla"
+msgstr "Béarla"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "EastÃ³inis"
+msgstr "Eastóinis"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Fionlainnis"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Fraincis"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "GearmÃ¡inis"
+msgstr "Gearmáinis"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "GrÃ©igis"
+msgstr "Gréigis"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Eabhrais"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "UngÃ¡iris"
+msgstr "Ungáiris"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ã\x00oslannais"
+msgstr "Íoslannais"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "IodÃ¡ilis"
+msgstr "Iodáilis"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "SeapÃ¡inis"
+msgstr "Seapáinis"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "CÃ³irÃ©is"
+msgstr "Cóiréis"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Laitvis"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "LiotuÃ¡inis"
+msgstr "Liotuáinis"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Ioruais"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Polannais"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "PortaingÃ©ilis"
+msgstr "Portaingéilis"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "RÃ³mÃ¡inis"
+msgstr "Rómáinis"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "RÃºisis"
+msgstr "Rúisis"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "SpÃ¡innis"
+msgstr "Spáinnis"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Sualainnis"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "SÃ­nis (TraidisiÃºnta)"
+msgstr "Sínis (Traidisiúnta)"
 
 #$lang=glg
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ChinÃ©s (simplificado)"
+msgstr "Chinés (simplificado)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Checo"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "DinamarquÃ©s"
+msgstr "Dinamarqués"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "HolandÃ©s"
+msgstr "Holandés"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "InglÃ©s"
+msgstr "Inglés"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estoniano"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "FinÃ©s"
+msgstr "Finés"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "FrancÃ©s"
+msgstr "Francés"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "AlemÃ¡n"
+msgstr "Alemán"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grego"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebreo"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "HÃºngaro"
+msgstr "Húngaro"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "IslandÃ©s"
+msgstr "Islandés"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italiano"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "XaponÃ©s"
+msgstr "Xaponés"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Coreano"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "LetÃ³n"
+msgstr "Letón"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Lituano"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "NorueguÃ©s"
+msgstr "Noruegués"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Polaco"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "PortuguÃ©s"
+msgstr "Portugués"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "RomanÃ©s"
+msgstr "Romanés"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Ruso"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "EspaÃ±ol"
+msgstr "Español"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Sueco"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ChinÃ©s (tradicional)"
+msgstr "Chinés (tradicional)"
 
 #$lang=hin
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Chini (Saral)"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Angrezi"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estoni"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Fransisi"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "greek"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Hungariyai"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italvi"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japani"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Latvi"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Lithuaniyai"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norwegiyai"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Purtgali"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Romani"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Roosi"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Chini (Paramparagat)"
@@ -4628,137 +3625,110 @@ msgstr "Chini (Paramparagat)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Kineski (pojednostavljen)"
 
-# DBI:mysql:papp/iso639.name:162
 #$lang=eng
 msgid "Croatian"
 msgstr "hrvatski"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ä\x00eÅ¡ki"
+msgstr "Češki"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Danski"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Nizozemski"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Engleski"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estonski"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Finski"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Francuski"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "NjemaÄ\x00ki"
+msgstr "Njemački"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "GrÄ\x00ki"
+msgstr "Grčki"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebrejski"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "MaÄ\x00arski"
+msgstr "Mađarski"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandski"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Talijanski"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japanski"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Korejski"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Latvijski"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Litavski"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "NorveÅ¡ki"
+msgstr "Norveški"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Poljski"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugalski"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Rumunjski"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Ruski"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Å panjolski"
+msgstr "Španjolski"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Å vedski"
+msgstr "Švedski"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Kineski (tradicionalni)"
@@ -4767,266 +3737,214 @@ msgstr "Kineski (tradicionalni)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "kÃ­nversku (einfaldaÃ°ri)"
+msgstr "kínversku (einfaldaðri)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "tÃ©kknesku"
+msgstr "tékknesku"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "dÃ¶nsku"
+msgstr "dönsku"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "hollensku"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "ensku"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "eistnesku"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "finnsku"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "frÃ¶nsku"
+msgstr "frönsku"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "Ã¾Ã½sku"
+msgstr "þýsku"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "grÃ­sku"
+msgstr "grísku"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "hebresku"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "ungversku"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ã­slensku"
+msgstr "íslensku"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "Ã­tÃ¶lsku"
+msgstr "ítölsku"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "japÃ¶nsku"
+msgstr "japönsku"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "kÃ³resku"
+msgstr "kóresku"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "lettnesku"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "lithÃ¡sku"
+msgstr "lithásku"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "norsku"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "pÃ³lsku"
+msgstr "pólsku"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "portÃºgÃ¶lsku"
+msgstr "portúgölsku"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "rÃºmensku"
+msgstr "rúmensku"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "rÃºssnesku"
+msgstr "rússnesku"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "spÃ¦nsku"
+msgstr "spænsku"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "sÃ¦nsku"
+msgstr "sænsku"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "kÃ­nversku (hefÃ°bundinni)"
+msgstr "kínversku (hefðbundinni)"
 
 #$lang=ita
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Cinese (semplificato)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Ceco"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Danese"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Olandese"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Inglese"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estone"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Finlandese"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Francese"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Tedesco"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Greco"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Ebraico"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Ungherese"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandese"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italiano"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Giapponese"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Coreano"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Lettone"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Lituano"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norvegese"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Polacco"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portoghese"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Rumeno"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Russo"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Spagnolo"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Svedese"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Cinese (tradizionale)"
@@ -5035,335 +3953,270 @@ msgstr "Cinese (tradizionale)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:8
 #$lang=eng
 msgid "Afrikaans"
-msgstr "ã\x00¢ã\x00\x00ã\x00ªã\x00«ã\x00¼ã\x00³ã\x00¹èª\x00"
+msgstr "アフリカーンス語"
 
-# DBI:mysql:papp/iso639.name:57
 #$lang=eng
 msgid "Bulgarian"
-msgstr "ã\x00\x00ã\x00«ã\x00¬ã\x00ªã\x00¢èª\x00"
+msgstr "ブルガリア語"
 
-# DBI:mysql:papp/iso639.name:61
 #$lang=eng
 msgid "Catalan"
-msgstr "ã\x00«ã\x00¿ã\x00­ã\x00\x00ã\x00¢èª\x00"
+msgstr "カタロニア語"
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ä¸­å\x00½èª\x00 (ç°¡ä½\x00)"
+msgstr "中国語 (簡体)"
 
-# DBI:mysql:papp/iso639.name:162
 #$lang=eng
 msgid "Croatian"
-msgstr "ã\x00¯ã\x00­ã\x00¢ã\x00\x00ã\x00¢èª\x00"
+msgstr "クロアチア語"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "ã\x00\x00ã\x00§ã\x00³èª\x00"
+msgstr "チェコ語"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "ã\x00\x00ã\x00³ã\x00\x00ã\x00¼ã\x00¯èª\x00"
+msgstr "デンマーク語"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "ã\x00ªã\x00©ã\x00³ã\x00\x00èª\x00"
+msgstr "オランダ語"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "è\x00±èª\x00"
+msgstr "英語"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "ã\x00¨ã\x00¹ã\x00\x00ã\x00\x00ã\x00¢èª\x00"
+msgstr "エストニア語"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "ã\x00\x00ã\x00£ã\x00³ã\x00©ã\x00³ã\x00\x00èª\x00"
+msgstr "フィンランド語"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "ã\x00\x00ã\x00©ã\x00³ã\x00¹èª\x00"
+msgstr "フランス語"
 
-# DBI:mysql:papp/iso639.name:139
 #$lang=eng
 msgid "Gallegan"
-msgstr "ã\x00¬ã\x00ªã\x00·ã\x00¢èª\x00"
+msgstr "ガリシア語"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "ã\x00\x00ã\x00¤ã\x00\x00èª\x00"
+msgstr "ドイツ語"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "ã\x00®ã\x00ªã\x00·ã\x00£èª\x00"
+msgstr "ギリシャ語"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "ã\x00\x00ã\x00\x00ã\x00©ã\x00¤èª\x00"
+msgstr "ヘブライ語"
 
-# DBI:mysql:papp/iso639.name:158
 #$lang=eng
 msgid "Hindi"
-msgstr "ã\x00\x00ã\x00³ã\x00\x00ã\x00£ã\x00¼èª\x00"
+msgstr "ヒンディー語"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "ã\x00\x00ã\x00³ã\x00¬ã\x00ªã\x00¼èª\x00"
+msgstr "ハンガリー語"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "ã\x00¢ã\x00¤ã\x00¹ã\x00©ã\x00³ã\x00\x00èª\x00"
+msgstr "アイスランド語"
 
-# DBI:mysql:papp/iso639.name:138
 #$lang=eng
 msgid "Irish"
-msgstr "ã\x00¢ã\x00¤ã\x00«ã\x00©ã\x00³ã\x00\x00èª\x00"
+msgstr "アイルランド語"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "ã\x00¤ã\x00¿ã\x00ªã\x00¢èª\x00"
+msgstr "イタリア語"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "æ\x00¥æ\x00¬èª\x00"
+msgstr "日本語"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "é\x00\x00å\x00½èª\x00"
+msgstr "韓国語"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "ã\x00©ã\x00\x00ã\x00\x00ã\x00¢èª\x00"
+msgstr "ラトビア語"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "ã\x00ªã\x00\x00ã\x00¢ã\x00\x00ã\x00¢èª\x00"
+msgstr "リトアニア語"
 
-# DBI:mysql:papp/iso639.name:250
 #$lang=eng
 msgid "Macedonian"
-msgstr "ã\x00\x00ã\x00±ã\x00\x00ã\x00\x00ã\x00¢èª\x00"
+msgstr "マケドニア語"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "ã\x00\x00ã\x00«ã\x00¦ã\x00§ã\x00¼èª\x00"
+msgstr "ノルウェー語"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "ã\x00\x00ã\x00¼ã\x00©ã\x00³ã\x00\x00èª\x00"
+msgstr "ポーランド語"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "ã\x00\x00ã\x00«ã\x00\x00ã\x00¬ã\x00«èª\x00"
+msgstr "ポルトガル語"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "ã\x00«ã\x00¼ã\x00\x00ã\x00\x00ã\x00¢èª\x00"
+msgstr "ルーマニア語"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "ã\x00­ã\x00·ã\x00¢èª\x00"
+msgstr "ロシア語"
 
-# DBI:mysql:papp/iso639.name:362
 #$lang=eng
 msgid "Serbian"
-msgstr "ã\x00»ã\x00«ã\x00\x00ã\x00¢èª\x00"
+msgstr "セルビア語"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "ã\x00¹ã\x00\x00ã\x00¤ã\x00³èª\x00"
+msgstr "スペイン語"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "ã\x00¹ã\x00¦ã\x00§ã\x00¼ã\x00\x00ã\x00³èª\x00"
+msgstr "スウェーデン語"
 
-# DBI:mysql:papp/iso639.name:382
 #$lang=eng
 msgid "Tagalog"
-msgstr "ã\x00¿ã\x00¬ã\x00­ã\x00°èª\x00"
+msgstr "タガログ語"
 
-# DBI:mysql:papp/iso639.name:398
 #$lang=eng
 msgid "Turkish"
-msgstr "ã\x00\x00ã\x00«ã\x00³èª\x00"
+msgstr "トルコ語"
 
-# DBI:mysql:papp/iso639.name:405
 #$lang=eng
 msgid "Ukrainian"
-msgstr "ã\x00¦ã\x00¯ã\x00©ã\x00¤ã\x00\x00èª\x00"
+msgstr "ウクライナ語"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ä¸­å\x00½èª\x00 (ç¹\x00ä½\x00)"
+msgstr "中国語 (繁体)"
 
 #$lang=kor
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ì¤\x00êµ­ì\x00´ (ê°\x00ì²´)"
+msgstr "중국어 (간체)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "ì²´í\x00¬ì\x00´"
+msgstr "체크어"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "ë\x00´ë§\x00í\x00¬ì\x00´"
+msgstr "덴마크어"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "ë\x00¤ë\x00¸ë\x00\x00ë\x00\x00ì\x00´"
+msgstr "네델란드어"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "ì\x00\x00ì\x00´"
+msgstr "영어"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "ì\x00\x00ì\x00¤í\x00 ë\x00\x00ì\x00\x00ì\x00´"
+msgstr "에스토니아어"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "í\x00\x00ë\x00\x00ë\x00\x00ì\x00´"
+msgstr "핀란드어"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "ë¶\x00ì\x00´"
+msgstr "불어"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "ë\x00\x00ì\x00¼ì\x00´"
+msgstr "독일어"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "ê·¸ë¦¬ì\x00¤ì\x00´"
+msgstr "그리스어"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "í\x00\x00ë¸\x00ë£¨ì\x00´"
+msgstr "히브루어"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "í\x00\x00ê°\x00ë¦¬ì\x00´"
+msgstr "헝가리어"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "ì\x00\x00ì\x00´ì\x00¬ë\x00\x00ë\x00\x00ì\x00´"
+msgstr "아이슬란드어"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "ì\x00´í\x00\x00ë¦¬ì\x00\x00ì\x00´"
+msgstr "이탈리아어"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "ì\x00¼ë³¸ì\x00´"
+msgstr "일본어"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "í\x00\x00êµ­ì\x00´"
+msgstr "한국어"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "ë\x00¼í\x00¸ë¹\x00ì\x00\x00ì\x00´"
+msgstr "라트비아어"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "ë¦¬í\x00¬ì\x00\x00ë\x00\x00ì\x00\x00ì\x00´"
+msgstr "리투아니아어"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "ë\x00¸ë¥´ì\x00¨ì\x00´ì\x00´"
+msgstr "노르웨이어"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "í\x00´ë\x00\x00ë\x00\x00ì\x00´"
+msgstr "폴란드어"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "í\x00¬ë¥´í\x00¬ê°\x00ì\x00´"
+msgstr "포르투갈어"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "ë£¨ë§\x00ë\x00\x00ì\x00´ì\x00´"
+msgstr "루마니어어"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "ë\x00¬ì\x00\x00ì\x00\x00ì\x00´"
+msgstr "러시아어"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "ì\x00¤í\x00\x00ì\x00¸ì\x00´"
+msgstr "스페인어"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "ì\x00¤ì\x00¨ë\x00´ì\x00´"
+msgstr "스웨덴어"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ì¤\x00êµ­ì\x00´ (ë²\x00ì²´)"
+msgstr "중국어 (번체)"
 
 #$lang=lav
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "latvieski"
@@ -5372,400 +4225,322 @@ msgstr "latvieski"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "KinÅ³ (Supaprastinta)"
+msgstr "Kinų (Supaprastinta)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ä\x00ekÅ³"
+msgstr "Čekų"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "DanÅ³"
+msgstr "Danų"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "DanÅ³"
+msgstr "Danų"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "AnglÅ³"
+msgstr "Anglų"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "EstÅ³"
+msgstr "Estų"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "SuomiÅ³"
+msgstr "Suomių"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "PrancÅ«zÅ³"
+msgstr "Prancūzų"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "VokieÄ\x00iÅ³"
+msgstr "Vokiečių"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "GraikÅ³"
+msgstr "Graikų"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "HebrajÅ³"
+msgstr "Hebrajų"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "VengrÅ³"
+msgstr "Vengrų"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "IslandÅ³"
+msgstr "Islandų"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "ItalÅ³"
+msgstr "Italų"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "JaponÅ³"
+msgstr "Japonų"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "KorÄ\x00jieÄ\x00iÅ³"
+msgstr "Korėjiečių"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "LatviÅ³"
+msgstr "Latvių"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "LietuviÅ³"
+msgstr "Lietuvių"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "NorvegÅ³"
+msgstr "Norvegų"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "LenkÅ³"
+msgstr "Lenkų"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "PortugalÅ³"
+msgstr "Portugalų"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "RumunÅ³"
+msgstr "Rumunų"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "RusÅ³"
+msgstr "Rusų"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "IspanÅ³"
+msgstr "Ispanų"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Å vedÅ³"
+msgstr "Švedų"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "KinÅ³ (TradicinÄ\x00)"
+msgstr "Kinų (Tradicinė)"
 
 #$lang=mkd
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "Ð\x00Ð¸Ð½ÐµÑ\x00ÐºÐ¸ (Ð£Ð¿Ñ\x00Ð¾Ñ\x00Ñ\x00ÐµÐ½Ð¾)"
+msgstr "Кинески (Упростено)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ð§ÐµÑ\x00ÐºÐ¸"
+msgstr "Чешки"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "Ð\x00Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Дански"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "Ð¥Ð¾Ð»Ð°Ð½Ð´Ñ\x00ÐºÐ¸"
+msgstr "Холандски"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "Ð\x00Ð½Ð³Ð»Ð¸Ñ\x00ÐºÐ¸"
+msgstr "Англиски"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "Ð\x00Ñ\x00Ñ\x00Ð¾Ð½Ñ\x00ÐºÐ¸"
+msgstr "Естонски"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "Ð¤Ð¸Ð½Ñ\x00ÐºÐ¸"
+msgstr "Фински"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "Ð¤Ñ\x00Ð°Ð½Ñ\x00Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Француски"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "Ð\x00ÐµÑ\x00Ð¼Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Германски"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Ð\x00Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Грчки"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "Ð\x00Ð²Ñ\x00ÐµÑ\x00Ñ\x00ÐºÐ¸"
+msgstr "Еврејски"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "Ð£Ð½Ð³Ð°Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Унгарски"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ð\x00Ñ\x00Ð»Ð°Ð½Ð´Ñ\x00ÐºÐ¸"
+msgstr "Исландски"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "Ð\x00Ñ\x00Ð°Ð»Ð¸Ñ\x00Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Италијански"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "Ð\x00Ð°Ð¿Ð¾Ð½Ñ\x00ÐºÐ¸"
+msgstr "Јапонски"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "Ð\x00Ð¾Ñ\x00ÐµÑ\x00Ñ\x00ÐºÐ¸"
+msgstr "Корејски"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "Ð\x00Ð°Ñ\x00Ð²Ð¸Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Латвијски"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Ð\x00Ð¸Ñ\x00Ð²Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Литвански"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "Ð\x00Ð¾Ñ\x00Ð²ÐµÑ\x00ÐºÐ¸"
+msgstr "Норвешки"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "Ð\x00Ð¾Ð»Ñ\x00ÐºÐ¸"
+msgstr "Полски"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "Ð\x00Ð¾Ñ\x00Ñ\x00Ñ\x00Ð³Ð°Ð»Ñ\x00ÐºÐ¸"
+msgstr "Португалски"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "Ð Ð¾Ð¼Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Романски"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "Ð Ñ\x00Ñ\x00ÐºÐ¸"
+msgstr "Руски"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Ð¨Ð¿Ð°Ð½Ñ\x00ÐºÐ¸"
+msgstr "Шпански"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Ð¨Ð²ÐµÐ´Ñ\x00ÐºÐ¸"
+msgstr "Шведски"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "Ð\x00Ð¸Ð½ÐµÑ\x00ÐºÐ¸ (Ð¢Ñ\x00Ð°Ð´Ð¸Ñ\x00Ð¸Ð¾Ð½Ð°Ð»ÐµÐ½)"
+msgstr "Кинески (Традиционален)"
 
 #$lang=nld
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Chinees (Vereenvoudigd)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Tsjechisch"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Deens"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Nederlands"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Engels"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estlands"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Fins"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Frans"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Duits"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grieks"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebreeuws"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Hongaars"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Ijslands"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italiaans"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japans"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Koreaans"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Letlands"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Litouws"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Noors"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Pools"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugees"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Roemeens"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Russisch"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Spaans"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Zweeds"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Chinees (Traditioneel)"
@@ -5774,19 +4549,11 @@ msgstr "Chinees (Traditioneel)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:284
-#$lang=eng
-#$flags=2
-msgid "Norwegian BokmÃ¥l"
-msgstr "nynorsk"
-
-# DBI:mysql:papp/iso639.name:284
 #$lang=eng
 #$flags=2
 msgid "Norwegian Bokmål"
 msgstr "nynorsk"
 
-# DBI:mysql:papp/iso639.name:283
 #$lang=eng
 msgid "Norwegian Nynorsk"
 msgstr "nynorsk"
@@ -5795,18 +4562,10 @@ msgstr "nynorsk"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norsk"
 
-# DBI:mysql:papp/iso639.name:284
-#$lang=eng
-#$flags=2
-msgid "Norwegian BokmÃ¥l"
-msgstr "Norsk"
-
-# DBI:mysql:papp/iso639.name:284
 #$lang=eng
 #$flags=2
 msgid "Norwegian Bokmål"
@@ -5816,144 +4575,111 @@ msgstr "Norsk"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "kinesisk (forenklet)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "tsjekkisk"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "dansk"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "nederlandsk"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "engelsk"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "estisk"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "finsk"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "fransk"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "tysk"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "gresk"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "hebraisk"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "ungarsk"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "islandsk"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "italiensk"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "japansk"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "koreansk"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "latvisk"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "litauisk"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "norsk"
 
-# DBI:mysql:papp/iso639.name:284
-#$lang=eng
-#$flags=2
-msgid "Norwegian BokmÃ¥l"
-msgstr "Norsk"
-
-# DBI:mysql:papp/iso639.name:284
 #$lang=eng
 #$flags=2
 msgid "Norwegian Bokmål"
 msgstr "Norsk"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "polsk"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "portugisisk"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "rumensk"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "russisk"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "spansk"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "svensk"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "kinesisk (tradisjonell)"
@@ -5962,400 +4688,322 @@ msgstr "kinesisk (tradisjonell)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ChiÅ\x00ski (prosty)"
+msgstr "Chiński (prosty)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Czeski"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "DuÅ\x00ski"
+msgstr "Duński"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Holenderski"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Angielski"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "EstoÅ\x00ski"
+msgstr "Estoński"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "FiÅ\x00ski"
+msgstr "Fiński"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Francuski"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Niemiecki"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grecki"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebrajski"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "WÄ\x00gierski"
+msgstr "Węgierski"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandzki"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "WÅ\x00oski"
+msgstr "Włoski"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "JapoÅ\x00ski"
+msgstr "Japoński"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "KoreaÅ\x00ski"
+msgstr "Koreański"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "Å\x00otewski"
+msgstr "Łotewski"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Litewski"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norweski"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Polski"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugalski"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "RumuÅ\x00ski"
+msgstr "Rumuński"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Rosyjski"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "HiszpaÅ\x00ski"
+msgstr "Hiszpański"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Szwedzki"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ChiÅ\x00ski (tradycyjny)"
+msgstr "Chiński (tradycyjny)"
 
 #$lang=por
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ChinÃªs (simplificado)"
+msgstr "Chinês (simplificado)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Tcheco"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "DinamarquÃªs"
+msgstr "Dinamarquês"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "HolandÃªs"
+msgstr "Holandês"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "InglÃªs"
+msgstr "Inglês"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estoniano"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "FinlandÃªs"
+msgstr "Finlandês"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "FrancÃªs"
+msgstr "Francês"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "AlemÃ£o"
+msgstr "Alemão"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grego"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebraico"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "HÃºngaro"
+msgstr "Húngaro"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "IslandÃªs"
+msgstr "Islandês"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italiano"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "JaponÃªs"
+msgstr "Japonês"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Coreano"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "LetÃ£o"
+msgstr "Letão"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Lituano"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "NorueguÃªs"
+msgstr "Norueguês"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "PolonÃªs"
+msgstr "Polonês"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "PortuguÃªs"
+msgstr "Português"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Romeno"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Russo"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Espanhol"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Sueco"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ChinÃªs (tradicional)"
+msgstr "Chinês (tradicional)"
 
 #$lang=ron
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Chineza (Simplificata)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Ceha"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Daneza"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Germana"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Engleza"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estoniana"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Finlandeza"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Franceza"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Germana"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Greaca"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Ebraica"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Ungara"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandeza"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italiana"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japoneza"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Koreana"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Lituana"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Lituaniana"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norvegiana"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Poloneza"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugheza"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Romana"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Rusa"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Spaniola"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Suedeza"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Chineza (Traditionala)"
@@ -6364,266 +5012,214 @@ msgstr "Chineza (Traditionala)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ÐºÐ¸Ñ\x00Ð°Ð¹Ñ\x00ÐºÐ¾Ð¼ (Ñ\x00Ð¿Ñ\x00Ð¾Ñ\x00ÐµÐ½Ð½Ð¾Ð¼)"
+msgstr "китайском (упрощенном)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ñ\x00ÐµÑ\x00Ñ\x00ÐºÐ¾Ð¼"
+msgstr "чешском"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "Ð´Ð°Ñ\x00Ñ\x00ÐºÐ¾Ð¼"
+msgstr "датском"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "Ð³Ð¾Ð»Ð»Ð°Ð½Ð´Ñ\x00ÐºÐ¾Ð¼"
+msgstr "голландском"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "Ð°Ð½Ð³Ð»Ð¸Ð¹Ñ\x00ÐºÐ¾Ð¼"
+msgstr "английском"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "Ñ\x00Ñ\x00Ñ\x00Ð¾Ð½Ñ\x00ÐºÐ¾Ð¼"
+msgstr "эстонском"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "Ñ\x00Ð¸Ð½Ñ\x00ÐºÐ¾Ð¼"
+msgstr "финском"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "Ñ\x00Ñ\x00Ð°Ð½Ñ\x00Ñ\x00Ð·Ñ\x00ÐºÐ¾Ð¼"
+msgstr "французском"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "Ð½ÐµÐ¼ÐµÑ\x00ÐºÐ¾Ð¼"
+msgstr "немецком"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Ð³Ñ\x00ÐµÑ\x00ÐµÑ\x00ÐºÐ¾Ð¼"
+msgstr "греческом"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "Ð¸Ð²Ñ\x00Ð¸Ñ\x00Ðµ"
+msgstr "иврите"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "Ð²ÐµÐ½Ð³ÐµÑ\x00Ñ\x00ÐºÐ¾Ð¼"
+msgstr "венгерском"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ð¸Ñ\x00Ð»Ð°Ð½Ð´Ñ\x00ÐºÐ¾Ð¼"
+msgstr "исландском"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "Ð¸Ñ\x00Ð°Ð»Ñ\x00Ñ\x00Ð½Ñ\x00ÐºÐ¾Ð¼"
+msgstr "итальянском"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "Ñ\x00Ð¿Ð¾Ð½Ñ\x00ÐºÐ¾Ð¼"
+msgstr "японском"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "ÐºÐ¾Ñ\x00ÐµÐ¹Ñ\x00ÐºÐ¾Ð¼"
+msgstr "корейском"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "Ð»Ð°Ñ\x00Ñ\x00Ñ\x00Ñ\x00ÐºÐ¾Ð¼"
+msgstr "латышском"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Ð»Ð¸Ñ\x00Ð¾Ð²Ñ\x00ÐºÐ¾Ð¼"
+msgstr "литовском"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "Ð½Ð¾Ñ\x00Ð²ÐµÐ¶Ñ\x00ÐºÐ¾Ð¼"
+msgstr "норвежском"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "Ð¿Ð¾Ð»Ñ\x00Ñ\x00ÐºÐ¾Ð¼"
+msgstr "польском"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "Ð¿Ð¾Ñ\x00Ñ\x00Ñ\x00Ð³Ð°Ð»Ñ\x00Ñ\x00ÐºÐ¾Ð¼"
+msgstr "португальском"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "Ñ\x00Ñ\x00Ð¼Ñ\x00Ð½Ñ\x00ÐºÐ¾Ð¼"
+msgstr "румынском"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "Ñ\x00Ñ\x00Ñ\x00Ñ\x00ÐºÐ¾Ð¼"
+msgstr "русском"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Ð¸Ñ\x00Ð¿Ð°Ð½Ñ\x00ÐºÐ¾Ð¼"
+msgstr "испанском"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Ñ\x00Ð²ÐµÐ´Ñ\x00ÐºÐ¾Ð¼"
+msgstr "шведском"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ÐºÐ¸Ñ\x00Ð°Ð¹Ñ\x00ÐºÐ¾Ð¼ (Ñ\x00Ñ\x00Ð°Ð´Ð¸Ñ\x00Ð¸Ð¾Ð½Ð½Ð¾Ðµ Ð¿Ð¸Ñ\x00Ñ\x00Ð¼Ð¾)"
+msgstr "китайском (традиционное письмо)"
 
 #$lang=spa
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "chino (simplificado)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "checo"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "danÃ©s"
+msgstr "danés"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "holandÃ©s"
+msgstr "holandés"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "inglÃ©s"
+msgstr "inglés"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "estonio"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "finÃ©s"
+msgstr "finés"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "francÃ©s"
+msgstr "francés"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "alemÃ¡n"
+msgstr "alemán"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "grieco"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "hebreo"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "hÃºngaro"
+msgstr "húngaro"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "islandÃ©s"
+msgstr "islandés"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "italiano"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "japonÃ©s"
+msgstr "japonés"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "coreano"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "letÃ³n"
+msgstr "letón"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "lituano"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "noruego"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "polaco"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "portuguÃ©s"
+msgstr "portugués"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "rumano"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "ruso"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "espaÃ±ol"
+msgstr "español"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "sueco"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "chino (tradicional)"
@@ -6632,137 +5228,110 @@ msgstr "chino (tradicional)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Kineski (Uproscen)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "Ceski"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "Danski"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Holandski"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Engleski"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estonski"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Finski"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Francuski"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Nemacki"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Grcki"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebrejski"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Madjarski"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
 msgstr "Islandski"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italijanski"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japanski"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Korejski"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Latvijski"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Litvanski"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "Norveski"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "Poljski"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portugalski"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Rumunski"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Ruski"
 
-# DBI:mysql:papp/iso639.name:362
 #$lang=eng
 msgid "Serbian"
 msgstr "srpsko"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Spanski"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Svedski"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Kineski (Tradicionalni)"
@@ -6771,132 +5340,106 @@ msgstr "Kineski (Tradicionalni)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "kinesiska (fÃ¶renklad)"
+msgstr "kinesiska (förenklad)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
 msgstr "tjeckiska"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
 msgstr "danska"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "hollÃ¤ndska"
+msgstr "holländska"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "engelska"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "estniska"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "finska"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "franska"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "tyska"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "grekiska"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "hebreiska"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "ungerska"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "islÃ¤ndska"
+msgstr "isländska"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "italienska"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "japanska"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "koreanska"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "lettiska"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "litauiska"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
 msgstr "norska"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
 msgstr "polska"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "portugisiska"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "rumÃ¤nska"
+msgstr "rumänska"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "ryska"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "spanska"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "svenska"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "kinesiska (traditionell)"
@@ -6905,72 +5448,58 @@ msgstr "kinesiska (traditionell)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
 msgstr "Tsino (Simplified)"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
 msgstr "Ingles"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
 msgstr "Pranses"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Aleman"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Griyego"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
 msgstr "Hebreo"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
 msgstr "Italyano"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Hapon"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Koreano"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portuges"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Ruso"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
 msgstr "Espanyol"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
 msgstr "Suwiso"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
 msgstr "Tsino (Tradisyunal)"
@@ -6979,540 +5508,435 @@ msgstr "Tsino (Tradisyunal)"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "Ã\x00ince (Basit)"
+msgstr "Çince (Basit)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ã\x00ekoslavakca"
+msgstr "Çekoslavakca"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "DanimarkaÃ§a"
+msgstr "Danimarkaça"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
 msgstr "Hollandaca"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "Ä°ngilizce"
+msgstr "İngilizce"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
 msgstr "Estonyaca"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
 msgstr "Fince"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "FransÄ±zca"
+msgstr "Fransızca"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
 msgstr "Almanca"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "Yunanca"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "Ä°branice"
+msgstr "İbranice"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
 msgstr "Macarca"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ä°zlandaca"
+msgstr "İzlandaca"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "Ä°talyanca"
+msgstr "İtalyanca"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
 msgstr "Japonca"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
 msgstr "Korece"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
 msgstr "Letonca"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
 msgstr "Lituanyaca"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "NorveÃ§ce"
+msgstr "Norveçce"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "LehÃ§e"
+msgstr "Lehçe"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
 msgstr "Portekizce"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
 msgstr "Romanca"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
 msgstr "Rusca"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Ä°spanyolca"
+msgstr "İspanyolca"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Ä°sveÃ§ce"
+msgstr "İsveçce"
 
-# DBI:mysql:papp/iso639.name:398
 #$lang=eng
 msgid "Turkish"
-msgstr "tÃ¼rkÃ§e"
+msgstr "türkçe"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "Ã\x00ince (Eski)"
+msgstr "Çince (Eski)"
 
 #$lang=ukr
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "Ð\x00Ð¸Ñ\x00Ð°Ð¹Ñ\x00Ñ\x00ÐºÐ° (Ñ\x00Ð¿Ñ\x00Ð¾Ñ\x00ÐµÐ½Ð°)"
+msgstr "Китайська (спрощена)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "Ð§ÐµÑ\x00Ñ\x00ÐºÐ°"
+msgstr "Чеська"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "Ð\x00Ð°Ñ\x00Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Датська"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "Ð\x00Ð¾Ð»Ð°Ð½Ð´Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Голандська"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "Ð\x00Ð½Ð³Ð»Ñ\x00Ð¹Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Англійська"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "Ð\x00Ñ\x00Ñ\x00Ð¾Ð½Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Естонська"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "Ð¤Ñ\x00Ð½Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Фінська"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "Ð¤Ñ\x00Ð°Ð½Ñ\x00Ñ\x00Ð·Ñ\x00ÐºÐ°"
+msgstr "Французька"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "Ð\x00Ñ\x00Ð¼ÐµÑ\x00Ñ\x00ÐºÐ°"
+msgstr "Німецька"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "Ð\x00Ñ\x00ÐµÑ\x00Ñ\x00ÐºÐ°"
+msgstr "Грецька"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "Ð\x00Ð²Ñ\x00Ð¸Ñ\x00"
+msgstr "Іврит"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "Ð£Ð³Ð¾Ñ\x00Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Угорська"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "Ð\x00Ñ\x00Ð»Ð°Ð½Ð´Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Ісландська"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "Ð\x00Ñ\x00Ð°Ð»Ñ\x00Ð¹Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Італійська"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "Ð¯Ð¿Ð¾Ð½Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Японська"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "Ð\x00Ð¾Ñ\x00ÐµÐ¹Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Корейська"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "Ð\x00Ð°Ñ\x00Ð¸Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Латиська"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Ð\x00Ð¸Ñ\x00Ð¾Ð²Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Литовська"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "Ð\x00Ð¾Ñ\x00Ð²ÐµÐ·Ñ\x00ÐºÐ°"
+msgstr "Норвезька"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "Ð\x00Ð¾Ð»Ñ\x00Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Польська"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "Ð\x00Ð¾Ñ\x00Ñ\x00Ñ\x00Ð³Ð°Ð»Ñ\x00Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Португальська"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "Ð Ñ\x00Ð¼Ñ\x00Ð½Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Румунська"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "Ð Ð°Ñ\x00Ñ\x00Ð¹Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Расєйська"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "Ð\x00Ñ\x00Ð¿Ð°Ð½Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Іспанська"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "Ð¨Ð²ÐµÐ´Ñ\x00Ñ\x00ÐºÐ°"
+msgstr "Шведська"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "Ð\x00Ð¸Ñ\x00Ð°Ð¹Ñ\x00Ñ\x00ÐºÐ° (Ñ\x00Ñ\x00Ð°Ð´Ð¸Ñ\x00Ñ\x00Ð¹Ð½Ð°)"
+msgstr "Китайська (традиційна)"
 
 #$lang=zha
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ä¸­æ\x00\x00 (ç°¡é«\x00)"
+msgstr "中文 (簡體)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "æ\x00·å\x00\x00æ\x00\x00"
+msgstr "捷克文"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "ä¸¹éº¥æ\x00\x00"
+msgstr "丹麥文"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "è\x00·è\x00­æ\x00\x00"
+msgstr "荷蘭文"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "è\x00±æ\x00\x00"
+msgstr "英文"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "æ\x00\x00æ²\x00å°¼äº\x00æ\x00\x00"
+msgstr "愛沙尼亞文"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "è\x00¬è\x00­æ\x00\x00"
+msgstr "芬蘭文"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "æ³\x00æ\x00\x00"
+msgstr "法文"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "å¾·æ\x00\x00"
+msgstr "德文"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "å¸\x00è\x00\x00æ\x00\x00"
+msgstr "希臘文"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "å¸\x00ä¼¯ä¾\x00æ\x00\x00"
+msgstr "希伯來文"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "å\x00\x00ç\x00\x00å\x00©æ\x00\x00"
+msgstr "匈牙利文"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "å\x00°å³¶æ\x00\x00"
+msgstr "冰島文"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "ç¾©å¤§å\x00©æ\x00\x00"
+msgstr "義大利文"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "æ\x00¥æ\x00\x00"
+msgstr "日文"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "é\x00\x00æ\x00\x00"
+msgstr "韓文"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "æ\x00\x00è\x00«ç¶­äº\x00æ\x00\x00"
+msgstr "拉脫維亞文"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "ç«\x00é\x00¶å®\x00æ\x00\x00"
+msgstr "立陶宛文"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "æ\x00ªå¨\x00æ\x00\x00"
+msgstr "挪威文"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "æ³¢è\x00­æ\x00\x00"
+msgstr "波蘭文"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "è\x00¡è\x00\x00ç\x00\x00æ\x00\x00"
+msgstr "葡萄牙文"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "ç¾\x00é¦¬å°¼äº\x00æ\x00\x00"
+msgstr "羅馬尼亞文"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "ä¿\x00æ\x00\x00"
+msgstr "俄文"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "è¥¿ç\x00­ç\x00\x00æ\x00\x00"
+msgstr "西班牙文"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "ç\x00\x00å\x00¸æ\x00\x00"
+msgstr "瑞典文"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ä¸­æ\x00\x00 (ç¹\x00é«\x00)"
+msgstr "中文 (繁體)"
 
 #$lang=zho
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso639.name:430
 #$lang=eng
 msgid "Chinese"
-msgstr "ä¸­æ\x00\x00 (ç®\x00ä½\x00)"
+msgstr "中文 (简体)"
 
-# DBI:mysql:papp/iso639.name:65
 #$lang=eng
 msgid "Czech"
-msgstr "æ\x00·å\x00\x00è¯­"
+msgstr "捷克语"
 
-# DBI:mysql:papp/iso639.name:91
 #$lang=eng
 msgid "Danish"
-msgstr "ä¸¹éº¦è¯­"
+msgstr "丹麦语"
 
-# DBI:mysql:papp/iso639.name:282
 #$lang=eng
 msgid "Dutch"
-msgstr "è\x00·å\x00°è¯­"
+msgstr "荷兰语"
 
-# DBI:mysql:papp/iso639.name:110
 #$lang=eng
 msgid "English"
-msgstr "è\x00±è¯­"
+msgstr "英语"
 
-# DBI:mysql:papp/iso639.name:113
 #$lang=eng
 msgid "Estonian"
-msgstr "ç\x00±æ²\x00å°¼äº\x00è¯­"
+msgstr "爱沙尼亚语"
 
-# DBI:mysql:papp/iso639.name:122
 #$lang=eng
 msgid "Finnish"
-msgstr "è\x00¬å\x00°è¯­"
+msgstr "芬兰语"
 
-# DBI:mysql:papp/iso639.name:125
 #$lang=eng
 msgid "French"
-msgstr "æ³\x00è¯­"
+msgstr "法语"
 
-# DBI:mysql:papp/iso639.name:95
 #$lang=eng
 msgid "German"
-msgstr "å¾·è¯­"
+msgstr "德语"
 
-# DBI:mysql:papp/iso639.name:108
 #$lang=eng
 msgid "Greek, Modern (1453-)"
-msgstr "å¸\x00è\x00\x00è¯­"
+msgstr "希腊语"
 
-# DBI:mysql:papp/iso639.name:154
 #$lang=eng
 msgid "Hebrew"
-msgstr "å¸\x00ä¼¯æ\x00¥è¯­"
+msgstr "希伯来语"
 
-# DBI:mysql:papp/iso639.name:163
 #$lang=eng
 msgid "Hungarian"
-msgstr "å\x00\x00ç\x00\x00å\x00©è¯­"
+msgstr "匈牙利语"
 
-# DBI:mysql:papp/iso639.name:179
 #$lang=eng
 msgid "Icelandic"
-msgstr "å\x00°å²\x00è¯­"
+msgstr "冰岛语"
 
-# DBI:mysql:papp/iso639.name:180
 #$lang=eng
 msgid "Italian"
-msgstr "æ\x00\x00å¤§å\x00©è¯­"
+msgstr "意大利语"
 
-# DBI:mysql:papp/iso639.name:182
 #$lang=eng
 msgid "Japanese"
-msgstr "æ\x00¥è¯­"
+msgstr "日语"
 
-# DBI:mysql:papp/iso639.name:207
 #$lang=eng
 msgid "Korean"
-msgstr "æ\x00\x00é²\x00è¯­"
+msgstr "朝鲜语"
 
-# DBI:mysql:papp/iso639.name:220
 #$lang=eng
 msgid "Latvian"
-msgstr "æ\x00\x00è\x00±ç»´äº\x00è¯­"
+msgstr "拉脱维亚语"
 
-# DBI:mysql:papp/iso639.name:223
 #$lang=eng
 msgid "Lithuanian"
-msgstr "ç«\x00é\x00¶å®\x00è¯­"
+msgstr "立陶宛语"
 
-# DBI:mysql:papp/iso639.name:286
 #$lang=eng
 msgid "Norwegian"
-msgstr "æ\x00ªå¨\x00è¯­"
+msgstr "挪威语"
 
-# DBI:mysql:papp/iso639.name:312
 #$lang=eng
 msgid "Polish"
-msgstr "æ³¢å\x00°è¯­"
+msgstr "波兰语"
 
-# DBI:mysql:papp/iso639.name:314
 #$lang=eng
 msgid "Portuguese"
-msgstr "è\x00¡è\x00\x00ç\x00\x00è¯­"
+msgstr "葡萄牙语"
 
-# DBI:mysql:papp/iso639.name:324
 #$lang=eng
 msgid "Romanian"
-msgstr "ç½\x00é©¬å°¼äº\x00è¯­"
+msgstr "罗马尼亚语"
 
-# DBI:mysql:papp/iso639.name:326
 #$lang=eng
 msgid "Russian"
-msgstr "ä¿\x00è¯­"
+msgstr "俄语"
 
-# DBI:mysql:papp/iso639.name:359
 #$lang=eng
 msgid "Spanish"
-msgstr "è¥¿ç\x00­ç\x00\x00è¯­"
+msgstr "西班牙语"
 
-# DBI:mysql:papp/iso639.name:371
 #$lang=eng
 msgid "Swedish"
-msgstr "ç\x00\x00å\x00¸è¯­"
+msgstr "瑞典语"
 
-# DBI:mysql:papp/iso639.name:429
 #$lang=eng
 msgid "Zhuang"
-msgstr "ä¸­æ\x00\x00 (ç¹\x00ä½\x00ï¼\x00"
+msgstr "中文 (繁体）"
 

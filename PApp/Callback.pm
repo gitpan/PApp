@@ -36,7 +36,7 @@ require 5.006;
 
 use base 'Exporter';
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 @EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...

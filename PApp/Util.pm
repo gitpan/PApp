@@ -19,7 +19,7 @@ use URI;
 
 use base 'Exporter';
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 @EXPORT_OK = qw(
       format_source dumpval sv_peek
       digest

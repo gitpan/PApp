@@ -14,7 +14,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 
 package PApp::Package;
 

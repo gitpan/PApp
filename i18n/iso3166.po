@@ -11,1472 +11,1068 @@ msgstr ""
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso3166.name:142
 #$lang=eng
 msgid "Afghanistan"
 msgstr "Afghanistan"
 
-# DBI:mysql:papp/iso3166.name:1
 #$lang=eng
 msgid "Africa"
 msgstr "Afrika"
 
-# DBI:mysql:papp/iso3166.name:209
 #$lang=eng
 msgid "Albania"
 msgstr "Albanien"
 
-# DBI:mysql:papp/iso3166.name:55
 #$lang=eng
 msgid "Algeria"
 msgstr "Algerien"
 
-# DBI:mysql:papp/iso3166.name:248
 #$lang=eng
 msgid "American Samoa"
 msgstr "Amerikanisch-Samoa"
 
-# DBI:mysql:papp/iso3166.name:7
 #$lang=eng
 msgid "Americas"
-msgstr "SÃ¼d- und Nordamerika"
+msgstr "Süd- und Nordamerika"
 
-# DBI:mysql:papp/iso3166.name:210
 #$lang=eng
 msgid "Andorra"
 msgstr "Andorra"
 
-# DBI:mysql:papp/iso3166.name:46
 #$lang=eng
 msgid "Angola"
 msgstr "Angola"
 
-# DBI:mysql:papp/iso3166.name:84
 #$lang=eng
 msgid "Anguilla"
 msgstr "Anguilla"
 
-# DBI:mysql:papp/iso3166.name:260
 #$lang=eng
 msgid "Antarctica"
 msgstr "Antarktis"
 
-# DBI:mysql:papp/iso3166.name:85
 #$lang=eng
 msgid "Antigua and Barbuda"
 msgstr "Antigua und Barbuda"
 
-# DBI:mysql:papp/iso3166.name:183
 #$lang=eng
 msgid "Arab Emirates"
 msgstr "Vereinigte Arabische Emirate"
 
-# DBI:mysql:papp/iso3166.name:116
 #$lang=eng
 msgid "Argentina"
 msgstr "Argentinien"
 
-# DBI:mysql:papp/iso3166.name:167
 #$lang=eng
 msgid "Armenia"
 msgstr "Armenien"
 
-# DBI:mysql:papp/iso3166.name:86
 #$lang=eng
 msgid "Aruba"
 msgstr "Aruba"
 
-# DBI:mysql:papp/iso3166.name:13
 #$lang=eng
 msgid "Asia"
 msgstr "Asien"
 
-# DBI:mysql:papp/iso3166.name:233
 #$lang=eng
 msgid "Australia"
 msgstr "Australien"
 
-# DBI:mysql:papp/iso3166.name:24
 #$lang=eng
 msgid "Australia and New Zealand"
 msgstr "Australien und Neuseeland"
 
-# DBI:mysql:papp/iso3166.name:224
 #$lang=eng
 msgid "Austria"
-msgstr "Ã\x00sterreich"
+msgstr "Österreich"
 
-# DBI:mysql:papp/iso3166.name:168
 #$lang=eng
 msgid "Azerbaijan"
 msgstr "Aserbaidschan"
 
-# DBI:mysql:papp/iso3166.name:87
 #$lang=eng
 msgid "Bahamas"
 msgstr "Bahamas"
 
-# DBI:mysql:papp/iso3166.name:169
 #$lang=eng
 msgid "Bahrain"
 msgstr "Bahrain"
 
-# DBI:mysql:papp/iso3166.name:143
 #$lang=eng
 msgid "Bangladesh"
 msgstr "Bangladesch"
 
-# DBI:mysql:papp/iso3166.name:88
 #$lang=eng
 msgid "Barbados"
 msgstr "Barbados"
 
-# DBI:mysql:papp/iso3166.name:185
 #$lang=eng
 msgid "Belarus"
-msgstr "WeiÃ\x00ruÃ\x00land"
+msgstr "Weißrußland"
 
-# DBI:mysql:papp/iso3166.name:225
 #$lang=eng
 msgid "Belgium"
 msgstr "Belgien"
 
-# DBI:mysql:papp/iso3166.name:108
 #$lang=eng
 msgid "Belize"
 msgstr "Belize"
 
-# DBI:mysql:papp/iso3166.name:67
 #$lang=eng
 msgid "Benin"
 msgstr "Benin"
 
-# DBI:mysql:papp/iso3166.name:130
 #$lang=eng
 msgid "Bermuda"
 msgstr "Bermuda"
 
-# DBI:mysql:papp/iso3166.name:144
 #$lang=eng
 msgid "Bhutan"
 msgstr "Bhutan"
 
-# DBI:mysql:papp/iso3166.name:117
 #$lang=eng
 msgid "Bolivia"
 msgstr "Bolivien"
 
-# DBI:mysql:papp/iso3166.name:211
 #$lang=eng
 msgid "Bosnia and Herzegovina"
 msgstr "Bosnien und Herzegowina"
 
-# DBI:mysql:papp/iso3166.name:62
 #$lang=eng
 msgid "Botswana"
 msgstr "Botsuana"
 
-# DBI:mysql:papp/iso3166.name:261
 #$lang=eng
 msgid "Bouvet island"
 msgstr "Bouvetinsel"
 
-# DBI:mysql:papp/iso3166.name:118
 #$lang=eng
 msgid "Brazil"
 msgstr "Brasilien"
 
-# DBI:mysql:papp/iso3166.name:262
 #$lang=eng
 msgid "British indian ocean territory"
 msgstr "Britisches Territorium im Indischen Ozean"
 
-# DBI:mysql:papp/iso3166.name:89
 #$lang=eng
 msgid "British Virgin Islands"
 msgstr "Britische Jungferninseln"
 
-# DBI:mysql:papp/iso3166.name:156
 #$lang=eng
 msgid "Brunei"
 msgstr "Brunei Darussalam"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Brunei Darussalam"
-msgstr ""
-
-# DBI:mysql:papp/iso3166.name:186
 #$lang=eng
 msgid "Bulgaria"
 msgstr "Bulgarien"
 
-# DBI:mysql:papp/iso3166.name:68
 #$lang=eng
 msgid "Burkina Faso"
 msgstr "Burkina Faso"
 
-# DBI:mysql:papp/iso3166.name:28
 #$lang=eng
 msgid "Burundi"
 msgstr "Burundi"
 
-# DBI:mysql:papp/iso3166.name:157
 #$lang=eng
 msgid "Cambodia"
 msgstr "Kambodscha"
 
-# DBI:mysql:papp/iso3166.name:47
 #$lang=eng
 msgid "Cameroon"
 msgstr "Kamerun"
 
-# DBI:mysql:papp/iso3166.name:131
 #$lang=eng
 msgid "Canada"
 msgstr "Kanada"
 
-# DBI:mysql:papp/iso3166.name:69
 #$lang=eng
 msgid "Cape Verde"
 msgstr "Kap Verde"
 
-# DBI:mysql:papp/iso3166.name:9
 #$lang=eng
 msgid "Caribbean"
 msgstr "Karibik"
 
-# DBI:mysql:papp/iso3166.name:90
 #$lang=eng
 msgid "Cayman Islands"
 msgstr "Kaimaninseln"
 
-# DBI:mysql:papp/iso3166.name:70
-#$lang=eng
-#$flags=2
-msgid "CÃ´te d'Ivoire"
-msgstr "CÃ´te dIvoire"
-
-# DBI:mysql:papp/iso3166.name:70
 #$lang=eng
 #$flags=2
 msgid "Côte d'Ivoire"
 msgstr "Côte dIvoire"
 
-# DBI:mysql:papp/iso3166.name:48
 #$lang=eng
 msgid "Central African Republic"
 msgstr "Zentralafrikanische Republik"
 
-# DBI:mysql:papp/iso3166.name:10
 #$lang=eng
 msgid "Central America"
 msgstr "Mittelamerika"
 
-# DBI:mysql:papp/iso3166.name:49
 #$lang=eng
 msgid "Chad"
 msgstr "Tschad"
 
-# DBI:mysql:papp/iso3166.name:195
 #$lang=eng
 msgid "Channel Islands"
 msgstr "Kanalinseln"
 
-# DBI:mysql:papp/iso3166.name:119
 #$lang=eng
 msgid "Chile"
 msgstr "Chile"
 
-# DBI:mysql:papp/iso3166.name:135
 #$lang=eng
 msgid "China"
 msgstr "China"
 
-# DBI:mysql:papp/iso3166.name:263
 #$lang=eng
 msgid "Christmas island"
 msgstr "Weihnachtsinsel"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-#$flags=2
-msgid "Cocos (keeling) islands"
-msgstr "Cook-Inseln"
-
-# DBI:mysql:papp/iso3166.name:264
 #$lang=eng
 msgid "Cocos islands"
 msgstr "Kokosinseln"
 
-# DBI:mysql:papp/iso3166.name:120
 #$lang=eng
 msgid "Colombia"
 msgstr "Kolumbien"
 
-# DBI:mysql:papp/iso3166.name:258
 #$lang=eng
 msgid "Commonwealth"
 msgstr "Commonwealth"
 
-# DBI:mysql:papp/iso3166.name:29
 #$lang=eng
 msgid "Comoros"
 msgstr "Komoren"
 
-# DBI:mysql:papp/iso3166.name:50
-# DBI:mysql:papp/iso3166.name:51
 #$lang=eng
 msgid "Congo"
 msgstr "Kongo, Demo- kratische Republik"
 
-# DBI:mysql:papp/iso3166.name:249
 #$lang=eng
 msgid "Cook Islands"
 msgstr "Cookinseln"
 
-# DBI:mysql:papp/iso3166.name:109
 #$lang=eng
 msgid "Costa Rica"
 msgstr "Costa Rica"
 
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Cote d'Ivoire"
-msgstr "CÃ´te dIvoire"
-
-# DBI:mysql:papp/iso3166.name:212
 #$lang=eng
 msgid "Croatia"
 msgstr "Kroatien"
 
-# DBI:mysql:papp/iso3166.name:91
 #$lang=eng
 msgid "Cuba"
 msgstr "Kuba"
 
-# DBI:mysql:papp/iso3166.name:170
 #$lang=eng
 msgid "Cyprus"
 msgstr "Zypern"
 
-# DBI:mysql:papp/iso3166.name:187
 #$lang=eng
 msgid "Czech Republic"
 msgstr "Tschechische Republik"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Democratic People's Republic of Korea"
-msgstr "Volksrepublik Korea"
-
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Democratic Republic of the Congo"
-msgstr "Demokratische Republik des Kongo"
-
-# DBI:mysql:papp/iso3166.name:196
 #$lang=eng
 msgid "Denmark"
-msgstr "DÃ¤nemark"
+msgstr "Dänemark"
 
-# DBI:mysql:papp/iso3166.name:30
 #$lang=eng
 msgid "Djibouti"
 msgstr "Dschibuti"
 
-# DBI:mysql:papp/iso3166.name:92
 #$lang=eng
 msgid "Dominica"
 msgstr "Dominica"
 
-# DBI:mysql:papp/iso3166.name:93
 #$lang=eng
 msgid "Dominican Republic"
 msgstr "Dominikanische Republik"
 
-# DBI:mysql:papp/iso3166.name:158
 #$lang=eng
 msgid "East Timor"
 msgstr "Ost-Timor"
 
-# DBI:mysql:papp/iso3166.name:2
 #$lang=eng
 msgid "Eastern Africa"
 msgstr "Ostafrika"
 
-# DBI:mysql:papp/iso3166.name:14
 #$lang=eng
 msgid "Eastern Asia"
 msgstr "Ostasien"
 
-# DBI:mysql:papp/iso3166.name:19
 #$lang=eng
 msgid "Eastern Europe"
 msgstr "Osteuropa"
 
-# DBI:mysql:papp/iso3166.name:121
 #$lang=eng
 msgid "Ecuador"
 msgstr "Ecuador"
 
-# DBI:mysql:papp/iso3166.name:56
 #$lang=eng
 msgid "Egypt"
-msgstr "Ã\x00gypten"
+msgstr "Ägypten"
 
-# DBI:mysql:papp/iso3166.name:110
 #$lang=eng
 msgid "El Salvador"
 msgstr "El Salvador"
 
-# DBI:mysql:papp/iso3166.name:52
 #$lang=eng
 msgid "Equatorial Guinea"
-msgstr "Ã\x00quatorialguinea"
+msgstr "Äquatorialguinea"
 
-# DBI:mysql:papp/iso3166.name:31
 #$lang=eng
 msgid "Eritrea"
 msgstr "Eritrea"
 
-# DBI:mysql:papp/iso3166.name:197
 #$lang=eng
 msgid "Estonia"
 msgstr "Estland"
 
-# DBI:mysql:papp/iso3166.name:32
 #$lang=eng
 msgid "Ethiopia"
-msgstr "Ã\x00thiopien"
+msgstr "Äthiopien"
 
-# DBI:mysql:papp/iso3166.name:18
 #$lang=eng
 msgid "Europe"
 msgstr "Europa"
 
-# DBI:mysql:papp/iso3166.name:198
 #$lang=eng
 msgid "Faeroe Islands"
-msgstr "FÃ¤rÃ¶er"
+msgstr "Färöer"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Falkland Islands (Malvinas)"
-msgstr "Falklandinseln (Malvinas)"
-
-# DBI:mysql:papp/iso3166.name:236
 #$lang=eng
 msgid "Fiji"
 msgstr "Fidschi"
 
-# DBI:mysql:papp/iso3166.name:199
 #$lang=eng
 msgid "Finland"
 msgstr "Finnland"
 
-# DBI:mysql:papp/iso3166.name:226
 #$lang=eng
 msgid "France"
 msgstr "Frankreich"
 
-# DBI:mysql:papp/iso3166.name:123
 #$lang=eng
 msgid "French Guiana"
-msgstr "FranzÃ¶sisch-Guayana"
+msgstr "Französisch-Guayana"
 
-# DBI:mysql:papp/iso3166.name:250
 #$lang=eng
 msgid "French Polynesia"
-msgstr "FranzÃ¶sisch-Polynesien"
+msgstr "Französisch-Polynesien"
 
-# DBI:mysql:papp/iso3166.name:265
 #$lang=eng
 msgid "French southern territories"
-msgstr "FranzÃ¶sische SÃ¼d- und Antarktisgebiete"
+msgstr "Französische Süd- und Antarktisgebiete"
 
-# DBI:mysql:papp/iso3166.name:53
 #$lang=eng
 msgid "Gabon"
 msgstr "Gabun"
 
-# DBI:mysql:papp/iso3166.name:71
 #$lang=eng
 msgid "Gambia"
 msgstr "Gambia"
 
-# DBI:mysql:papp/iso3166.name:171
 #$lang=eng
 msgid "Georgia"
 msgstr "Georgien"
 
-# DBI:mysql:papp/iso3166.name:227
 #$lang=eng
 msgid "Germany"
 msgstr "Deutschland"
 
-# DBI:mysql:papp/iso3166.name:72
 #$lang=eng
 msgid "Ghana"
 msgstr "Ghana"
 
-# DBI:mysql:papp/iso3166.name:213
 #$lang=eng
 msgid "Gibraltar"
 msgstr "Gibraltar"
 
-# DBI:mysql:papp/iso3166.name:214
 #$lang=eng
 msgid "Greece"
 msgstr "Griechenland"
 
-# DBI:mysql:papp/iso3166.name:132
 #$lang=eng
 msgid "Greenland"
-msgstr "GrÃ¶nland"
+msgstr "Grönland"
 
-# DBI:mysql:papp/iso3166.name:94
 #$lang=eng
 msgid "Grenada"
 msgstr "Grenada"
 
-# DBI:mysql:papp/iso3166.name:95
 #$lang=eng
 msgid "Guadeloupe"
 msgstr "Guadeloupe"
 
-# DBI:mysql:papp/iso3166.name:241
 #$lang=eng
 msgid "Guam"
 msgstr "Guam"
 
-# DBI:mysql:papp/iso3166.name:111
 #$lang=eng
 msgid "Guatemala"
 msgstr "Guatemala"
 
-# DBI:mysql:papp/iso3166.name:73
 #$lang=eng
 msgid "Guinea"
 msgstr "Guinea"
 
-# DBI:mysql:papp/iso3166.name:74
 #$lang=eng
 msgid "Guinea-Bissau"
 msgstr "Guinea-Bissau"
 
-# DBI:mysql:papp/iso3166.name:124
 #$lang=eng
 msgid "Guyana"
 msgstr "Guyana"
 
-# DBI:mysql:papp/iso3166.name:96
 #$lang=eng
 msgid "Haiti"
 msgstr "Haiti"
 
-# DBI:mysql:papp/iso3166.name:266
 #$lang=eng
 msgid "Heard and McDonald islands"
 msgstr "Heard und McDonaldinseln"
 
-# DBI:mysql:papp/iso3166.name:215
 #$lang=eng
 msgid "Holy See"
 msgstr "Vatikanstadt"
 
-# DBI:mysql:papp/iso3166.name:112
 #$lang=eng
 msgid "Honduras"
 msgstr "Honduras"
 
-# DBI:mysql:papp/iso3166.name:136
 #$lang=eng
 msgid "Hong Kong"
 msgstr ""
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Hong Kong Special Administrative Region of China"
-msgstr "Hongkong Verwaltungsgebiet China"
-
-# DBI:mysql:papp/iso3166.name:188
 #$lang=eng
 msgid "Hungary"
 msgstr "Ungarn"
 
-# DBI:mysql:papp/iso3166.name:200
 #$lang=eng
 msgid "Iceland"
 msgstr "Island"
 
-# DBI:mysql:papp/iso3166.name:145
 #$lang=eng
 msgid "India"
 msgstr "Indien"
 
-# DBI:mysql:papp/iso3166.name:159
 #$lang=eng
 msgid "Indonesia"
 msgstr "Indonesien"
 
-# DBI:mysql:papp/iso3166.name:146
 #$lang=eng
 msgid "Iran"
 msgstr "Iran"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Iran (Islamic Republic of)"
-msgstr "Iran (Islamische Republik des)"
-
-# DBI:mysql:papp/iso3166.name:172
 #$lang=eng
 msgid "Iraq"
 msgstr "Irak"
 
-# DBI:mysql:papp/iso3166.name:201
 #$lang=eng
 msgid "Ireland"
 msgstr "Irland"
 
-# DBI:mysql:papp/iso3166.name:202
 #$lang=eng
 msgid "Isle of Man"
 msgstr ""
 
-# DBI:mysql:papp/iso3166.name:173
 #$lang=eng
 msgid "Israel"
 msgstr "Israel"
 
-# DBI:mysql:papp/iso3166.name:216
 #$lang=eng
 msgid "Italy"
 msgstr "Italien"
 
-# DBI:mysql:papp/iso3166.name:57
 #$lang=eng
 msgid "Jamahiriya"
 msgstr "Libysch-Arabische Dschamahirija"
 
-# DBI:mysql:papp/iso3166.name:97
 #$lang=eng
 msgid "Jamaica"
 msgstr "Jamaika"
 
-# DBI:mysql:papp/iso3166.name:139
 #$lang=eng
 msgid "Japan"
 msgstr "Japan"
 
-# DBI:mysql:papp/iso3166.name:174
 #$lang=eng
 msgid "Jordan"
 msgstr "Jordanien"
 
-# DBI:mysql:papp/iso3166.name:147
 #$lang=eng
 msgid "Kazakhstan"
 msgstr "Kasachstan"
 
-# DBI:mysql:papp/iso3166.name:33
 #$lang=eng
 msgid "Kenya"
 msgstr "Kenia"
 
-# DBI:mysql:papp/iso3166.name:242
 #$lang=eng
 msgid "Kiribati"
 msgstr "Kiribati"
 
-# DBI:mysql:papp/iso3166.name:138
 #$lang=eng
 msgid "Korea"
 msgstr "Korea, Demokratische Volksrepublik"
 
-# DBI:mysql:papp/iso3166.name:175
 #$lang=eng
 msgid "Kuwait"
 msgstr "Kuwait"
 
-# DBI:mysql:papp/iso3166.name:148
 #$lang=eng
 msgid "Kyrgyzstan"
 msgstr "Kirgisistan"
 
-# DBI:mysql:papp/iso3166.name:160
 #$lang=eng
 msgid "Lao"
 msgstr "Laos, Demokratische Volksrepublik"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Lao People's Democratic Republic"
-msgstr "Volksrepublik Lao"
-
-# DBI:mysql:papp/iso3166.name:8
 #$lang=eng
 msgid "Latin America and the Caribbean"
 msgstr "Lateinamerika und die Karibik"
 
-# DBI:mysql:papp/iso3166.name:203
 #$lang=eng
 msgid "Latvia"
 msgstr "Lettland"
 
-# DBI:mysql:papp/iso3166.name:176
 #$lang=eng
 msgid "Lebanon"
 msgstr "Libanon"
 
-# DBI:mysql:papp/iso3166.name:63
 #$lang=eng
 msgid "Lesotho"
 msgstr "Lesotho"
 
-# DBI:mysql:papp/iso3166.name:75
 #$lang=eng
 msgid "Liberia"
 msgstr "Liberia"
 
-# DBI:mysql:papp/iso3166.name:228
 #$lang=eng
 msgid "Liechtenstein"
 msgstr "Liechtenstein"
 
-# DBI:mysql:papp/iso3166.name:204
 #$lang=eng
 msgid "Lithuania"
 msgstr "Litauen"
 
-# DBI:mysql:papp/iso3166.name:229
 #$lang=eng
 msgid "Luxembourg"
 msgstr "Luxemburg"
 
-# DBI:mysql:papp/iso3166.name:137
 #$lang=eng
 msgid "Macao"
 msgstr "Macau"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Macao Special Administrative Region of China"
-msgstr "Macao Verwaltungsgebiet China"
-
-# DBI:mysql:papp/iso3166.name:222
 #$lang=eng
 msgid "Macedonia"
 msgstr "Mazedonien"
 
-# DBI:mysql:papp/iso3166.name:34
 #$lang=eng
 msgid "Madagascar"
 msgstr "Madagaskar"
 
-# DBI:mysql:papp/iso3166.name:35
 #$lang=eng
 msgid "Malawi"
 msgstr "Malawi"
 
-# DBI:mysql:papp/iso3166.name:161
 #$lang=eng
 msgid "Malaysia"
 msgstr "Malaysia"
 
-# DBI:mysql:papp/iso3166.name:149
 #$lang=eng
 msgid "Maldives"
 msgstr "Malediven"
 
-# DBI:mysql:papp/iso3166.name:76
 #$lang=eng
 msgid "Mali"
 msgstr "Mali"
 
-# DBI:mysql:papp/iso3166.name:217
 #$lang=eng
 msgid "Malta"
 msgstr "Malta"
 
-# DBI:mysql:papp/iso3166.name:122
 #$lang=eng
 msgid "Malvinas"
 msgstr "Falklandinseln"
 
-# DBI:mysql:papp/iso3166.name:246
 #$lang=eng
 msgid "Mariana Islands"
-msgstr "NÃ¶rdliche Marianen"
+msgstr "Nördliche Marianen"
 
-# DBI:mysql:papp/iso3166.name:243
 #$lang=eng
 msgid "Marshall Islands"
 msgstr "Marshallinseln"
 
-# DBI:mysql:papp/iso3166.name:98
 #$lang=eng
 msgid "Martinique"
 msgstr "Martinique"
 
-# DBI:mysql:papp/iso3166.name:77
 #$lang=eng
 msgid "Mauritania"
 msgstr "Mauretanien"
 
-# DBI:mysql:papp/iso3166.name:36
 #$lang=eng
 msgid "Mauritius"
 msgstr "Mauritius"
 
-# DBI:mysql:papp/iso3166.name:267
 #$lang=eng
 msgid "Mayotte"
 msgstr "Mayotte"
 
-# DBI:mysql:papp/iso3166.name:25
 #$lang=eng
 msgid "Melanesia"
 msgstr "Melanesien"
 
-# DBI:mysql:papp/iso3166.name:113
 #$lang=eng
 msgid "Mexico"
 msgstr "Mexiko"
 
-# DBI:mysql:papp/iso3166.name:26
-# DBI:mysql:papp/iso3166.name:244
 #$lang=eng
 msgid "Micronesia"
-msgstr "Mikronesien, FÃ¶derierte Staaten von"
+msgstr "Mikronesien, Föderierte Staaten von"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Micronesia, Federated States of"
-msgstr "Mikronesien, FÃ¶derative Staaten der"
-
-# DBI:mysql:papp/iso3166.name:3
 #$lang=eng
 msgid "Middle Africa"
 msgstr "Zentralafrika"
 
-# DBI:mysql:papp/iso3166.name:190
 #$lang=eng
 msgid "Moldova"
 msgstr "Moldova"
 
-# DBI:mysql:papp/iso3166.name:230
 #$lang=eng
 msgid "Monaco"
 msgstr "Monaco"
 
-# DBI:mysql:papp/iso3166.name:140
 #$lang=eng
 msgid "Mongolia"
 msgstr "Mongolei"
 
-# DBI:mysql:papp/iso3166.name:99
 #$lang=eng
 msgid "Montserrat"
 msgstr "Montserrat"
 
-# DBI:mysql:papp/iso3166.name:58
 #$lang=eng
 msgid "Morocco"
 msgstr "Marokko"
 
-# DBI:mysql:papp/iso3166.name:37
 #$lang=eng
 msgid "Mozambique"
 msgstr "Mosambik"
 
-# DBI:mysql:papp/iso3166.name:162
 #$lang=eng
 msgid "Myanmar"
 msgstr "Myanmar"
 
-# DBI:mysql:papp/iso3166.name:64
 #$lang=eng
 msgid "Namibia"
 msgstr "Namibia"
 
-# DBI:mysql:papp/iso3166.name:245
 #$lang=eng
 msgid "Nauru"
 msgstr "Nauru"
 
-# DBI:mysql:papp/iso3166.name:150
 #$lang=eng
 msgid "Nepal"
 msgstr "Nepal"
 
-# DBI:mysql:papp/iso3166.name:231
 #$lang=eng
 msgid "Netherlands"
 msgstr "Niederlande"
 
-# DBI:mysql:papp/iso3166.name:100
 #$lang=eng
 msgid "Netherlands Antilles"
-msgstr "NiederlÃ¤ndische Antillen"
+msgstr "Niederländische Antillen"
 
-# DBI:mysql:papp/iso3166.name:237
 #$lang=eng
 msgid "New Caledonia"
 msgstr "Neukaledonien"
 
-# DBI:mysql:papp/iso3166.name:234
 #$lang=eng
 msgid "New Zealand"
 msgstr "Neuseeland"
 
-# DBI:mysql:papp/iso3166.name:114
 #$lang=eng
 msgid "Nicaragua"
 msgstr "Nicaragua"
 
-# DBI:mysql:papp/iso3166.name:78
 #$lang=eng
 msgid "Niger"
 msgstr "Niger"
 
-# DBI:mysql:papp/iso3166.name:79
 #$lang=eng
 msgid "Nigeria"
 msgstr "Nigeria"
 
-# DBI:mysql:papp/iso3166.name:251
 #$lang=eng
 msgid "Niue"
 msgstr "Niue"
 
-# DBI:mysql:papp/iso3166.name:235
 #$lang=eng
 msgid "Norfolk Island"
 msgstr "Norfolkinsel"
 
-# DBI:mysql:papp/iso3166.name:4
 #$lang=eng
 msgid "Northern Africa"
 msgstr "Nordafrika"
 
-# DBI:mysql:papp/iso3166.name:12
 #$lang=eng
 msgid "Northern America"
 msgstr "Nordamerika"
 
-# DBI:mysql:papp/iso3166.name:20
 #$lang=eng
 msgid "Northern Europe"
 msgstr "Nordeuropa"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Northern Mariana Islands"
-msgstr "Nordliche Marianeninseln"
-
-# DBI:mysql:papp/iso3166.name:205
 #$lang=eng
 msgid "Norway"
 msgstr "Norwegen"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Occupied Palestinian Territory"
-msgstr "PalÃ¤stina"
-
-# DBI:mysql:papp/iso3166.name:23
 #$lang=eng
 msgid "Oceania"
 msgstr "Ozeanien"
 
-# DBI:mysql:papp/iso3166.name:178
 #$lang=eng
 msgid "Oman"
 msgstr "Oman"
 
-# DBI:mysql:papp/iso3166.name:151
 #$lang=eng
 msgid "Pakistan"
 msgstr "Pakistan"
 
-# DBI:mysql:papp/iso3166.name:247
 #$lang=eng
 msgid "Palau"
 msgstr "Palau"
 
-# DBI:mysql:papp/iso3166.name:177
 #$lang=eng
 msgid "Palestine"
-msgstr "PalÃ¤stina"
+msgstr "Palästina"
 
-# DBI:mysql:papp/iso3166.name:115
 #$lang=eng
 msgid "Panama"
 msgstr "Panama"
 
-# DBI:mysql:papp/iso3166.name:238
 #$lang=eng
 msgid "Papua New Guinea"
 msgstr "Papua-Neuguinea"
 
-# DBI:mysql:papp/iso3166.name:125
 #$lang=eng
 msgid "Paraguay"
 msgstr "Paraguay"
 
-# DBI:mysql:papp/iso3166.name:126
 #$lang=eng
 msgid "Peru"
 msgstr "Peru"
 
-# DBI:mysql:papp/iso3166.name:163
 #$lang=eng
 msgid "Philippines"
 msgstr "Philippinen"
 
-# DBI:mysql:papp/iso3166.name:252
 #$lang=eng
 msgid "Pitcairn"
 msgstr "Pitcairn"
 
-# DBI:mysql:papp/iso3166.name:189
 #$lang=eng
 msgid "Poland"
 msgstr "Polen"
 
-# DBI:mysql:papp/iso3166.name:27
 #$lang=eng
 msgid "Polynesia"
-msgstr "FranzÃ¶sisch-Polynesien"
+msgstr "Französisch-Polynesien"
 
-# DBI:mysql:papp/iso3166.name:218
 #$lang=eng
 msgid "Portugal"
 msgstr "Portugal"
 
-# DBI:mysql:papp/iso3166.name:101
 #$lang=eng
 msgid "Puerto Rico"
 msgstr "Puerto Rico"
 
-# DBI:mysql:papp/iso3166.name:179
 #$lang=eng
 msgid "Qatar"
 msgstr "Katar"
 
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "RÃ\x00Â©union"
-msgstr "RÃ\x00Â©union"
-
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "RÃ©union"
-msgstr "RÃ©union"
-
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Réunion"
-msgstr "Réunion"
-
-# DBI:mysql:papp/iso3166.name:141
 #$lang=eng
 msgid "Republic of Korea"
 msgstr "Korea, Republik"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-#$flags=2
-msgid "Republic of Moldova"
-msgstr "Republik Korea"
-
-# DBI:mysql:papp/iso3166.name:191
 #$lang=eng
 msgid "Romania"
-msgstr "RumÃ¤nien"
+msgstr "Rumänien"
 
-# DBI:mysql:papp/iso3166.name:192
 #$lang=eng
 msgid "Russia"
-msgstr "Russische FÃ¶deration"
+msgstr "Russische Föderation"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Russian Federation"
-msgstr "Russische FÃ¶deration"
-
-# DBI:mysql:papp/iso3166.name:39
 #$lang=eng
 msgid "Rwanda"
 msgstr "Ruanda"
 
-# DBI:mysql:papp/iso3166.name:80
 #$lang=eng
 msgid "Saint Helena"
 msgstr "Ascension"
 
-# DBI:mysql:papp/iso3166.name:102
 #$lang=eng
 msgid "Saint Kitts and Nevis"
 msgstr "St. Kitts und Nevis"
 
-# DBI:mysql:papp/iso3166.name:103
 #$lang=eng
 msgid "Saint Lucia"
 msgstr "St. Lucia"
 
-# DBI:mysql:papp/iso3166.name:133
 #$lang=eng
 msgid "Saint Pierre and Miquelon"
 msgstr "St. Pierre und Miquelon"
 
-# DBI:mysql:papp/iso3166.name:104
 #$lang=eng
 msgid "Saint Vincent and the Grenadines"
 msgstr "St. Vincent und die Grenadinen"
 
-# DBI:mysql:papp/iso3166.name:253
 #$lang=eng
 msgid "Samoa"
 msgstr "Samoa"
 
-# DBI:mysql:papp/iso3166.name:219
 #$lang=eng
 msgid "San Marino"
 msgstr "San Marino"
 
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Sao Tome and Principe"
-msgstr "SÃ£o TomÃ© und PrÃ­ncipe"
-
-# DBI:mysql:papp/iso3166.name:180
 #$lang=eng
 msgid "Saudi Arabia"
 msgstr "Saudi-Arabien"
 
-# DBI:mysql:papp/iso3166.name:54
-#$lang=eng
-#$flags=2
-msgid "SÃ£o Tome and Principe"
-msgstr "SÃ£o TomÃ© und PrÃ­ncipe"
-
-# DBI:mysql:papp/iso3166.name:54
 #$lang=eng
 #$flags=2
 msgid "São Tome and Principe"
 msgstr "São Tomé und Príncipe"
 
-# DBI:mysql:papp/iso3166.name:81
 #$lang=eng
 msgid "Senegal"
 msgstr "Senegal"
 
-# DBI:mysql:papp/iso3166.name:40
 #$lang=eng
 msgid "Seychelles"
 msgstr "Seychellen"
 
-# DBI:mysql:papp/iso3166.name:82
 #$lang=eng
 msgid "Sierra Leone"
 msgstr "Sierra Leone"
 
-# DBI:mysql:papp/iso3166.name:164
 #$lang=eng
 msgid "Singapore"
 msgstr "Singapur"
 
-# DBI:mysql:papp/iso3166.name:193
 #$lang=eng
 msgid "Slovakia"
 msgstr "Slowakei"
 
-# DBI:mysql:papp/iso3166.name:220
 #$lang=eng
 msgid "Slovenia"
 msgstr "Slowenien"
 
-# DBI:mysql:papp/iso3166.name:239
 #$lang=eng
 msgid "Solomon Islands"
 msgstr "Salomonen"
 
-# DBI:mysql:papp/iso3166.name:41
 #$lang=eng
 msgid "Somalia"
 msgstr "Somalia"
 
-# DBI:mysql:papp/iso3166.name:65
 #$lang=eng
 msgid "South Africa"
-msgstr "SÃ¼dafrika"
+msgstr "Südafrika"
 
-# DBI:mysql:papp/iso3166.name:11
 #$lang=eng
 msgid "South America"
-msgstr "SÃ¼damerika"
+msgstr "Südamerika"
 
-# DBI:mysql:papp/iso3166.name:268
 #$lang=eng
 msgid "South georgia"
-msgstr "SÃ¼dgeorgien und die SÃ¼dlichen Sandwichinseln"
+msgstr "Südgeorgien und die Südlichen Sandwichinseln"
 
-# DBI:mysql:papp/iso3166.name:15
 #$lang=eng
 msgid "South-central Asia"
-msgstr "SÃ¼d-Zentralasien"
+msgstr "Süd-Zentralasien"
 
-# DBI:mysql:papp/iso3166.name:16
 #$lang=eng
 msgid "South-eastern Asia"
-msgstr "SÃ¼dostasien"
+msgstr "Südostasien"
 
-# DBI:mysql:papp/iso3166.name:5
 #$lang=eng
 msgid "Southern Africa"
-msgstr "Afrika (SÃ¼d)"
+msgstr "Afrika (Süd)"
 
-# DBI:mysql:papp/iso3166.name:21
 #$lang=eng
 msgid "Southern Europe"
-msgstr "SÃ¼deuropa"
+msgstr "Südeuropa"
 
-# DBI:mysql:papp/iso3166.name:221
 #$lang=eng
 msgid "Spain"
 msgstr "Spanien"
 
-# DBI:mysql:papp/iso3166.name:152
 #$lang=eng
 msgid "Sri Lanka"
 msgstr "Sri Lanka nicht: Ceylon"
 
-# DBI:mysql:papp/iso3166.name:59
 #$lang=eng
 msgid "Sudan"
 msgstr "Sudan"
 
-# DBI:mysql:papp/iso3166.name:127
 #$lang=eng
 msgid "Suriname"
 msgstr "Suriname"
 
-# DBI:mysql:papp/iso3166.name:206
 #$lang=eng
 msgid "Svalbard and Jan Mayen Islands"
-msgstr "BÃ¤reninsel"
+msgstr "Bäreninsel"
 
-# DBI:mysql:papp/iso3166.name:66
 #$lang=eng
 msgid "Swaziland"
 msgstr "Swasiland"
 
-# DBI:mysql:papp/iso3166.name:207
 #$lang=eng
 msgid "Sweden"
 msgstr "Schweden"
 
-# DBI:mysql:papp/iso3166.name:232
 #$lang=eng
 msgid "Switzerland"
 msgstr "Schweiz"
 
-# DBI:mysql:papp/iso3166.name:181
 #$lang=eng
 msgid "Syria"
 msgstr "Syrien, Arabische Republik"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-#$flags=2
-msgid "Syrian Arab Republic"
-msgstr "Iran (Islamische Republik des)"
-
-# DBI:mysql:papp/iso3166.name:259
 #$lang=eng
 msgid "Taiwan"
 msgstr "Taiwan, siehe: China"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Taiwan Province of China"
-msgstr "Taiwan, Chinesische Provinz"
-
-# DBI:mysql:papp/iso3166.name:153
 #$lang=eng
 msgid "Tajikistan"
 msgstr "Tadschikistan"
 
-# DBI:mysql:papp/iso3166.name:43
 #$lang=eng
 msgid "Tanzania"
 msgstr "Tansania, Vereinigte Republik"
 
-# DBI:mysql:papp/iso3166.name:165
 #$lang=eng
 msgid "Thailand"
 msgstr "Thailand"
 
-# DBI:mysql:papp/iso3166.name:83
 #$lang=eng
 msgid "Togo"
 msgstr "Togo"
 
-# DBI:mysql:papp/iso3166.name:254
 #$lang=eng
 msgid "Tokelau"
 msgstr "Tokelau"
 
-# DBI:mysql:papp/iso3166.name:255
 #$lang=eng
 msgid "Tonga"
 msgstr "Tonga"
 
-# DBI:mysql:papp/iso3166.name:105
 #$lang=eng
 msgid "Trinidad and Tobago"
 msgstr "Trinidad und Tobago"
 
-# DBI:mysql:papp/iso3166.name:60
 #$lang=eng
 msgid "Tunisia"
 msgstr "Tunesien"
 
-# DBI:mysql:papp/iso3166.name:182
 #$lang=eng
 msgid "Turkey"
-msgstr "TÃ¼rkei"
+msgstr "Türkei"
 
-# DBI:mysql:papp/iso3166.name:154
 #$lang=eng
 msgid "Turkmenistan"
 msgstr "Turkmenistan"
 
-# DBI:mysql:papp/iso3166.name:106
 #$lang=eng
 msgid "Turks and Caicos Islands"
 msgstr "Turks- und Caicosinseln"
 
-# DBI:mysql:papp/iso3166.name:256
 #$lang=eng
 msgid "Tuvalu"
 msgstr "Tuvalu"
 
-# DBI:mysql:papp/iso3166.name:42
 #$lang=eng
 msgid "Uganda"
 msgstr "Uganda"
 
-# DBI:mysql:papp/iso3166.name:194
 #$lang=eng
 msgid "Ukraine"
 msgstr "Ukraine"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "United Arab Emirates"
-msgstr "Vereinigte Arabische Emirate"
-
-# DBI:mysql:papp/iso3166.name:208
 #$lang=eng
 msgid "United Kingdom"
-msgstr "Vereinigtes KÃ¶nigreich"
+msgstr "Vereinigtes Königreich"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "United Republic of Tanzania"
-msgstr "Vereinigte Republik Tansania"
-
-# DBI:mysql:papp/iso3166.name:134
 #$lang=eng
 msgid "United States"
 msgstr "Vereinigte Staaten"
 
-# DBI:mysql:papp/iso3166.name:269
 #$lang=eng
 msgid "United states minor outlying islands"
 msgstr "Amerikanisch-Ozeanien"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-#$flags=2
-msgid "United States Virgin Islands"
-msgstr "Vereinigte Staaten"
-
-# DBI:mysql:papp/iso3166.name:128
 #$lang=eng
 msgid "Uruguay"
 msgstr "Uruguay"
 
-# DBI:mysql:papp/iso3166.name:155
 #$lang=eng
 msgid "Uzbekistan"
 msgstr "Usbekistan"
 
-# DBI:mysql:papp/iso3166.name:240
 #$lang=eng
 msgid "Vanuatu"
 msgstr "Vanuatu"
 
-# DBI:mysql:papp/iso3166.name:129
 #$lang=eng
 msgid "Venezuela"
 msgstr "Venezuela"
 
-# DBI:mysql:papp/iso3166.name:166
 #$lang=eng
 msgid "Viet Nam"
 msgstr "Vietnam"
 
-# DBI:mysql:papp/iso3166.name:107
 #$lang=eng
 msgid "Virgin Islands"
 msgstr "Amerikanische Jungferninseln"
 
-# DBI:mysql:papp/iso3166.name:257
 #$lang=eng
 msgid "Wallis and Futuna Islands"
 msgstr "Wallis und Futuna"
 
-# DBI:mysql:papp/iso3166.name:6
 #$lang=eng
 msgid "Western Africa"
 msgstr "Westafrika"
 
-# DBI:mysql:papp/iso3166.name:17
 #$lang=eng
 msgid "Western Asia"
 msgstr "Westasien"
 
-# DBI:mysql:papp/iso3166.name:22
 #$lang=eng
 msgid "Western Europe"
 msgstr "Westeuropa"
 
-# DBI:mysql:papp/iso3166.name:61
 #$lang=eng
 msgid "Western Sahara"
 msgstr "Westliche Sahara"
 
-# DBI:mysql:papp/iso3166.name:184
 #$lang=eng
 msgid "Yemen"
 msgstr "Jemen"
 
-# DBI:mysql:papp/iso3166.name:223
 #$lang=eng
 msgid "Yugoslavia"
 msgstr "Jugoslawien"
 
-# DBI:mysql:papp/iso3166.name:44
 #$lang=eng
 msgid "Zambia"
 msgstr "Sambia"
 
-# DBI:mysql:papp/iso3166.name:45
 #$lang=eng
 msgid "Zimbabwe"
 msgstr "Simbabwe"
@@ -1485,1337 +1081,939 @@ msgstr "Simbabwe"
 msgid ""
 msgstr ""
 
-# DBI:mysql:papp/iso3166.name:142
 #$lang=eng
 msgid "Afghanistan"
 msgstr "Afghanistan"
 
-# DBI:mysql:papp/iso3166.name:1
 #$lang=eng
 #$flags=2
 msgid "Africa"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:209
 #$lang=eng
 msgid "Albania"
 msgstr "Albanie"
 
-# DBI:mysql:papp/iso3166.name:55
 #$lang=eng
 msgid "Algeria"
-msgstr "AlgÃ©rie"
+msgstr "Algérie"
 
-# DBI:mysql:papp/iso3166.name:248
 #$lang=eng
 msgid "American Samoa"
-msgstr "Samoas amÃ©ricaines"
+msgstr "Samoas américaines"
 
-# DBI:mysql:papp/iso3166.name:7
 #$lang=eng
 #$flags=2
 msgid "Americas"
-msgstr "ArmÃ©nie"
+msgstr "Arménie"
 
-# DBI:mysql:papp/iso3166.name:210
 #$lang=eng
 msgid "Andorra"
 msgstr "Andorre"
 
-# DBI:mysql:papp/iso3166.name:46
 #$lang=eng
 msgid "Angola"
 msgstr "Angola"
 
-# DBI:mysql:papp/iso3166.name:84
 #$lang=eng
 msgid "Anguilla"
 msgstr "Anguilla"
 
-# DBI:mysql:papp/iso3166.name:85
 #$lang=eng
 msgid "Antigua and Barbuda"
 msgstr "Antigua-et-Barbuda"
 
-# DBI:mysql:papp/iso3166.name:116
 #$lang=eng
 msgid "Argentina"
 msgstr "Argentine"
 
-# DBI:mysql:papp/iso3166.name:167
 #$lang=eng
 msgid "Armenia"
-msgstr "ArmÃ©nie"
+msgstr "Arménie"
 
-# DBI:mysql:papp/iso3166.name:86
 #$lang=eng
 msgid "Aruba"
 msgstr "Aruba"
 
-# DBI:mysql:papp/iso3166.name:13
 #$lang=eng
 #$flags=2
 msgid "Asia"
 msgstr "Autriche"
 
-# DBI:mysql:papp/iso3166.name:233
 #$lang=eng
 msgid "Australia"
 msgstr "Australie"
 
-# DBI:mysql:papp/iso3166.name:24
 #$lang=eng
 #$flags=2
 msgid "Australia and New Zealand"
-msgstr "Nouvelle-ZÃ©lande"
+msgstr "Nouvelle-Zélande"
 
-# DBI:mysql:papp/iso3166.name:224
 #$lang=eng
 msgid "Austria"
 msgstr "Autriche"
 
-# DBI:mysql:papp/iso3166.name:168
 #$lang=eng
 msgid "Azerbaijan"
-msgstr "AzerbaÃ¯djan"
+msgstr "Azerbaïdjan"
 
-# DBI:mysql:papp/iso3166.name:87
 #$lang=eng
 msgid "Bahamas"
 msgstr "Bahamas"
 
-# DBI:mysql:papp/iso3166.name:169
 #$lang=eng
 msgid "Bahrain"
-msgstr "BahreÃ¯n"
+msgstr "Bahreïn"
 
-# DBI:mysql:papp/iso3166.name:143
 #$lang=eng
 msgid "Bangladesh"
 msgstr "Bangladesh"
 
-# DBI:mysql:papp/iso3166.name:88
 #$lang=eng
 msgid "Barbados"
 msgstr "Barbade"
 
-# DBI:mysql:papp/iso3166.name:185
 #$lang=eng
 msgid "Belarus"
-msgstr "BÃ©larus"
+msgstr "Bélarus"
 
-# DBI:mysql:papp/iso3166.name:225
 #$lang=eng
 msgid "Belgium"
 msgstr "Belgique"
 
-# DBI:mysql:papp/iso3166.name:108
 #$lang=eng
 msgid "Belize"
 msgstr "Belize"
 
-# DBI:mysql:papp/iso3166.name:67
 #$lang=eng
 msgid "Benin"
-msgstr "BÃ©nin"
+msgstr "Bénin"
 
-# DBI:mysql:papp/iso3166.name:130
 #$lang=eng
 msgid "Bermuda"
 msgstr "Bermudes"
 
-# DBI:mysql:papp/iso3166.name:144
 #$lang=eng
 msgid "Bhutan"
 msgstr "Bhoutan"
 
-# DBI:mysql:papp/iso3166.name:117
 #$lang=eng
 msgid "Bolivia"
 msgstr "Bolivie"
 
-# DBI:mysql:papp/iso3166.name:211
 #$lang=eng
 msgid "Bosnia and Herzegovina"
-msgstr "Bosnie-HerzÃ©govine"
+msgstr "Bosnie-Herzégovine"
 
-# DBI:mysql:papp/iso3166.name:62
 #$lang=eng
 msgid "Botswana"
 msgstr "Botswana"
 
-# DBI:mysql:papp/iso3166.name:118
 #$lang=eng
 msgid "Brazil"
-msgstr "BrÃ©sil"
+msgstr "Brésil"
 
-# DBI:mysql:papp/iso3166.name:89
 #$lang=eng
 msgid "British Virgin Islands"
-msgstr "Ã\x00les Vierges britanniques"
+msgstr "Îles Vierges britanniques"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Brunei Darussalam"
-msgstr "BrunÃ©i Darussalam"
-
-# DBI:mysql:papp/iso3166.name:186
 #$lang=eng
 msgid "Bulgaria"
 msgstr "Bulgarie"
 
-# DBI:mysql:papp/iso3166.name:68
 #$lang=eng
 msgid "Burkina Faso"
 msgstr "Burkina Faso"
 
-# DBI:mysql:papp/iso3166.name:28
 #$lang=eng
 msgid "Burundi"
 msgstr "Burundi"
 
-# DBI:mysql:papp/iso3166.name:157
 #$lang=eng
 msgid "Cambodia"
 msgstr "Cambodge"
 
-# DBI:mysql:papp/iso3166.name:47
 #$lang=eng
 msgid "Cameroon"
 msgstr "Cameroun"
 
-# DBI:mysql:papp/iso3166.name:131
 #$lang=eng
 msgid "Canada"
 msgstr "Canada"
 
-# DBI:mysql:papp/iso3166.name:69
 #$lang=eng
 msgid "Cape Verde"
 msgstr "Cap-Vert"
 
-# DBI:mysql:papp/iso3166.name:90
 #$lang=eng
 msgid "Cayman Islands"
-msgstr "Ã\x00les CaÃ¯manes"
+msgstr "Îles Caïmanes"
 
-# DBI:mysql:papp/iso3166.name:70
-#$lang=eng
-#$flags=2
-msgid "CÃ´te d'Ivoire"
-msgstr "CÃ´te d'Ivoire"
-
-# DBI:mysql:papp/iso3166.name:70
 #$lang=eng
 #$flags=2
 msgid "Côte d'Ivoire"
 msgstr "Côte d'Ivoire"
 
-# DBI:mysql:papp/iso3166.name:48
 #$lang=eng
 msgid "Central African Republic"
-msgstr "RÃ©publique centrafricaine"
+msgstr "République centrafricaine"
 
-# DBI:mysql:papp/iso3166.name:10
 #$lang=eng
 #$flags=2
 msgid "Central America"
-msgstr "RÃ©publique centrafricaine"
+msgstr "République centrafricaine"
 
-# DBI:mysql:papp/iso3166.name:49
 #$lang=eng
 msgid "Chad"
 msgstr "Tchad"
 
-# DBI:mysql:papp/iso3166.name:195
 #$lang=eng
 msgid "Channel Islands"
-msgstr "Ã\x00les Anglo-Normandes"
+msgstr "Îles Anglo-Normandes"
 
-# DBI:mysql:papp/iso3166.name:119
 #$lang=eng
 msgid "Chile"
 msgstr "Chili"
 
-# DBI:mysql:papp/iso3166.name:135
 #$lang=eng
 msgid "China"
 msgstr "Chine"
 
-# DBI:mysql:papp/iso3166.name:263
-#$lang=eng
-#$flags=2
-msgid "Christmas island"
-msgstr "Ã\x00les CaÃ¯manes"
-
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-#$flags=2
-msgid "Cocos (keeling) islands"
-msgstr "Ã\x00les Cook"
-
-# DBI:mysql:papp/iso3166.name:120
 #$lang=eng
 msgid "Colombia"
 msgstr "Colombie"
 
-# DBI:mysql:papp/iso3166.name:29
 #$lang=eng
 msgid "Comoros"
 msgstr "Comores"
 
-# DBI:mysql:papp/iso3166.name:50
-# DBI:mysql:papp/iso3166.name:51
 #$lang=eng
 msgid "Congo"
 msgstr "Congo"
 
-# DBI:mysql:papp/iso3166.name:249
 #$lang=eng
 msgid "Cook Islands"
-msgstr "Ã\x00les Cook"
+msgstr "Îles Cook"
 
-# DBI:mysql:papp/iso3166.name:109
 #$lang=eng
 msgid "Costa Rica"
 msgstr "Costa Rica"
 
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Cote d'Ivoire"
-msgstr "CÃ´te d'Ivoire"
-
-# DBI:mysql:papp/iso3166.name:212
 #$lang=eng
 msgid "Croatia"
 msgstr "Croatie"
 
-# DBI:mysql:papp/iso3166.name:91
 #$lang=eng
 msgid "Cuba"
 msgstr "Cuba"
 
-# DBI:mysql:papp/iso3166.name:170
 #$lang=eng
 msgid "Cyprus"
 msgstr "Chypre"
 
-# DBI:mysql:papp/iso3166.name:187
 #$lang=eng
 msgid "Czech Republic"
-msgstr "RÃ©publique tchÃ¨que"
+msgstr "République tchèque"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Democratic People's Republic of Korea"
-msgstr "RÃ©publique populaire dÃ©mocratique de CorÃ©e"
-
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Democratic Republic of the Congo"
-msgstr "RÃ©publique dÃ©mocratique du Congo"
-
-# DBI:mysql:papp/iso3166.name:196
 #$lang=eng
 msgid "Denmark"
 msgstr "Danemark"
 
-# DBI:mysql:papp/iso3166.name:30
 #$lang=eng
 msgid "Djibouti"
 msgstr "Djibouti"
 
-# DBI:mysql:papp/iso3166.name:92
 #$lang=eng
 msgid "Dominica"
 msgstr "Dominique"
 
-# DBI:mysql:papp/iso3166.name:93
 #$lang=eng
 msgid "Dominican Republic"
-msgstr "RÃ©publique dominicaine"
+msgstr "République dominicaine"
 
-# DBI:mysql:papp/iso3166.name:158
 #$lang=eng
 msgid "East Timor"
 msgstr "Timor oriental"
 
-# DBI:mysql:papp/iso3166.name:2
 #$lang=eng
 #$flags=2
 msgid "Eastern Africa"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:14
 #$lang=eng
 #$flags=2
 msgid "Eastern Asia"
 msgstr "Estonie"
 
-# DBI:mysql:papp/iso3166.name:121
 #$lang=eng
 msgid "Ecuador"
-msgstr "Ã\x00quateur"
+msgstr "Équateur"
 
-# DBI:mysql:papp/iso3166.name:56
 #$lang=eng
 msgid "Egypt"
-msgstr "Ã\x00gypte"
+msgstr "Égypte"
 
-# DBI:mysql:papp/iso3166.name:110
 #$lang=eng
 msgid "El Salvador"
 msgstr "El Salvador"
 
-# DBI:mysql:papp/iso3166.name:52
 #$lang=eng
 msgid "Equatorial Guinea"
-msgstr "GuinÃ©e Ã©quatoriale"
+msgstr "Guinée équatoriale"
 
-# DBI:mysql:papp/iso3166.name:31
 #$lang=eng
 msgid "Eritrea"
-msgstr "Ã\x00rythrÃ©e"
+msgstr "Érythrée"
 
-# DBI:mysql:papp/iso3166.name:197
 #$lang=eng
 msgid "Estonia"
 msgstr "Estonie"
 
-# DBI:mysql:papp/iso3166.name:32
 #$lang=eng
 msgid "Ethiopia"
-msgstr "Ã\x00thiopie"
+msgstr "Éthiopie"
 
-# DBI:mysql:papp/iso3166.name:198
 #$lang=eng
 msgid "Faeroe Islands"
-msgstr "Ã\x00les FÃ©roÃ©"
+msgstr "Îles Féroé"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Falkland Islands (Malvinas)"
-msgstr "Ã\x00les Falkland (Malvinas)"
-
-# DBI:mysql:papp/iso3166.name:236
 #$lang=eng
 msgid "Fiji"
 msgstr "Fidji"
 
-# DBI:mysql:papp/iso3166.name:199
 #$lang=eng
 msgid "Finland"
 msgstr "Finlande"
 
-# DBI:mysql:papp/iso3166.name:226
 #$lang=eng
 msgid "France"
 msgstr "France"
 
-# DBI:mysql:papp/iso3166.name:123
 #$lang=eng
 msgid "French Guiana"
-msgstr "Guyane franÃ§aise"
+msgstr "Guyane française"
 
-# DBI:mysql:papp/iso3166.name:250
 #$lang=eng
 msgid "French Polynesia"
-msgstr "PolynÃ©sie franÃ§aise"
+msgstr "Polynésie française"
 
-# DBI:mysql:papp/iso3166.name:53
 #$lang=eng
 msgid "Gabon"
 msgstr "Gabon"
 
-# DBI:mysql:papp/iso3166.name:71
 #$lang=eng
 msgid "Gambia"
 msgstr "Gambie"
 
-# DBI:mysql:papp/iso3166.name:171
 #$lang=eng
 msgid "Georgia"
-msgstr "GÃ©orgie"
+msgstr "Géorgie"
 
-# DBI:mysql:papp/iso3166.name:227
 #$lang=eng
 msgid "Germany"
 msgstr "Allemagne"
 
-# DBI:mysql:papp/iso3166.name:72
 #$lang=eng
 msgid "Ghana"
 msgstr "Ghana"
 
-# DBI:mysql:papp/iso3166.name:213
 #$lang=eng
 msgid "Gibraltar"
 msgstr "Gibraltar"
 
-# DBI:mysql:papp/iso3166.name:214
 #$lang=eng
 msgid "Greece"
-msgstr "GrÃ¨ce"
+msgstr "Grèce"
 
-# DBI:mysql:papp/iso3166.name:132
 #$lang=eng
 msgid "Greenland"
 msgstr "Groenland"
 
-# DBI:mysql:papp/iso3166.name:94
 #$lang=eng
 msgid "Grenada"
 msgstr "Grenade"
 
-# DBI:mysql:papp/iso3166.name:95
 #$lang=eng
 msgid "Guadeloupe"
 msgstr "Guadeloupe"
 
-# DBI:mysql:papp/iso3166.name:241
 #$lang=eng
 msgid "Guam"
 msgstr "Guam"
 
-# DBI:mysql:papp/iso3166.name:111
 #$lang=eng
 msgid "Guatemala"
 msgstr "Guatemala"
 
-# DBI:mysql:papp/iso3166.name:73
 #$lang=eng
 msgid "Guinea"
-msgstr "GuinÃ©e"
+msgstr "Guinée"
 
-# DBI:mysql:papp/iso3166.name:74
 #$lang=eng
 msgid "Guinea-Bissau"
-msgstr "GuinÃ©e-Bissau"
+msgstr "Guinée-Bissau"
 
-# DBI:mysql:papp/iso3166.name:124
 #$lang=eng
 msgid "Guyana"
 msgstr "Guyana"
 
-# DBI:mysql:papp/iso3166.name:96
 #$lang=eng
 msgid "Haiti"
-msgstr "HaÃ¯ti"
+msgstr "Haïti"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-#$flags=2
-msgid "Heard island and mcdonald islands"
-msgstr "Svalbard et Ã®le Jan Mayen"
-
-# DBI:mysql:papp/iso3166.name:215
 #$lang=eng
 msgid "Holy See"
-msgstr "Saint-SiÃ¨ge"
+msgstr "Saint-Siège"
 
-# DBI:mysql:papp/iso3166.name:112
 #$lang=eng
 msgid "Honduras"
 msgstr "Honduras"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Hong Kong Special Administrative Region of China"
-msgstr "Hong Kong rÃ©gion administrative spÃ©ciale de Chine"
-
-# DBI:mysql:papp/iso3166.name:188
 #$lang=eng
 msgid "Hungary"
 msgstr "Hongrie"
 
-# DBI:mysql:papp/iso3166.name:200
 #$lang=eng
 msgid "Iceland"
 msgstr "Islande"
 
-# DBI:mysql:papp/iso3166.name:145
 #$lang=eng
 msgid "India"
 msgstr "Inde"
 
-# DBI:mysql:papp/iso3166.name:159
 #$lang=eng
 msgid "Indonesia"
-msgstr "IndonÃ©sie"
+msgstr "Indonésie"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Iran (Islamic Republic of)"
-msgstr "Iran (RÃ©publique islamique d')"
-
-# DBI:mysql:papp/iso3166.name:172
 #$lang=eng
 msgid "Iraq"
 msgstr "Iraq"
 
-# DBI:mysql:papp/iso3166.name:201
 #$lang=eng
 msgid "Ireland"
 msgstr "Irlande"
 
-# DBI:mysql:papp/iso3166.name:202
 #$lang=eng
 msgid "Isle of Man"
-msgstr "Ã\x00le de Man"
+msgstr "Île de Man"
 
-# DBI:mysql:papp/iso3166.name:173
 #$lang=eng
 msgid "Israel"
-msgstr "IsraÃ«l"
+msgstr "Israël"
 
-# DBI:mysql:papp/iso3166.name:216
 #$lang=eng
 msgid "Italy"
 msgstr "Italie"
 
-# DBI:mysql:papp/iso3166.name:97
 #$lang=eng
 msgid "Jamaica"
-msgstr "JamaÃ¯que"
+msgstr "Jamaïque"
 
-# DBI:mysql:papp/iso3166.name:139
 #$lang=eng
 msgid "Japan"
 msgstr "Japon"
 
-# DBI:mysql:papp/iso3166.name:174
 #$lang=eng
 msgid "Jordan"
 msgstr "Jordanie"
 
-# DBI:mysql:papp/iso3166.name:147
 #$lang=eng
 msgid "Kazakhstan"
 msgstr "Kazakhstan"
 
-# DBI:mysql:papp/iso3166.name:33
 #$lang=eng
 msgid "Kenya"
 msgstr "Kenya"
 
-# DBI:mysql:papp/iso3166.name:242
 #$lang=eng
 msgid "Kiribati"
 msgstr "Kiribati"
 
-# DBI:mysql:papp/iso3166.name:175
 #$lang=eng
 msgid "Kuwait"
-msgstr "KoweÃ¯t"
+msgstr "Koweït"
 
-# DBI:mysql:papp/iso3166.name:148
 #$lang=eng
 msgid "Kyrgyzstan"
 msgstr "Kirghizistan"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Lao People's Democratic Republic"
-msgstr "RÃ©publique dÃ©mocratique populaire lao"
-
-# DBI:mysql:papp/iso3166.name:8
 #$lang=eng
 #$flags=2
 msgid "Latin America and the Caribbean"
 msgstr "Saint-Vincent-et-les Grenadines"
 
-# DBI:mysql:papp/iso3166.name:203
 #$lang=eng
 msgid "Latvia"
 msgstr "Lettonie"
 
-# DBI:mysql:papp/iso3166.name:176
 #$lang=eng
 msgid "Lebanon"
 msgstr "Liban"
 
-# DBI:mysql:papp/iso3166.name:63
 #$lang=eng
 msgid "Lesotho"
 msgstr "Lesotho"
 
-# DBI:mysql:papp/iso3166.name:75
 #$lang=eng
 msgid "Liberia"
-msgstr "LibÃ©ria"
+msgstr "Libéria"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Libyan Arab Jamahiriya"
-msgstr "Jamahiriya arabe libyenne"
-
-# DBI:mysql:papp/iso3166.name:228
 #$lang=eng
 msgid "Liechtenstein"
 msgstr "Liechtenstein"
 
-# DBI:mysql:papp/iso3166.name:204
 #$lang=eng
 msgid "Lithuania"
 msgstr "Lituanie"
 
-# DBI:mysql:papp/iso3166.name:229
 #$lang=eng
 msgid "Luxembourg"
 msgstr "Luxembourg"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Macao Special Administrative Region of China"
-msgstr "Macao rÃ©gion administrative spÃ©ciale de Chine"
-
-# DBI:mysql:papp/iso3166.name:34
 #$lang=eng
 msgid "Madagascar"
 msgstr "Madagascar"
 
-# DBI:mysql:papp/iso3166.name:35
 #$lang=eng
 msgid "Malawi"
 msgstr "Malawi"
 
-# DBI:mysql:papp/iso3166.name:161
 #$lang=eng
 msgid "Malaysia"
 msgstr "Malaisie"
 
-# DBI:mysql:papp/iso3166.name:149
 #$lang=eng
 msgid "Maldives"
 msgstr "Maldives"
 
-# DBI:mysql:papp/iso3166.name:76
 #$lang=eng
 msgid "Mali"
 msgstr "Mali"
 
-# DBI:mysql:papp/iso3166.name:217
 #$lang=eng
 msgid "Malta"
 msgstr "Malte"
 
-# DBI:mysql:papp/iso3166.name:243
 #$lang=eng
 msgid "Marshall Islands"
-msgstr "Ã\x00les Marshall"
+msgstr "Îles Marshall"
 
-# DBI:mysql:papp/iso3166.name:98
 #$lang=eng
 msgid "Martinique"
 msgstr "Martinique"
 
-# DBI:mysql:papp/iso3166.name:77
 #$lang=eng
 msgid "Mauritania"
 msgstr "Mauritanie"
 
-# DBI:mysql:papp/iso3166.name:36
 #$lang=eng
 msgid "Mauritius"
 msgstr "Maurice"
 
-# DBI:mysql:papp/iso3166.name:25
 #$lang=eng
 #$flags=2
 msgid "Melanesia"
 msgstr "Malaisie"
 
-# DBI:mysql:papp/iso3166.name:113
 #$lang=eng
 msgid "Mexico"
 msgstr "Mexique"
 
-# DBI:mysql:papp/iso3166.name:26
-# DBI:mysql:papp/iso3166.name:244
-#$lang=eng
-#$flags=2
-msgid "Micronesia"
-msgstr "IndonÃ©sie"
-
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Micronesia, Federated States of"
-msgstr "MicronÃ©sie (Ã\x00tats fÃ©dÃ©rÃ©s de)"
-
-# DBI:mysql:papp/iso3166.name:230
 #$lang=eng
 msgid "Monaco"
 msgstr "Monaco"
 
-# DBI:mysql:papp/iso3166.name:140
 #$lang=eng
 msgid "Mongolia"
 msgstr "Mongolie"
 
-# DBI:mysql:papp/iso3166.name:99
 #$lang=eng
 msgid "Montserrat"
 msgstr "Montserrat"
 
-# DBI:mysql:papp/iso3166.name:58
 #$lang=eng
 msgid "Morocco"
 msgstr "Maroc"
 
-# DBI:mysql:papp/iso3166.name:37
 #$lang=eng
 msgid "Mozambique"
 msgstr "Mozambique"
 
-# DBI:mysql:papp/iso3166.name:162
 #$lang=eng
 msgid "Myanmar"
 msgstr "Myanmar"
 
-# DBI:mysql:papp/iso3166.name:64
 #$lang=eng
 msgid "Namibia"
 msgstr "Namibie"
 
-# DBI:mysql:papp/iso3166.name:245
 #$lang=eng
 msgid "Nauru"
 msgstr "Nauru"
 
-# DBI:mysql:papp/iso3166.name:150
 #$lang=eng
 msgid "Nepal"
-msgstr "NÃ©pal"
+msgstr "Népal"
 
-# DBI:mysql:papp/iso3166.name:231
 #$lang=eng
 msgid "Netherlands"
 msgstr "Pays-Bas"
 
-# DBI:mysql:papp/iso3166.name:100
 #$lang=eng
 msgid "Netherlands Antilles"
-msgstr "Antilles nÃ©erlandaises"
+msgstr "Antilles néerlandaises"
 
-# DBI:mysql:papp/iso3166.name:237
 #$lang=eng
 msgid "New Caledonia"
-msgstr "Nouvelle-CalÃ©donie"
+msgstr "Nouvelle-Calédonie"
 
-# DBI:mysql:papp/iso3166.name:234
 #$lang=eng
 msgid "New Zealand"
-msgstr "Nouvelle-ZÃ©lande"
+msgstr "Nouvelle-Zélande"
 
-# DBI:mysql:papp/iso3166.name:114
 #$lang=eng
 msgid "Nicaragua"
 msgstr "Nicaragua"
 
-# DBI:mysql:papp/iso3166.name:78
 #$lang=eng
 msgid "Niger"
 msgstr "Niger"
 
-# DBI:mysql:papp/iso3166.name:79
 #$lang=eng
 msgid "Nigeria"
-msgstr "NigÃ©ria"
+msgstr "Nigéria"
 
-# DBI:mysql:papp/iso3166.name:251
 #$lang=eng
 msgid "Niue"
-msgstr "NiouÃ©"
+msgstr "Nioué"
 
-# DBI:mysql:papp/iso3166.name:235
 #$lang=eng
 msgid "Norfolk Island"
-msgstr "Ã\x00le Norfolk"
+msgstr "Île Norfolk"
 
-# DBI:mysql:papp/iso3166.name:4
 #$lang=eng
 #$flags=2
 msgid "Northern Africa"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:12
 #$lang=eng
 #$flags=2
 msgid "Northern America"
 msgstr "Afrique du Sud"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Northern Mariana Islands"
-msgstr "Ã\x00les Mariannes septentrionales"
-
-# DBI:mysql:papp/iso3166.name:205
 #$lang=eng
 msgid "Norway"
-msgstr "NorvÃ¨ge"
+msgstr "Norvège"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Occupied Palestinian Territory"
-msgstr "Territoire palestinien occupÃ© pse"
-
-# DBI:mysql:papp/iso3166.name:178
 #$lang=eng
 msgid "Oman"
 msgstr "Oman"
 
-# DBI:mysql:papp/iso3166.name:151
 #$lang=eng
 msgid "Pakistan"
 msgstr "Pakistan"
 
-# DBI:mysql:papp/iso3166.name:247
 #$lang=eng
 msgid "Palau"
 msgstr "Palaos"
 
-# DBI:mysql:papp/iso3166.name:115
 #$lang=eng
 msgid "Panama"
 msgstr "Panama"
 
-# DBI:mysql:papp/iso3166.name:238
 #$lang=eng
 msgid "Papua New Guinea"
-msgstr "Papouasie-Nouvelle-GuinÃ©e"
+msgstr "Papouasie-Nouvelle-Guinée"
 
-# DBI:mysql:papp/iso3166.name:125
 #$lang=eng
 msgid "Paraguay"
 msgstr "Paraguay"
 
-# DBI:mysql:papp/iso3166.name:126
 #$lang=eng
 msgid "Peru"
-msgstr "PÃ©rou"
+msgstr "Pérou"
 
-# DBI:mysql:papp/iso3166.name:163
 #$lang=eng
 msgid "Philippines"
 msgstr "Philippines"
 
-# DBI:mysql:papp/iso3166.name:252
 #$lang=eng
 msgid "Pitcairn"
 msgstr "Pitcairn"
 
-# DBI:mysql:papp/iso3166.name:189
 #$lang=eng
 msgid "Poland"
 msgstr "Pologne"
 
-# DBI:mysql:papp/iso3166.name:27
 #$lang=eng
 #$flags=2
 msgid "Polynesia"
-msgstr "PolynÃ©sie franÃ§aise"
+msgstr "Polynésie française"
 
-# DBI:mysql:papp/iso3166.name:218
 #$lang=eng
 msgid "Portugal"
 msgstr "Portugal"
 
-# DBI:mysql:papp/iso3166.name:101
 #$lang=eng
 msgid "Puerto Rico"
 msgstr "Porto Rico"
 
-# DBI:mysql:papp/iso3166.name:179
 #$lang=eng
 msgid "Qatar"
 msgstr "Qatar"
 
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "RÃ\x00Â©union"
-msgstr "RÃ\x00Â©union"
-
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "RÃ©union"
-msgstr "RÃ©union"
-
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Réunion"
-msgstr "Réunion"
-
-# DBI:mysql:papp/iso3166.name:141
 #$lang=eng
 msgid "Republic of Korea"
-msgstr "RÃ©publique de CorÃ©e"
+msgstr "République de Corée"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Republic of Moldova"
-msgstr "RÃ©publique de Moldova"
-
-# DBI:mysql:papp/iso3166.name:191
 #$lang=eng
 msgid "Romania"
 msgstr "Roumanie"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Russian Federation"
-msgstr "FÃ©dÃ©ration de Russie"
-
-# DBI:mysql:papp/iso3166.name:39
 #$lang=eng
 msgid "Rwanda"
 msgstr "Rwanda"
 
-# DBI:mysql:papp/iso3166.name:80
 #$lang=eng
 msgid "Saint Helena"
-msgstr "Sainte-HÃ©lÃ¨ne"
+msgstr "Sainte-Hélène"
 
-# DBI:mysql:papp/iso3166.name:102
 #$lang=eng
 msgid "Saint Kitts and Nevis"
 msgstr "Saint-Kitts-et-Nevis"
 
-# DBI:mysql:papp/iso3166.name:103
 #$lang=eng
 msgid "Saint Lucia"
 msgstr "Sainte-Lucie"
 
-# DBI:mysql:papp/iso3166.name:133
 #$lang=eng
 msgid "Saint Pierre and Miquelon"
 msgstr "Saint-Pierre-et-Miquelon"
 
-# DBI:mysql:papp/iso3166.name:104
 #$lang=eng
 msgid "Saint Vincent and the Grenadines"
 msgstr "Saint-Vincent-et-les Grenadines"
 
-# DBI:mysql:papp/iso3166.name:253
 #$lang=eng
 msgid "Samoa"
 msgstr "Samoa"
 
-# DBI:mysql:papp/iso3166.name:219
 #$lang=eng
 msgid "San Marino"
 msgstr "Saint-Marin"
 
-# DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Sao Tome and Principe"
-msgstr "Sao TomÃ©-et-Principe"
-
-# DBI:mysql:papp/iso3166.name:180
 #$lang=eng
 msgid "Saudi Arabia"
 msgstr "Arabie saoudite"
 
-# DBI:mysql:papp/iso3166.name:54
-#$lang=eng
-#$flags=2
-msgid "SÃ£o Tome and Principe"
-msgstr "Sao TomÃ©-et-Principe"
-
-# DBI:mysql:papp/iso3166.name:54
 #$lang=eng
 #$flags=2
 msgid "São Tome and Principe"
 msgstr "Sao Tomé-et-Principe"
 
-# DBI:mysql:papp/iso3166.name:81
 #$lang=eng
 msgid "Senegal"
-msgstr "SÃ©nÃ©gal"
+msgstr "Sénégal"
 
-# DBI:mysql:papp/iso3166.name:40
 #$lang=eng
 msgid "Seychelles"
 msgstr "Seychelles"
 
-# DBI:mysql:papp/iso3166.name:82
 #$lang=eng
 msgid "Sierra Leone"
 msgstr "Sierra Leone"
 
-# DBI:mysql:papp/iso3166.name:164
 #$lang=eng
 msgid "Singapore"
 msgstr "Singapour"
 
-# DBI:mysql:papp/iso3166.name:193
 #$lang=eng
 msgid "Slovakia"
 msgstr "Slovaquie"
 
-# DBI:mysql:papp/iso3166.name:220
 #$lang=eng
 msgid "Slovenia"
-msgstr "SlovÃ©nie"
+msgstr "Slovénie"
 
-# DBI:mysql:papp/iso3166.name:239
 #$lang=eng
 msgid "Solomon Islands"
-msgstr "Ã\x00les Salomon"
+msgstr "Îles Salomon"
 
-# DBI:mysql:papp/iso3166.name:41
 #$lang=eng
 msgid "Somalia"
 msgstr "Somalie"
 
-# DBI:mysql:papp/iso3166.name:65
 #$lang=eng
 msgid "South Africa"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:11
 #$lang=eng
 #$flags=2
 msgid "South America"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:15
 #$lang=eng
 #$flags=2
 msgid "South-central Asia"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:16
 #$lang=eng
 #$flags=2
 msgid "South-eastern Asia"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:5
 #$lang=eng
 #$flags=2
 msgid "Southern Africa"
 msgstr "Afrique du Sud"
 
-# DBI:mysql:papp/iso3166.name:221
 #$lang=eng
 msgid "Spain"
 msgstr "Espagne"
 
-# DBI:mysql:papp/iso3166.name:152
 #$lang=eng
 msgid "Sri Lanka"
 msgstr "Sri Lanka"
 
-# DBI:mysql:papp/iso3166.name:59
 #$lang=eng
 msgid "Sudan"
 msgstr "Soudan"
 
-# DBI:mysql:papp/iso3166.name:127
 #$lang=eng
 msgid "Suriname"
 msgstr "Suriname"
 
-# DBI:mysql:papp/iso3166.name:206
 #$lang=eng
 msgid "Svalbard and Jan Mayen Islands"
-msgstr "Svalbard et Ã®le Jan Mayen"
+msgstr "Svalbard et île Jan Mayen"
 
-# DBI:mysql:papp/iso3166.name:66
 #$lang=eng
 msgid "Swaziland"
 msgstr "Swaziland"
 
-# DBI:mysql:papp/iso3166.name:207
 #$lang=eng
 msgid "Sweden"
-msgstr "SuÃ¨de"
+msgstr "Suède"
 
-# DBI:mysql:papp/iso3166.name:232
 #$lang=eng
 msgid "Switzerland"
 msgstr "Suisse"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Syrian Arab Republic"
-msgstr "RÃ©publique arabe syrienne"
-
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "Taiwan Province of China"
-msgstr "Province chinoise de TaÃ¯wan"
-
-# DBI:mysql:papp/iso3166.name:153
 #$lang=eng
 msgid "Tajikistan"
 msgstr "Tadjikistan"
 
-# DBI:mysql:papp/iso3166.name:165
 #$lang=eng
 msgid "Thailand"
-msgstr "ThaÃ¯lande"
+msgstr "Thaïlande"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "The former Yugoslav Republic of Macedonia"
-msgstr "Ex-RÃ©publique yougoslave de MacÃ©doine"
-
-# DBI:mysql:papp/iso3166.name:83
 #$lang=eng
 msgid "Togo"
 msgstr "Togo"
 
-# DBI:mysql:papp/iso3166.name:254
 #$lang=eng
 msgid "Tokelau"
-msgstr "TokÃ©laou"
+msgstr "Tokélaou"
 
-# DBI:mysql:papp/iso3166.name:255
 #$lang=eng
 msgid "Tonga"
 msgstr "Tonga"
 
-# DBI:mysql:papp/iso3166.name:105
 #$lang=eng
 msgid "Trinidad and Tobago"
-msgstr "TrinitÃ©-et-Tobago"
+msgstr "Trinité-et-Tobago"
 
-# DBI:mysql:papp/iso3166.name:60
 #$lang=eng
 msgid "Tunisia"
 msgstr "Tunisie"
 
-# DBI:mysql:papp/iso3166.name:182
 #$lang=eng
 msgid "Turkey"
 msgstr "Turquie"
 
-# DBI:mysql:papp/iso3166.name:154
 #$lang=eng
 msgid "Turkmenistan"
-msgstr "TurkmÃ©nistan"
+msgstr "Turkménistan"
 
-# DBI:mysql:papp/iso3166.name:106
 #$lang=eng
 msgid "Turks and Caicos Islands"
-msgstr "Ã\x00les Turques et CaÃ¯ques"
+msgstr "Îles Turques et Caïques"
 
-# DBI:mysql:papp/iso3166.name:256
 #$lang=eng
 msgid "Tuvalu"
 msgstr "Tuvalu"
 
-# DBI:mysql:papp/iso3166.name:42
 #$lang=eng
 msgid "Uganda"
 msgstr "Ouganda"
 
-# DBI:mysql:papp/iso3166.name:194
 #$lang=eng
 msgid "Ukraine"
 msgstr "Ukraine"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "United Arab Emirates"
-msgstr "Ã\x00mirats arabes unis"
-
-# DBI:mysql:papp/iso3166.name:208
 #$lang=eng
 msgid "United Kingdom"
 msgstr "Royaume-Uni de Grande-Bretagne et d'Irlande du Nord"
 
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "United Republic of Tanzania"
-msgstr "RÃ©publique-Unie de Tanzanie"
-
-# DBI:mysql:papp/iso3166.name:134
 #$lang=eng
 msgid "United States"
-msgstr "Ã\x00tats-Unis d'AmÃ©rique"
+msgstr "États-Unis d'Amérique"
 
-# DBI:mysql:papp/iso3166.name:269
-#$lang=eng
-#$flags=2
-msgid "United states minor outlying islands"
-msgstr "Ã\x00les Vierges amÃ©ricaines"
-
-#   DBI:mysql:papp/iso3166.name
-#$lang=eng
-msgid "United States Virgin Islands"
-msgstr "Ã\x00les Vierges amÃ©ricaines"
-
-# DBI:mysql:papp/iso3166.name:128
 #$lang=eng
 msgid "Uruguay"
 msgstr "Uruguay"
 
-# DBI:mysql:papp/iso3166.name:155
 #$lang=eng
 msgid "Uzbekistan"
-msgstr "OuzbÃ©kistan"
+msgstr "Ouzbékistan"
 
-# DBI:mysql:papp/iso3166.name:240
 #$lang=eng
 msgid "Vanuatu"
 msgstr "Vanuatu"
 
-# DBI:mysql:papp/iso3166.name:129
 #$lang=eng
 msgid "Venezuela"
 msgstr "Venezuela"
 
-# DBI:mysql:papp/iso3166.name:166
 #$lang=eng
 msgid "Viet Nam"
 msgstr "Viet Nam"
 
-# DBI:mysql:papp/iso3166.name:257
 #$lang=eng
 msgid "Wallis and Futuna Islands"
-msgstr "Ã\x00les Wallis et Futuna"
+msgstr "Îles Wallis et Futuna"
 
-# DBI:mysql:papp/iso3166.name:6
 #$lang=eng
 #$flags=2
 msgid "Western Africa"
 msgstr "Sahara occidental"
 
-# DBI:mysql:papp/iso3166.name:17
 #$lang=eng
 #$flags=2
 msgid "Western Asia"
 msgstr "Sahara occidental"
 
-# DBI:mysql:papp/iso3166.name:22
 #$lang=eng
 #$flags=2
 msgid "Western Europe"
 msgstr "Sahara occidental"
 
-# DBI:mysql:papp/iso3166.name:61
 #$lang=eng
 msgid "Western Sahara"
 msgstr "Sahara occidental"
 
-# DBI:mysql:papp/iso3166.name:184
 #$lang=eng
 msgid "Yemen"
-msgstr "YÃ©men"
+msgstr "Yémen"
 
-# DBI:mysql:papp/iso3166.name:223
 #$lang=eng
 msgid "Yugoslavia"
 msgstr "Yougoslavie"
 
-# DBI:mysql:papp/iso3166.name:44
 #$lang=eng
 msgid "Zambia"
 msgstr "Zambie"
 
-# DBI:mysql:papp/iso3166.name:45
 #$lang=eng
 msgid "Zimbabwe"
 msgstr "Zimbabwe"

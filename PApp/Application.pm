@@ -30,7 +30,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 
 =item $papp = new PApp::Application args...
 

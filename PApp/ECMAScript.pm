@@ -14,7 +14,7 @@ PApp::ECMAScript - make javascript horrors less horrible
 
 package PApp::ECMAScript;
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 @EXPORT = qw($js escape_string_sq escape_string_dq);
 
 use base Exporter;

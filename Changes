@@ -1,5 +1,13 @@
 Revision history for Perl extension PApp
 
+0.122 Mon Dec  3 19:32:50 CET 2001
+	- fixed hashing of long strings in PApp::I18n. This invalidates
+          all translation tables.
+        - fixed i18n tables. wrote 4 perlbug reports. flamed with jhi, who
+          is such a nice person...
+        - "fixed" import/export i18n tables with respect to various perl versions.
+        - PApp::Lock always timed out if the lock was down.
+
 0.121 Fri Nov 30 10:53:24 CET 2001
 	- fixed apps/poedit.papp.
 

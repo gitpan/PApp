@@ -45,7 +45,7 @@ struct dpo_head {
 
 /* each string has the following format */
 struct dpo_str {
-  OFS next;
+  OFS next; /* inefficient, should be optimized by sorting buckets */
   OFS len1;
   OFS len2;
   /* followed by two unterminated, unaligned strings */
@@ -62,7 +62,8 @@ hash (const unsigned char *msg, unsigned int len)
 
   if (len > MAXHASH)
     len = MAXHASH;
-  else if (len != 0)
+
+  if (len)
     do {
       hval ^= (hval << 4) + (hval >> 25) + (HASH)*msg++;
     } while (--len);

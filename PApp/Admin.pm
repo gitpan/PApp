@@ -22,7 +22,7 @@ use Convert::Scalar ':utf8';
 
 use base 'Exporter';
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 @EXPORT = qw();
 
 our $verbose = 1;
@@ -82,6 +82,10 @@ sub export_po {
                      $domain;
 
    while ($st->fetch) {
+      utf8_on $id;
+      utf8_on $context;
+      utf8_on $msg;
+
       unless ($po{$lang2}) {
          if ($po) {
             $po{$lang2} = $po;
@@ -106,8 +110,8 @@ sub export_po {
       if ($flags != 2 or $msg ne "") {
          $cnt{$lang2}++;
          $po{$lang2}->add(
-               utf8_on $id,
-               utf8_on $msg,
+               $id,
+               $msg,
                (map " $_", split /\n/, $context),
                "\$lang=$lang1",
                $flags != 1 ? ("\$flags=$flags") : (),
@@ -153,7 +157,6 @@ sub import_po {
       my $lang;
 
       while (my ($id, $msg, @comments) = $po->next) {
-         warn "$id|$msg|\n";#d#
          my $comment = "";
          my %val;
          for (@comments) {

@@ -20,7 +20,7 @@ moderately easy to add XML::Transformiix or XML::XSLT).
 
 package PApp::XSLT;
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 
 no bytes;
 

@@ -7,7 +7,7 @@ PApp::I18n - internationalization support for PApp
 =head1 SYNOPSIS
 
    use PApp::I18n;
-   # nothing expoted by default
+   # nothing exported by default
 
    my $translator = PApp::I18n::open_translator("/libdir/i18n/myapp", "de");
    my $table = $translator->get_table("uk,de,en"); # will return de translator
@@ -56,12 +56,12 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 0.121;
+   $VERSION = 0.122;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
          scan_file scan_init scan_end scan_field 
-         export_po export_dpo
+         export_dpo
          normalize_langid translate_langid locale_charsets
    );
 
@@ -363,6 +363,10 @@ translation steps (like the language used). Here are some examples:
 
 To ensure that the string is translated "as is" just prefix it with "\{}".
 
+=item $lang = $table->lang
+
+Return the language this translation table contains.
+
 =cut
 
 =item flush_cache
@@ -413,8 +417,8 @@ sub quote($) {
    s/\n/\\n/g;
    s/\r/\\r/g;
    s/\t/\\t/g;
-   s/[\x00-\x1f\x80-\x9f]/sprintf "\\x%02x", unpack "c", $1/ge;
-   #s/[\x{0100}-\x{ffff}/sprintf "\\x{%04x}", ord($1)/ge;
+   s/([\x00-\x1f\x80-\x9f])/sprintf "\\x%02x", ord $1/ge;
+   #s/([\x{0100}-\x{ffff}])/sprintf "\\x{%04x}", ord($1)/ge;
    $_;
 }
 
@@ -541,18 +545,19 @@ sub scan_str($$$) {
    while() {
       if ($string =~ m/\G
          (
-            (?: [^\012N_]+ | [N_][^_] | [N_]_[^"] )*
-            [N_]_ \(? "( (?:[^"\\]+ | \\.)+ )" \)?
-            (?: [^\012N_]+ | [N_][^_] | [N_]_[^"] )*
+            (?> [^\012N_]+ | [N_][^\012_] | [N_]_[^\012"(] )*
+            [N_]_
+               \(?" (
+                  (?> [^"\\]+ | \\. )+
+               ) "\)?
+            (?> [^\012N_]+ | [N_][^\012_] | [N_]_[^\012"(] )*
          )
       /sgcx) {
          my ($context, $id) = ($1, $2);
          scan_add $lang, PApp::I18n::unquote $id, "$prefix:$line $context";
          $line += $context =~ y%\012%%;
-      } elsif ($string =~ m/\G\012/sgc) {
+      } elsif ($string =~ m/\G([^\012]*)\012/sgc) {
          $line++;
-      } elsif ($string =~ m/\G./sgc) {
-         # if you think this is slow then consider the first pattern
       } else {
          last;
       }
@@ -743,7 +748,6 @@ Read the next entry. Returns nothing on end-of-file.
 =cut
 
 sub peek {
-   use bytes;
    my $self = shift;
    unless ($self->{line}) {
       do {
@@ -766,7 +770,6 @@ sub perr {
 }
 
 sub next {
-   use bytes;
    my $self = shift;
    my ($id, $str, @c);
 
@@ -782,11 +785,7 @@ sub next {
       }
       if ($self->peek =~ /^\s*msgstr/) {
          while ($self->peek =~ /^\s*(?:msgstr\s+)?\"(.*)\"\s*$/) {
-               use Devel::Peek;
-            Dump($self->{line});
             $self->{line} =~ /^\s*(?:msgstr\s+)?\"(.*)\"\s*$/; #d# DEVEL9021, redo regex on var
-            Dump($1);
-            Dump("$1");
             $str .= PApp::I18n::unquote $1;
             $self->line;
          }

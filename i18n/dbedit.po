@@ -14,7 +14,7 @@ msgstr ""
 # /root/src/PApp/widget/dbedit.papp:135    <h3>__"Columns (editing columns may take a long time)"</h3>
 #$lang=eng
 msgid "Columns (editing columns may take a long time)"
-msgstr "Spalten (Ã\x00nderungen kÃ¶nnen sehr lange dauern!)"
+msgstr "Spalten (Änderungen können sehr lange dauern!)"
 
 # /root/src/PApp/widget/dbedit.papp:131    <tr><td valign=baseline>__"Comment:"&nbsp;<td><?textfield({ size => 50 }, "text1", "$comment"):>
 #$lang=eng
@@ -54,7 +54,7 @@ msgstr "Standardwert?"
 # /root/src/PApp/widget/dbedit.papp:138 __"Drop"&nbsp;<th align=left>
 #$lang=eng
 msgid "Drop"
-msgstr "LÃ¶schen"
+msgstr "Löschen"
 
 # /root/src/PApp/apps/dbedit.papp:35 <tr><th align='left'>__"DSN"</th><th align='left'>
 #$lang=eng
@@ -64,7 +64,7 @@ msgstr "DSN"
 # /root/src/PApp/widget/dbedit.papp:159    <h3>__"Keys (changing keys often takes a long time!)"</h3>
 #$lang=eng
 msgid "Keys (changing keys often takes a long time!)"
-msgstr "SchlÃ¼ssel (Ã\x00nderungen kÃ¶nnen sehr lange dauern!)"
+msgstr "Schlüssel (Änderungen können sehr lange dauern!)"
 
 # /root/src/PApp/apps/dbedit.papp:16 <title>__"MySQL Database Editor"</title>
 # /root/src/PApp/apps/dbedit.papp:19 <table width="100%"><tr><td><h1>__"MySQL Database Editor"</h1></td><td align="right">
@@ -90,7 +90,7 @@ msgstr "Passwort"
 # /root/src/PApp/widget/dbedit.papp:121    __"Please type enter after changing <em>any</em> field."
 #$lang=eng
 msgid "Please type enter after changing <em>any</em> field."
-msgstr "Bitte bestÃ¤tigen Sie <em>jede</em> Ã\x00nderung mit der Eingabetaste."
+msgstr "Bitte bestätigen Sie <em>jede</em> Änderung mit der Eingabetaste."
 
 # /root/src/PApp/widget/dbedit.papp:127    <tr><td valign=baseline>__"Rename:"&nbsp;<td><?textfield("text1", $S{table}):>
 #$lang=eng
@@ -115,7 +115,7 @@ msgstr "Keine Verbindung"
 # /root/src/PApp/widget/dbedit.papp:383       print "</table><p>", submit("submit", __"Update");
 #$lang=eng
 msgid "Update"
-msgstr "Ã\x00ndern"
+msgstr "Ändern"
 
 # /root/src/PApp/apps/dbedit.papp:35 __"User"</th><th align='left'>
 #$lang=eng
@@ -125,22 +125,22 @@ msgstr "Benutzer"
 # /root/src/PApp/apps/dbedit.papp:25 __"You need to authentificate yourself first"<p />
 #$lang=eng
 msgid "You need to authentificate yourself first"
-msgstr "Sie mÃ¼ssen sich zuerst authentifizieren"
+msgstr "Sie müssen sich zuerst authentifizieren"
 
 # /root/src/PApp/widget/dbedit.papp:235    <?slink __"[ALTER]", "table
 #$lang=eng
 msgid "[ALTER]"
-msgstr "[Ã\x00NDERN]"
+msgstr "[ÄNDERN]"
 
 # /root/src/PApp/widget/dbedit.papp:294             print "<td>", slink __"[DELETE]", sql => "delete from $S{table} where $S{pri
 #$lang=eng
 msgid "[DELETE]"
-msgstr "[LÃ\x00SCHEN]"
+msgstr "[LÖSCHEN]"
 
 # /root/src/PApp/widget/dbedit.papp:152          print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
 #$lang=eng
 msgid "[drop default]"
-msgstr "[Standardwert lÃ¶schen]"
+msgstr "[Standardwert löschen]"
 
 # /root/src/PApp/widget/dbedit.papp:61          print "<td>", slink __"[EDIT]", "database", db => $db;
 # /root/src/PApp/widget/dbedit.papp:107    <?slink __"[EDIT]", "table":>
@@ -195,7 +195,7 @@ msgstr ""
 # /root/src/PApp/widget/dbedit.papp:138 __"Drop"&nbsp;<th align=left>
 #$lang=eng
 msgid "Drop"
-msgstr "LÃ¤schen"
+msgstr "Läschen"
 
 # /root/src/PApp/apps/dbedit.papp:35 <tr><th align='left'>__"DSN"</th><th align='left'>
 #$lang=eng
@@ -205,7 +205,7 @@ msgstr ""
 # /root/src/PApp/widget/dbedit.papp:159    <h3>__"Keys (changing keys often takes a long time!)"</h3>
 #$lang=eng
 msgid "Keys (changing keys often takes a long time!)"
-msgstr "Schlessel (Ã¶fters wiesslen kann e bessen daueren!)"
+msgstr "Schlessel (öfters wiesslen kann e bessen daueren!)"
 
 # /root/src/PApp/apps/dbedit.papp:16 <title>__"MySQL Database Editor"</title>
 # /root/src/PApp/apps/dbedit.papp:19 <table width="100%"><tr><td><h1>__"MySQL Database Editor"</h1></td><td align="right">
@@ -271,12 +271,12 @@ msgstr "Dir musst Iech vir d'eischt Authentifizeiren"
 # /root/src/PApp/widget/dbedit.papp:235    <?slink __"[ALTER]", "table
 #$lang=eng
 msgid "[ALTER]"
-msgstr "[Ã\x00NNEREN]"
+msgstr "[ÄNNEREN]"
 
 # /root/src/PApp/widget/dbedit.papp:294             print "<td>", slink __"[DELETE]", sql => "delete from $S{table} where $S{pri
 #$lang=eng
 msgid "[DELETE]"
-msgstr "[LÃ\x00SCHEN]"
+msgstr "[LÄSCHEN]"
 
 # /root/src/PApp/widget/dbedit.papp:152          print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
 #$lang=eng

@@ -19,7 +19,7 @@ use base Exporter;
 use utf8;
 no bytes;
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 @EXPORT = qw(
 
       errbox

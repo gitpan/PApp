@@ -28,7 +28,7 @@ use PApp::SQL;
 
 use base Exporter;
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 @EXPORT = qw(locked);
 
 =item locked BLOCK name, [timeout, [holdtime]]
@@ -111,7 +111,7 @@ sub lock {
    for(;;) {
       $now = time;
       return 1 if eval {
-         sql_exec "delete from locks where id = ? and time < ?", $self->{name}, $now - $self->{holdtime};
+         sql_exec "delete from locks where id = ? and breaktime < ?", $self->{name}, $now - $self->{holdtime};
          sql_exec "insert into locks values (?, ?, ?)", $self->{name}, $now, "";
       };
 

@@ -28,7 +28,7 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 0.121;
+$VERSION = 0.122;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"

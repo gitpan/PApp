@@ -97,10 +97,15 @@ predist: setver i18n
 	\$(MAKE) tardist
 
 install :: config.pl all
-	echo
-	echo Please run ./papp-install now to initialize any databases.
-	echo
-	#\$(PERL) ./papp-install
+	\@echo
+	\@echo '*****'
+	\@echo '***** Please run:'
+	\@echo '*****'
+	\@echo '***** \$(PERL) papp-install'
+	\@echo '*****'
+	\@echo '***** now to initialize the papp databases, if necessary.'
+	\@echo '*****'
+	\@echo
 
 ";
 
