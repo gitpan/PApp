@@ -184,7 +184,7 @@ Revoke the specified access right to the logged-in user.
    }
 ]]></perl></macro>
 
-<macro name="verify_login*" args="$user $pass">
+<macro name="verify_login*" args="$user $pass"><![CDATA[
 =head2 verify_login $user, $pass
 
 Try to login as user $user, with pass $pass. If the password verifies
@@ -192,7 +192,7 @@ correctly, switch the userid (if necessary), add any access rights and
 return true. Otherwise, return false and do nothing else.
 
 =cut
-<perl><![CDATA[
+]]><perl><![CDATA[
    my $st = sql_exec $PApp::statedbh,
                      \my($userid, $xpass),
                      "select id, pass from user where user = ?",

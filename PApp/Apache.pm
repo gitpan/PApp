@@ -49,7 +49,7 @@ use File::Basename qw(dirname);
 use PApp;
 use PApp::Parser;
 
-$VERSION = 0.07;
+$VERSION = 0.08;
 
 *PApp::apache_request = \&Apache::request;
 
@@ -57,6 +57,12 @@ sub ChildInit {
    unless (PApp::configured_p) {
       warn "FATAL: 'configured PApp' was never called, disabling PApp";
    }
+
+   eval { PApp::SQL::reinitialize() };
+   eval { PApp::Env::DBH->disconnect() };
+   eval { PApp::I18n::flush_cache() };
+   undef $PApp::Env::DBH;
+
    PApp::event('childinit');
 }
 
@@ -67,6 +73,7 @@ sub mount {
    my $location = delete $args{location};
    my $config   = delete $args{config};
    my $src      = delete $args{src};
+   my $delayed	= delete $args{delayed} || $PApp::delayed;
    my $path     = PApp::expand_path($src);
    $path or die "papp-module '$src' not found\n";
    #${"${caller}::PerlInitHandler"} = "PApp::Apache::Init";
@@ -76,7 +83,7 @@ sub mount {
          PerlHandler => 'PApp::handler',
          %args,
    };
-   $PApp::papp{$location} = PApp::reload_app $path, $config;
+   PApp::load_app $delayed, location => $location, path => $path, config => $config, delayed => $delayed;
 }
 
 <<'EOF';

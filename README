@@ -17,8 +17,8 @@ DESCRIPTION
     * Speed. PApp isn't much slower than a hand-coded mod_perl handler, and
     this is only due to the extra database request to fetch and restore
     state, which typically you would do anyway. To the contrary: a
-    non-trivial Apache::Registry page is much slower than the equivalent
-    PApp application (or much, much more complicated);
+    non-trivial Apache::Registry page is slower than the equivalent PApp
+    application (or much, much more complicated);
     * Embedded Perl. You can freely embed perl into your documents. In fact,
     You can do things like these:
            <h1>Names and amounts</h1>
@@ -117,7 +117,7 @@ GLOBAL VARIABLES
 
          lang     a hash-ref enumerating the available languages, values are
                   either language I<Names> or references to another language-id.
-         config   the argument to the C<config>option given to  C<mount>.
+         config   the argument to the C<config>option given to C<mount>.
 
     $location [read-only]
         The location value from `mount'.
@@ -142,13 +142,20 @@ FUNCTIONS/METHODS
                        re-set the cookie (default: one day)
          cookie_expires time in seconds after which a cookie shall expire
                        (default: one year)
+
+        The following configuration values are used mainly for development:
+
          checkdeps     when set, papp will check the .papp file dates for
                        every request (slow!!) and will reload the app when necessary.
+         delayed       do not compile applications at server startup, only on first
+                       access. This greatly increases memory consumption but ensures
+                       that the httpd startup works and is faster.
 
     PApp->mount(location => 'uri', src => 'file.app', ... );
          location[*]   The URI the application is moutned under, must start with "/"
          src[*]        The .papp-file to mount there
          config        Will be available to the module as $pmod->{config}
+         delayed       see C<PApp->configure>.
 
          [*] required attributes
 

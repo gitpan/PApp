@@ -4,10 +4,15 @@
    http://www.goof.com/pcg/marc/
    (requires PApp)
 
-   version 0.2
+   version 0.3
 -->
 
 <papp name="dbedit" lang="en">
+
+<description>
+   a simple mysql database editor specially suited for developing complex
+   relation databases "on-the-fly".
+</description>
 
 <database dsn="DBI:mysql:"/>
 <language lang="en" desc="English"/>
@@ -47,7 +52,7 @@
                print "<hr><pre>Executing: $_<br>";
                eval { sql_exec $_ };
                if ($@) {
-                  echo errbox ref $@ ? "$@->[0]<br>$@->[1]" : $@;
+                  echo errbox $@;
                } else {
                   print "OK";
                }
@@ -122,21 +127,22 @@
 
    <h3>Columns (editing columns may take a long time)</h3>
 
-   <table cellspacing=0 cellpadding=2 border=0>
-   <tr><th>Name<th>Create<th>Default?<th>Drop?
+   <table cellspacing=0 cellpadding=0 border=0>
+   <tr><th>Name<th>Create<th>Drop<th>Default?
    <:
       my $s = sql_exec "show fields from $S{table}";
       $s->bind_columns(\my($name,$type,$null,$key,$default,$extra,$priviledges));
       print "<tr><td>",sform(sql => "$alter add %1 first"),"<td>",textfield(name => "text1", size => 70),"</td>",endform;
       while ($s->fetch) {
-         print "<tr><td>$name";
+         print "<tr><td>$name&nbsp;";
          $type .= " not null" unless $null;
          $type .= " primary key" if $key eq "pri";
          $type .= " default '$default'" if $default;
          $type .= " $extra" if $extra;
          print sform(sql => "$alter change $name %1"),"<td>",textfield(name => "text1", value => "$name $type", size => 70),"</td>",endform;
-         print "<td>",slink("[drop default]", sql => "$alter alter $name drop default") if $default;
-         print "<td>[",slink("D", sql => "$alter drop column $name"), "]ROP";
+         print "<td>&nbsp;[",slink("D", sql => "$alter drop column $name"), "]ROP";
+         print "<td>&nbsp;";
+         print slink("[drop default]", sql => "$alter alter $name drop default") if $default;
 
          print "<tr><td>",sform(sql => "$alter add %1 after $name"),"<td>",textfield(name => "text1", size => 70),"</td>",endform;
       }
@@ -145,7 +151,7 @@
 
    <h3>Keys (changing keys often takes a long time!)</h3>
 
-   <table cellspacing=0 cellpadding=2 border=0>
+   <table cellspacing=0 cellpadding=0 border=0>
    <:
       my $s = sql_exec "show keys from $S{table}";
       my %key;
@@ -165,12 +171,12 @@
             $drop = "index $name";
          }
          $spec .= "(".(join ", ", @{$v->{col}}).")";
-         print "<tr><td>$name";
+         print "<tr><td>$name&nbsp;";
          print "<td>",sform(sql => "$alter drop $drop, add %1"),
                       textfield(name => "text1", value => "$spec", size => 60),endform;
-                      print "<td>[",slink("D", sql => "$alter drop $drop"),"]ROP";
+                      print "<td>&nbsp;[",slink("D", sql => "$alter drop $drop"),"]ROP";
       }
-      print "<tr><td>NEW -->";
+      print "<tr><td>NEW -->&nbsp;";
       print "<td>",sform(sql => "$alter add %1"),textfield(name => "text1", value => "", size => 60),endform;
    :>
    </table>

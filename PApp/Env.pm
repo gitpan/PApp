@@ -37,7 +37,7 @@ use PApp::SQL;
 require Exporter;
 
 @ISA = qw(Exporter);
-$VERSION = 0.07;
+$VERSION = 0.08;
 @EXPORT = qw(setenv getenv unsetenv modifyenv lockenv listenv);
 
 =item PApp::Env->configure name => value, ...
@@ -58,24 +58,28 @@ sub configure {
    exists $attr{statedb}      and $statedb = $attr{statedb};
    exists $attr{statedb_user} and $statedb = $attr{statedb_user};
    exists $attr{statedb_pass} and $statedb = $attr{statedb_pass};
+
+   $configured = 1;
 }
 
-our $statedb      = undef;
-our $statedb_user = undef;
-our $statedb_pass = undef;
-our $configured   = 0;
+our $statedb;
+our $statedb_user;
+our $statedb_pass;
+our $configured;
 
 sub dbconnect {
    if (defined $PApp::statedbh) {
       $DBH = $PApp::statedbh;
-   } elsif (!$confgured) {
-      require PApp::Config;
-      $statedb      ||= $PApp::Config{STATEDB};
-      $statedb_user ||= $PApp::Config{STATEDB_USER};
-      $statedb_pass ||= $PApp::Config{STATEDB_PASS};
+   } else {
+      unless ($configured) {
+         require PApp::Config;
+         $statedb      ||= $PApp::Config{STATEDB};
+         $statedb_user ||= $PApp::Config{STATEDB_USER};
+         $statedb_pass ||= $PApp::Config{STATEDB_PASS};
+         $configured = 1;
+      }
 
       $DBH = PApp::SQL::connect_cached(__PACKAGE__ . __FILE__, $statedb, $statedb_user, $statedb_pass);
-      $configured = 1;
    }
 }
 
@@ -86,7 +90,7 @@ Sets a single environment variable to the specified value. (mysql-specific ;)
 =cut
 
 sub setenv($$) {
-   dbconnect;
+   dbconnect unless $DBH;
    my ($key, $val) = @_;
 
    $val = "\x00".Storable::nfreeze($val)
@@ -102,7 +106,7 @@ Unsets (removes) the specified environment variable.
 =cut
 
 sub unsetenv($) {
-   dbconnect;
+   dbconnect unless $DBH;
    my $key = shift;
    sql_exec "delete from env where name = ?", $key;
 }
@@ -114,7 +118,7 @@ Return the value of the specified environment value
 =cut
 
 sub getenv($) {
-   dbconnect;
+   dbconnect unless $DBH;
    my $key = shift;
    my $st = sql_exec \my($val), "select value from env where name = ?", $key;
    if ($st->fetch) {
@@ -138,7 +142,7 @@ Calls to lockenv can be nested.
 our $locklevel;
 
 sub lockenv(&) {
-   dbconnect;
+   dbconnect unless $DBH;
    sql_exec "lock tables env write" unless $locklevel;
    my $res = eval { local $locklevel=$locklevel+1; $_[0]->() };
    my $err = $@;
@@ -178,7 +182,7 @@ Returns a list of all environment variables (names).
 =cut
 
 sub listenv {
-   dbconnect;
+   dbconnect unless $DBH;
    sql_fetchall "select name from env";
 }
 

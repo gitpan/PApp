@@ -12,6 +12,8 @@ to look at the examples to understand the descriptions here :(
 This module exports nothing at the moment, but might soon export C<phtml2perl>
 and other nifty functions.
 
+This module also implements the pmod class itself, currently.
+
 =over 4
 
 =cut
@@ -19,10 +21,9 @@ and other nifty functions.
 package PApp::Parser;
 
 use Carp;
-use XML::Parser::Expat;
 use PApp::Exception;
 
-$VERSION = 0.07;
+$VERSION = 0.08;
 
 =item phtml2perl "pthml-code";
 
@@ -46,7 +47,7 @@ instead.
 
 In html sections (and only there!), you can also use preprocessor commands
 (the C<#> must be at the beginning of the line, between the C<#> and the
-command anme can be any amount of white space, just like in C!)
+command name can be any amount of white space, just like in C!)
 
  #if any_perl_condition
    any phtml code
@@ -56,12 +57,14 @@ command anme can be any amount of white space, just like in C!)
    ...
  #endif
 
-=for nobody
+=begin comment
    
 And also these experimental preprocessor commands (these currently trash the line number info, though!)
 
  #?? condition ?? if-yes-phtml-code
  #?? condition ?? if-yes-phtml-code ?? if-no-phtml-code
+
+=end comment
 
 =cut
 
@@ -118,6 +121,14 @@ sub phtml2perl {
 
 my $upid = "PMOD000000";
 
+sub DESTROY {
+   my $self = shift;
+
+   # try to get rid of the package
+   requite Symbol;
+   Symbol::delete_package($self->{package});
+}
+
 sub _eval {
    # be careful not to use "my" for global variables -> my vars
    # are visible  within the subs we do!
@@ -152,6 +163,8 @@ sub compile {
       use PApp::SQL;
       use PApp::HTML;
       use PApp::Exception;
+      use PApp::Callback;
+      use PApp::DataRef ();
 
 #line 1 \"(internal gettext)\"
       sub gettext(\$) {
@@ -182,6 +195,12 @@ sub compile {
       next if $module eq "init";
       $pmod->{module}{$module}{cb} = $pmod->_eval("sub {\n$pmod->{module}{$module}{cb_src}\n}");
    }
+}
+
+sub event {
+   my $pmod = shift,
+   my $event = shift,
+   $pmod->{cb}{$event}() if exists $pmod->{cb}{$event};
 }
 
 sub mark_statekey {
@@ -215,7 +234,7 @@ sub load_file {
       i18ndir=> $PApp::i18ndir,
       modules=> [ '' ],
       state  => { 
-                   import      => { lang => 1 },
+                   import      => { "/lang" => 1 },
                    preferences => { },
                    sysprefs    => {
                                      lang => 1,
@@ -228,6 +247,7 @@ sub load_file {
 
    $pmod->{file}{$path}{mtime} = (stat $path)[9];
 
+   require XML::Parser::Expat;
    my $parser = new XML::Parser::Expat(
       ErrorContext => 0,
       ParseParamEnt => 0,
@@ -248,7 +268,7 @@ sub load_file {
          # convert back to latin1 (from utf8)
          {
             use utf8;
-            $cdata =~ tr/\0-\x{ff}//UC;
+            $cdata =~ tr/\x{80}-\x{ff}//UC;
          }
          $curchr[-1] .= $cdata;
          1;
@@ -363,6 +383,10 @@ sub load_file {
                ($attr{username} || ""),
                ($attr{password} || ""),
             ];
+         } elsif ($element eq "description") {
+            $end = sub {
+               $pmod->{description} .= shift;
+            }
          } elsif ($element eq "translate") {
             for (split / /, $attr{fields}) {
                $pmod->{translate}{$_} = [$attr{lang}, $attr{style}||"plain"];

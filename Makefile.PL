@@ -24,6 +24,9 @@ WriteMakefile(
     		    'PApp.pm'		=> '$(INST_LIBDIR)/PApp.pm',
     		    'PApp/Apache.pm'	=> '$(INST_LIBDIR)/PApp/Apache.pm',
     		    'PApp/CGI.pm'	=> '$(INST_LIBDIR)/PApp/CGI.pm',
+    		    'PApp/Env.pm'	=> '$(INST_LIBDIR)/PApp/Env.pm',
+    		    'PApp/DataRef.pm'	=> '$(INST_LIBDIR)/PApp/DataRef.pm',
+    		    'PApp/Callback.pm'	=> '$(INST_LIBDIR)/PApp/Callback.pm',
     		    'PApp/Config.pm'	=> '$(INST_LIBDIR)/PApp/Config.pm',
     		    'PApp/Exception.pm'	=> '$(INST_LIBDIR)/PApp/Exception.pm',
     		    'PApp/FormBuffer.pm'=> '$(INST_LIBDIR)/PApp/FormBuffer.pm',
@@ -33,7 +36,7 @@ WriteMakefile(
     'PREREQ_PM'	=> {
                     XML::Parser		=> 2.27,
                     #mod_perl		=> 1.21, # not necessarily required anymore
-                    Storable		=> 0.60,
+                    Storable		=> 0.6111,
                     DBI			=> 1.13,
                     DBD::mysql		=> 2.04,
                     Compress::LZV1	=> 0.03,
@@ -41,6 +44,29 @@ WriteMakefile(
                     Crypt::Twofish2	=> 0.01,
 		   },
 );
+
+eval {
+   require Storable;
+
+   if ($Storable::VERSION < 0.6111) {
+      warn <<EOF;
+
+*** WARNING **
+
+This module requires a fix to Storable. Please download Storable-0.611
+and apply the diff named 'storable-0.611.patch' in this directory (and of
+course install it):
+
+ cd Storable-0.611
+ patch -p1 <.../storable-0.611.patch
+ perl Makefile.PL
+ make
+ make test
+ make install
+
+EOF
+   }
+};
 
 sub MY::postamble {
    my $self=shift;

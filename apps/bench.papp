@@ -3,6 +3,10 @@
 <database dsn="DBI:mysql:"/>
 <language lang="en" desc="English"/>
 
+<description>
+   a very simple test application for papp
+</description>
+
 <phtml><![CDATA[
    <html><body>
    <?slink __"This is a test"?>

@@ -11,13 +11,17 @@
 <!ENTITY % sourceref  "src CDATA">
 <!ENTITY % yesno      "(yes|no)">
 
-<!ENTITY % modulebody "(module|import|callback|macro|%perlcode;)*">
+<!ENTITY % modulebody "(module|import|callback|macro|description|%perlcode;)*">
 
-<!ELEMENT papp     (%modulebody;|database|language)+>
+<!ELEMENT papp     (%modulebody;|database|language|description)+>
 <!ATTLIST papp
     name  CDATA #IMPLIED
     lang  CDATA #IMPLIED
 >
+
+<!-- a description describes the papp or module it is found in.
+     only <papp>-description elements are currently supported -->
+<!ELEMENT description>
 
 <!--
    each web-page is a seperate "module"

@@ -22,8 +22,8 @@ Advantages:
 =item * Speed. PApp isn't much slower than a hand-coded mod_perl handler,
 and this is only due to the extra database request to fetch and restore
 state, which typically you would do anyway. To the contrary: a non-trivial
-Apache::Registry page is much slower than the equivalent PApp application
-(or much, much more complicated);
+Apache::Registry page is slower than the equivalent PApp application (or
+much, much more complicated);
 
 =item * Embedded Perl. You can freely embed perl into your documents. In
 fact, You can do things like these:
@@ -115,7 +115,7 @@ use PApp::I18n;
 use PApp::HTML;
 
 BEGIN {
-   $VERSION = 0.07;
+   $VERSION = 0.08;
 
    @ISA = qw/Exporter/;
 
@@ -129,7 +129,7 @@ BEGIN {
 
          $request $location $module $pmod $NOW
          *state %P %A *S *L save_prefs $userid
-         reload_p switch_userid
+         reload_p switch_userid load_prefs
 
          dprintf dprint echo capture $request 
          insert_module
@@ -168,6 +168,7 @@ our %S;
 our %P;
 our %A;
 
+our %papp_info;   # configuration info for all configured applications
 our %papp;        # all loaded applications, indexed by location
 
 our $NOW;         # the current time (so you only need to call "time" once)
@@ -191,6 +192,7 @@ our $langs;       # contains the current requested languages (e.g. "de, en-GB")
    $cookie_expires = 86400 * 365; # cookie expiry time (one year, whooo..)
 
    $checkdeps;   # check dependencies (relatively slow)
+   $delayed;     # delay loading of apps until needed
 
 # we might be slow, but we are rarely called ;)
 sub __($) {
@@ -255,7 +257,7 @@ The current module (don't ask). The only user-accessible keys are:
 
  lang     a hash-ref enumerating the available languages, values are
           either language I<Names> or references to another language-id.
- config   the argument to the C<config>option given to  C<mount>.
+ config   the argument to the C<config>option given to C<mount>.
 
 =item $location [read-only]
 
@@ -288,14 +290,21 @@ Add a directory in where to search for included/imported/"module'd" files.
                re-set the cookie (default: one day)
  cookie_expires time in seconds after which a cookie shall expire
                (default: one year)
+
+The following configuration values are used mainly for development:
+
  checkdeps     when set, papp will check the .papp file dates for
                every request (slow!!) and will reload the app when necessary.
+ delayed       do not compile applications at server startup, only on first
+               access. This greatly increases memory consumption but ensures
+               that the httpd startup works and is faster.
 
 =item PApp->mount(location => 'uri', src => 'file.app', ... );
 
  location[*]   The URI the application is moutned under, must start with "/"
  src[*]        The .papp-file to mount there
  config        Will be available to the module as $pmod->{config}
+ delayed       see C<PApp->configure>.
 
  [*] required attributes
 
@@ -304,7 +313,7 @@ Add a directory in where to search for included/imported/"module'd" files.
 sub event {
    my $event = shift;
    for $pmod (values %papp) {
-      $pmod->{cb}{$event}() if exists $pmod->{cb}{$event};
+      $pmod->event($event);
    }
 }
 
@@ -331,8 +340,10 @@ sub configure {
    exists $a{pappdb_pass} and $statedb_pass = $a{pappdb_pass};
    exists $a{cookie_reset} and $cookie_reset = $a{cookie_reset};
    exists $a{cookie_expires} and $cookie_expires = $a{cookie_expires};
-   exists $a{checkdeps} and $checkdeps = $a{checkdeps};
    exists $a{cipherkey} and $key = $a{cipherkey};
+
+   exists $a{checkdeps} and $checkdeps = $a{checkdeps};
+   exists $a{delayed} and $delayed = $a{delayed};
 }
 
 sub configured {
@@ -350,7 +361,7 @@ sub configured {
 
       # fake module for papp itself
 
-      $papp{""} = {
+      $papp{""} = bless {
          i18ndir => $i18ndir,
          name    => 'papp',
          lang    => { 'de' => "Deutsch", 'en' => "English" },
@@ -364,7 +375,7 @@ sub configured {
             $INC{"PApp/Exception.pm"}     => { lang => 'en' },
             $INC{"PApp/Parser.pm"}        => { lang => 'en' },
          },
-      };
+      }, "PApp::Parser";
 
       $translator = PApp::I18n::open_translator("$i18ndir/papp", keys %{$papp{""}{lang}});
 
@@ -495,6 +506,8 @@ in the (non-persistent) C<%A>-hash instead (for "one-shot" arguments).
 =cut
 
 sub surl(@) {
+   use bytes; # I do not understand this :(
+
    my $module = @_ & 1 ? shift : $module;
    my $location = $module =~ s/^(\/.*?)(?:\/([^\/]*))?$/$2/ ? $1 : $location;
 
@@ -703,10 +716,12 @@ the browser will not see the url change.
 =cut
 
 sub internal_redirect {
+   local $SIG{__DIE__};
    die { internal_redirect => $_[0] };
 }
 
 sub redirect {
+   local $SIG{__DIE__};
    $request->status(302);
    $request->header_out(Location => $_[0]);
    $output = "
@@ -904,14 +919,17 @@ sub reload_p {
 }
 
 # forcefully read the user-prefs, return new-user-flag
-sub get_userprefs {
+sub load_prefs {
    my ($prefs, $k, $v);
    $st_fetchprefs->execute($userid);
-   if (my ($prefs) = $st_fetchprefs->fetchrow_array) {
-      $prefs = $prefs ? Storable::thaw decompress $prefs : {};
+   if (defined ($prefs = $st_fetchprefs->fetchrow_array)) {
+      $prefs &&= Storable::thaw decompress $prefs if $prefs;
 
-      $state{$k} = $v while ($k,$v) = each %{$prefs->{sys}};
-      $S{$k}     = $v while ($k,$v) = each %{$prefs->{loc}{$location}};
+      $state{$k}               = $v while ($k,$v) = each %{$prefs->{sys}};
+
+      for $location (keys %papp) {
+         $state{$location}{$k} = $v while ($k,$v) = each %{$prefs->{loc}{$location}};
+      }
 
       1;
    } else {
@@ -936,7 +954,7 @@ sub switch_userid {
       $pmod->{cb}{newuser}->();
       $newuser = 1;
    } else {
-      get_userprefs;
+      load_prefs;
    }
    if ($userid != $oldid) {
       $state{papp}{switch_newuserid} = $userid;
@@ -945,28 +963,54 @@ sub switch_userid {
 }
 
 sub save_prefs {
-   my %prefs;
+   my $prefs;
+
+   $st_fetchprefs->execute($userid);
+   if ($prefs = $st_fetchprefs->fetchrow_array) {
+      $prefs = Storable::thaw decompress $prefs;
+   } else {
+      $prefs = {};
+   }
 
    while (my ($key,$v) = each %state) {
-      $prefs{sys}{$key}            = $v if $pmod->{state}{sysprefs}{$key};
+      $prefs->{sys}{$key}            = $v if $pmod->{state}{sysprefs}{$key};
    }
    while (my ($key,$v) = each %S) {
-      $prefs{loc}{$location}{$key} = $v if $pmod->{state}{preferences}{$key};
+      $prefs->{loc}{$location}{$key} = $v if $pmod->{state}{preferences}{$key};
    }
 
-   $st_updateprefs->execute(compress Storable::freeze(\%prefs), $userid);
+   $st_updateprefs->execute(compress Storable::freeze($prefs), $userid);
 }
 
 sub update_state {
    $st_updatestate->execute(compress Storable::freeze(\%state), $userid, $stateid);
 }
 
-sub reload_app {
-   my ($path, $config) = @_;
-   my $pmod = load_file PApp::Parser $path;
-   $pmod->{config} = $config;
-   $pmod->compile;
-   $pmod;
+sub load_app($@) {
+   my $delayed = shift;
+   my %attr = @_;
+   my $papp = $papp_info{$attr{location}} = \%attr;
+   if ($delayed) {
+      delete $papp{$papp->{location}};
+      ();
+   } else {
+      my $pmod = load_file PApp::Parser $papp->{path};
+      $pmod->{config} = $papp->{config};
+      $pmod->compile;
+      $papp{$papp->{location}} = $pmod;
+      $pmod;
+   }
+}
+
+sub find_app($) {
+   my $location = shift;
+   return unless $papp_info{$location};
+   PApp::load_app 0, %{$PApp::papp_info{$location}} unless $PApp::papp{$location};
+   $papp{$location};
+}
+
+sub list_apps() {
+   keys %papp_info;
 }
 
 # *apache_request = \&Apache::request;
@@ -996,6 +1040,8 @@ sub handler {
    $request->content_type('text/html; charset=ISO-8859-1');
 
    eval {
+      local $SIG{__DIE__} = sub { PApp::Exception::fancydie("Caught a DIE", $_[0], compatible => $_[0]) };
+      
       $newuser = 0;
 
       $statedbh = PApp::SQL::connect_cached("PAPP_1", $statedb, $statedb_user, $statedb_pass, {
@@ -1020,16 +1066,22 @@ sub handler {
       $location =~ s/\Q$pathinfo\E$//;
 
       $pmod = $papp{$location} or do {
-         fancydie "Application not mounted", $location;
+         if ($papp_info{$location}) {
+            $pmod = load_app 0, %{$papp_info{$location}};
+            $pmod->event("init");
+            $pmod->event("childinit");
+         } else {
+            fancydie "Application not mounted", $location;
+         }
       };
 
       if ($checkdeps) {
          while (my ($path, $v) = each %{$pmod->{file}}) {
             if ((stat $path)[9] > $v->{mtime}) {
                $request->warn("reloading application $location");
-               $pmod = $papp{$location} = reload_app $pmod->{path}, $pmod->{config};
-               $pmod->{cb}{init}();
-               $pmod->{cb}{childinit}();
+               $pmod = load_app 0, %{$papp_info{$location}};
+               $pmod->event("init");
+               $pmod->event("childinit");
                values %{$pmod->{file}}; # reset "each"-state
                last;
             }
@@ -1087,7 +1139,7 @@ sub handler {
          }
 
          if ($userid) {
-            if (get_userprefs) {
+            if (load_prefs) {
                $state{papp_visits}++;
                $state{save_prefs} = 1;
             }

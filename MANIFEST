@@ -16,6 +16,7 @@ PApp/Apache.pm
 PApp/XML.pm
 PApp/Env.pm
 PApp/Callback.pm
+PApp/DataRef.pm
 SQL/Makefile.PL
 SQL/SQL.pm
 SQL/SQL.xs
@@ -51,6 +52,7 @@ apps/bench.papp		benchmark
 t/load.t
 
 papp-install
-gen-db.sql
 httpd.conf
+
+storable-0.611.patch	fix 0.611 to make it work with overloaded objects
 

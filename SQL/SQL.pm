@@ -26,7 +26,7 @@ use DBI;
 BEGIN {
    require Exporter;
 
-   $VERSION = 0.07;
+   $VERSION = 0.08;
    @ISA = qw/Exporter/;
    @EXPORT = qw(
          sql_exec sql_fetch sql_fetchall sql_exists sql_insertid $sql_exec
@@ -42,7 +42,7 @@ BEGIN {
 $sql_exec;  # last result of sql_exec's execute call
 $DBH;       # the default database handle
 
-my %dbcache;
+our %dbcache;
 
 =item $dbh = connect_cached $id, $dsn, $user, $pass, $flags, $connect
 
@@ -180,7 +180,7 @@ Examples:
 
 =cut
 
-# uncodumented, since unportable. yet it is exportet (aaargh!)
+# uncodumented, since unportable (only works with DBH even!). yet it is exported (aaargh!)
 sub sql_insertid {
    $DBH->{mysql_insertid};
 }
@@ -201,6 +201,22 @@ construct can be used:
  PApp::SQL::cachesize PApp::SQL::cachesize 0;
 
 =cut
+
+=item reinitialize [not exported]
+
+Clears any internal caches (statement cache, database handle cache).
+
+=cut
+
+sub reinitialize {
+   cachesize cachesize 0;
+   for (values %dbcache) {
+      eval { $_->disconnect };
+   }
+   undef %dbcache;
+}
+
+reinitialize;
 
 =begin comment
 

@@ -1,9 +1,9 @@
-<!--
+<papp name="acedit" lang="en">
+
+<description>
    access rights editor
    requires "admin" priviledges
--->
-
-<papp name="acedit" lang="en">
+</description>
 
 <language lang="en" desc="English"/>
 <language lang="de" desc="Deutsch"/>
@@ -29,15 +29,19 @@
 :>
 ]]></phtml></macro>
 
-<state keys="search" import="yes"/>
+<state keys="usearch gsearch" import="yes"/>
+<state keys="ac_users ac_groups" preferences="yes"/>
 <phtml><![CDATA[
 <:page {:>
-   <:$S{search} = "_" unless defined $S{search}:>
+
+#if $S{ac_users}
+   <h2><?slink "&lt;&lt;&lt; ".__"Users", ac_users => 0, "/save_prefs" => 1:></h2>
 
    <:my ($cnt) = sql_fetch "select count(*) from user":>
-   __"There are currently $cnt users in the database."
+   <?sprintf __"There are currently %d users in the database.", $cnt:>
    <ul>
-   <li><?sform:>__"Search username/comment:" <?textfield "search", value => $S{search}:><?endform:>
+   <:$S{usearch} = "_" unless defined $S{usearch}:>
+   <li><?sform:>__"Search username/comment:" <?textfield "usearch", value => $S{usearch}:><?endform:>
    </ul>
 
    __"To see all users, enter nothing in the 'Search' entry"<br>
@@ -48,15 +52,15 @@
                         "select id, user, pass, comment
                          from user
                          where user like ? or comment like ?",
-                         ("%$S{search}%")x2;
+                         ("%$S{usearch}%")x2;
    :>
    <table rules=all frame=box border=1>
-   <tr><th>ID<th>login<th>password<th>comment<th>&nbsp;
+   <tr><th>__"ID"<th>__"login"<th>__"password"<th>__"comment"<th>&nbsp;
    <: while ($st->fetch) {
          $comment ||= "&nbsp;"
          ?>
-            <tr><td>$id<td>$user<td>$pass<td><?substr $comment, 0, 20?>
-                <td><?slink __"[EDIT]", "edit", userid => $id:>
+            <tr><td>$id<td>$user<td>$pass<td><?substr $comment, 0, 30?>
+                <td><?slink __"[EDIT]", "edit_user", userid => $id:>
          <:
          my $st = sql_exec \my($access), "select g.name from usergrp u, grp g where u.grpid = g.id and userid = ?", $id;
          while ($st->fetch) {
@@ -65,14 +69,79 @@
       }
    :>
    </table>
+#else
+   <h2><?slink __("Users")." &gt;&gt;&gt;", ac_users => 1, save_prefs => 1:></h2>
+#endif
+
+#if $S{ac_groups}
+   <h2><?slink "&lt;&lt;&lt; ".__"Groups", ac_groups => 0, save_prefs => 1:></h2>
+
+   <:my ($cnt) = sql_fetch "select count(*) from grp":>
+   <?sprintf __"There are currently %d groups in the database.", $cnt:>
+   <ul>
+   <:$S{gsearch} = ""  unless defined $S{gsearch}:>
+   <li><?sform:>__"Search groupname/comment:" <?textfield "gsearch", value => $S{gsearch}:><?endform:>
+   <li><?slink __"[CREATE NEW GROUP]", "edit_grp", grpid => undef:>
+   </ul>
+
+#if $A{delete_grp}
+   <:sql_exec "delete from grp where id = ?", $A{delete_grp}:>
+#endif
+
+   <:
+      my $st = sql_exec \my($id, $user, $comment),
+                        "select id, name, longdesc
+                         from grp
+                         where name like ? or longdesc like ?",
+                         ("%$S{gsearch}%")x2;
+   :>
+
+   <table rules=all frame=box border=1>
+   <tr><th>__"ID"<th>__"name"<th>__"comment"<th>&nbsp;<th>&nbsp;
+   <:
+      while ($st->fetch) {
+         $comment ||= "&nbsp;"
+         ?>
+            <tr><td>$id<td>$user<td><?substr $comment, 0, 30?>
+                <td><?slink __"[EDIT]", "edit_grp", grpid => $id:>
+                <td><?slink __"[DROP]", -delete_grp => $id:>
+         <:
+      }
+   :>
+   </table>
+#else
+   <h2><?slink __("Groups")." &gt;&gt;&gt;", ac_groups => 1, "/save_prefs" => 1:></h2>
+#endif
+
 <:}:>
 ]]></phtml>
 
-<module name="edit">
+<module name="edit_user">
 <state keys="userid" local="yes"/>
 <phtml><![CDATA[
 <:page {:>
    <?slink __"Go Back", "":><p>
+
+   <: BEGIN {
+         use Data::Dumper;
+         use Storable;
+         use Compress::LZV1;
+
+         $fetch_prefs = create_callback {
+            eval {
+               "# currently read-only\n\n".
+               Data::Dumper->new([Storable::thaw decompress $_[1]])
+                  ->Indent(1)
+                  ->Purity(1)
+                  ->Useqq(1)
+                  ->Terse(1)
+                  ->Dump;
+            } || "# deserialization error"
+         };
+         $store_prefs = create_callback {
+            ();
+         };
+   } :>
 
 #if $A{delete_grp}
    <:sql_exec "delete from usergrp where userid = ? and grpid = ?", $S{userid}, $A{delete_grp}:>
@@ -80,23 +149,20 @@
 #if $A{add_grp}
    <:sql_exec "replace into usergrp values (?, ?)", $S{userid}, $P{grpid}:>
 #endif
-   <:ef_begin "user", ["id", $S{userid}]:>
-   <:
-     sql_fetch \my($user, $pass, $comment),
-               "select user, pass, comment from user where id = ?",
-               $S{userid};
-   :>
+   <:my $row = new PApp::DataRef 'DB_row', table => "user", where => [id => $S{userid}], preload => 1, delay => 1:>
+   <:ef_begin:>
    <table>
-   <tr><td>User</td><td><:ef_string $user, "user", 20:>
-   <tr><td>Pass</td><td><:ef_string $pass, "pass", 14:>
-   <tr><td>Comment</td><td><:ef_text $comment, "comment", 60, 8:>
+   <tr><td>__"User"</td><td><:ef_string $row->{user}, 20:>
+   <tr><td>__"Password"</td><td><:ef_string $row->{[pass, filter => 'password']}, 14:> __"(leave this field empty for no change)"
+   <tr><td>__"Comment"</td><td><:ef_text $row->{comment}, 60, 8:>
+   <tr><td>__"Preferences"</td><td><:ef_text $row->{["prefs", fetch => $fetch_prefs, store => $store_prefs]}, 60, 14:>
    <:
       my $st = sql_exec \my($id, $name),
                         "select g.id, g.name from usergrp u, grp g where u.grpid = g.id and userid = ?",
                         $S{userid};
       while ($st->fetch) {
          ?>
-            <tr><td>Group:</td><td>$name <?slink __"[DELETE]", -delete_grp => $id:>
+            <tr><td>__"User Group:"</td><td>$name <?slink __"[DELETE]", -delete_grp => $id:>
          <:
       }
    :>
@@ -116,6 +182,28 @@
       </select>
       <?submit "add", "add":>
       <?endform:>
+<:}:>
+]]></phtml></module>
+
+<module name="edit_grp">
+<state keys="grpid" local="yes"/>
+<phtml><![CDATA[
+<:page {:>
+   <?slink __"Go Back", "":><p>
+
+#if !defined $S{grpid}
+   <:sql_exec "replace into grp (name) values ('<new grp>')":>
+   <:$S{grpid} = sql_insertid:>
+#endif
+
+   <:my $row = new PApp::DataRef 'DB_row', table => "grp", where => [id => $S{grpid}], preload => 1, delay => 1:>
+   <:ef_begin:>
+   <table>
+   <tr><td>__"Name"</td><td><:ef_string $row->{name}, 20:>
+   <tr><td>__"Comment"</td><td><:ef_text $row->{longdesc}, 60, 8:>
+   <tr><td><td><:ef_submit:><:ef_reset:>
+   </table>
+   <:ef_end:>
 <:}:>
 ]]></phtml></module>
 

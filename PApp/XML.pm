@@ -24,7 +24,7 @@ special pappxml directives that can be used to create links etc...
 
 package PApp::XML;
 
-$VERSION = 0.07;
+$VERSION = 0.08;
 
 =item new PApp::XML parameter => value...
 
@@ -32,12 +32,26 @@ Creates a new PApp::XML template object with the specified behaviour. It
 can be used as an object factory to create new C<PApp::XML::Template>
 objects.
 
- special	a hashref containing special => coderef pairs. If a special
-                is encountered, the given coderef will be compiled in
-                instead. If a reference to a coderef is given, the coderef
-                will be called during parsing and the resulting string will
-                be added to the compiled subroutine
- html           html output mode enable flag (NYI)
+ special        a hashref containing special => coderef pairs. If a
+                special is encountered, the given coderef will be compiled
+                in instead (i.e. it will be called each time the fragment
+                is print'ed). The coderef will be called with a reference
+                to the attribute hash, the element's contents (as a
+                string) and the PApp::XML::Template object used to print
+                the string.
+
+                If a reference to a coderef is given (e.g. C<\sub {}>),
+                the coderef will be called during parsing and the
+                resulting string will be added to the compiled subroutine.
+                The arguments are the same, except that the contents are
+                not given as string but as a magic token that must be
+                inserted into the return value.
+
+                The return value is expected to be in "phtml"
+                (L<PApp::Parser>) format, the magic "contents" token must
+                not occur in code sections.
+                
+ html           html output mode enable flag
 
 At the moment there is one predefined special named C<slink>, that maps
 almost directly into a call to slink (a leading underscore in an attribute
@@ -245,17 +259,26 @@ sub __dom2sub($) {
                my $sub = $_self->{attr}{special}{$name} || $_factory->{special}{$name};
 
                if (defined $sub) {
-                  my $idx = @_local;
-                  push @_local, $sub;
-                  push @_local, \%attr;
-                  push @_local, $_self->_dom2sub($node, $_factory, $_package);
-                  $_res .= '<:
-                     $_dom2sub_local->['.($idx).'](
-                           $_dom2sub_local->['.($idx+1).'],
-                           capture { $_dom2sub_local->['.($idx+2).']() },
-                           $_dom2sub_self,
-                     )
-                  :>';
+                  my $idx = @$_local;
+                  if (ref $sub eq "REF") {
+                     push @$_local, $_self->_dom2sub($node, $_factory, $_package);
+                     $_res .= $$sub->(
+                           \%attr,
+                           '<:$_dom2sub_local['.($idx).']():>',
+                           $_self,
+                     );
+                  } else {
+                     push @$_local, $sub;
+                     push @$_local, \%attr;
+                     push @$_local, $_self->_dom2sub($node, $_factory, $_package);
+                     $_res .= '<:
+                        $_dom2sub_local['.($idx).'](
+                              $_dom2sub_local['.($idx+1).'],
+                              capture { $_dom2sub_local['.($idx+2).']() },
+                              $_dom2sub_self,
+                        )
+                     :>';
+                  }
                } else {
                   $_res .= "&lt;&lt;&lt; undefined special '$name' containing '";
                   __dom2sub($node);
@@ -308,11 +331,12 @@ sub _dom2sub($$$$) : locked {
    local $_factory = shift;
    local $_package =  shift;
 
-   local @_local;
+   my @_dom2sub_local;
+   local $_local = \@_dom2sub_local;
+
    local $_res;
    __dom2sub($_dom);
 
-   my $_dom2sub_local = \@_local;
    my $_dom2sub_self = $_self;
    my $_dom2sub_str = <<EOC;
 package $_package;
@@ -321,6 +345,10 @@ sub {
 ${\(PApp::Parser::phtml2perl($_res))}
 }
 EOC
+   {
+      use utf8;
+      $_doc2sub_str =~ tr/\x{80}-\x{ff}//UC;
+   }
    my $self = $_self;
    my $sub = eval $_dom2sub_str;
 
@@ -331,6 +359,46 @@ EOC
       delete $_factory->{err};
       return $sub;
    }
+}
+
+=item $template->localvar([content]) [WIZARDRY]
+
+Create a local variable that can be used inside specials and return a
+string representation of it (i.e. a magic token that represents the lvalue
+of the variable when compiled). Can only be called during compilation.
+
+=cut
+
+sub localvar($$;$) {
+   my ($self, $val) = @_;
+   my $idx = @$_local;
+   push @$_local, $val;
+   '$_dom2sub_local['.($idx).']';
+}
+
+=item $template->gen_surl(<surl-arguments>) [WIZARDY]
+
+Returns a string representing a perl statement returning the surl.
+
+=cut
+
+sub gen_surl($;@) {
+   my $self = shift;
+   my $var = $self->localvar(\@_);
+   "surl(\@{$var})";
+}
+
+=item $template->gen_slink(<surl-arguments>) [WIZARDY]
+
+Returns a string representing a perl statement returning the slink.
+
+=cut
+
+sub gen_slink($;@) {
+   my $self = shift;
+   my $content = $self->localvar(shift);
+   my $surl = $self->gen_surl($content);
+   "slink($content, $surl)";
 }
 
 =item $template->attr(key, [newvalue])
@@ -350,8 +418,9 @@ sub attr($$;$) {
 
 =item $template->print
 
-Print (and execute any required specials). You cna capture the output
-using the C<PApp::capture> function.
+Print (and execute any required specials). You can capture the output
+using the C<PApp::capture> function. The output will be in iso-8859-1, not
+utf8, as one might expect.
 
 =cut
 

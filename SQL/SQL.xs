@@ -20,8 +20,8 @@ typedef struct lru_node {
 } lru_node;
 
 static lru_node lru_list;
-static int lru_size    =  0;
-static int lru_maxsize = 50;
+static int lru_size;
+static int lru_maxsize;
 
 #define lru_init lru_list.next = &lru_list; lru_list.prev = &lru_list /* other fields are zero */
 
@@ -122,6 +122,16 @@ static void lru_store(SV *dbh, SV *sql, SV *sth)
   lru_list.next = n;
 }
 
+static void lru_cachesize (int size)
+{
+  if (size >= 0)
+    {
+      lru_maxsize = size;
+      while (lru_size > lru_maxsize)
+        lru_nukeone ();
+    }
+}
+
 static GV *sql_exec;
 static GV *DBH;
 
@@ -130,22 +140,24 @@ MODULE = PApp::SQL		PACKAGE = PApp::SQL
 PROTOTYPES: DISABLE
 
 BOOT:
-   lru_init;
+{
    sql_exec = gv_fetchpv ("PApp::SQL::sql_exec", TRUE, SVt_PV);
    DBH      = gv_fetchpv ("PApp::SQL::DBH"     , TRUE, SVt_PV);
+
+   /* apache migth BOOT: twice :( */
+   if (lru_size)
+     lru_cachesize (0);
+
+   lru_init;
+   lru_cachesize (50);
+}
 
 int
 cachesize(size = -1)
 	int	size
 	CODE:
         RETVAL = lru_maxsize;
-        if (size >= 0)
-          {
-            lru_maxsize = size;
-            while (lru_size > lru_maxsize)
-              lru_nukeone ();
-          }
-
+        lru_cachesize (size);
         OUTPUT:
         RETVAL
 
@@ -370,6 +382,14 @@ sql_exec(...)
             else
               XPUSHs (sth);
 
+            if (ix || GIMME_V == G_VOID)
+              {
+                PUSHMARK (SP);
+                XPUSHs (sth);
+                PUTBACK;
+                (void) call_method ("finish", G_DISCARD);
+                SPAGAIN;
+              }
           }
 }
 

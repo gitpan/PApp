@@ -19,36 +19,46 @@ macro/editform - macros used for creating sql editing forms
 sub ef_edit*() {
    $S{ef_edit};
 }
+
+my $EF_KEY = "ef000000";
+my $ef_args;
+
+sub ef_nextid($) {
+   my $field = shift;
+   my $key = $EF_KEY++;
+   $ef_args->{$key}{field} = $field;
+   $key;
+}
+
 ]]></xperl>
 
 <macro name="ef_parse*"><phtml><![CDATA[
 <:
-   my $ef = delete $A{ef};
+   my $ef = delete $A{ef_args};
    return unless $ef;
    local *FILE;
+   my %multi;
 
    if (reload_p) {
       echo __"[not updating anything due to page reload]", "<br>";
    } else {
       my %set;
-      echo "<tt>";
-      if (!defined $ef->{where}[1]) {
-         # no id, lets try to create one (lets hope the where clause is an auto_increment)
-         my $st = sql_exec "insert into $ef->{table} ($ef->{where}[0]) values (NULL)";
-         $ef->{where}[1] = sql_insertid;
-         echo "creating new row ($ef->{where}[1])<br>";#d#
-      }
-      while (my ($field, $data) = each %{$ef->{constant}}) {
-         sql_exec "update $ef->{table} set $field = ? where $ef->{where}[0] = ?",
-                  $data, $ef->{where}[1];
-         echo "updating $field: ", ($DBI::errstr||"ok"), "<br>";
-      }
       parse_multipart_form {
          my ($fh, $name, $ct, $cd) = @_;
          my $data;
-         if ($name =~ /^file_(.*)$/) {
-            my $path = $ef->{file}{$1};
+         my $field = $ef->{$name};
+
+         if (defined $field->{field}) {
+            $fh->read($data, 1024*128);
+            $data =~ s/\r\n$//;
+            if (exists $field->{multi}) {
+               push @{$field->{multi}}, $data;
+            } else {
+               ${$field->{field}} = $data;
+            }
+         } elsif (my $path = $field->{path}) {
             my $prev;
+            echo "<tt>";
             echo "file upload to '$path'<br>";
             if (open FILE, ">", "$path~") {
                my $size = 0;
@@ -75,29 +85,18 @@ sub ef_edit*() {
             } else {
                echo "=&gt;&nbsp;$path~: $!<br>";
             }
+            echo "</tt>";
          } else {
-            $fh->read($data, 1024*128);
-            $data =~ s/\r\n$//;
-            if ($name =~ /^field_(.*)$/) {
-               my $field = $1;
-               sql_exec "update $ef->{table} set $field = ? where $ef->{where}[0] = ?",
-                        $data, $ef->{where}[1];
-               echo "updating $field: ", ($DBI::errstr||"ok"), "<br>";
-            } elsif ($name =~ /^set_(.*)$/) {
-               push @{$set{$1}}, $data;
-            } else {
-               return 0;
-            }
+            # submit et. al.
          }
          return 1;
       };
-      while (my ($field, $vals) = each %set) {
-         sql_exec "update $ef->{table} set $field = ? where $ef->{where}[0] = ?",
-                  join (",", @$vals), $ef->{where}[1];
-         echo "updating $field: ", ($DBI::errstr||"ok"), "<br>";
+
+      for my $field (values %$ef) {
+         ${$field->{field}} = $field->{multi}    if exists $field->{multi};
+         ${$field->{field}} = $field->{constant} if exists $field->{constant};
       }
    }
-   echo "</tt>";
    return 1;
 :>
 ]]></phtml></macro>
@@ -110,101 +109,107 @@ sub ef_edit*() {
 #endif
 ]]></phtml></macro>
 
-<macro name="ef_submit*"><phtml><![CDATA[
-   <?submit "submit_editform", __"Save Changes":>
+<macro name="ef_submit*(;$)" args="$text"><phtml><![CDATA[
+   <?submit "submit_editform", $text || __"Save Changes":>
 ]]></phtml></macro>
 
 <macro name="ef_reset*"><phtml><![CDATA[
    <?submit "reset", __"Restore Values":>
 ]]></phtml></macro>
 
-<macro name="ef_begin*" args="$table $where"><phtml><![CDATA[
+<macro name="ef_begin*"><phtml><![CDATA[
    <:ef_parse:>
    <?
       multipart_form;
    :>
-   <:$ef_table = $table:>
-   <:$ef_where = $where:>
-   <:$ef_args = {
-         table => $table,
-         where => $where,
-      };
-   :>
-
-#if 0
-#if $S{ef_edit}
-   <?slink __"[Edit mode OFF]", ef_edit => 0?>
-#endif
-   [$table.$where->[0] == $where->[1]]
-#endif
 ]]></phtml></macro>
 
-<macro name="ef_end*"><phtml><![CDATA[
-   <?endform -ef => $ef_args:>
+<macro name="ef_end*"><phtml><![CDATA[<:
+   echo endform -ef_args => $ef_args;
+   undef $ef_args;
+:>]]></phtml></macro>
+
+<macro name="ef_string*" args="$field $len"><phtml><![CDATA[
+   <?textfield ef_nextid($field), value => $$field, size => $len||20:>
 ]]></phtml></macro>
 
-<macro name="ef_string*" args="$content $field $len"><phtml><![CDATA[
-   <?textfield "field_$field", value => $content, size => $len||20:>
-]]></phtml></macro>
-
-<macro name="ef_text*" args="$content $field $w $h"><phtml><![CDATA[
+<macro name="ef_text*" args="$field $w $h"><phtml><![CDATA[
    <:$h ||= int (length ($content) / ($w-5.0001)) + 30:>
-   <?textarea "field_$field", cols => $w, rows => $h, wrap => undef?>$content</textarea>
+   <?textarea ef_nextid($field), cols => $w, rows => $h, wrap => undef?><?escape_html $$field:></textarea>
 ]]></phtml></macro>
 
-<macro name="ef_optionbox*" args="$content $field $values"><phtml><![CDATA[
+<![CDATA[
+=item ef_optionbox $ref, values...
+
+Creates an optionbox for the given values. If $$ref evaluates to an
+array-ref a multiple-select optionbox is created, otherwise a simple
+single-select box is used. C<values>... can be as many C<value =>
+description< pairs as you like.
+
+=cut
+]]>
+
+<macro name="ef_optionbox*" args="$field @values"><phtml><![CDATA[
 <:
+   my $values = ref $values[0] eq "ARRAY" ? $values[0] : \@values;
+
    my %content;
+   my $content = $$field;
+
+   my $id = ef_nextid $field;
+
    if (ref $content) {
       @content{@$content} = ();
-      echo "<select name=set_$field multiple>";
+      echo "<select name=$id multiple>";
+      $ef_args->{$id}{multi} = [];
    } else {
       $content{$content} = ();
-      echo "<select name=set_$field>";
+      echo "<select name=$id>";
    }
 
    for (my $i = 0; $i < $#$values; $i += 2) {
       echo "<option";
       echo " selected" if exists $content{$$values[$i]};
-      echo " value='$$values[$i]'>".__($$values[$i+1])."</option>";
+      echo " value=".escape_attr($$values[$i]).">".escape_html($$values[$i+1])."</option>";
    }
    echo "</select>";
 :>
 ]]></phtml></macro>
 
-<macro name="ef_relation*" args="$content $field $relation"><phtml><![CDATA[
+<macro name="ef_relation*" args="$field $relation @values"><phtml><![CDATA[
 <:
    my ($sel, @arg) = @$relation;
-   echo "<select name=field_$field>";
    my $st = sql_exec \my($id,$val), "select $sel order by 2";
-   # FIXME #d# use ef_optionbox?
-   while ($st->fetch) {
-      echo "<option";
-      echo " selected" if $id eq $content;
-      echo " value=$id>$val</option>";
-   }
-   echo "</select>";
+   push @values, $id => $val while $st->fetch;
+   ef_optionbox $field, \@values;
 :>
 ]]></phtml></macro>
 
-<macro name="ef_set*" args="$content $field"><phtml><![CDATA[
+<macro name="ef_set*" args="$field $relation"><phtml><![CDATA[
 <:
-   my $st = sql_exec "show columns from $ef_table like ?", $field;
+   my ($table, $fild) = @$relation;
+   my $st = sql_exec "show columns from $table like ?", $fild;
    my $type = $st->fetchrow_arrayref->[1];
-   $type =~ s/^set\('(.*)'\)$/$1/ or die "ef_set: field '$field' is not of set type\n";
+   $type =~ s/^set\('(.*)'\)$/$1/ or die "ef_set: field '$fild' is not of set type\n";
 
-   ef_optionbox [split /,/, $content], $field, [ map {$_, $_} split /','/, $type ];
+   ef_optionbox $field, map {$_, $_} split /','/, $type;
+
+   #ef_optionbox [split /,/, $$field], $field, [ map {$_, $_} split /','/, $type ];
 :>
 ]]></phtml></macro>
 
-<macro name="ef_file*" args="$path $name"><phtml><![CDATA[<?
-     filefield "file_$name":>
-   <:$ef_args->{file}{$name} = $path:>
+<macro name="ef_file*" args="$path"><phtml><![CDATA[
+<:
+   my $id = ef_nextid(undef);
+   $ef_args->{$id}{path} = $path;
+   echo filefield $id;
+:>
 ]]></phtml></macro>
 
-<macro name="ef_constant*" args="$content $name"><phtml><![CDATA[
+<macro name="ef_constant*" args="$field $value"><phtml><![CDATA[
 <:
-   $ef_args->{constant}{$name} = $content;
+   my $id = ef_nextid($field);
+   $ef_args->{$id}{constant} = $value;
 ?>
 ]]></phtml></macro>
 

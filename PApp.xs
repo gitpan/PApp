@@ -7,6 +7,16 @@ typedef unsigned char uchar;
 static uchar e64[ 64] = "0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ.abcdefghijklmnopqrstuvwxyz";
 static uchar d64[256];
 
+MODULE = PApp		PACKAGE = PApp
+
+SV *
+weaken(sv)
+	SV *sv
+	CODE:
+        RETVAL = SvREFCNT_inc (sv_rvweaken(sv));
+	OUTPUT:
+        RETVAL
+
 MODULE = PApp		PACKAGE = PApp::X64
 
 BOOT:

@@ -1,76 +1,115 @@
-#/usr/app/lib/perl5/PApp.pm:692 <head><title>".[TEXT]."</title></head>
+#,lang=de
+#:/usr/app/lib/perl5/PApp.pm:716 <head><title>".__"page redirection"."</title></head>
 msgid "page redirection"
 msgstr "Weiterleitung"
 
-#/usr/app/lib/perl5/PApp.pm:697 ".[TEXT]."
+#,lang=de
+#:/usr/app/lib/perl5/PApp.pm:721 ".__"The automatic redirection  has failed. Please try a <i>slightly</i> newer browser next time, and in the meantime <i>please</i> follow this link ;)"."
 msgid "The automatic redirection  has failed. Please try a <i>slightly</i> newer browser next time, and in the meantime <i>please</i> follow this link ;)"
 msgstr "Die automatische Weiterleitung ist  fehlgeschlagen (wie wärs das nächste Mal mit einem <em>etwas</em> neuerem Browser??). Bitte folgen Sie derweil diesem Link..."
 
-#/fluffball/macro/admin.papp:217             echo errbox [TEXT], __"no such user or wrong password";
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:226             echo errbox __"Login failed", 
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
 
-#/fluffball/macro/admin.papp:217             echo errbox [TEXT], [TEXT];
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:226 __"no such user or wrong password";
 msgid "no such user or wrong password"
 msgstr "Falsches Passwort oder Benutzer unbekannt"
 
-#/fluffball/macro/editform.papp:108    <?submit "reset", [TEXT]:>
-msgid "Restore Values"
-msgstr "Felder zurücksetzen"
-
-#/fluffball/macro/util.papp:26    [TEXT]
-msgid "I fear you do not have the necessary... well... access rights to do anything on this page..."
-msgstr "Ich fürchte, Sie haben nicht die notwendigen.. äh, ähm... Zugriffsrechte für diese Seite..."
-
-#/fluffball/macro/editform.papp:127    <?slink [TEXT], ef_edit => 0?>
-msgid "[Edit mode OFF]"
-msgstr "[Edit-Modus AUS]"
-
-#/fluffball/macro/util.papp:28      <p>[returl] <?retlink [TEXT]:>
-msgid "Go Back"
-msgstr "Zurück"
-
-#/fluffball/macro/editform.papp:25       echo [TEXT], "<br>";
-msgid "[not updating anything due to page reload]"
-msgstr "[kein Update wegen Page-Reload]"
-
-#/fluffball/macro/editform.papp:100    <?slink [TEXT], ef_edit => 1:><p>
-msgid "[Edit this page]"
-msgstr "[Diese Seite ändern]"
-
-#/fluffball/macro/util.papp:31      <p>[referer] <?alink [TEXT], $request->header_in('Referer'):>
+#,lang=de
+#:/usr/fluffball/macro/util.papp:83      <p>[referer] <?alink __"Send me back to wherever I came from", $request->header
 msgid "Send me back to wherever I came from"
 msgstr "Zurück nach woauchimmer ich herkam..."
 
-#/fluffball/macro/editform.papp:104    <?submit "submit_editform", [TEXT]:>
+#,lang=de
+#:/usr/fluffball/macro/util.papp:80      <p>[returl] <?retlink __"Go Back":>
+msgid "Go Back"
+msgstr "Zurück"
+
+#,lang=de
+#:/usr/fluffball/macro/editform.papp:43       echo __"[not updating anything due to page reload]", "<br>";
+msgid "[not updating anything due to page reload]"
+msgstr "[kein Update wegen Page-Reload]"
+
+#,lang=de
+#:/usr/fluffball/macro/editform.papp:118    <?submit "reset", __"Restore Values":>
+msgid "Restore Values"
+msgstr "Felder zurücksetzen"
+
+#,lang=de
+#:/usr/fluffball/macro/util.papp:78    __"I fear you do not have the necessary... well... access rights to do anything on this page..."
+msgid "I fear you do not have the necessary... well... access rights to do anything on this page..."
+msgstr "Ich fürchte, Sie haben nicht die notwendigen.. äh, ähm... Zugriffsrechte für diese Seite..."
+
+#,lang=de
+#:/usr/fluffball/macro/editform.papp:114 editform", __"Save Changes":>
 msgid "Save Changes"
 msgstr "Änderungen Speichern"
 
-#/fluffball/macro/admin.papp:267          <?sprintf [TEXT], PApp::reload_p:><br>
-msgid "This page has been reloaded <b>%d</b> times."
-msgstr "Diese Seite wurde <b>%d</b> mal neugeladen."
-
-#/fluffball/macro/admin.papp:264          [TEXT]<br>
-msgid "(You are not currently logged in)"
-msgstr "(Du bist z.Zt. nicht angemeldet)"
-
-#/fluffball/macro/admin.papp:260          [TEXT]<b>$PApp::userid</b><br>
-msgid "You are currently known to me as user #"
-msgstr "Im Moment bist du für mich Benutzer #"
-
-#/fluffball/macro/admin.papp:270          [TEXT]<p>
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:279          __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p>
 msgid "Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"
 msgstr "Nie, aber auch wirklich <i>NIEMALS</i> sollte eine URL mit dem hex-hash extern verwendet werden!"
 
-#/fluffball/macro/admin.papp:262          [TEXT] "<b><?join ", ", keys %{$state{papp}{access}}:></b>"<br>
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:269          __"You are currently known to me as user #"<b>$PApp::userid</b><br>
+msgid "You are currently known to me as user #"
+msgstr "Im Moment bist du für mich Benutzer #"
+
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:273          __"(You are not currently logged in)"<br>
+msgid "(You are not currently logged in)"
+msgstr "(Du bist z.Zt. nicht angemeldet)"
+
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:276          <?sprintf __"This page has been reloaded <b>%d</b> times.", PApp::reload
+msgid "This page has been reloaded <b>%d</b> times."
+msgstr "Diese Seite wurde <b>%d</b> mal neugeladen."
+
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:271          __"Current access rights include" "<b><?join ", ", keys %{$state{papp}{access}}:></b>"<br>
 msgid "Current access rights include"
 msgstr "Die aktuellen Zugriffsrechte sind"
 
-#/fluffball/macro/admin.papp:269          [TEXT] <?alink ((reference_url 1)x2):><br>
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:278          __"<i>Possible(!)</i> URI (for referencing) of this page:" <?alink ((reference
 msgid "<i>Possible(!)</i> URI (for referencing) of this page:"
-msgstr "<i>Mögliche</i> URI (zum externen ver\"link\"en dieser Seite:"
+msgstr "<i>Mögliche</i> URI (zum externen ver\\"link\\"en dieser Seite:"
 
-#/fluffball/macro/admin.papp:271          <?slink [TEXT], papp_logout => 1:>
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:280          <?slink __"Reload page and drop all priviledges", papp
 msgid "Reload page and drop all priviledges"
 msgstr "Seite neuladen und alle Zugriffsrechte abgeben."
+
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:236             __"You may log-in now!"
+msgid "You may log-in now!"
+msgstr "Sie können sich nun einloggen!"
+
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:240             __"Password:"</td><td><?password
+msgid "Password:"
+msgstr "Passwort:"
+
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:238             __"Username:"</td><td><?textfield "papp
+msgid "Username:"
+msgstr "Benutzername:"
+
+#,lang=de
+#:/usr/fluffball/macro/admin.papp:242             <?submit "login" => __"Log In":>
+msgid "Log In"
+msgstr "Anmelden"
+
+#,lang=de
+#:/usr/fluffball/macro/editform.papp:107    <?slink __"[Leave Edit Mode]", ef
+msgid "[Leave Edit Mode]"
+msgstr "[Edit-Modus AUS]"
+
+#,lang=de
+#:/usr/fluffball/macro/editform.papp:109    <?slink __"[Enter Edit Mode]", ef
+msgid "[Enter Edit Mode]"
+msgstr "[Edit-Modus EIN]"
 

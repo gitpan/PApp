@@ -15,15 +15,15 @@ use Carp;
 use FileHandle ();
 
 BEGIN {
-   $VERSION = 0.07;
+   $VERSION = 0.08;
    @ISA = qw/Exporter/;
    @EXPORT = qw(
 
          errbox
 
          alink mailto_url filefield param submit textfield password_field
-         textarea escape_html escape_uri hidden unixtime2http checkbox
-         radio reset_button submit_image selectbox
+         textarea escape_html escape_uri escape_attr hidden unixtime2http
+         checkbox radio reset_button submit_image selectbox
 
    );
 }
@@ -31,6 +31,18 @@ BEGIN {
 =head1 FUNCTIONS
 
 =over 4
+
+=item escape_html $arg
+
+Returns the html-escaped version of C<$arg>.
+
+=item escape_uri $arg
+
+Returns the uri-escaped version of C<$arg>.
+
+=item escape_attr $arg
+
+Returns the attribute-escaped version of C<$arg>.
 
 =cut
 
@@ -44,6 +56,12 @@ sub escape_uri($) {
    local $_ = shift;
    s/([()<>%&?,; ='"\x00-\x1f\x80-\x9f])/sprintf "%%%02X", ord($1)/ge;
    $_;
+}
+
+sub escape_attr($) {
+   local $_ = shift;
+   s/('[<>&\x00-\x1f\x80-\x9f])/sprintf "&#%d;", ord($1)/ge;
+   "'$_'";
 }
 
 my @MON  = qw/Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;

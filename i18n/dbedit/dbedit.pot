@@ -1,21 +1,21 @@
 #,lang=en
-#:/root/src/Fluffball/apps/dbedit.papp:363       print "</table><p>", submit([TEXT];
+#:/root/src/Fluffball/apps/dbedit.papp:369       print "</table><p>", submit(__"Update");
 msgid "Update"
 msgstr ""
 
 #,lang=en
-#:/root/src/Fluffball/apps/dbedit.papp:24          <?retlink [TEXT]:><p>
+#:/root/src/Fluffball/apps/dbedit.papp:29          <?retlink __"Go Back":><p>
 msgid "Go Back"
 msgstr ""
 
 #,lang=en
-#:/root/src/Fluffball/apps/dbedit.papp:20    access_page "admin", [TEXT], sub {
-#:/root/src/Fluffball/apps/dbedit.papp:22          <h1>[TEXT]</h1>
-msgid "MySQL Database Editor"
+#:/root/src/Fluffball/apps/dbedit.papp:32          &gt; <?slink __"Databases", "" :>
+msgid "Databases"
 msgstr ""
 
 #,lang=en
-#:/root/src/Fluffball/apps/dbedit.papp:27          &gt; <?slink [TEXT], "" :>
-msgid "Databases"
+#:/root/src/Fluffball/apps/dbedit.papp:25 page "admin", __"MySQL Database Editor", sub {
+#:/root/src/Fluffball/apps/dbedit.papp:27          <h1>__"MySQL Database Editor"</h1>
+msgid "MySQL Database Editor"
 msgstr ""
 

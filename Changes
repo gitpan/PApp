@@ -1,5 +1,46 @@
 Revision history for Perl extension PApp
 
+0.08  Sun Jun 18 23:53:50 CEST 2000
+	- PApp now overwrites $SIG{__DIE__}, be careful!
+	- PApp::Exception has a compatibility mode now.
+        - fixed the preferences system to actually make *sense*.
+        - fixed memory corruption bug in SQL.xs that happens
+          because mod_perl BOOT:'s the same object twice :(
+        - fixed documentation of PApp::I18n, PApp::FormBuffer.
+        - PApp::Env and PApp::SQL should be more resistent to restarts.
+        - removed gen-db.sql.
+        - added PApp::DataRef.
+        - added <description> tag to papp, maybe soon followed
+          by <copyright> and <version>.
+        - workaround for mod_perl or perl bug that causes the 'bool'ean
+          value of error messages to be shown instead of their string
+          value. Funny, might be the same bug as with Storable, but
+          for totally different reasons ;)
+        - DataRef'ied macro/editform and the apps that were using it.
+        - PApp::SQL::*fetch methods call finish on the statement handle,
+          as does sql_exec in void context.
+        - load_prefs allows empty prefs settings and doesn't log you
+          out if the preferences field is empty.
+        - fixed PApp::Callback::create_callback.
+        - added experimental preferences field for acedit.
+        - surl now uses "use bytes" because otherwise.. strange things happen.
+        - implemented ref-to-coderef special in PApp::XML.
+        - _really_ commented out #?? in PApp/Parser.
+        - added more compliation facilities to PApp::XML.
+        - implemented "delayed" option which is handy for debugging
+          (improves server restart speed at the expense of more memory).
+        - DataRef/use base: worked around an overload bug in perl.
+        - now flushing translation cache on childinit.
+        - apps/poedit now allows finer-grained access rights "poedit_*" = all
+          apps, "poedit_<app>" = application app etc...
+        - various other small enhancements to apps/poedit, and i18n in general,
+          much more to come!
+        - added life-saving(!!!) index on papp.msgid.id, better execute
+          "alter table papp.msgid add index (id(64))" on your existing
+          installation(s).
+        - fixed apps/dbedit error-reporting (what was it supposed to do?).
+        - improved apps/acedit to also work on groups.
+
 0.07  Fri Jun  9 22:14:36 CEST 2000
 	- fixed dumb typoe in macro/util.papp :(
         - added PApp::Env module.
@@ -27,7 +68,7 @@ Revision history for Perl extension PApp
 
 0.04  Thu May 11 03:24:07 CEST 2000
 	- too many things to remember.
-        - a first try at an instalaltino script and a config mechanism
+        - a first try at an installation script and a config mechanism.
         - PApp::I18n now uses it's own format. With the
           (not-yet-implemented) pre-sorting it should require less random
           accesses then gettext. Also supports binary formats (i.e. you

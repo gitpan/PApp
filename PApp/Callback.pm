@@ -6,10 +6,12 @@ PApp::Callback - a workaround for the problem of nonserializable code.
 
  use PApp::Callback;
 
- my $function = register_callback BLOCK/CODEREF/FUNCNAME, "key => value...";
+ my $function = register_callback BLOCK [key => value...];
  my $cb = $function->refer([args...]);
 
  &$cb;
+
+ my $cb = create_callback BLOCK [key => value...];
 
 =head1 DESCRIPTION
 
@@ -35,8 +37,8 @@ require 5.006;
 require Exporter;
 
 @ISA = qw(Exporter);
-$VERSION = 0.07;
-@EXPORT = qw(register_callback);
+$VERSION = 0.08;
+@EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...
 
@@ -88,7 +90,19 @@ sub register_callback(&;@) {
       id        => $id,
    }, __PACKAGE__;
 
-   $self;
+   $attr{__do_refer} ? $self->refer : $self;
+}
+
+=item create_callback <same arguments as register_callback>
+
+Just like C<register_callback>, but additionally calls C<refer> on the
+result, returning the function reference directly.
+
+=cut
+
+sub create_callback(&;@) {
+   push @_, __do_refer => 1;
+   goto &register_callback;
 }
 
 =item $cb = $func->refer([args...])
@@ -99,7 +113,7 @@ code reference, e.g.:
 
  $cb->call(4,5,6);
  $cb->(4,5,6);
- &$cb;
+ &$cb; # this does not work with Storable-0.611 and below
 
 It will behave as if the original registered callback function would be
 called with the arguments given to C<register_callback> first and then the

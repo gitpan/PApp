@@ -4,6 +4,11 @@ package PApp::FormBuffer;
 
 PApp::FormBuffer - a re-blocking buffer for multipart streams
 
+=head1 SYNOPSIS
+
+ use PApp::FormBuffer;
+ # not yet
+
 =head1 DESCRIPTION
 
 In flux ;-> See C<parse_multipart_form> in L<PApp>.
@@ -24,7 +29,7 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.07;
+$VERSION = 0.08;
 
 use PApp::Exception;
 

@@ -4,7 +4,18 @@ package PApp::I18n;
 
 PApp::I18n - internationalization support for PApp
 
-=over 4
+=head1 SYNOPSIS
+
+   use PApp::I18n;
+
+   my $translator = open_translator "/libdir/i18n/myapp", qw(de en);
+   my $table = $translator->get_language("uk,de,en"); # will return de translator
+   print $table->gettext("yeah"); # better define __ and N_ functions
+
+=head1 DESCRIPTION
+
+This module provides basic translation services, .po-reader and writer
+support and text and database scanners to identify tagged strings.
 
 =cut
 
@@ -17,7 +28,7 @@ use PApp::Exception;
 BEGIN {
    require Exporter;
 
-   $VERSION = 0.07;
+   $VERSION = 0.08;
    @ISA = qw(Exporter);
    @EXPORT = qw(
          open_translator
@@ -29,6 +40,12 @@ BEGIN {
    require XSLoader;
    XSLoader::load PApp::I18n, $VERSION;
 }
+
+our @table_registry;
+
+=head2 TRANSLATION SUPPORT
+
+=over 4
 
 =item open_translator $path, lang1, lang2...
 
@@ -49,6 +66,8 @@ sub new {
    my $class = shift;
    my $self = { @_ };
    bless $self, $class;
+   push @table_registry, PApp::weaken(my $wref = $self);
+   $self;
 }
 
 #=item expand_lang langid, langid... [internal utility function]
@@ -124,15 +143,53 @@ To assure that the string is translated "as is" just prefix it with "\{}".
 
 =cut
 
+=item flush_cache
+
+Flush the translation table cache. This is rarely necessary, translation
+hash files are not written to. This can be used to ensure that new calls
+to C<get_language>
+
+=cut
+
+sub flush_cache {
+   if (@_) {
+      my $self = shift;
+      delete $self->{db};
+   } else {
+      my @tables = @table_registry;
+      @table_registry = ();
+      for(@tables) {
+         if ($_) {
+            push @table_registry, $_;
+            $_->flush_cache;
+         }
+      }
+   }
+}
+
 #############################################################################
 
 use PApp::SQL;
 use String::Similarity 'fstrcmp';
 
+=back
+
+=head2 SCANNING SUPPORT
+
+As of yet undocumented
+
+=over 4
+
+=cut
+
 # our because of my due to mod_perl bugs
 our %scan_msg;
 our $scan_app;
 our $scan_langs;
+
+=item scan_init
+
+=cut
 
 sub scan_init {
    ($scan_app, $scan_langs) = @_;
@@ -140,6 +197,10 @@ sub scan_init {
    print "Scanning ", $scan_app, ", for @$scan_langs\n";
    sql_exec "update msgid set context = '' where app = ?", $scan_app;
 }
+
+=item scan_str $prefix, $string, $lang
+
+=cut
 
 sub scan_str($$$) {
    my ($prefix, $string, $lang) = @_;
@@ -161,6 +222,10 @@ sub scan_str($$$) {
    }
 }
 
+=item scan_init
+
+=cut
+
 sub scan_file($$) {
    my ($path, $lang) = @_;
    local *FILE;
@@ -169,6 +234,10 @@ sub scan_file($$) {
    local $/;
    scan_str($path, scalar<FILE>, $lang);
 }
+
+=item scan_field $dsn, $field, $style, $lang
+
+=cut
 
 sub scan_field {
    my ($dsn, $field, $style, $lang) = @_;
@@ -219,12 +288,20 @@ sub fuzzy_search  {
     \%best;
 }
 
+=item scan_end
+
+=cut
+
 sub scan_end {
-   my $refine = shift() ? "and flags & 1 = 1" : "";
+   my $refine = shift() ? " and flags & 1 = 1" : "";
+   my $st1 = $PApp::SQL::DBH->prepare("select nr from msgid where id = ? and app = ? and lang = ?");
+   my $st2 = $PApp::SQL::DBH->prepare("select msg from msgstr where nr = ? and lang = ?$refine");
    while (my ($lang, $v) = each %scan_msg) {
       while (my ($msg, $context) = each %$v) {
          $context = join "\n", @$context;
-         my $nr = sql_fetch "select nr from msgid where id = ? and app = ? and lang = ?", $msg, $scan_app, $lang;
+         $st1->execute($msg, $scan_app, $lang);
+         $st1->bind_columns(\my($nr));
+         $st1->fetch;
          unless ($nr) {
             sql_exec "insert into msgid values (NULL, ?, ?, ?, ?)",
                      $msg, $scan_app, $lang, $context;
@@ -233,8 +310,8 @@ sub scan_end {
          my $best;
          for my $lang2 (@$scan_langs) {
             next if $lang eq $lang2;
-            my $msg2 = sql_fetch "select msg from msgstr where nr = ? and lang = ? $refine",
-                                 $nr, $lang2;
+            $st2->execute($nr, $lang2);
+            my ($msg2) = $st2->fetchrow_array;
             if (!$msg2) {
                $best = fuzzy_search $msg unless $best;
                sql_exec "replace into msgstr values (?, ?, ?, ?)",
@@ -247,6 +324,10 @@ sub scan_end {
    }
    ($scan_app, $scan_lang, %scan_msg) = ();
 }
+
+=item export_po $pmod
+
+=cut
 
 sub export_po {
    my $pmod = shift;
@@ -287,11 +368,16 @@ sub export_po {
    }
 }
 
+=item export_dbm $pmod
+
+=cut
+
 sub export_dbm {
    my $pmod = shift;
    my $base = "$pmod->{i18ndir}/$pmod->{name}";
    mkdir $base, 0755;
    for my $lang (grep !ref$pmod->{lang}{$_}, keys %{$pmod->{lang}}) {
+      mkdir $base, 0755 unless -e $base;
       my $pofile = "$base/$lang.dpo";
       my $st = sql_exec \my($id, $msg),
                         "select id, msg from msgid, msgstr
@@ -358,7 +444,9 @@ use Carp;
 
 =back
 
-=head1 CLASS PApp::I18n::PO_Reader
+=head2 PO READING AND WRITING
+
+CLASS PApp::I18n::PO_Reader
 
 This class can be used to read serially through a .po file. (where "po
 file" is about the same thing as a standard "Portable Object" file from
@@ -446,7 +534,7 @@ use Carp;
 
 =back
 
-=head1 CLASS PApp::I18n::PO_Writer
+CLASS PApp::I18n::PO_Writer
 
 This class can be used to write a new .po file. (where "po file" is about
 the same thing as a standard "Portable Object" file from the NLS standard
