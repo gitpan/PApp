@@ -35,6 +35,20 @@ static MGVTBL vtbl_agni_object = {0, 0, 0, 0, 0};
 #define MAKEVERS(r,v,s) (((r) << 24) || ((v) << 12) || (s))
 #define PERLVERS MAKEVERS(PERL_REVISION, PERL_VERSION, PERL_SUBVERSION)
 
+static const char *
+AGNI_OBJ_STRING (SV *self)
+{
+  static char s[80];
+  HE *path = hv_fetch_ent ((HV *)SvRV (self), PATHs, 0, PATHh);
+  HE *gid  = hv_fetch_ent ((HV *)SvRV (self), GIDs , 0, GIDh);
+
+  sprintf (s, "%s/%s",
+      path ? SvPV_nolen (HeVAL (path)) : "?",
+      gid  ? SvPV_nolen (HeVAL (gid )) : "?");
+
+  return s;
+}
+
 static void
 compute_hash (char *key, I32 len, SV **sv, U32 *hash)
 {
@@ -92,12 +106,19 @@ agni_key2obj (SV *self, SV **key, int need_member)
   else
     {
       /* NAME, fetch tobj and GID. */
-      HV *hvt = (HV *)SvRV (HeVAL (hv_fetch_ent ((HV *)SvRV (self), TYPEs, 0, TYPEh)));
-      HE *he = hv_fetch_ent (hvt, *key, 0, 0);
+      HV *hvt;
+      HE *he;
+
+      he = hv_fetch_ent ((HV *)SvRV (self), TYPEs, 0, TYPEh);
+      if (!he)
+        croak ("FATAL: object %s has no " TYPEp " member", AGNI_OBJ_STRING (self));
+
+      hvt = (HV *)SvRV (HeVAL (he));
+      he = hv_fetch_ent (hvt, *key, 0, 0);
 
       if (!he)
         if (need_member)
-          croak ("object has no data member named '%s'", key_);
+          croak ("object %s has no data member named '%s'", AGNI_OBJ_STRING (self), key_);
         else
           return 0;
 
@@ -107,7 +128,6 @@ agni_key2obj (SV *self, SV **key, int need_member)
         croak ("type object for '%s' is not an object (bug in populate method?)", key_);
 
       he = hv_fetch_ent ((HV *)SvRV (tobj), GIDs, 0, GIDh);
-
       if (!he)
         croak ("FATAL: type object for '%s' has no GID", key_);
 
@@ -1073,7 +1093,7 @@ sv_dump(sv)
 	SV *	sv
         PROTOTYPE: $
         CODE:
-        sv_dump (sv);
+        sv_dump (SvROK (sv) ? SvRV (sv) : sv);
 
 void
 filter_add(cb)

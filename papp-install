@@ -280,7 +280,7 @@ if ($mode_update && $installed_version < 0.142) {
 }
 
 if ($mode_update && $installed_version < 0.21) {
-   sql_exec "drop table obj_isa";
+   sql_exec "drop table /*! if exists */ obj_isa";
 }
 
 if ($mode_update && $installed_version < 0.22) {

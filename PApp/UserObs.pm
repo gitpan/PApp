@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 =head1 NAME
 
 PApp::UserObs - manage user and access rights
@@ -25,7 +34,7 @@ use PApp::Event ();
 
 use base Exporter;
 
-$VERSION = 0.22;
+$VERSION = 0.95;
 @EXPORT = qw( 
    authen_p access_p admin_p known_user_p update_username choose_username
    update_password update_comment username user_login user_logout userid

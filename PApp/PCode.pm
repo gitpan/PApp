@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 =head1 NAME
 
 PApp::PCode - PCode compiler/decompiler and various other utility functions.
@@ -28,7 +37,7 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 0.22;
+$VERSION = 0.95;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"

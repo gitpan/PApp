@@ -1485,7 +1485,7 @@ stcxt_t *cxt;
  *
  * Tells whether we're in the middle of a store operation.
  */
-int is_storing(void)
+static int is_storing(void)
 {
 	dSTCXT;
 
@@ -1497,7 +1497,7 @@ int is_storing(void)
  *
  * Tells whether we're in the middle of a retrieve operation.
  */
-int is_retrieving(void)
+static int is_retrieving(void)
 {
 	dSTCXT;
 
@@ -1512,7 +1512,7 @@ int is_retrieving(void)
  * This is typically out-of-band information that might prove useful
  * to people wishing to convert native to network order data when used.
  */
-int last_op_in_netorder(void)
+static int last_op_in_netorder(void)
 {
 	dSTCXT;
 
@@ -2166,7 +2166,7 @@ static int store_hash(stcxt_t *cxt, HV *hv)
 	if (
 		!(cxt->optype & ST_CLONE) && (cxt->canonical == 1 ||
 		(cxt->canonical < 0 && (cxt->canonical =
-			(SvTRUE(perl_get_sv("Storable::canonical", TRUE)) ? 1 : 0))))
+			(SvTRUE(perl_get_sv("PApp::Storable::canonical", TRUE)) ? 1 : 0))))
 	) {
 		/*
 		 * Storing in order, sorted by key.
@@ -2407,7 +2407,7 @@ static int store_code(stcxt_t *cxt, CV *cv)
 	if (
 		cxt->deparse == 0 ||
 		(cxt->deparse < 0 && !(cxt->deparse =
-			SvTRUE(perl_get_sv("Storable::Deparse", TRUE)) ? 1 : 0))
+			SvTRUE(perl_get_sv("PApp::Storable::Deparse", TRUE)) ? 1 : 0))
 	) {
 		return store_other(cxt, (SV*)cv);
 	}
@@ -3143,7 +3143,7 @@ static int store_other(stcxt_t *cxt, SV *sv)
 	if (
 		cxt->forgive_me == 0 ||
 		(cxt->forgive_me < 0 && !(cxt->forgive_me =
-			SvTRUE(perl_get_sv("Storable::forgive_me", TRUE)) ? 1 : 0))
+			SvTRUE(perl_get_sv("PApp::Storable::forgive_me", TRUE)) ? 1 : 0))
 	)
 		CROAK(("Can't store %s items", sv_reftype(sv, FALSE)));
 
@@ -3375,7 +3375,7 @@ static int magic_write(stcxt_t *cxt)
         length = sizeof (network_file_header);
     } else {
 #ifdef USE_56_INTERWORK_KLUDGE
-        if (SvTRUE(perl_get_sv("Storable::interwork_56_64bit", TRUE))) {
+        if (SvTRUE(perl_get_sv("PApp::Storable::interwork_56_64bit", TRUE))) {
             header = file_header_56;
             length = sizeof (file_header_56);
         } else
@@ -3531,7 +3531,7 @@ static int do_store(
  * Store the transitive data closure of given object to disk.
  * Returns 0 on error, a true value otherwise.
  */
-int pstore(PerlIO *f, SV *sv)
+static int pstore(PerlIO *f, SV *sv)
 {
 	TRACEME(("pstore"));
 	return do_store(f, sv, 0, FALSE, (SV**) 0);
@@ -3544,7 +3544,7 @@ int pstore(PerlIO *f, SV *sv)
  * Same as pstore(), but network order is used for integers and doubles are
  * emitted as strings.
  */
-int net_pstore(PerlIO *f, SV *sv)
+static int net_pstore(PerlIO *f, SV *sv)
 {
 	TRACEME(("net_pstore"));
 	return do_store(f, sv, 0, TRUE, (SV**) 0);
@@ -3572,7 +3572,7 @@ static SV *mbuf2sv(void)
  * Store the transitive data closure of given object to memory.
  * Returns undef on error, a scalar value containing the data otherwise.
  */
-SV *mstore(SV *sv)
+static SV *mstore(SV *sv)
 {
 	SV *out;
 
@@ -3590,7 +3590,7 @@ SV *mstore(SV *sv)
  * Same as mstore(), but network order is used for integers and doubles are
  * emitted as strings.
  */
-SV *net_mstore(SV *sv)
+static SV *net_mstore(SV *sv)
 {
 	SV *out;
 
@@ -4484,7 +4484,7 @@ static SV *retrieve_utf8str(stcxt_t *cxt, char *cname)
 #else
         if (cxt->use_bytes < 0)
             cxt->use_bytes
-                = (SvTRUE(perl_get_sv("Storable::drop_utf8", TRUE))
+                = (SvTRUE(perl_get_sv("PApp::Storable::drop_utf8", TRUE))
                    ? 1 : 0);
         if (cxt->use_bytes == 0)
             UTF8_CROAK();
@@ -4513,7 +4513,7 @@ static SV *retrieve_lutf8str(stcxt_t *cxt, char *cname)
 #else
         if (cxt->use_bytes < 0)
             cxt->use_bytes
-                = (SvTRUE(perl_get_sv("Storable::drop_utf8", TRUE))
+                = (SvTRUE(perl_get_sv("PApp::Storable::drop_utf8", TRUE))
                    ? 1 : 0);
         if (cxt->use_bytes == 0)
             UTF8_CROAK();
@@ -4837,7 +4837,7 @@ static SV *retrieve_flag_hash(stcxt_t *cxt, char *cname)
     if (hash_flags & SHV_RESTRICTED) {
         if (cxt->derestrict < 0)
             cxt->derestrict
-                = (SvTRUE(perl_get_sv("Storable::downgrade_restricted", TRUE))
+                = (SvTRUE(perl_get_sv("PApp::Storable::downgrade_restricted", TRUE))
                    ? 1 : 0);
         if (cxt->derestrict == 0)
             RESTRICTED_HASH_CROAK();
@@ -4906,7 +4906,7 @@ static SV *retrieve_flag_hash(stcxt_t *cxt, char *cname)
 #else
                 if (cxt->use_bytes < 0)
                     cxt->use_bytes
-                        = (SvTRUE(perl_get_sv("Storable::drop_utf8", TRUE))
+                        = (SvTRUE(perl_get_sv("PApp::Storable::drop_utf8", TRUE))
                            ? 1 : 0);
                 if (cxt->use_bytes == 0)
                     UTF8_CROAK();
@@ -4996,16 +4996,16 @@ static SV *retrieve_code(stcxt_t *cxt, char *cname)
 	 */
 
 	if (cxt->eval == NULL) {
-		cxt->eval = perl_get_sv("Storable::Eval", TRUE);
+		cxt->eval = perl_get_sv("PApp::Storable::Eval", TRUE);
 		SvREFCNT_inc(cxt->eval);
 	}
 	if (!SvTRUE(cxt->eval)) {
 		if (
 			cxt->forgive_me == 0 ||
 			(cxt->forgive_me < 0 && !(cxt->forgive_me =
-				SvTRUE(perl_get_sv("Storable::forgive_me", TRUE)) ? 1 : 0))
+				SvTRUE(perl_get_sv("PApp::Storable::forgive_me", TRUE)) ? 1 : 0))
 		) {
-			CROAK(("Can't eval, please set $Storable::Eval to a true value"));
+			CROAK(("Can't eval, please set $PApp::Storable::Eval to a true value"));
 		} else {
 			sv = newSVsv(sub);
 			return sv;
@@ -5024,7 +5024,7 @@ static SV *retrieve_code(stcxt_t *cxt, char *cname)
 		count = call_sv(cxt->eval, G_SCALAR);
 		SPAGAIN;
 		if (count != 1)
-			CROAK(("Unexpected return value from $Storable::Eval callback\n"));
+			CROAK(("Unexpected return value from $PApp::Storable::Eval callback\n"));
 		cv = POPs;
 		if (SvTRUE(errsv)) {
 			CROAK(("code %s caused an error: %s", SvPV(sub, PL_na), SvPV(errsv, PL_na)));
@@ -5318,14 +5318,14 @@ static SV *magic_check(stcxt_t *cxt)
                      cxt->accept_future_minor));
             if (cxt->accept_future_minor < 0)
                 cxt->accept_future_minor
-                    = (SvTRUE(perl_get_sv("Storable::accept_future_minor",
+                    = (SvTRUE(perl_get_sv("PApp::Storable::accept_future_minor",
                                           TRUE))
                        ? 1 : 0);
             if (cxt->accept_future_minor == 1)
                 croak_now = 0;  /* Don't croak yet.  */
         }
         if (croak_now) {
-            CROAK(("Storable binary image v%d.%d more recent than I am (v%d.%d)",
+            CROAK(("PApp::Storable binary image v%d.%d more recent than I am (v%d.%d)",
                    version_major, version_minor,
                    STORABLE_BIN_MAJOR, STORABLE_BIN_MINOR));
         }
@@ -5351,7 +5351,7 @@ static SV *magic_check(stcxt_t *cxt)
 #ifdef USE_56_INTERWORK_KLUDGE
     /* No point in caching this in the context as we only need it once per
        retrieve, and we need to recheck it each read.  */
-    if (SvTRUE(perl_get_sv("Storable::interwork_56_64bit", TRUE))) {
+    if (SvTRUE(perl_get_sv("PApp::Storable::interwork_56_64bit", TRUE))) {
         if ((c != (sizeof (byteorderstr_56) - 1))
             || memNE(buf, byteorderstr_56, c))
             CROAK(("Byte order is not compatible"));
@@ -5488,12 +5488,12 @@ static SV *retrieve(stcxt_t *cxt, char *cname)
                    && cxt->ver_minor > STORABLE_BIN_MINOR) {
             if (cxt->accept_future_minor < 0)
                 cxt->accept_future_minor
-                    = (SvTRUE(perl_get_sv("Storable::accept_future_minor",
+                    = (SvTRUE(perl_get_sv("PApp::Storable::accept_future_minor",
                                           TRUE))
                        ? 1 : 0);
             if (cxt->accept_future_minor == 1) {
-                CROAK(("Storable binary image v%d.%d contains data of type %d. "
-                       "This Storable is v%d.%d and can only handle data types up to %d",
+                CROAK(("PApp::Storable binary image v%d.%d contains data of type %d. "
+                       "This PApp::Storable is v%d.%d and can only handle data types up to %d",
                        cxt->ver_major, cxt->ver_minor, type,
                        STORABLE_BIN_MAJOR, STORABLE_BIN_MINOR, SX_ERROR - 1));
             }
@@ -5734,7 +5734,7 @@ static SV *do_retrieve(
  *
  * Retrieve data held in file and return the root object, undef on error.
  */
-SV *pretrieve(PerlIO *f)
+static SV *pretrieve(PerlIO *f)
 {
 	TRACEME(("pretrieve"));
 	return do_retrieve(f, Nullsv, 0);
@@ -5745,7 +5745,7 @@ SV *pretrieve(PerlIO *f)
  *
  * Retrieve data held in scalar and return the root object, undef on error.
  */
-SV *mretrieve(SV *sv)
+static SV *mretrieve(SV *sv)
 {
 	TRACEME(("mretrieve"));
 	return do_retrieve((PerlIO*) 0, sv, 0);
@@ -5764,7 +5764,7 @@ SV *mretrieve(SV *sv)
  * there. Not that efficient, but it should be faster than doing it from
  * pure perl anyway.
  */
-SV *dclone(SV *sv)
+static SV *dclone(SV *sv)
 {
 	dSTCXT;
 	int size;

@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 =head1 NAME
 
 PApp::Log - analyze and expire the state/user databases
@@ -41,7 +50,7 @@ use PApp::Env;
 
 use base Exporter;
 
-$VERSION = 0.22;
+$VERSION = 0.95;
 @EXPORT = qw();
 
 =head2 CALLBACKS

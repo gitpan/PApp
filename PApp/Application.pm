@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 =head1 NAME
 
 PApp::Application - a class representing a single mountable application
@@ -30,7 +39,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.22;
+$VERSION = 0.95;
 
 =item $papp = new PApp::Application args...
 
@@ -232,6 +241,20 @@ sub files($;$) {
 =item $papp->run
 
 "Run" the application, i.e. find the current package & module and execute it.
+
+=item $papp->callback_exception
+
+This method is called when a surl callback die's. The cause is still in
+C<$@>. This method is free to call C<abort_to> or other functions. If it
+returns, the exception will be ignored.
+
+The default implementation just rethrows.
+
+=cut
+
+sub callback_exception {
+   die;
+}
 
 =item $papp->new_package(same arguments as PApp::Package->new)
 
@@ -519,6 +542,26 @@ sub run {
    local $PApp::SQL::DBH      = $PApp::Config::DBH;
 
    $papp->{obj}->show;
+}
+
+=item $papp->callback_exception
+
+The Agni-specific version of this method calls the C<callback_exception>
+method of the mounted application.
+
+=cut
+
+sub callback_exception {
+   package PApp;
+
+   local $papp    = shift;
+   local $curpath = "";
+   local $curprfx = "/$papp->{name}";
+
+   local $PApp::SQL::Database = $PApp::Config::Database;
+   local $PApp::SQL::DBH      = $PApp::Config::DBH;
+
+   $papp->{obj}->callback_exception;
 }
 
 1;

@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 =head1 NAME
 
 PApp::XSLT - wrapper for an XSLT implementation
@@ -20,7 +29,7 @@ moderately easy to add XML::Transformiix or XML::XSLT).
 
 package PApp::XSLT;
 
-$VERSION = 0.22;
+$VERSION = 0.95;
 
 no bytes;
 

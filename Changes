@@ -1,5 +1,20 @@
 Revision history for Perl extension PApp
 
+0.95 Sat Apr 24 09:14:54 CEST 2004
+	- "use strict" by default in Agni methods.
+	- improved ef_password.
+	- new function: set_output.
+	- give priority to "en" when no language is requested.
+        - call PApp::Application->callback_exception when
+          papp execone handlers cause one.
+        - PApp::Application::Agni->callback_exception will call the method
+          of the same name in the mounted application.
+        - Apache-2.0 hack by oesi. Stable.
+        - mark functions in Storable.xs as static, as starting with
+          5.8.1 or 5.8.2 they were colliding with the functions in perls
+          Storable. Probable cause: Storable is built-in in my perl thus
+          it's symbols are found first (damn).
+
 0.22 Sat Nov  1 14:26:10 CET 2003
 	- editform is now transactional, i.e. first phase check,
           second phase cb_begin/assignments/cb_end.

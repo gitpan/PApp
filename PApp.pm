@@ -1,7 +1,16 @@
 #if (!defined $PApp::_compiled) { eval do { local $/; <DATA> }; die if $@ } 1;
 #__DATA__
 
-#line 5 "(PApp.pm)"
+##line 4 "(PApp.pm)"
+
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
 
 =head1 NAME
 
@@ -150,7 +159,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 0.22;
+   $VERSION = 0.95;
 
    use base Exporter;
 
@@ -1242,12 +1251,33 @@ sub flush_snd_length {
    flush_snd;
 }
 
+=item PApp::set_output ($data) [not exported by default]
+
+Clear the output so far and set it to C<data>. This only clears committed
+output, not any partial output within C<capture> blocks.
+
+=cut
+
+sub set_output {
+   $$routput = $_[0];
+}
+
 =item PApp::send_upcall BLOCK
 
 Immediately stop processing of the current application and call BLOCK,
 which is run outside the handler compartment and without state or other
-goodies. It has to return one of the status codes (e.g. &PApp::OK). Never
-returns.
+goodies (like redirected STDOUT). It has to return one of the status codes
+(e.g. &PApp::OK). Never returns.
+
+If you want to output something in an upcall, try to use this sequence:
+
+   abort_with {
+      content_type "text/html";
+      $request->status ("401");
+      $request->header_out ("WWW-Authenticate" => "Basic realm=\"$realm\"");
+      PApp::set_output "...";
+      PApp::flush;
+   };
 
 You should never need to call this function directly, rather use
 C<internal_redirect> and other functions that use upcalls to do their
@@ -1276,19 +1306,18 @@ sub internal_redirect {
    my $url = $_[0];
    send_upcall {
       # we have to get rid of the old request (think POST, and Apache->content)
-      $request->method("GET");
-      $request->header_in("Content-Type", "");
-      $request->internal_redirect($url);
+      $request->method ("GET");
+      $request->header_in ("Content-Type", "");
+      $request->internal_redirect ($url);
       return &OK;
    };
 }
 
 sub _gen_external_redirect {
    my $url = $_[0];
-   $request->status(302);
-   $request->header_out(Location => $url);
-   undef $output_p;
-   $$routput = "
+   $request->status (302);
+   $request->header_out (Location => $url);
+   set_output "
 <html>
 <head><title>".__"page redirection"."</title></head>
 <meta http-equiv=\"refresh\" content=\"0;URL=$url\">
@@ -1332,10 +1361,10 @@ sub abort_to {
 
 =item abort_with BLOCK
 
-Abort processing of all modules and execute BLOCK as if it were the
-top-level module and never return. This function is handy when you are
-deeply nested inside a module stack but want to output your own page (e.g.
-a file download). Example:
+Abort processing of all modules and execute BLOCK in an upcall (See
+L<send_upcall> for limitations on the environment) and never return. This
+function is handy when you are deeply nested inside a module stack but
+want to output your own page (e.g. a file download). Example:
 
  abort_with {
     content_type "text/plain";
@@ -1853,7 +1882,7 @@ sub list_apps() {
 sub handle_error($) {
    my $exc = $_[0];
 
-   UNIVERSAL::isa($exc, PApp::Exception)
+   UNIVERSAL::isa $exc, PApp::Exception::
       or $exc = new PApp::Exception error => 'Script evaluation error',
                                     info => [$exc];
    $exc->errorpage;
@@ -1998,7 +2027,7 @@ sub _handler {
          }
       }
 
-      $langs = "$state{papp_locale},".$request->header_in("Content-Language").",de,en";
+      $langs = "$state{papp_locale},".$request->header_in("Content-Language").",en";
 
       $papp->check_deps if $checkdeps;
 
@@ -2012,7 +2041,13 @@ sub _handler {
 
       # do not use for, as papp_execonce might actually grow during
       # execution of these callbacks.
-      (shift @{$state{papp_execonce}})->() while @{$state{papp_execonce}};
+      while (@{$state{papp_execonce}}) {
+         eval {
+            (shift @{$state{papp_execonce}})->() while @{$state{papp_execonce}};
+            1;
+         } or (UNIVERSAL::isa $@, PApp::Upcall:: and die)
+           or $papp->callback_exception;
+      }
       delete $state{papp_execonce};
 
       if ($state{papp_cookie} < $NOW - $cookie_reset) {

@@ -31,6 +31,7 @@ WriteMakefile(
     'PM'	=> {
 		    'PApp.pm'		=> '$(INST_LIBDIR)/PApp.pm',
 		    'PApp/Apache.pm'	=> '$(INST_LIBDIR)/PApp/Apache.pm',
+		    'PApp/Apache2.pm'	=> '$(INST_LIBDIR)/PApp/Apache2.pm',
 		    'PApp/CGI.pm'	=> '$(INST_LIBDIR)/PApp/CGI.pm',
 		    'PApp/Env.pm'	=> '$(INST_LIBDIR)/PApp/Env.pm',
 		    'PApp/Event.pm'	=> '$(INST_LIBDIR)/PApp/Event.pm',

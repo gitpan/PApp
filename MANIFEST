@@ -1,6 +1,7 @@
 README
 README.DB
 README.unicode
+README.Apache-2.0
 Changes
 MANIFEST
 INSTALL
@@ -25,6 +26,7 @@ PApp/Config.pm.PL
 PApp/HTML.pm
 PApp/CGI.pm
 PApp/Apache.pm
+PApp/Apache2.pm
 PApp/XML.pm
 PApp/XSLT.pm
 PApp/XSLT/Sablotron.pm

@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 =head1 NAME
 
 PApp::XML - pxml sections and more
@@ -30,7 +39,7 @@ use PApp::Exception qw(fancydie);
 
 use base 'Exporter';
 
-$VERSION = 0.22;
+$VERSION = 0.95;
 @EXPORT_OK = qw(
       xml_quote xml_attr xml_unquote xml_tag xml_cdata
       xml_check xml_encoding xml2utf8

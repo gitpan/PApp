@@ -154,7 +154,7 @@
 
 =head1 CONFIG OPTIONS
 
-The papp mount config variable C<xpcse_prefix> can be used to specify an
+The papp app config variable C<xpcse_prefix> can be used to specify an
 access port that xpcse uses. This is useful in case the application itself
 is protected by basic authentication or cookies and xpcse cannot make use
 of them.

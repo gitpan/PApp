@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 package PApp::FormBuffer;
 
 =head1 NAME
@@ -30,7 +39,7 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.22;
+$VERSION = 0.95;
 
 no utf8;
 use bytes;
@@ -76,7 +85,6 @@ sub _refill {
 	  && $self->{datalen}
 	  && $self->{datalen} >= length($self->{buffer})
 	 ) {
-      my $buf;
       $len = $self->{rsize} if $len > $self->{rsize};
       my $got = $self->{fh}->read($self->{buffer}, $len, length $self->{buffer});
 

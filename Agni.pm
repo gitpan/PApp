@@ -1,3 +1,12 @@
+##########################################################################
+## All portions of this code are copyright (c) 2003,2004 nethype GmbH   ##
+##########################################################################
+## Using, reading, modifying or copying this code requires a LICENSE    ##
+## from nethype GmbH, Franz-Werfel-Str. 11, 74078 Heilbronn,            ##
+## Germany. If you happen to have questions, feel free to contact us at ##
+## license@nethype.de.                                                  ##
+##########################################################################
+
 package Agni;
 
 =head1 NAME
@@ -84,7 +93,7 @@ our @parpathmask; # id => parent path mask (|| of all parents, sans path itself)
 our $last_compile_status;
 
 # reserved object gids
-# <20 == must only use string types and perl methods, for bootstrapping
+# <20 == must only use string types and perl methods, for bootstrapping.
 
 $OID_OBJECT		= 1;
 $OID_ATTR		= 2;
@@ -110,7 +119,7 @@ $OID_META_PACKAGE	= 30; # perl package name
 $OID_INTERFACE		= 31; # class interface
 $OID_ROOTSET		= 32; # a container containing all objects that are alive "by default"
 $OID_ISA		= 33; # the data/method parent for lookups
-$OID_ISA_METHOD		= 5100001742;
+$OID_ISA_METHOD		= 5100001742; # the gids start to get ugly here
 $OID_ISA_DATA		= 5100001741;
 $OID_CMDLINE_HANDLER    = 21474836484; # util::cmdline
 $OID_META_NAMESPACE	= 4295048763;
@@ -287,31 +296,32 @@ sub path_obj_by_gid($$) {
 
 # like path_obj_by_gid, but is called by PApp::Storable
 *storable_path_obj_by_gid = \&path_obj_by_gid;
+#sub storable_path_obj_by_gid { warn "SPOBID @_\n"; &path_obj_by_gid; }#d#
 
 # stolen & modified from Symbol::delete_package: doesn't remove the stash itself
 sub empty_package ($) {
-    my $pkg = shift;
+   my $pkg = shift;
 
-    unless ($pkg =~ /^main::.*::$/) {
-        $pkg = "main$pkg"       if      $pkg =~ /^::/;
-        $pkg = "main::$pkg"     unless  $pkg =~ /^main::/;
-        $pkg .= '::'            unless  $pkg =~ /::$/;
-    }
+   unless ($pkg =~ /^main::.*::$/) {
+      $pkg = "main$pkg"       if      $pkg =~ /^::/;
+      $pkg = "main::$pkg"     unless  $pkg =~ /^main::/;
+      $pkg .= '::'            unless  $pkg =~ /::$/;
+   }
 
-    my($stem, $leaf) = $pkg =~ m/(.*::)(\w+::)$/;
-    my $stem_symtab = *{$stem}{HASH};
-    return unless defined $stem_symtab and exists $stem_symtab->{$leaf};
+   my($stem, $leaf) = $pkg =~ m/(.*::)(\w+::)$/;
+   my $stem_symtab = *{$stem}{HASH};
+   return unless defined $stem_symtab and exists $stem_symtab->{$leaf};
 
-    # free all the symbols in the package
+   # free all the symbols in the package
 
-    my $leaf_symtab = *{$stem_symtab->{$leaf}}{HASH};
-    foreach my $name (keys %$leaf_symtab) {
-        undef *{$pkg . $name};
-    }
+   my $leaf_symtab = *{$stem_symtab->{$leaf}}{HASH};
+   foreach my $name (keys %$leaf_symtab) {
+      undef *{$pkg . $name};
+   }
 
-    # delete the symbol table
+   # delete the symbol table
 
-    %$leaf_symtab = ();
+   %$leaf_symtab = ();
 }
 
 our $bootstrap; # bootstrapping?
@@ -374,7 +384,6 @@ sub compile {
    #local $SIG{__DIE__}; local $SIG{__WARN__}; # speed, among others
    my $code = $_[0];
 
-
    $code =~ s{
       $objtag_start([$objtag_type_lo-$objtag_type_hi])([^$objtag_end]*)$objtag_end
    }{
@@ -391,7 +400,7 @@ sub compile {
       }
    }ogex;
 
-   eval "package $NAMESPACE->{_package}; $code";
+   eval "package $NAMESPACE->{_package}; use strict; $code";
 }
 
 sub compile_method_perl {
@@ -474,6 +483,8 @@ sub get_namespace {
 
          use Agni qw(*env *app path_obj_by_gid gid obj_of);
 
+         use vars qw($PATH $NAMESPACE);
+
          sub obj($) {
             ref $_[0] ? $_[0] : path_obj_by_gid PATH, $_[0];
          }
@@ -485,9 +496,7 @@ sub get_namespace {
          use PApp::UserObs;
          use PApp::PCode qw(pxml2pcode perl2pcode pcode2perl);
 
-         $papp_translator = PApp::I18n::open_translator(
-                               "$PApp::i18ndir/mercury", "eng",
-                            );
+         our $papp_translator = PApp::I18n::open_translator ("$PApp::i18ndir/mercury", "eng");
          sub __      ($){ PApp::I18n::Table::gettext(PApp::I18n::get_table($papp_translator, $PApp::langs), $_[0]) }
          sub gettext ($){ PApp::I18n::Table::gettext(PApp::I18n::get_table($papp_translator, $PApp::langs), $_[0]) }
 
@@ -760,7 +769,8 @@ sub update_class($) {
 
    # if we were loading this object, then it's loaded now...
    # this is just used to avoid expensive loops in
-   # update_isa_class in the common case.
+   # update_isa_class in the common case, but may be used
+   # for other purposes, too.
    delete $self->{_loading};
 
    rmagical_on $self;
