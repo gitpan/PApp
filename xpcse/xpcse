@@ -1,0 +1,204 @@
+#!/usr/bin/perl
+
+$XMESSAGE = "xmessage";
+$TERMINAL = $ENV{XPCSE_TERMINAL} || "rxvt -g 90x25 -e";
+$EDITOR   = $ENV{EDITOR} || "vi";
+
+use POSIX ":sys_wait_h";
+use LWP::UserAgent;
+use File::Temp qw(tempdir);
+use IO::Handle;
+use Config;
+
+# 1. init
+
+our $TEMPDIR;
+
+our $check_ms = 300;
+our $on_exit_only = 0;
+our $dirty_wait = 1;
+our $quiet = 0;
+
+our $PROTOCOL_VERSION = "1.1";
+our $VERSION = 0.2;
+
+BEGIN {
+   $TEMPDIR = tempdir TEMPDIR => 1;
+}
+
+END {
+   system "rm", "-rf", $TEMPDIR;
+}
+
+sub msgbox {
+   system $XMESSAGE, "-buttons", "OK", "-default", "OK", "-center", "-name", @_;
+}
+
+sub parse_header($) {
+   local $/ = "\015\012\015\012";
+   my $full = $_[0]->getline;
+   my (%hdr);
+   $hdr{lc $1} .= "$2"
+      while $full =~ /\G
+                      ([^:\000-\040]+):
+                      [\011\040]*
+                      ((?: [^\015\012]+ | \015\012[\011\040] )*)
+                      \015\012
+                     /gxc;
+
+   $full =~ /\G\015\012$/
+      or return;
+
+   %hdr;
+}
+
+
+$SIG{__DIE__} = sub {
+   (my $msg = $_[0]) =~ s/\n$//;
+   msgbox "xpcse_error", $_[0];
+   exit (1);
+};
+
+my $ua = new LWP::UserAgent;
+$ua->env_proxy;
+
+my $nodename = (POSIX::uname)[1];
+$nodename =~ tr/[\000-\040\177-\377]//d;
+
+my $ch = "&ostype=unix&pver=$PROTOCOL_VERSION&node=$nodename";
+
+$ua->agent("xpcse/$VERSION; unix-perl");
+
+sub download {
+   my ($url, $file) = @_;
+
+   $http_headers->content_type("application/octet-stream");
+   my $res = $ua->request(new HTTP::Request GET => "$hdr{url}?command=fetch$ch", $http_headers, "");
+
+   if($res->is_success) {
+      open my $f, ">", $file or die "can't open file '$file' $!";
+      print $f $res->content;
+      close $f;
+   } else {
+      die $res->error_as_HTML;
+   }
+}
+
+
+# 2. parse
+
+open my $request, "<$ARGV[0]\000"
+   or die "unable to open submitted command file: $!\n";
+
+our %hdr = parse_header $request;
+close $request;
+#unlink $ARGV[0]; # marc says you'll have a better life without this
+
+for(qw(url extension content-type xpcse-protocol-version)) {
+  die "protocol error: required header \"$_\" missing" unless exists $hdr{$_};
+}
+
+$hdr{'xpcse-protocol-version'} >= 1
+   and $hdr{'xpcse-protocol-version'} < 2
+   or die "illegal protocol version $hdr{'xpcse-protocol-version'}";
+
+my $TEMP;
+
+$hdr{extension} =~ s/[^\.a-zA-Z0-9\-_]//g; # security .)
+
+$TEMP ||= "$TEMPDIR/xpcse$hdr{extension}";
+
+# @@@
+
+$dirty_wait = $hdr{"dirty-wait"} if $hdr{dirty_wait} =~ /^\d+$/;
+$quiet = $hdr{quiet} if $hdr{quiet} =~ /^\d+$/;
+$on_exit_only = $hdr{"on-exit-only"} if $hdr{"on-exit-only"} =~ /^\d+$/;
+$check_ms = $hdr{"check-ms"} if $hdr{"check-ms"} =~ /^\d+$/ && $hdr{"check-ms"} > 65;
+
+$http_headers = new HTTP::Headers;
+$http_headers->authorization_basic      ($hdr{"auth-username"},       $hdr{"auth-password"})
+   if exists $hdr{"auth-username"};
+$http_headers->proxy_authorization_basic($hdr{"proxy-auth-username"}, $hdr{"proxy-auth-password"})
+   if exists $hdr{"proxy-auth-username"};
+
+# 3. create local file
+
+download $hdr{url}, $TEMP;
+
+die "no file $TEMP" unless -f $TEMP;
+
+my $MTIME;
+
+{
+   $MTIME = time - 1;
+   utime $MTIME, $MTIME, $TEMP;
+}
+
+# 4. start editor
+
+my $editpid;
+
+if (0 == ($editpid = fork)) {
+   if ($hdr{'content-type'} eq "text/plain") {
+      exec "$TERMINAL $EDITOR $TEMP";
+   } else {
+      local $ENV{MAILCAPS} = "$ENV{HOME}/.mailcap.xpcse:/etc/mailcap.xpcse:$ENV{MAILCAPS}";
+      my $rm = -x "$Config{sitebin}/run-mailcap" ? "$Config{sitebin}/run-mailcap" : "run-mailcap";
+      exec "$TERMINAL $rm --action=edit $hdr{'content-type'}:$TEMP";
+   }
+   exit(255);
+} elsif (!defined $editpid) {
+   die "error while starting editor: $!\n";
+}
+
+# 5. poll file && upload
+
+sub upload {
+   my $file = do {
+      local($/);
+      open my $fh, "<$TEMP\000"
+         or die "$TEMP: $!";
+      <$fh>;
+   };
+
+   $MTIME = (stat $TEMP)[9] - 1;
+   utime $MTIME, $MTIME, $TEMP;
+
+   $http_headers->content_type($hdr{'content-type'});
+   my $res = $ua->request(new HTTP::Request POST => "$hdr{url}?command=store$ch", $http_headers, $file);
+
+   if ($res->is_success) {
+      my $content = $res->content;
+      $content =~ s/^-+//;
+      
+      if ($res->code == 200 && length ($content) < 100) {
+         $quiet or msgbox "xpcse_ok", -timeout => 1, $content;
+      } else {
+         msgbox "xpcse_ok", $content;
+      }
+   } else {
+      msgbox "xpcse_error", "UPLOAD FAILED\n" . $res->as_string;
+   }
+}
+
+my ($dirty, $dwait) = (0,0);
+
+do {
+   select undef, undef, undef, $check_ms/1000;
+   $MTIME2 = (stat $TEMP)[9];
+   if($MTIME2 != $MTIME) {
+      ($dirty, $dwait) = (1,0);
+      $MTIME = $MTIME2;
+   } else {
+      if(!$on_exit_only && $dirty) {
+         if(++$dwait > $dirty_wait) {
+            ($dirty, $dwait) = (0,0);
+            upload;
+         }
+      }
+   }
+} while $editpid != waitpid $editpid, WNOHANG;
+
+($dirty or (stat $TEMP)[9] != $MTIME) and upload;
+
+

@@ -30,7 +30,7 @@ Create a plain and ugly html footer.
 
 Create a simple access-protected page. C<$access> is the required access
 level (L<macro/editform>), C<$title> is the page title. The C<body>
-argument must be a function reference. If the uer has the required access
+argument must be a function reference. If the user has the required access
 right a plain page is created (using the functions above) and the body
 function is called. Otherwise the user is informed of his missing rights
 and gets the opportunity to log-in.

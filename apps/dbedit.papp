@@ -34,7 +34,7 @@ __"You need to authentificate yourself first"<p />
 
 <:$S{dsn} ||= "DBI:mysql:":>
 
-<?ef_begin -change_db => 1:>
+<?ef_begin change_db => 1:>
 <table>
 <tr><th align='left'>__"DSN"</th><th align='left'>__"User"</th><th align='left'>__"Password"</th></tr>
 <tr>
@@ -47,7 +47,7 @@ __"You need to authentificate yourself first"<p />
 <?ef_end:>
 
 <:
-   if ($A{change_db}) {
+   if (delete $S{change_db}) {
       save_prefs;
    }
 

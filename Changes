@@ -1,6 +1,42 @@
 Revision history for Perl extension PApp
 
+0.143  Fri Sep 27 08:04:19 CEST 2002
+	- ef_selectbox now keeps key values on the server: improved security,
+          complex types for key values possible.
+        - $state{papp_lcs} no longer deleted, because parse_multipart_form can
+          be called very late.
+        - new module: PApp::MimeType.
+        - added PApp::Storable, which will, in the future, used to work round
+          limitations in the original Storable module.
+        - XML-ified PApp::Exception. Doh.
+        - new papp runtime events "prefork" and "postfork".
+        - event will now integrity now checked (but not fixed automatically).
+        - new PApp::XML::xml_errorparser.
+        - PApp::DataRef::Scalar now supports specialization.
+        - SURL_EXEC_IMMED.
+        - new function PApp::postpone.
+
+0.142  <elmex-special>
+	- PApp::Event::broadcast accepts multiple scalars now.
+	- callbacks now save and restore the $PApp::SQL::Database at refer.
+	- callbacks can now be defined using {::} syntax, see PApp::PCode.
+          this is an EXPERIMENTAL feature.
+	- SURL_EXEC is now optional and deprecated, do no longer use (just
+          pass the PApp::Callback::Function object directly).
+	- better error messages on missing files when parsing .papp files.
+        - <include> now works relative to the file containing it.
+        - work around scoping probles in PApp/Config.PL, so the old
+          config will be read.
+        - ./papp-install should no longer be called directly.
+        - added PApp::Preprocessor.
+        - make test runs without lots of warnings.
+        - PApp::Util doesn't require PApp.pm anymore.
+        - added PApp::XBox (not working).
+        - added PApp::Session.
+        - PApp::Event now saves/restores the DBH.
+
 0.142 Tue Apr 16 19:17:14 CEST 2002
+        - removed first sublink and suburl argument 
 	- WARNING: You need to either re-run papp-install, or
           run "alter table papp.grp add unique key (name)" before using this
           version.

@@ -11,9 +11,16 @@ use Compress::LZF qw(:compress :freeze);
 use blib;
 use lib '.';
 
+@ARGV or die "this program shouldn't be called directly\n";
+
+for (@ARGV) {
+   /^--(\w+)$/ or die "really, don't call this program directly\n";
+   ${"mode_$1"}++;
+}
+
 BEGIN {
+   $PApp::Config::CONFIG_PL = "./config.pl";
    require 'PApp/Config.pm';
-   require "./config.pl";
 }
 
 use PApp;
@@ -29,7 +36,7 @@ my $lib = $CFG{LIBDIR};
 
 sub crdir {
    local $_ = shift;
-   print "making directory $_... ";
+   print "Creating directory $_... ";
    if (-d $_) {
       print "[skipped] ";
    } else {
@@ -54,41 +61,56 @@ sub install($$) {
    }
 }
 
-crdir $lib;
-crdir $CFG{I18NDIR};
+if ($mode_install) {
+   crdir $lib;
+   crdir $CFG{I18NDIR};
 
-for my $dir (qw(macro widget apps demo style eg)) {
-   crdir "$lib/$dir";
+   for my $dir (qw(macro widget apps demo style eg etc)) {
+      crdir "$lib/$dir";
 
-   for my $app (bsd_glob "$dir/*.{papp,xsl,pxsl}",
-                                 GLOB_ERR|GLOB_NOSORT|GLOB_BRACE) {
-      $app =~ s/.*?([^\/]+)$/$1/;
-      print "$dir/$app => $lib/$dir...";
-      print "[skipped] " if install "$dir/$app", "$lib/$dir/$app";
-      print "ok\n";
+      for my $app (bsd_glob "$dir/{*.{papp,xsl,pxsl},mimedb}",
+                                    GLOB_ERR|GLOB_NOSORT|GLOB_BRACE) {
+         $app =~ s/.*?([^\/]+)$/$1/;
+         print "Installing $dir/$app $lib/$dir...";
+         print "[skipped] " if install "$dir/$app", "$lib/$dir/$app";
+         print "ok\n";
+      }
    }
+
+   my $umask = umask 077;
+   install("config.pl", "$lib/config.pl");
+   chmod 0600, "$lib/config.pl"; # just to be sure
+   umask $umask;
+   print "\n$lib/config.pl is chmod 600, better chown or chgrp it to the group
+   your webserver or trusted user is running under.\n\n";
 }
+
+if ($mode_init || $mode_update) {
 
 print <<EOF;
 
-This program (papp-install) initializes the database and library
-directories used by PApp. It assumes that the DBD driver understands the
-"func" method. MySQL currently does this.
+This initializes the database and library directories used by PApp. It
+assumes that the DBD driver understands the "func" method. MySQL currently
+does this.
 
-You can re-run ./papp-install from the (configured) installation directory
-to reset the database and re-install the library directry as often as you
-want.
+You should be able to re-run "make update" as often as you like, no harm
+will be done.
 
 EOF
 
-print "trying to open state database... ";
+if ($mode_update) {
+   print "trying to open state database... ";
 
-$DBH =
-   DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS},
-                { RaiseError => 0, PrintError => 1 });
+   $DBH =
+      DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS},
+                   { RaiseError => 0, PrintError => 1 });
 
-if (!$DBH) {
-   print "failed\n";
+   $DBH
+      or die "Unable to open database ($CFG{STATEDB}): $DBI::errstr\n";
+
+   $installed_version = sql_fetch $DBH, "select value from env where name = ?", "PAPP_VERSION";
+
+} elsif ($mode_init) {
    $CFG{STATEDB} =~ /DBI:([^:]+):([^:]+).*?(?:host=([^;]*))?/i or die "unable to parse database name ($CFG{STATEDB})\n";
 
    my ($driver, $db, $host) = ($1, $2, $3||"'localhost'");
@@ -102,13 +124,9 @@ if (!$DBH) {
    $DBH or die "unable to create database $CFG{STATEDB}, please create it manually and re-run papp-install\n";
 
    print "seems to have worked\n";
-} else {
-   print "already exists (good)\n";
 }
 
 $PApp::SQL::DBH = $DBH;
-
-$installed_version = eval { sql_fetch "select value from env where name = ?", "PAPP_VERSION" };
 
 print <<EOF;
 
@@ -119,7 +137,7 @@ version you have to drop the database manually.
 EOF
 
 $DBH->do(<<SQL);
-   create table env (
+   create table /*! if not exists */ env (
      name varchar(255) binary not null,
      value longblob not null,
      primary key (name)
@@ -127,29 +145,29 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do(<<SQL);
-   create table msgid (
+   create table /*! if not exists */ msgid (
      nr mediumint(6) unsigned not null auto_increment,
-     id mediumtext not null,
+     id mediumblob not null,
      domain varchar(30) not null,
      lang varchar(16) not null,
-     context text not null,
+     context blob not null,
      primary key (nr),
      index (id(64))
    )
 SQL
 
 $DBH->do(<<SQL);
-   create table msgstr (
+   create table /*! if not exists */ msgstr (
      nr mediumint(6) unsigned default '0' not null,
      lang varchar(16) not null,
      flags set('valid','fuzzy','unused') not null,
-     msg mediumtext not null,
+     msg mediumblob not null,
      unique nr (nr,lang)
    )
 SQL
 
 $DBH->do(<<SQL);
-   create table event (
+   create table /*! if not exists */ event (
      id int(10) unsigned not null auto_increment,
      event varchar(255) not null,
      ctime timestamp(14),
@@ -158,28 +176,36 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do("drop table state") if $installed_version < 0.142;
-$DBH->do(<<SQL);
-   create table state (
-     id int(10) unsigned not null,
-     ctime timestamp(14),
-     previd int(10) unsigned default '0' not null,
-     alternative mediumint(8) unsigned default '0' not null,
-     userid int(10) unsigned default '0' not null,
-     sessid int(10) unsigned default '0' not null,
-     state mediumblob default '' not null,
-     primary key (id),
-     key (alternative, previd)
-   ) delay_key_write=1
+if ($installed_version < 0.142) {
+   $DBH->do("drop table state") if $mode_update;
+   $DBH->do(<<SQL);
+      create table /*! if not exists */ state (
+        id int(10) unsigned not null,
+        ctime timestamp(14),
+        previd int(10) unsigned default '0' not null,
+        alternative mediumint(8) unsigned default '0' not null,
+        userid int(10) unsigned default '0' not null,
+        sessid int(10) unsigned default '0' not null,
+        state mediumblob default '' not null,
+        primary key (id),
+        key (alternative, previd)
+      ) delay_key_write=1
 SQL
+}
 
-$DBH->do("drop table eventcount") if $installed_version < 0.141;
+if ($installed_version < 0.143) {
+   $DBH->do("drop table eventcount") if $mode_update;
 
-$DBH->do(<<SQL);
-   create table event_count (
-      count int(10) unsigned not null
-   )
+   $DBH->do("alter table msgid change id id mediumblob not null, change context context blob not null");
+   $DBH->do("alter table msgstr change msg msg mediumblob not null");
+
+
+   $DBH->do(<<SQL);
+      create table /*! if not exists */ event_count (
+         count int(10) unsigned not null
+      )
 SQL
+}
 
 unless (sql_fetch "select count(*) from event_count") {
    sql_exec "insert into event_count values (0)";
@@ -187,7 +213,7 @@ unless (sql_fetch "select count(*) from event_count") {
 }
 
 $DBH->do(<<SQL);
-   create table state_seq (
+   create table /*! if not exists */ state_seq (
       seq int(10) unsigned not null
    )
 SQL
@@ -198,7 +224,16 @@ unless (sql_fetch "select count(*) from state_seq") {
 }
 
 $DBH->do(<<SQL);
-   create table prefs (
+   create table /*! if not exists */ session (
+     sid int(10) unsigned not null default '0',
+     name varchar(255) binary not null default '',
+     value mediumblob not null,
+     unique key id (sid,name(200))
+   )
+SQL
+
+$DBH->do(<<SQL);
+   create table /*! if not exists */ prefs (
      uid int(10) unsigned not null default '0',
      path varchar(255) binary not null default '',
      name varchar(255) binary not null default '',
@@ -207,7 +242,7 @@ $DBH->do(<<SQL);
    )
 SQL
 
-if ($installed_version < 0.142) {
+if ($mode_update && $installed_version < 0.142) {
    eval {
       my $st = sql_exec \my($userid, $prefs, $user, $pass, $comment),
                         "select id, prefs, user, pass, comment from user";
@@ -244,27 +279,23 @@ if ($installed_version < 0.142) {
 }
 
 $DBH->do(<<SQL);
-   create table user_seq (
+   create table /*! if not exists */ user_seq (
       seq int(10) unsigned not null
    )
 SQL
 
 unless (sql_fetch "select count(*) from user_seq") {
-   sql_exec "insert into user_seq values (?)", sql_fetch "select max(uid) + 1 from prefs";
+   sql_exec "insert into user_seq values (?)", 0+sql_fetch "select max(uid) + 1 from prefs";
 }
 
-$DBH->do("drop table user") if $installed_version < 0.142;
+$DBH->do("drop table user") if $mode_update && $installed_version < 0.142;
 
-if ($installed_version < 0.124) {
-   $DBH->do("alter table grp add unique key (name)");
-}
-
-if ($installed_version < 0.14) {
-   $DBH->do("alter table grp change name name varchar(160) not null");
-}
+$DBH->do("alter table grp add comment text not null") if $mode_update && $installed_version < 0.124;
+$DBH->do("alter table grp add unique key (name)") if $mode_update && $installed_version < 0.124;
+$DBH->do("alter table grp change name name varchar(160) not null") if $mode_update && $installed_version < 0.14;
 
 $DBH->do(<<SQL);
-   create table grp (
+   create table /*! if not exists */ grp (
      id int(10) unsigned not null auto_increment,
      name varchar(100) not null,
      comment text not null,
@@ -274,7 +305,7 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do(<<SQL);
-   create table usergrp (
+   create table /*! if not exists */ usergrp (
      userid int(10) unsigned default '0' not null,
      grpid int(8) unsigned default '0' not null,
      primary key (userid,grpid)
@@ -282,7 +313,7 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do(<<SQL);
-   create table app (
+   create table /*! if not exists */ app (
      id smallint(6) unsigned not null auto_increment,
      name varchar(255) binary default '' not null,
      appset smallint(5) unsigned default '0' not null,
@@ -295,7 +326,7 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do(<<SQL);
-   create table appset (
+   create table /*! if not exists */ appset (
      id smallint(5) unsigned not null auto_increment,
      name varchar(255) default '' not null,
      primary key (id),
@@ -304,7 +335,7 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do(<<SQL);
-   create table pkg (
+   create table /*! if not exists */ pkg (
      id varchar(255) default '' not null,
      ctime timestamp(14),
      config mediumblob default '' not null,
@@ -314,7 +345,7 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do(<<SQL);
-   create table locks (
+   create table /*! if not exists */ locks (
      id varchar(255) binary default '' not null,
      breaktime int(10) unsigned default '0' not null,
      data varchar(255) binary default '' not null,
@@ -322,9 +353,9 @@ $DBH->do(<<SQL);
    )
 SQL
 
-$DBH->do("drop table error") if $installed_version < 0.13;
+$DBH->do("drop table error") if $installed_version && $installed_version < 0.13;
 $DBH->do(<<SQL);
-   create table error (
+   create table /*! if not exists */ error (
      id mediumint(6) unsigned not null auto_increment,
      ctime timestamp(14),
      data blob default '' not null,
@@ -334,11 +365,11 @@ $DBH->do(<<SQL);
 SQL
 
 $DBH->do(<<SQL);
-  CREATE TABLE ssluser (
-    userid int(10) unsigned NOT NULL default '0',
-    cert blob NOT NULL,
-    KEY idx_userid (userid),
-    KEY idx_cert (cert(20))
+  create table /*! if not exists */ ssluser (
+    userid int(10) unsigned not null default '0',
+    cert blob not null,
+    key idx_userid (userid),
+    key idx_cert (cert(20))
   )
 SQL
 
@@ -352,27 +383,26 @@ section are supposedly fatal(!!).
 
 EOF
 
-eval {
+if ($mode_init) {
    $DBH->do("insert into appset values (1, 'default')")
-      or die;
-};
+      or warn "unable to create 'default' appset: $DBI::errstr\n";
 
-print "creating admin user and admin group... ";
-eval {
-   my $pass = crypt "public", "xx";
-       $DBH->do("insert into prefs values (1, '', 'papp_username', 'admin')")
-   and $DBH->do("insert into prefs values (1, '', 'papp_password', '$pass')")
-   and $DBH->do("insert into prefs values (1, '', 'papp_comment', 'Main Administrator')")
-   and $DBH->do("insert into grp values (1, 'admin'      , 'hyperuser access rights')")
-   and $DBH->do("insert into grp values (2, 'poedit'     , 'general translator access')")
-   and $DBH->do("insert into grp values (3, 'poedit_*'   , 'translator access for all apps')")
-   and $DBH->do("insert into grp values (4, 'poedit_papp', 'translator access for papp itself')")
-   and $DBH->do("insert into usergrp values (1, 1)")
-   and $DBH->do("insert into usergrp values (1, 2)")
-   and $DBH->do("insert into usergrp values (1, 3)")
-   or die;
-   print <<EOF;
-ok
+   print "creating admin user and admin group... ";
+   eval {
+      my $pass = crypt "public", "xx";
+          $DBH->do("insert into prefs values (1, '', 'papp_username', 'admin')")
+      and $DBH->do("insert into prefs values (1, '', 'papp_password', '$pass')")
+      and $DBH->do("insert into prefs values (1, '', 'papp_comment', 'Main Administrator')")
+      and $DBH->do("insert into grp values (1, 'admin'      , 'hyperuser access rights')")
+      and $DBH->do("insert into grp values (2, 'poedit'     , 'general translator access')")
+      and $DBH->do("insert into grp values (3, 'poedit_*'   , 'translator access for all apps')")
+      and $DBH->do("insert into grp values (4, 'poedit_papp', 'translator access for papp itself')")
+      and $DBH->do("insert into usergrp values (1, 1)")
+      and $DBH->do("insert into usergrp values (1, 2)")
+      and $DBH->do("insert into usergrp values (1, 3)")
+      or die;
+      print <<EOF;
+   ok
 
 ********* the admin user is named 'admin'           *********
 ********* and has the initial password 'public'     *********
@@ -380,18 +410,11 @@ ok
 ********* papp-admin -u admin --password <password> *********
 
 EOF
-};
-if ($@) {
-   print "failed (or already exists)\n";
+   };
+   if ($@) {
+      print "failed (or already exists)\n";
+   }
 }
-
-$DBH->do("delete from env where name='PAPP_VERSION'");
-$DBH->do("insert into env (name, value) values ('PAPP_VERSION', '$PApp::Config::VERSION')");
-
-my $umask = umask 077;
-install("config.pl", "$lib/config.pl");
-chmod 0600, "$lib/config.pl"; # just to be sure
-umask $umask;
 
 print "\nimporting i18n tables\n";
 for my $domain (qw(papp bench dbedit demo iso639 iso3166)) {
@@ -400,7 +423,8 @@ for my $domain (qw(papp bench dbedit demo iso639 iso3166)) {
    PApp::I18n::export_dpo $domain, "$CFG{I18NDIR}/$domain", $CFG{PAPP_UID}, $CFG{PAPP_GID};
 }
 
-print "\n$lib/config.pl is chmod 600, better chown or chgrp it to the group
-your webserver or trusted user is running under.\n\n";
+$DBH->do("delete from env where name='PAPP_VERSION'");
+$DBH->do("insert into env (name, value) values ('PAPP_VERSION', '$PApp::Config::VERSION')");
 
+}
 

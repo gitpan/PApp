@@ -10,6 +10,9 @@
 <import pm="PApp::ECMAScript"/>
 <import src="simple-edit/simple-edit"/>
 
+<macro name="remote_edit*" args="$data $extension @surlargs"><pxml><![CDATA[<:
+:>]]></pxml></macro>
+
 <perl><![CDATA[
    use PApp::XSLT;
    use PApp::PCode qw(pcode2perl pxml2pcode);

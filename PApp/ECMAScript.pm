@@ -14,7 +14,7 @@ PApp::ECMAScript - make javascript horrors less horrible
 
 package PApp::ECMAScript;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw($js escape_string_sq escape_string_dq);
 
 use base Exporter;
@@ -146,23 +146,130 @@ netscape, netscape 4 (or higher), ie, ie4 (or higher) or ie5 (or higher), respec
 
 =cut
 
-sub is_ns($) {
-   $_[0]->need_headercode("var papp_ns4=(document.layers)?true:false;");
-   "papp_ns4";
+sub _agent_test($) {
+   $_[0]->need_headercode("var ua=navigator.userAgent.toLowerCase();");
+   $_[0]->need_headercode("var is_major = parseInt(navigator.appVersion);");
+   $_[0]->need_headercode("var is_minor = parseFloat(navigator.appVersion);");
 }
 
-*is_ns4 = \&is_ns;
+sub ns_version($) {
 
-sub is_ie($) {
-   $_[0]->need_headercode("var papp_ie=(document.all)?true:false;");
-   "papp_ie";
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var ns_version=((ua.indexOf('mozilla')!=-1)"
+                          . " && (ua.indexOf('spoofer')==-1)"
+                          . " && (ua.indexOf('compatible') == -1)"
+                          . " && (ua.indexOf('opera')==-1)"
+                          . " && (ua.indexOf('webtv')==-1)"
+                          . " && (ua.indexOf('hotjava')==-1))"
+                          . " && ((is_major == 2)?2:((is_major == 3)?3"
+                          . ":((is_major == 4)?4:((is_major == 5)?6:7))));");
+   "ns_version";
 }
 
-*is_ie4 = \&is_ie;
+sub is_ns($;$) {
+
+   my ($self, $version) = $_;
+   
+   $self->ns_version;
+   $self->need_headercode("var papp_ns=(".$version." == ns_version)?true:false;"); 
+   "papp_ns";
+}
+
+sub is_ns_up($;$) {
+
+   my ($self, $version) = $_;
+
+   $self->ns_version;
+   $self->need_headercode("var papp_ns_up=(papp_ns >= ".$version.")?true:false;");
+   "papp_ns_up";
+}
+
+sub is_gecko($) {
+   $_[0]->need_headercode("var is_gecko=ua.indexOf('gecko') != -1);");
+   "is_gecko";
+}
+
+sub ie_version($) {
+
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var ie_version=((ua.indexOf('msie') != -1) && (ua.indexOf('opera') == -1))?is_major:0;");
+   "ie_version";
+}
+
+sub is_ie4($) {
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie4=((".$_[0]->is_ie." && (is_major == 4)) && (ua.indexOf('msie 4') != -1)));");
+   "papp_ie4";
+}
+
+sub is_ie4up($) {
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie4up=(".$_[0]->is_ie." && (is_major >= 4));");
+   "papp_ie4up";
+}
 
 sub is_ie5($) {
-   $_[0]->need_headercode("var papp_ie5((".$_[0]->is_ie.")&&(navigator.userAgent.indexOf('MSIE 5')>0))?true:false;");
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie5=(".$_[0]->is_ie." && (ua.indexOf('msie 5.0') != -1));");
    "papp_ie5";
+}
+
+sub is_ie5up($) {
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie5up=(".$_[0]->is_ie." && !".$_[0]->is_ie3." && !".$_[0]->is_ie4.");"); 
+   "papp_ie5up";
+}
+
+sub is_ie5_5($) {
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie5_5=((".$_[0]->is_ie." && (is_major == 4)) && (ua.indexOf('msie 5.5') != -1)));");
+   "papp_ie5_5";
+}
+
+sub is_ie5_5up($) {
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie5_5up=(".$_[0]->is_ie." && !".$_[0]->is_ie3." && !".$_[0]->is_ie4." && !".$_[0]->is_ie5.");"); 
+   "papp_ie5_5up";
+}
+
+sub is_ie6($) {
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie6=((".$_[0]->is_ie." && (is_major == 4)) && (ua.indexOf('msie 6.') != -1)));");
+   "papp_ie6";
+}
+
+sub is_ie6up($) {
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var papp_ie6up=(".$_[0]->is_ie." && !".$_[0]->is_ie3." && !".$_[0]->is_ie4." && !".$_[0]->is_ie5." && !".$_[0]->is_ie6.");"); 
+   "papp_ie6up";
+}
+
+sub aol_version {
+
+   $_[0]->_agent_test;
+   $_[0]->need_headercode("var aol_version=(ua.indexOf('aol') != -1) && ("
+                          . $_[0]->is_ie3."?3:(".$_[0]->is_ie4
+                          . "?4:((ua.indexOf('aol 5') != -1)?5:"
+                          . "(ua.indexOf('aol 6') != -1)?6:7)));");
+   "aol_version";
+}
+
+sub is_aol($;$) {
+
+   my ($self, $version) = $_;
+
+   $self->aol_version;
+   $self->need_headercode("var papp_aol=(".$version." == aol_version)?true:false;");
+   "papp_aol";
+}
+
+sub is_aol_up($;$) {
+
+   my ($self, $version) = $_;
+
+   $self->aol_version;
+   $self->need_headercode("var papp_aol_up=(aol_version >= ".$version.")?true:false;");
+   "papp_aol_up"
 }
 
 sub is_konquerer($) {

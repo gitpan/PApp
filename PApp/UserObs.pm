@@ -9,7 +9,7 @@ PApp::UserObs - manage user and access rights
 
 =head1 DESCRIPTION
 
-This is an oboslete module. See also the L<PApp::User> module for additional documentation.
+This is an obsolete module. See also the L<PApp::User> module for additional documentation.
 
 =cut
 
@@ -18,14 +18,14 @@ package PApp::UserObs;
 use PApp::SQL;
 use PApp::Exception qw(fancydie);
 use PApp::Callback ();
-use PApp::Config qw($DBH);
+use PApp::Config qw(DBH $DBH); DBH;
 use PApp qw(*state $userid getuid);
 use PApp::Prefs;
 use PApp::Event ();
 
 use base Exporter;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw( 
    authen_p access_p admin_p known_user_p update_username choose_username
    update_password update_comment username user_login user_logout userid
@@ -230,7 +230,7 @@ when the link is followed.
 
 =cut
 
-sub SURL_USER_LOGOUT (){ PApp::SURL_EXEC($surl_logout_cb) }
+sub SURL_USER_LOGOUT (){ $surl_logout_cb }
 
 =item user_delete $userid
 
@@ -294,6 +294,7 @@ group already exists.
 sub newgrp($;$) {
    my ($grp, $comment) = @_;
    eval {
+      local $SIG{__DIE__};
       sql_exec $DBH, "insert into grp (name, comment) values (?, ?)",
                "$grp", "$comment";
    };

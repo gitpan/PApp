@@ -4,7 +4,7 @@
 <description>administration package for papp</description>
 
 <perl>
-   $ppkg->set_database(PApp::Config::Database);
+   $ppkg->set_database($PApp::Config::Database);
 </perl>
 
 <import src="macro/admin"/>
@@ -56,8 +56,8 @@ __"Currently Mounted Applications":<br />
 
 <h3>__"Select an Application to edit, or create a new one"</h3>
 
-#if $A{delete}
-<:sql_exec "delete from app where id = ?", $A{delete}:>
+#if $S{delete}
+<:sql_exec "delete from app where id = ?", delete $S{delete}:>
 #endif
 
 <table border="1">
@@ -71,8 +71,8 @@ __"Currently Mounted Applications":<br />
    while ($st->fetch) {
       $appset ||= __"[DISABLED]";
       :><tr><td><?$appset:></td><td><?$name:></td><td><?$path:></td>
-            <td><?slink "[EDIT]", "app_edit", -appid => $id:></td>
-            <td><?slink "[D]", -delete => $id:>ELETE</td>
+            <td><?slink "[EDIT]", "app_edit", appid => $id:></td>
+            <td><?slink "[D]", delete => $id:>ELETE</td>
       </tr><:
    }
 :>
@@ -84,7 +84,7 @@ __"Currently Mounted Applications":<br />
 <phtml><![CDATA[
 <:
    my $row = new PApp::DataRef 'DB_row',
-      table => "app", where => [id => $A{appid}],
+      table => "app", where => [id => delete $S{appid}],
       insertid => 1, delay => 1, preload => 1, autocommit => 1;
 
    $row->{mountconfig} ||= "\$Location{'~ ^/$row->{name}(/|\$)'} = \\%papp_handler," if defined $row->{name};
@@ -169,7 +169,7 @@ __"You need to authentificate yourself first"<p />
 # if admin_p
 <td><?slink __"Edit Access Rights", "admin/acedit,admin/acedit/":></td>
 <td><?slink __"Edit Applications", "admin/apps":></td>
-<td><?slink __"Flush Package Cache", SURL_EXEC($ppkg->refer('flush_cache')):></td>
+<td><?slink __"Flush Package Cache", $ppkg->refer('flush_cache'):></td>
 # endif
 # if access_p "poedit"
 <td><?slink __"Edit Translations", "admin/poedit,admin/poedit/":></td>
@@ -177,9 +177,9 @@ __"You need to authentificate yourself first"<p />
 <td><?slink __"Memory Usage", "admin/memory":></td>
 </tr></table>
 
-#if $A{restart}
-<:kill 'USR1', $A{restart}:>
-<p>Apache (pid $A{restart}) has been sent the USR1 signal</p>
+#if $S{restart}
+<:kill 'USR1', $S{restart}:>
+<p>Apache (pid <?delete $S{restart}:>) has been sent the USR1 signal</p>
 #endif
 
 <p />

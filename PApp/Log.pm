@@ -41,7 +41,7 @@ use PApp::Env;
 
 use base Exporter;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw();
 
 =head2 CALLBACKS
@@ -196,20 +196,27 @@ sub expire_db {
 
    log_state($keepstate);
 
-   sql_exec "delete from state where ctime < from_unixtime(?)", $keepstate;
-
-   my $st = sql_exec \my($id, $ctime, $prefs, $user, $comment),
-                     "select id, ctime, prefs, user, comment
-                      from user
-                      where (user  = '' and ctime < from_unixtime(?))
-                         or (user != '' and ctime < from_unixtime(?))",
-                     $keepuser, $keepreguser;
-
-   while ($st->fetch) {
-      #undef $user if $user eq "";
-      sql_exec "delete from usergrp where userid = ?", $id;
-      sql_exec "delete from user where id = ?", $id;
-   }
+# update last seen marker.
+{
+  my $st = sql_exec \my($uid, $ctime), "select userid, unix_timestamp(max(ctime)) from state group by userid";
+  while($st->fetch) {
+       sql_exec "replace into prefs (uid, path, name, value) values (?, '', 'papp_lastvisit', ?)", $uid, $ctime;
+  }
+}
+#blow away old states (sessions in fact)
+{
+  my @delstates = sql_fetchall "select sessid from state group by sessid having max(ctime) < from_unixtime(?)", $keepstate;
+  scalar @delstates && sql_exec "delete from state where sessid in (".join( ",", @delstates).")";
+}
+#expire users...
+$st = sql_exec \my($uid, $visited, $known), "select uid, value,max(grpid) from prefs left join usergrp on (uid=userid) where path='' and name='papp_lastvisit' group by uid";
+while($st->fetch) {
+   $known ||= 0;
+   next if $visited >= ($known ? $keepreguser : $keepuser);
+   sql_exec "delete from prefs where uid = ?", $uid;
+   sql_exec "delete from usergrp where userid = ?", $uid if $known;
+}
+   
 }
 
 =item log_state

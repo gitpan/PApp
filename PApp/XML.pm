@@ -19,8 +19,6 @@ that can be used to create links etc...
 
 # to be written
 
-=over 4
-
 =cut
 
 package PApp::XML;
@@ -32,31 +30,102 @@ use PApp::Exception qw(fancydie);
 
 use base 'Exporter';
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT_OK = qw(
-      xml_quote xml_unquote xml_check xml_encoding xml2utf8
-      xml_include expand_pi
+      xml_quote xml_attr xml_unquote xml_tag xml_cdata
+      xml_check xml_encoding xml2utf8
+      xml_include expand_pi xml_errorparser
 );
+
+=head2 FUNCTIONS FOR GENERATING XML
+
+=over 4
 
 =item xml_quote $string
 
 Quotes (and returns) the given string so that it's contents won't be
-interpreted by an XML parser.
+interpreted by an XML parser (quotes ', ", <, & and ]]>). Example:
+
+   print xml_quote q( <xx> & <[[]]> );
+   => &lt;xx> &amp; &lt;[[]]&gt;
+
+=item xml_cdata $string
+
+Does the same thing as C<xml_quote>, but using CDATA constructs, rather
+than quoting individual characters. Example:
+
+   print xml_cdata q(hi ]]> there);
+   => <![CDATA[hi ]]]]><![CDATA[> there ]]>
 
 =item xml_unquote $string
 
-Unquotes (and returns) an XML string (by resolving it's entities and CDATA
-sections). Currently, only the named predefined xml entities and decimal
-character constants are resolved. Everything else is silently ignored.
+Unquotes (and returns) an XML string (by resolving it's entities and
+CDATA sections). Currently, only the named predefined xml entities and
+numerical character entities are resolved. Everything else is silently
+ignored. Example:
+
+   print xml_unquote q( <![CDATA[text1]]> &amp; text2&#x21; );
+   => text1 & text2!
+
+=item xml_attr $attr => $value [, $attr2 => $value2, ...]
+
+Returns a fully quoted $attr => $value pairs. Example:
+
+   print xml_attr authors => q(Alan Cox & Linus "kubys" Torvalds);
+   => authors="Alan Cox & Linus &quot;kubys&quot; Torvalds"
+
+=item xml_tag $element_name, [$attr => $value, ...] [, $content_or_undef]
+
+Generates a tag from the given element name, content and attribute
+name => value pairs. If content is undef, an empty tag will be
+generated. Example:
+
+   print xml_tag "p", align => "center"
+   => <p align="center"/>
+
+As a very special courtesy hack for you, if you omit the content argument
+entirely, only an opening tag will be generated.
 
 =cut
 
 sub xml_quote {
    local $_ = shift;
-   s/</&lt;/g;
    s/&/&amp;/g;
-   s/]>/]&gt;/g;
+   s/</&lt;/g;
+   s/]]>/]]&gt;/g;
    $_;
+}
+
+sub xml_cdata {
+   local $_ = shift;
+   s/]]>/]]]]><![CDATA[>/g;
+   "<![CDATA[$_]]>";
+}
+sub xml_attr {
+   my $attrs;
+   for (my $i = 0; $i < $#_; $i += 2) {
+      local $_ = $_[$i+1];
+      s/&/&amp;/g;
+      s/"/&quot;/g;
+      s/</&lt;/g;
+      $attrs .= " $_[$i]=\"$_\"";
+   }
+   substr $attrs, 1;
+}
+
+sub xml_tag {
+   my $element = shift;
+   my $tag = "<$element";
+   $tag .= " ".&xml_attr if @_ > 1;
+   if (@_ & 1) {
+      if (defined $_[-1]) {
+         "$tag>$_[-1]</$element>";
+      } else {
+         "$tag/>";
+      }
+   } else {
+      "$tag>";
+   }
 }
 
 sub xml_unquote($) {
@@ -64,9 +133,9 @@ sub xml_unquote($) {
    s{&([^;]+);|<!\[CDATA\[(.*?)]]>}{
       if (defined $2) {
          $2;
-      } elsif (substr($1,0,1) eq "#") {
-         if (substr($1,1,1) eq "x") {
-            # hex not yet supported
+      } elsif ("#" eq substr $1, 0, 1) {
+         if ("x" eq substr $1, 1, 1) {
+            chr hex substr $1, 2;
          } else {
             chr substr $1,1;
          }
@@ -76,6 +145,12 @@ sub xml_unquote($) {
    }ge;
    $_;
 }
+
+=back
+
+=head2 FUNCTIONS FOR ANALYZING XML
+
+=over 4
 
 =item ($msg, $line, $col, $byte) = xml_check $string [, $prolog, $epilog]
 
@@ -121,7 +196,151 @@ sub xml_check {
 
    $err =~ /^\n(.*?) at line (\d+), column (\d+), byte (\d+)/
       or die "unparseable xml error message: $err";
-   ($1, $2 - 1, $3, $4 - 1 - length $prolog);
+   ($1, $2 - 1, $3, ($4 <= length $string - length $epilog ? $4 - 1 - length $prolog : (length $string) - (length $prolog) - (length $epilog) - 1));
+}
+
+=item xml_errorparser $xml, [$offset, $message]
+
+This function takes a slightly damaged XML document or fragment and tries
+to repair it. During this process it annotates many errors with error
+messages in <error>-elements.  It also offers the option of adding a
+custom error message around the specified offste in the file.
+
+This function works best with HTML or HTML-like input, and tries very hard
+not to place error messages at places wheer they won't be visible.
+
+The result should be parseable by XML parsers, but be warned that not
+every case will be fixed.
+
+=cut
+
+my %delay_error = (
+   script => 1,
+   style  => 1,
+   head   => 1,
+   input  => 1,
+   select => 1,
+   option => 1,
+   applet => 1,
+   frame  => 1,
+   h1     => 0,
+   h2     => 0,
+   table  => 0,
+   tr     => 0,
+);
+%delay_error = ();
+
+sub xml_errorparser {
+   require HTML::Parser;
+
+   # fix any invalid xml-"names"
+   my $xmlname = sub {
+      local $_ = $_[0];
+      s/([^:]*):([^:]*):/$1:$2_illegal-colon-in-name_/g;
+      s/^([^\p{Letter}_:])/"illegal-xml-start-character_" . (ord $1)/e;
+      s/([^\p{Letter}\p{Digit}\-_.:])/"_illegal-character-" . (ord $1) . "-in-name_"/ge;
+      $_;
+   };
+
+   my ($xml, $errofs, $errmsg) = @_;
+
+   defined $errofs or $errofs = 1e99;
+
+   my $output = "";
+   my $delayed;
+
+   my @tag; # open elements
+
+   my $err = sub {
+      $delayed .= $_[0] if @_;
+      return if exists $delay_error{$tag[-1]};
+      for (my $i = @tag; --$i >= 0; ) {
+         return if $delay_error{$tag[$i]};
+      }
+      $output .= $delayed;
+      $delayed = "";
+   };
+
+   $xml =~ s%
+      ([\x{0}-\x{8}\x{b}\x{c}\x{e}-\x{1f}\x{fffe}])
+   %
+      "illegal-character-" . (ord $1) . "-skipped";
+   %gex;
+
+   # HTML::Parser can't cope with unicode :(
+   utf8_upgrade $xml;
+   $xml = (utf8_to PApp::Recode "iso-8859-1", \&PApp::_unicode_to_entity)->($xml);
+   utf8_downgrade $xml;
+
+   my $parser = new HTML::Parser
+         api_version	=> 3,
+         strict_names	=> 1,
+         xml_mode	=> 1,
+         unbroken_text	=> 1,
+         case_sensitive	=> 1,
+         ignore_elements=> [qw(script)],
+         
+         text_h		=> [sub {
+            if ($_[1] >= $errofs) {
+               $err->("<error>$errmsg, source<pre>\n"
+                      . (xml_cdata substr $xml, $errofs >= 40 ? $errofs - 40 : 0, 40)
+                      . "&#xf7;"
+                      . (xml_cdata substr $xml, $errofs, 160)
+                      . "\n</pre></error>");
+               $errofs = 1e99;
+            } else {
+               $delayed and $err->();
+            }
+            $output .= PApp::XML::xml_quote $_[0];
+         }, "dtext, offset"],
+         start_h	=> [sub {
+            my $tag = $xmlname->($_[0]);
+            push @tag, $tag;
+            $output .= PApp::XML::xml_tag $tag, map +($xmlname->($_), $_[1]{$_}), keys %{$_[1]};
+            $delayed and $err->();
+         }, "tagname, attr"],
+         end_h		=> [sub {
+            my $tag = $xmlname->($_[0]);
+            if ($tag[-1] eq $tag) {
+               pop @tag;
+               $output .= "</$tag>";
+               $delayed and $err->();
+            } else {
+               for (my $i = @tag; --$i >= 0; ) {
+                  if ($tag[$i] eq $tag) {
+                     my $errmsg = "<error>ERROR: end-tag for element '$tag', which is not open, closing tag(s)";
+                     while (@tag > $i) {
+                        my $tag = pop @tag;
+                        $output .= "</$tag>";
+                        $delayed and $err->();
+                        $errmsg .= " $tag";
+                     }
+                     $err->("$errmsg instead. </error>");
+                     return;
+                  }
+               }
+               $err->("<error>ERROR: skipping end-tag for element '$tag', which is not open. </error>");
+            }
+         }, "tagname"],
+         end_document_h	=> [sub {
+            while (@tag) {
+               my $tag = pop @tag;
+               $output .= "</$tag>" ;
+               $delayed and $err->();
+            }
+         }],
+         declaration_h	=> [sub {
+         }],
+         comment_h	=> [sub {
+         }],
+         process_h	=> [sub {
+         }],
+      ;
+
+   $parser->parse($xml);
+   $parser->eof;
+
+   utf8_upgrade $output; # just for your convinience
 }
 
 =item xml_encoding xml-string [deprecated]
@@ -161,6 +380,12 @@ sub xml_encoding($) {
    return utf8_valid $_[0] ? "utf-8" : "iso-8859-1";
 }
 
+=back
+
+=head2 FUNCTIONS FOR MODIFYING XML
+
+=over 4
+
 =item ($version, $encoding, $standalone) = xml_remove_decl $xml[, $encoding]
 
 Remove the xml header, if any, from the given string and return
@@ -191,7 +416,8 @@ supports UTF-8 and ISO-8859-1, but could be extended easily to handle
 everything Expat can. Uses C<xml_encoding> to autodetect the encoding
 unless an explicit encoding argument is given.
 
-It returns the xml declaration parameters (where encoding is always utf-8).
+It returns the xml declaration parameters (where encoding is always
+utf-8). The xml declaration itself will be removed from the string.
 
 =cut
 
@@ -386,7 +612,10 @@ sub xml_include {
             if ($nested) {
                my $ctx = pop @context;
                $doc .= "</".(delete $ctx->{"\0"}).">";
-               $prefix{$k} = $v while my($k, $v) = each %$doc;
+               
+               while (my($k, $v) = each %$doc) {
+                  $prefix{$k} = $v;
+               }
             } else {
                $doc .= $self->recognized_string;
             }
@@ -413,6 +642,7 @@ sub xml_include {
    );
    $xinclude = $self->generate_ns_name("include", $xmlns_xinclude);
    eval {
+      local $SIG{__DIE__};
       $self->parse($_[0]);
    };
    $@ and fancydie "xml_include expansion failed", $@,

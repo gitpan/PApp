@@ -6,7 +6,7 @@
 <description>translation editor frontend</description>
 
 <perl>
-   $ppkg->set_database(PApp::Config::Database);
+   $ppkg->set_database($PApp::Config::Database);
 </perl>
 
 <import src="macro/admin"/>

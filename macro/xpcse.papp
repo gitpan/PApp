@@ -1,0 +1,208 @@
+<package name="xpcse">
+<domain name="papp" lang="en">
+
+<import pm="PApp::Exception">()</import>
+<import pm="PApp::MimeType">()</import>
+
+<macro name="remote_edit_parse*"><perl><![CDATA[
+   my $buf;
+   $request->read($buf, $request->header_in("Content-Length"));
+   if ($request->header_in("Content-Type") =~ /text\//) {
+        Convert::Scalar::utf8_valid $buf or die "format violation - only utf8 supported\n";
+        Convert::Scalar::utf8_on $buf;
+
+        # remove byte-order-mark, as per unicode 3, section 13.6
+        $buf =~ y/\x{feff}//d;
+   }
+   $buf;
+]]></perl></macro>
+
+<macro name="remote_edit_store*" args="$fh"><perl><![CDATA[
+   my $buf;
+   my $len = $request->header_in("Content-Length");
+   while($len) {
+      my $rlen = ($len > 8192) ? 8192 : $len;
+      $request->read($buf, $rlen);
+      print $fh $buf;
+      $len -= $rlen;
+   }
+]]></perl></macro>
+
+<callback name="remote_edit" args="$data $mode"><phtml><![CDATA[<:
+   use HTTP::Date;
+
+   my %flags = %{$data->{flags}};
+
+   abort_with {
+      eval {
+         if ($mode) {
+            $P{pver} >= 1 && $P{pver} < 2
+               or die "unsupported protocol version\n";
+
+            for my $c (qw(pver command ostype)) {
+               die "Required header \"$c\" missing\n" unless exists $P{$c};
+            }
+            if($P{command} eq "store") {
+               if(exists $data->{file}) {
+                  my $dest = $data->{file};
+                  open my $fh, ">", "$dest.$$" or die "open $dest.$$";
+                  remote_edit_store($fh);
+                  close $fh;
+                  rename "$dest.$$", $dest or die "can't rename to $dest";
+               } else {
+                  my $x = &remote_edit_parse;
+                  $x =~ s/\015\012/\012/g if $data->{mime} =~ m@^text/@ and $P{ostype} eq "win";
+                  ${$data->{ref}} = $x;
+               }
+               content_type "text/plain";
+               $request->status(200);
+               echo "upload ok";
+               if ($PApp::warn_log) {
+                  echo ", but the following warnings were logged:\n\n$PApp::warn_log";
+               }
+            } elsif ($P{command} eq "fetch") {
+               abort_with { 
+                  if(exists $data->{file}) {
+                     use PApp qw(abort_with_file);
+                     my $file = $data->{file};
+                     if (!-e $file && exists $data->{flags}{template}) {
+                        $file = $data->{flags}{template};
+                     }
+                     open my $fh, "<", $file or die "can't open $file";
+                     abort_with_file $fh, $data->{mime};
+                  } elsif ($data->{mime} =~ m@^text/@) {
+                     content_type $data->{mime}, "utf-8";
+                     my $out = "${$data->{ref}}";
+                     $out =~ s/\012/\015\012/g if $P{ostype} eq "win";
+                     echo $out;
+                  } else {
+                     content_type $data->{mime};
+                     echo ${$data->{ref}};
+                  }
+               };
+            } else {
+               die "illegal command specified.";
+            }
+         } else {
+            my %outflags;
+            $outflags{"Extension"}              = $flags{extension} || (".". (PApp::MimeType::by_mimetype($data->{mime}))->extension) or ".no-mime.bin";
+            $outflags{"Url"}                    = "http://" . $request->hostname . ":" . $request->get_server_port . $data->{upd};
+            $outflags{"Content-Type"}           = $data->{mime};
+            $outflags{"Server-Date"}            = time2str();
+            $outflags{"Xpcse-Protocol-Version"} = "1.1";
+            $outflags{"Quiet"}                  = $flags{quiet} if exists $flags{quiet};
+            $outflags{"On-Exit-Only"}           = $flags{'on_exit_only'} if exists $flags{'on_exit_only'};
+            $outflags{"Check-Ms"}               = $flags{'check_ms'} if exists $flags{'check_ms'};
+            $outflags{"Dirty-Wait"}             = $flags{'dirty_wait'} if exists $flags{'dirty_wait'};
+            $outflags{"Auth-Username"}          = $flags{'auth_username'} if exists $flags{'auth_username'};
+            $outflags{"Auth-Password"}          = $flags{'auth_password'} if exists $flags{'auth_password'};
+            $outflags{"Auth-Proxy-Username"}    = $flags{'auth_proxy_username'} if exists $flags{'auth_proxy_username'};
+            $outflags{"Auth-Proxy-Password"}    = $flags{'auth_proxy_password'} if exists $flags{'auth_proxy_password'};
+
+            my $outflags;
+            while(my ($x,$y) = each %outflags) {
+               $x =~ s/[ \t:\012\015]//g;
+               $outflags .= "$x: $y\015\012";
+            }
+
+            content_type "application/x-xpcse", "utf-8";
+            $request->header_out("Content-Disposition" => "inline; filename=x.xpcse"); # for windows (file extension!)
+            :><?"$outflags\015\012":><:
+         }
+      };
+
+      fancydie "xpcse upload error", $@, as_string => 1
+         if $@;
+   }
+:>]]></phtml></callback>
+
+<macro name="client_edit_surl*" args="$ref $mime %flags"><perl><![CDATA[
+   $mime = PApp::MimeType::by_extension $flags{extension} if !defined $mime and $flags{extension};
+   $mime = (PApp::MimeType::by_filename $ref)->mimetype if !defined $mime and !ref $ref;
+   my $data = {
+      (ref $ref) ? (ref => $ref) : (file => $ref),
+      mime  => $mime,
+      flags => { %flags },
+   };
+   $data->{upd} = surl $papp_ppkg->refer('remote_edit', $data, 1);
+   surl $papp_ppkg->refer('remote_edit', $data, 0);
+]]></perl></macro>
+
+  
+<macro name="client_edit_slink*" args="$content $ref $mime %flags"><perl><![CDATA[
+   alink $content, client_edit_surl $ref, $mime, %flags;
+]]></perl></macro>
+
+<perl><![CDATA[
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item client_edit_surl $ref, $content-type, %flags
+
+Returns a surl for remote editing ref
+
+  $ref            A tied scalar that should be edited or a fully
+                  qualified filename
+  $content-type   Content-type like "image/jpg"
+  @flags          Optional flags that affects processing.
+                  Supported flags:
+
+                      extension => ".png"
+                        file extension like ".txt" (or "txt"). If missing, a
+                        suitable extension will be guessed (see
+                        LIBDIR/etc/xpcse.extensions).
+
+                      check_ms => 300
+                        check interval for filesystem updates
+
+		      dirty_wait => 2
+                        mtime must be stable for dirty_wait check_ms
+                        rounds before submitting
+
+                      on_exit_only => 1
+                        save only when client-app is exiting
+
+                      quiet => 1
+                        suppress "Upload OK messages"
+
+                      template => "/path/to/templatefile" 
+                        substitute this file if $ref is a filename
+                        that does not exist. Copy on write
+
+                      auth_username => "username"
+                        username for http authentification
+
+                      auth_password => "password"
+                        password for http authentification
+                        
+                      auth_proxy_username => "username"
+                        username for proxy authentification
+
+                      auth_proxy_password => "password"
+                        password for proxy authentification
+                        
+  
+=item client_edit_slink $content, $ref, $content-type, %flags
+
+See C<client_edit_surl>
+
+=back
+
+=head1 SEE ALSO
+
+L<PApp>
+
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
+
+=cut
+
+]]></perl>
+
+</domain>
+</package>
+

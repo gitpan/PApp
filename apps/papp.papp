@@ -4,6 +4,13 @@
    implements papp's own internal pages
 </description>
 
+<import pm="Compress::LZF">:freeze</import>
+<import pm="PApp::Util"/>
+
+<perl>
+   $ppkg->set_database($PApp::Config::Database);
+</perl>
+
 <module name="">
 <phtml><![CDATA[
 <:$request->content_type("text/plain"):>
@@ -15,9 +22,30 @@ pages for papp's internal uses only."
 ]]></phtml>
 </module>
 
-<module name="error"><phtml><![CDATA[
+<macro name="page(&amp;)"><phtml><![CDATA[
+<html>
+<body text="black" link="#1010C0" vlink="#101080" alink="red" bgcolor="white">
+<:&{$_[0]}:>
+</body>
+</html>
+]]></phtml></macro>
+
+<module name="error"><phtml><![CDATA[<:page {:>
+#if delete $A{set_comment} && exists $P{comment}
+   <:sql_exec "update error set comment = ? where id = ?", $P{comment}, $A{id}:>
+#endif
+<:
+   sql_fetch \my ($ctime, $exc, $comment),
+             "select ctime, data, comment from error where id = ?", $A{id};
+
+   $exc = sthaw $exc;
+:>
+
+<pre>
+<:echo escape_html PApp::Util::dumpval($exc):>
+</pre>
 Fehler? Ach was.... iss' halt noch nich fettich.
-]]></phtml></module>
+<:}:>]]></phtml></module>
 
 </domain>
 </package>

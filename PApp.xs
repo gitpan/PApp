@@ -7,6 +7,28 @@
 #endif
 #include <string.h>
 
+/* agni */
+
+#define CACHEp "_cache"
+#define CACHEl (sizeof (CACHEp) - 1)
+#define TYPEp  "_type"
+#define TYPEl  (sizeof (TYPEp) - 1)
+
+static U32 CACHEh, TYPEh;
+static MGVTBL vtbl_agni_object = {0, 0, 0, 0, 0};
+
+static U32
+compute_hash (char *key, I32 len)
+{
+  U32 hash;
+
+  PERL_HASH (hash, key, len);
+
+  return hash;
+}
+
+/* papp */
+
 /*
  * return wether the given sv really is a "scalar value" (i.e. something
  * we can cann setsv on without getting a headache.
@@ -59,6 +81,38 @@ x64_enc (uchar *dst, uchar *src, STRLEN len)
       case 0:
         break;
     }
+}
+
+static I32
+papp_filter_read(pTHX_ int idx, SV *buf_sv, int maxlen)
+{
+  dSP;
+  SV *datasv = FILTER_DATA (idx);
+
+  ENTER;
+  SAVETMPS;
+  PUSHMARK (SP);
+  XPUSHs (sv_2mortal (newSViv (idx)));
+  XPUSHs (buf_sv);
+  XPUSHs (sv_2mortal (newSViv (maxlen)));
+  PUTBACK;
+  maxlen = call_sv ((SV* )IoBOTTOM_GV (datasv), G_SCALAR);
+  SPAGAIN;
+
+  if (maxlen != 1)
+    croak ("papp_filter_read: filter read function must return a single integer");
+
+  maxlen = POPi;
+  FREETMPS;
+  LEAVE;
+
+  if (maxlen <= 0)
+    {
+      SvREFCNT_dec (IoBOTTOM_GV (datasv));
+      filter_del (papp_filter_read);
+    }
+
+  return maxlen;
 }
 
 /*****************************************************************************/
@@ -226,12 +280,15 @@ find_path (SV *path, HV **hashp)
   return elem + 1;
 }
 
-#define SURL_STYLE    0x41
-#define SURL_SUFFIX   0x42
-#define SURL_PUSH     0x01
-#define SURL_POP      0x81
-#define SURL_UNSHIFT  0x02
-#define SURL_SHIFT    0x82
+#define SURL_SUFFIX	0x41
+#define SURL_STYLE	0x42
+
+#define SURL_EXEC_IMMED	0x91
+
+#define SURL_PUSH	0x01
+#define SURL_POP	0x81
+#define SURL_UNSHIFT	0x02
+#define SURL_SHIFT	0x82
 
 static AV *
 rv2av(SV *sv)
@@ -272,7 +329,7 @@ find_keysv (SV *arg, int may_delete)
       if (!sv_is_scalar_type (sv))
         croak ("find_keysv: tried to assign scalar to non-scalar reference (2)");
     }
-  else if (may_delete)
+  else if (may_delete && 0) /* optimization removed for agni */
     {
       elem = find_path (arg, &hash);
       /* setting an element to undef may delete it */
@@ -413,6 +470,10 @@ eval_path (SV *path)
   return eval_path_ (pth, pth + len);
 }
 
+/* checks wether this surl argument is a single arg (1) or key->value (0) */
+/* should be completely pluggable, i.e. by subclassing/calling PApp::SURL->gen */
+#define SURL_NOARG(sv) (SvROK (sv) && sv_isa (sv, "PApp::Callback::Function"))
+
 /*****************************************************************************/
 
 MODULE = PApp		PACKAGE = PApp
@@ -445,7 +506,8 @@ surl(...)
            salternative = 1
 	PPCODE:
 {
-        int i = 0;
+        int i;
+        int has_module; /* wether a module has been given or not */
         UV xalternative;
         SV *surl;
         AV *args = newAV ();
@@ -463,13 +525,27 @@ surl(...)
         if (SvIOK (GvSV (surlstyle)))
           style = SvIV (GvSV (surlstyle));
 
-        if (items & 1)
+        {
+          int j;
+
+          has_module = items;
+          for (j = 0; j < items; j++)
+            if (SURL_NOARG (ST(j)))
+              has_module++;
+
+          has_module &= 1;
+        }
+
+        if (has_module)
           {
-            dstmodule = ST(i);
-            i++;
+            dstmodule = ST(0);
+            i = 1;
           }
         else
-          dstmodule = GvSV (module);
+          {
+            dstmodule = GvSV (module);
+            i = 0;
+          }
 
         if (SvROK (dstmodule))
           {
@@ -483,59 +559,79 @@ surl(...)
 
         xcurprfx = SvPV (GvSV (curprfx), lcurprfx);
 
-        if (!ix || items & 1) /* only set module when explicitly given */
+        if (!ix || has_module) /* only set module when explicitly given */
           av_push (args, SvREFCNT_inc (pathinfo));
 
-        for (; i < items; i += 2)
+        for (; i < items; i++)
           {
-            SV *arg = ST(i  );
-            SV *val = ST(i+1);
+            SV *arg = ST(i);
 
-            if (SvROK (arg))
+            if (SURL_NOARG (arg))
               {
-                if (!sv_is_scalar_type (SvRV (arg)))
-                  croak ("surl: tried to assign scalar to non-scalar reference (e.g. 'surl \\@x => 5')");
-
-                arg = newSVsv (arg);
-                val = newSVsv (val);
-              }
-            else if (SvPOK(arg) && SvCUR (arg) == 2 && !*SvPV_nolen (arg))
-              /* do not expand SURL_xxx constants */
-              {
-                int surlmod = (unsigned char)SvPV_nolen (arg)[1];
-
-                if (surlmod == SURL_STYLE)
-                  {
-                    style = SvIV (val);
-                    continue;
-                  }
-                else if (surlmod == SURL_SUFFIX)
-                  {
-                    path = val;
-                    continue;
-                  }
-                else if ((surlmod == SURL_POP || surlmod == SURL_SHIFT)
-                         && !SvROK (val))
-                  {
-                    svp = SvPV (val, svl);
-                    val = expand_path (svp, svl, xcurprfx, lcurprfx);
-                  }
-                else
-                  {
-                    val = newSVsv (val);
-                  }
-
-                SvREFCNT_inc (arg);
+                /* SURL_EXEC() */
+                av_push (args, newSVpvn ("\x00\x01", 2));
+                av_push (args, NEWSV (0,0));
+                av_push (args, newSVpv ("/papp_execonce", 0));
+                av_push (args, SvREFCNT_inc (arg));
               }
             else
               {
-                svp = SvPV (arg, svl);
-                arg = expand_path (svp, svl, xcurprfx, lcurprfx);
-                val = newSVsv (val);
-              }
+                SV *val = ST(i+1);
+                i++;
 
-            av_push (args, arg);
-            av_push (args, val);
+                if (SvROK (arg))
+                  {
+                    if (!sv_is_scalar_type (SvRV (arg)))
+                      croak ("surl: tried to assign scalar to non-scalar reference (e.g. 'surl \\@x => 5')");
+
+                    arg = newSVsv (arg);
+                    val = newSVsv (val);
+                  }
+                else if (SvPOK(arg) && SvCUR (arg) == 2 && !*SvPV_nolen (arg))
+                  /* do not expand SURL_xxx constants */
+                  {
+                    int surlmod = (unsigned char)SvPV_nolen (arg)[1];
+
+                    if (surlmod == SURL_STYLE)
+                      {
+                        style = SvIV (val);
+                        continue;
+                      }
+                    else if (surlmod == SURL_SUFFIX)
+                      {
+                        path = val;
+                        continue;
+                      }
+                    else if (surlmod == SURL_EXEC_IMMED)
+                      {
+                        if (!SvROK (val))
+                          croak ("INTERNAL ERROR SURL_EXEC_IMMED");
+
+                        val = newSVsv (SvRV (val));
+                      }
+                    else if ((surlmod == SURL_POP || surlmod == SURL_SHIFT)
+                             && !SvROK (val))
+                      {
+                        svp = SvPV (val, svl);
+                        val = expand_path (svp, svl, xcurprfx, lcurprfx);
+                      }
+                    else
+                      {
+                        val = newSVsv (val);
+                      }
+
+                    SvREFCNT_inc (arg);
+                  }
+                else
+                  {
+                    svp = SvPV (arg, svl);
+                    arg = expand_path (svp, svl, xcurprfx, lcurprfx);
+                    val = newSVsv (val);
+                  }
+
+                av_push (args, arg);
+                av_push (args, val);
+              }
           }
 
         if (ix == 1)
@@ -545,7 +641,7 @@ surl(...)
           }
         else
           {
-            surl = sv_2mortal (newSVsv (GvSV (location)));
+            surl = sv_mortalcopy (GvSV (location));
             sv_catpvn (surl, "/", 1);
             sv_catsv (surl, pathinfo);
 
@@ -696,6 +792,14 @@ set_alternative(array)
                                   SvREFCNT_dec (av_shift (av));
                               }
                           }
+                        else if (surlmod == SURL_EXEC_IMMED)
+                          {
+                            PUSHMARK (SP); PUTBACK;
+                            call_sv (val, G_VOID | G_DISCARD);
+                            SPAGAIN;
+                          }
+                        else
+                          croak ("set_alternative: unsupported surlmod (%02x)", surlmod);
                       }
                     else
                       flags |= surlmod;
@@ -832,6 +936,34 @@ sv_peek(sv)
 	OUTPUT:
 	RETVAL
 
+void
+sv_dump(sv)
+	SV *	sv
+        PROTOTYPE: $
+        CODE:
+        sv_dump (sv);
+
+void
+filter_add(cb)
+	SV *	cb
+        PROTOTYPE: $
+        CODE:
+        SV *datasv = NEWSV (0,0);
+
+        SvUPGRADE (datasv, SVt_PVIO);
+        IoBOTTOM_GV (datasv) = (GV *)newSVsv (cb);
+        filter_add (papp_filter_read, datasv);
+
+I32
+filter_read(idx, sv, maxlen)
+	int	idx
+	SV *	sv
+        int	maxlen
+	CODE:
+        RETVAL = FILTER_READ (idx, sv, maxlen);
+        OUTPUT:
+        RETVAL
+
 MODULE = PApp		PACKAGE = PApp::X64
 
 BOOT:
@@ -917,4 +1049,284 @@ dec(data)
 }
 	OUTPUT:
         RETVAL
+
+MODULE = PApp		PACKAGE = Agni
+
+char *
+and64(a,b)
+	char *	a
+	char *	b
+        PROTOTYPE: $$
+        ALIAS:
+           or64     = 1
+           andnot64 = 2
+        CODE:
+        unsigned long long a_, b_, c_;
+        char c[64];
+
+        a_ = strtoull (a, 0, 0);
+        b_ = strtoull (b, 0, 0);
+
+        c_ = ix == 0 ? a_ & b_
+           : ix == 1 ? a_ | b_
+           : ix == 2 ? a_ & ~b_
+           :           -1;
+
+        sprintf (c, "%llu", c_);
+        
+        RETVAL = c;
+        OUTPUT:
+	RETVAL
+
+BOOT:
+	CACHEh = compute_hash (CACHEp, CACHEl);
+	TYPEh  = compute_hash (TYPEp,  TYPEl);
+
+SV *
+agnibless(SV *rv, char *classname)
+        CODE:
+        HV *hv = (HV *)SvRV (rv);
+
+        sv_unmagic (rv, PERL_MAGIC_tied);
+
+        RETVAL = newSVsv (sv_bless (rv, gv_stashpv(classname, TRUE)));
+
+        if (!hv_fetch (hv, CACHEp, CACHEl, 0))
+          hv_store (hv, CACHEp, CACHEl, newRV_noinc ((SV *)newHV ()), CACHEh);
+
+        if (!hv_fetch (hv, TYPEp, TYPEl, 0))
+          hv_store (hv, TYPEp,  TYPEl,  newRV_noinc ((SV *)newHV ()), TYPEh);
+
+        sv_magicext ((SV *)hv, Nullsv, PERL_MAGIC_tied, &vtbl_agni_object, Nullch, 0);
+
+        OUTPUT:
+        RETVAL
+
+void
+rmagical_off(SV *rv)
+	ALIAS:
+          rmagical_on = 1
+	CODE:
+        if (ix)
+          SvRMAGICAL_on (SvRV (rv));
+        else
+          SvRMAGICAL_off (SvRV (rv));
+
+void
+isobject(SV *rv)
+	CODE:
+        if (sv_isobject (rv))
+          XSRETURN_YES;
+        else
+          XSRETURN_NO;
+
+MODULE = PApp		PACKAGE = agni::object
+
+void
+DESTROY(SV *rv)
+	CODE:
+        /* turn magic off before destruction, to ease perls job */
+        SvRMAGICAL_off (SvRV (rv));
+
+void
+FETCH(SV *self, SV *key)
+        PPCODE:
+        HV *hv = (HV*) SvRV (self);
+        char *key_ = SvPV_nolen (key);
+        HE *he;
+        
+        SvRMAGICAL_off (hv);
+
+        /* _-keys go into $self, non-_-keys are store'ed immediately */
+        if (key_[0] == '_')
+          he = hv_fetch_ent (hv, key, 0, 0);
+        else
+          {
+            HV *hvc = (HV *)SvRV (*(hv_fetch (hv, CACHEp, CACHEl, 0)));
+            he = hv_fetch_ent (hvc, key, 0, 0);
+
+            if (!he)
+              {
+                hvc = (HV *)SvRV (*(hv_fetch (hv, TYPEp, TYPEl, 0)));
+                he = hv_fetch_ent (hvc, key, 0, 0);
+
+                /* if cached, do not call fetch */
+                if (he)
+                  {
+                    SV *save_mh = HeVAL (&PL_hv_fetch_ent_mh); /* perl bug, FETCH recursively clobbers PL_hv..mh */
+                    SV *tobj = HeVAL (he);
+                    SV *data;
+                    int c;
+
+                    SvRMAGICAL_on (hv);
+
+                    /* $tobj->fetch($self) */
+                    PUSHMARK (SP); EXTEND(SP, 2); PUSHs (tobj); PUSHs (self); PUTBACK;
+                    c = call_method ("fetch", G_SCALAR | G_EVAL);
+                    SPAGAIN;
+
+                    if (SvTRUE (ERRSV))
+                      croak (0);
+
+                    if (c == 1)
+                      data = POPs;
+                    else if (c == 0)
+                      data = &PL_sv_undef;
+                    else
+                      croak ("TYPE->fetch must return at most one return value");
+
+                    /* $tobj->thaw($data) */
+                    PUSHMARK (SP); EXTEND (SP, 2); PUSHs (tobj); PUSHs (data); PUTBACK;
+                    c = call_method ("thaw", G_SCALAR | G_EVAL);
+                    SPAGAIN;
+
+                    if (SvTRUE (ERRSV))
+                      croak (0);
+
+                    if (c == 1)
+                      XPUSHs (POPs);
+                    else if (c == 0)
+                      ; /*NOP*/
+                    else
+                      croak ("TYPE->thaw must return at most one return value");
+
+                    he = 0; /* don't fetch anything */
+                    HeVAL (&PL_hv_fetch_ent_mh) = save_mh;
+                  }
+                else
+                  he = hv_fetch_ent (hv, key, 0, 0);
+              }
+          }
+
+        if (he)
+          XPUSHs (sv_mortalcopy (HeVAL (he)));
+
+        SvRMAGICAL_on (hv);
+
+void
+STORE(SV *self, SV *key, SV *value)
+        PPCODE:
+        HV *hv = (HV*) SvRV (self);
+        char *key_ = SvPV_nolen (key);
+
+        SvRMAGICAL_off (hv);
+
+        /* _-keys go into $self, non-_-keys are store'ed immediately */
+        if (key_[0] == '_')
+          hv_store_ent (hv, key, newSVsv (value), 0);
+        else
+          {
+            /* now check for a _type entry */
+            HV *hvc = (HV *)SvRV (*(hv_fetch (hv, TYPEp, TYPEl, 0)));
+            HE *he = hv_fetch_ent (hvc, key, 0, 0);
+
+            if (he)
+              {
+                SV *tobj = HeVAL (he);
+                SV *data;
+                int c;
+
+                SvRMAGICAL_on (hv);
+
+                hvc = (HV *)SvRV (*(hv_fetch (hv, CACHEp, CACHEl, 0)));
+                he = hv_fetch_ent (hvc, key, 0, 0);
+
+                /* always update cache, if it exists */
+                if (he)
+                  {
+                    SvREFCNT_dec (HeVAL (he));
+                    HeVAL (he) = newSVsv (value);
+                  }
+
+                PUSHMARK (SP); EXTEND (SP, 2); PUSHs (tobj); PUSHs (value); PUTBACK;
+                c = call_method ("freeze", G_SCALAR | G_EVAL);
+                SPAGAIN;
+
+                if (SvTRUE (ERRSV))
+                  croak (0);
+
+                if (c == 1)
+                  data = POPs;
+                else if (c == 0)
+                  data = &PL_sv_undef;
+                else
+                  croak ("TYPE->freeze must return at most one return value");
+
+                PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (self); PUSHs (data); PUTBACK;
+                call_method ("store", G_VOID | G_DISCARD | G_EVAL);
+                SPAGAIN;
+
+                if (SvTRUE (ERRSV))
+                  croak (0);
+
+                XSRETURN_EMPTY;
+              }
+            else
+              hv_store_ent (hv, key, newSVsv (value), 0);
+          }
+
+        SvRMAGICAL_on (hv);
+
+void
+EXISTS(SV *self, SV *key)
+        PPCODE:
+        HV *hv = (HV*) SvRV (self);
+        HV *hvt;
+        char *key_ = SvPV_nolen (key);
+        
+        SvRMAGICAL_off (hv);
+
+        /* check _-keys in $self and non-_-keys in $self->{_type} */
+        if (key_[0] == '_')
+          hvt = hv;
+        else
+          hvt = (HV *)SvRV (*(hv_fetch (hv, TYPEp, TYPEl, 0)));
+
+        XPUSHs (sv_2mortal (newSViv (hv_exists_ent (hvt, key, 0))));
+
+        SvRMAGICAL_on (hv);
+
+void
+DELETE(SV *self, SV *key)
+        PPCODE:
+        HV *hv = (HV*) SvRV (self);
+        char *key_ = SvPV_nolen (key);
+        SV *value;
+        
+        SvRMAGICAL_off (hv);
+
+        if (key_[0] != '_' || 1)
+          {
+            value = hv_delete_ent (hv, key, 0, 0);
+
+            if (value)
+              XPUSHs (value);
+          }
+
+        SvRMAGICAL_on (hv);
+
+void
+NEXTKEY(self, ...)
+	SV *	self
+        ALIAS:
+          FIRSTKEY = 1
+        PPCODE:
+        HV *hv = (HV*) SvRV (self);
+        HV *hvt;
+        HE *he;
+
+        SvRMAGICAL_off (hv);
+
+        hvt = (HV *)SvRV (*(hv_fetch (hv, TYPEp, TYPEl, 0)));
+
+        if (ix)
+          hv_iterinit (hvt);
+
+        he = hv_iternext (hvt);
+
+        if (he)
+          XPUSHs (hv_iterkeysv (he));
+
+        SvRMAGICAL_on (hv);
+
 

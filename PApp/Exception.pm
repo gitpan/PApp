@@ -18,12 +18,13 @@ PApp::Exception - exception handling for PApp
 package PApp::Exception;
 
 use base Exporter;
+use overload ();
 
 use PApp::HTML;
 
 use utf8;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw(fancydie try catch);
 
 no warnings;
@@ -34,13 +35,8 @@ sub __($) {
 }
 
 use overload 
-# if we use bool we are faster, BUT apache et. al. just display
-# the boolean as return value.
-# 2001-02-08 enabled again, maybe it works now
-# 2001-02-08 no, it doesn't
-# 2001-02-10 hmmm.. maybe now?
    'bool'   => sub { 1 },
-   '""'     => sub { ;$_[0]{compatible} || $_[0]->as_string },
+   '""'     => sub { $_[0]{compatible} || $_[0]->as_string },
    fallback => 1,
    ;
 
@@ -103,6 +99,8 @@ stringification will call C<as_string>.
  info       additional info (arrayref)
  backtrace  optional backtrace info
  compatible if set, stringification will only return this field
+ abridged   if set, only the error text will be shown
+ as_string  if set, a plaintext instead of html will be generated
 
 When called on an existing object, a clone of that exception object is
 created and the information is extended (backtrace is being ignored,
@@ -161,28 +159,32 @@ sub as_string {
    my $self = shift;
    local $@; # localize $@ as to not destroy it inadvertetly
 
-   my $err = "\n".($self->{title} || __"PApp::Exception caught")."\n\n$self->{category}\n";
-   $err .= "\n$self->{error}\n" if $self->{error};
-   if ($self->{info}) {
-      for (@{$self->{info}}) {
-         my $info = $_;
-         my $desc;
+   if ($self->{abridged}) {
+      $self->{error};
+   } else {
+      my $err = "\n".($self->{title} || __"PApp::Exception caught")."\n\n$self->{category}\n";
+      $err .= "\n$self->{error}\n" if $self->{error};
+      if ($self->{info}) {
+         for (@{$self->{info}}) {
+            my $info = $_;
+            my $desc;
 
-         if (ref $info) {
-            $desc = " ($info->[0])";
-            $info = $info->[1];
+            if (ref $info) {
+               $desc = " ($info->[0])";
+               $info = $info->[1];
+            }
+
+            $info = wrap_text $info, 80;
+            $err .= "\n".__"Additional Info"."$desc:\n$info\n";
          }
-
-         $info = wrap_text $info, 80;
-         $err .= "\n".__"Additional Info"."$desc:\n$info\n";
       }
-   }
-   $err .= "\n".__"Backtrace".":\n$self->{backtrace}\n";
-   
-   $err =~ s/^/! /gm;
-   $err =~ s/\0/\\0/g;
+      $err .= "\n".__"Backtrace".":\n$self->{backtrace}\n";
+      
+      $err =~ s/^/! /gm;
+      $err =~ s/\0/\\0/g;
 
-   $err;
+      $err;
+   }
 }
 
 sub title {
@@ -195,7 +197,24 @@ sub category {
 
 sub as_html {
    my $self = shift;
-   my $title = sprintf __"%s (exception caught)", $self->title;
+
+   if ($self->{abridged}) {
+      my $category = escape_html $self->{category};
+      my $error    = escape_html $self->{error};
+
+      <<EOF;
+<html>
+<body>
+<p><table bgcolor='#d0d0f0' cellspacing='0' cellpadding='10' border='0'>
+<tr><td bgcolor='#b0b0d0'><font face='Arial, Helvetica' color='black'><b>$category</b></font></td></tr>
+<tr><td><font color='#3333cc'>$error</font></td></tr>
+</table></p>
+</body>
+</html>
+EOF
+
+   } else {
+      my $title = sprintf __"%s (exception caught)", $self->title;
 
 "<html>
 <head>
@@ -204,10 +223,11 @@ sub as_html {
 <body bgcolor=\"#d0d0d0\">
 <blockquote>
 <h1>$title</h1>".
-   $self->_as_html(@_)."
+      $self->_as_html(@_)."
 </blockquote>
 </body>
 </html>";
+   }
 }
 
 sub _as_html($;$) {
@@ -218,15 +238,11 @@ sub _as_html($;$) {
    my $category = escape_html ($self->category);
    my $error = escape_html $self->{error};
 
-   $title =~ s/\n/<br>/g;
-   $error =~ s/\n/<br>/g;
-   
    my $err = <<EOF;
-<p>
-<table bgcolor='#d0d0f0' cellspacing=0 cellpadding=10 border=0>
+<p><table bgcolor='#d0d0f0' cellspacing='0' cellpadding='10' border='0'>
 <tr><td bgcolor='#b0b0d0'><font face='Arial, Helvetica'><b><pre>$category</pre></b></font></td></tr>
 <tr><td><font color='#3333cc'>$error</font></td></tr>
-</table>
+</table></p>
 EOF
 
    if ($self->{info}) {
@@ -244,7 +260,7 @@ EOF
 <table bgcolor='#e0e0e0' cellspacing='0' cellpadding='10' border='0'>
 <tr><td bgcolor='#c0c0c0'><font face='Arial, Helvetica'><b>".__"Additional Info"."$desc:</b></font></td></tr>
 <tr><td><pre>$info</pre></td></tr>
-</table>
+</table></p>
 ";
       }
    }
@@ -255,17 +271,16 @@ EOF
 <table bgcolor='#ffc0c0' cellspacing='0' cellpadding='10' border='0' width='94%'>
 <tr><td bgcolor='#e09090'><font face='Arial, Helvetica'><b>".__"Backtrace".":</b></font></td></tr>
 <tr><td><pre>$backtrace</pre></td></tr>
-</table>
+</table></p>
 ";
    }
 
    if ($body) {
       $body = wrap_text $body, 80;
       $err .= <<EOF;
-<p>
-<table bgcolor='#e0e0f0' cellspacing='0' cellpadding='10' border='0'>
+<p><table bgcolor='#e0e0f0' cellspacing='0' cellpadding='10' border='0'>
 <tr><td><pre>$body</pre></td></tr>
-</table>
+</table></p>
 EOF
    }
 
@@ -298,18 +313,28 @@ sub papp_backtrace {
   my $start = shift;
   my($p,$f,$l,$s,$h,$w,$e,$r,$a, @a, @ret,$i);
   $start = 1 unless $start;
-  for ($i = $start; ($p,$f,$l,$s,$h,$w,$e,$r) = caller($i); $i++) {
+  for ($i = $start; @DB::args = ("optimized away"), ($p,$f,$l,$s,$h,$w,$e,$r) = caller($i); $i++) {
     $f = "file `$f'" unless $f eq '-e';
     $w = $w ? '@ = ' : '$ = ';
     if ($i > $start) {
        my @a = map {
           eval {
-             local $_ = $_;
-             s/'/\\'/g;
-             s/([^\0]*)/'$1'/ unless /^-?[\d.]+$/;
-             s/([\200-\377])/sprintf("M-%c",ord($1)&0177)/eg;
-             s/([\0-\37\177])/sprintf("^%c",ord($1)^64)/eg;
-             $_;
+             if (tied $_) {
+                "<<TIED ".(tied $_).">>";
+             } elsif (ref) {
+                if (overload::Overloaded $_) {
+                   "<<OVERLOADED ".(overload::StrVal $_).">>";
+                } else {
+                   "$_";
+                }
+             } else {
+                my $strval = "$_";
+                $strval =~ s/'/\\'/g;
+                $strval =~ s/([^\0]*)/'$1'/ unless /^-?[\d.]+$/;
+                $strval =~ s/([\200-\377])/sprintf("M-%c",ord($1)&0177)/eg;
+                $strval =~ s/([\0-\37\177])/sprintf("^%c",ord($1)^64)/eg;
+                $strval;
+             }
           } || do {
              $@ =~ s/ at \(.*$//s;
              $@;
@@ -327,9 +352,9 @@ sub papp_backtrace {
        } elsif ($s eq '(eval)') {
          $s = "eval {...}";
        }
-       push @ret, "$w&$s$a from $f line $l";
+       push @ret, "$w$s$a from $f line $l";
     } else {
-       push @ret, "$w&$s$a called from $f line $l";
+       push @ret, "$w$s$a called from $f line $l";
     }
     last if $DB::signal;
   }
@@ -341,7 +366,7 @@ sub _fancyerr {
    my $error = shift;
    my $info = [];
    my $backtrace;
-   my @arg;
+   my %arg;
    my $skipcallers = 2;
 
    my $class = PApp::Exception::;
@@ -360,25 +385,27 @@ sub _fancyerr {
       } elsif ($arg eq "info") {
          push @$info, $val;
       } else {
-         push @arg, $arg, $val;
+         $arg{$arg} = $val;
       }
    }
 
-   for my $frame (papp_backtrace($skipcallers)) {
-      $frame =~ s/  +/ /g;
-      $frame = wrap_text $frame, 80;
-      $frame =~ s/\n/\n    /g;
-      $backtrace .= "$frame\n";
+   unless (ref $class or $arg{abridged}) {
+      for my $frame (papp_backtrace($skipcallers)) {
+         $frame =~ s/  +/ /g;
+         $frame = wrap_text $frame, 80;
+         $frame =~ s/\n/\n    /g;
+         $backtrace .= "$frame\n";
+      }
    }
 
    s/\n+$//g for @$info;
 
    $class->new(
-      backtrace => $backtrace,
+      ref $class ? () : (backtrace => $backtrace),
       category  => $category,
       error     => $error,
       info      => $info,
-      @arg,
+      %arg,
    );
 }
 
@@ -440,14 +467,16 @@ an error page for the user. Better overwrite the following methods, not this one
 
 sub _clone {
    eval {
-      require Storable; # should use Clone some day
+      local $SIG{__DIE__};
+      require PApp::Storable; # should use Clone some day
       local $Storable::forgive_me = 1;
-      Storable::dclone($_[0]);
+      PApp::Storable::dclone($_[0]);
    } || "$_[1]: $@";
 }
 
 sub _clone_request {
    my $r = $PApp::request;
+   local $SIG{__DIE__};
    +{
       eval {
          time        => time,
@@ -475,33 +504,98 @@ sub errorpage {
    my $onerr = exists $papp->{onerr} ? $papp->{onerr} : $PApp::onerr;
    my @html;
 
-   content_type("text/html", "*");
-
    $self->{save} = {
-      output    => $output,
-      arguments => PApp::Exception::_clone(\%arguments, "unable to clone arguments"),
-      params    => PApp::Exception::_clone(\%P,         "unable to clone params"),
-      state     => PApp::Exception::_clone(\%state,     "unable to clone state"),
-      userid    => $userid,
-      stateid   => $stateid,
-      prevstateid => $prevstateid,
-      alternative => $alternative,
-      request   => PApp::Exception::_clone_request,
+      misc      => {
+         NOW       => $NOW,
+         onerr     => $onerr,
+      },
+
+      state     => {
+         arguments   => PApp::Exception::_clone(\%arguments, "unable to clone arguments"),
+         params      => PApp::Exception::_clone(\%P,         "unable to clone params"),
+         state       => PApp::Exception::_clone(\%state,     "unable to clone state"),
+         userid      => $userid,
+         sessionid   => $sessionid,
+         stateid     => $stateid,
+         prevstateid => $prevstateid,
+         alternative => $alternative,
+      },
+
+      app       => {
+         curpath     => $curpath,
+         curprfx     => $curprfx,
+         module      => \%module,
+         modules     => $modules,
+         langs       => $langs,
+      },
+
+      output    => {
+         content_type   => $content_type,
+         output_charset => $output_charset,
+         output_p       => $output_p,
+         output         => $output,
+         routput        => $$routput,
+         doutput        => $doutput,
+      },
+
+      protocol => {
+         location    => $location,
+         pathinfo    => $pathinfo,
+         request     => PApp::Exception::_clone_request,
+      },
    };
 
-   $onerr ||= "sha";
+   if ($self->{as_string}) {
+      content_type("text/plain", "*");
 
-   push @html, $self->ep_save      if $onerr =~ /s/i;
-   push @html, $self->ep_shortinfo if $onerr =~ /h/i;
-   push @html, $self->ep_fullinfo  if $onerr =~ /v/i;
-   push @html, $self->ep_login     if $onerr =~ /a/i;
+      $PApp::output = $self->as_string;
+   } else {
+      content_type("text/html", "*");
 
-   $PApp::output = $self->ep_wrap (@html);
+      $onerr ||= "sha";
+
+      push @html, $self->ep_save      if $onerr =~ /s/i;
+      push @html, $self->ep_shortinfo if $onerr =~ /h/i;
+      push @html, $self->ep_fullinfo  if $onerr =~ /v/i;
+      push @html, $self->ep_login     if $onerr =~ /a/i;
+
+      $PApp::output = $self->ep_wrap (@html);
+   }
 }
 
 sub ep_save {
    my $self = shift;
-   __"[saving is not yet implemented]";
+   my $id;
+   local $SIG{__DIE__};
+
+   eval {
+      require PApp::SQL;
+      require PApp::Config;
+      require Compress::LZF;
+
+      $id = PApp::SQL::sql_insertid (
+               PApp::SQL::sql_exec (
+                  PApp::Config::DBH,
+                  "insert into error values (NULL, NULL, ?, '')",
+                  Compress::LZF::sfreeze_cr ($self)
+               )
+            );
+   } || __"[unable to save error information: $@]";
+
+   eval {
+      require PApp::HTML;
+      my $surl = $PApp::papp_main->surl("error", -set_comment => 1, -id => $id);
+
+      my $output = "<form method='GET' action='$surl'>";
+      $output .= sprintf __"saved as error report #%d", $id;
+
+      $output .= "<br />".__"please enter a short description, this will help us fix the problem. thanks. ";
+      $output .= "<br /><input type='text' name='comment' size='40' /> ";
+      $output .= "</form>";
+      $output .= "<hr /><a href='$surl'>".(__"[Login/View this error]")."</a>";
+
+      $output;
+   } || __"[unable to enter error browser: $@]";
 }
 
 sub ep_shortinfo {
@@ -516,8 +610,9 @@ sub ep_fullinfo {
 
 sub ep_login {
    my $self = shift;
+   local $SIG{__DIE__};
    eval {
-      $PApp::papp_main->slink(__"[Login/View this error]", "error", exception => $self);
+      $PApp::papp_main->slink(__"[Login/View this error]", "error", -exception => $self);
    } or __"[unable to enter error browser at this time]";
 }
 

@@ -6,7 +6,7 @@
 <import pm="PApp::UserObs">access_p</import>
 
 <perl><![CDATA[
-   $ppkg->set_database(PApp::Config::Database);
+   $ppkg->set_database($PApp::Config::Database);
 
    use Convert::Scalar ':utf8';
    use PApp::I18n qw(scan_file scan_init scan_end scan_field

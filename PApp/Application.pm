@@ -30,7 +30,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 
 =item $papp = new PApp::Application args...
 
@@ -89,6 +89,8 @@ sub preprocess {
 
    if ($pid == 0) {
       close $R;
+
+      local $SIG{__DIE__};
 
       #print "gdb /usr/app/sbin/httpd $$\n"; #<STDIN>;
 
@@ -342,7 +344,7 @@ sub check_deps($) {
    });
 
    while (my ($path, $v) = each %{$self->{file}}) {
-      $reload++ if (stat $path)[9] > $v->{mtime};
+      $reload++ if (stat $path)[9] != $v->{mtime};
    }
 
    $self->reload if $reload;

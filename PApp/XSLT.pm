@@ -20,7 +20,7 @@ moderately easy to add XML::Transformiix or XML::XSLT).
 
 package PApp::XSLT;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 
 no bytes;
 
@@ -183,8 +183,8 @@ sub apply_string($$;@) {
       require PApp::Util;
       my $ss = ref $self->{ss} ? $self->{ss}->() : $self->{ss};
       fancydie "error during stylesheet processing", $self->{curerr}[1],
-               $self->{curerr}[0] ne "arg:/template" ? (info => ["arg:/data"     => PApp::Util::format_source($source)]) : (),
-               $self->{curerr}[0] ne "arg:/data"     ? (info => ["arg:/template" => PApp::Util::format_source($ss    )]) : (),
+               $self->{curerr}[0] ne "arg:/template" ? (info => ["arg:/data"     => PApp::Util::format_source($source)], info => ["arg:/template" => PApp::Util::format_source($ss    )]) : (),
+               $self->{curerr}[0] ne "arg:/data"     ? (info => ["arg:/template" => PApp::Util::format_source($ss    )], info => [ "arg:/data"     => PApp::Util::format_source($source)]) : (),
               ;
    }
    Convert::Scalar::utf8_on($result);

@@ -1345,7 +1345,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Abkhazian"
-msgstr "Aserbeidschan"
+msgstr "Abchasisch"
 
 #$lang=eng
 msgid "Achinese"
@@ -1361,7 +1361,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Afar"
-msgstr "Afrika"
+msgstr "Afar"
 
 #$lang=eng
 msgid "Afrihili"
@@ -1369,7 +1369,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Afrikaans"
-msgstr ""
+msgstr "Afrikaans"
 
 #$lang=eng
 msgid "Afro-Asiatic (Other)"
@@ -1382,6 +1382,10 @@ msgstr ""
 #$lang=eng
 msgid "Akkadian"
 msgstr "Akkadianisch"
+
+#$lang=eng
+msgid "Albanian"
+msgstr "Albanisch"
 
 #$lang=eng
 msgid "Aleut"
@@ -1424,6 +1428,10 @@ msgid "Arawak"
 msgstr ""
 
 #$lang=eng
+msgid "Armenian"
+msgstr "Armenisch"
+
+#$lang=eng
 msgid "Artificial (Other)"
 msgstr "Sonstige Kunstsprachen"
 
@@ -1449,7 +1457,7 @@ msgstr "Awarisch"
 
 #$lang=eng
 msgid "Avestan"
-msgstr "Avestanisch"
+msgstr "Avestan"
 
 #$lang=eng
 msgid "Awadhi"
@@ -1457,11 +1465,11 @@ msgstr ""
 
 #$lang=eng
 msgid "Aymara"
-msgstr ""
+msgstr "Aymara"
 
 #$lang=eng
 msgid "Azerbaijani"
-msgstr "Aserbeidschanisch"
+msgstr "Aserbaidschanisch"
 
 #$lang=eng
 msgid "Balinese"
@@ -1497,7 +1505,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Bashkir"
-msgstr ""
+msgstr "Baschkirisch"
 
 #$lang=eng
 msgid "Basque"
@@ -1513,7 +1521,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Belarusian"
-msgstr "Weissrussisch"
+msgstr "Belorussisch"
 
 #$lang=eng
 msgid "Bemba"
@@ -1533,7 +1541,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Bihari"
-msgstr ""
+msgstr "Biharisch"
 
 #$lang=eng
 msgid "Bikol"
@@ -1545,11 +1553,11 @@ msgstr ""
 
 #$lang=eng
 msgid "Bislama"
-msgstr ""
+msgstr "Bislamisch"
 
 #$lang=eng
 msgid "Bosnian"
-msgstr "Bosnisch"
+msgstr "Bosnian"
 
 #$lang=eng
 msgid "Braj"
@@ -1565,15 +1573,24 @@ msgstr "Buginesisch"
 
 #$lang=eng
 msgid "Bulgarian"
-msgstr "Bulgarisch"
+msgstr "Bulgarirsch"
 
 #$lang=eng
 msgid "Buriat"
 msgstr ""
 
 #$lang=eng
+msgid "Burmese"
+msgstr "Burmesisch"
+
+#$lang=eng
 msgid "Caddo"
 msgstr ""
+
+# #getiso-hack#
+#$lang=eng
+msgid "Cambodian"
+msgstr "Kambodschanisch"
 
 #$lang=eng
 msgid "Carib"
@@ -1609,11 +1626,11 @@ msgstr "Sonstige Samisprachen"
 
 #$lang=eng
 msgid "Chamorro"
-msgstr "Kamerun"
+msgstr "Chamorro"
 
 #$lang=eng
 msgid "Chechen"
-msgstr ""
+msgstr "Chechen"
 
 #$lang=eng
 msgid "Cherokee"
@@ -1623,9 +1640,14 @@ msgstr "hier"
 msgid "Chibcha"
 msgstr ""
 
+# #getiso-hack#
+#$lang=eng
+msgid "Chichewa"
+msgstr "Chichewa"
+
 #$lang=eng
 msgid "Chinese"
-msgstr "Chinesisch (vereinfacht)"
+msgstr "Chinesisch"
 
 #$lang=eng
 msgid "Church Slavic"
@@ -1634,6 +1656,10 @@ msgstr "Kirchenslawisch"
 #$lang=eng
 msgid "Chuukese"
 msgstr "Chuukesisch"
+
+#$lang=eng
+msgid "Chuvash"
+msgstr "Chuvash"
 
 #$lang=eng
 msgid "Coptic"
@@ -1701,11 +1727,15 @@ msgstr "Sonstige drawidische Sprachen"
 
 #$lang=eng
 msgid "Dutch"
-msgstr "Niederländisch"
+msgstr "Holländisch"
 
 #$lang=eng
 msgid "Dutch, Middle (ca. 1050-1350)"
 msgstr "Mittelfranzösisch (ca. 1400-1600)"
+
+#$lang=eng
+msgid "Dzongkha"
+msgstr "Bhutani"
 
 #$lang=eng
 msgid "Egyptian (Ancient)"
@@ -1729,7 +1759,7 @@ msgstr "Altenglisch (ca. 450-1100)"
 
 #$lang=eng
 msgid "Esperanto"
-msgstr ""
+msgstr "Esperanto"
 
 #$lang=eng
 msgid "Estonian"
@@ -1745,11 +1775,11 @@ msgstr ""
 
 #$lang=eng
 msgid "Faroese"
-msgstr "Faröesisch"
+msgstr "Faröisch"
 
 #$lang=eng
 msgid "Fijian"
-msgstr "Fidschianisch"
+msgstr "Fiji"
 
 #$lang=eng
 msgid "Finnish"
@@ -1787,9 +1817,18 @@ msgstr ""
 msgid "Ga"
 msgstr ""
 
+# #getiso-hack#
+#$lang=eng
+msgid "Gaelic"
+msgstr "Schottisches Gälisch"
+
 #$lang=eng
 msgid "Gaelic (Scots)"
 msgstr "Gaelisch (Schottisch)"
+
+#$lang=eng
+msgid "Gallegan"
+msgstr "Galizisch"
 
 #$lang=eng
 msgid "Gayo"
@@ -1798,6 +1837,10 @@ msgstr ""
 #$lang=eng
 msgid "Geez"
 msgstr "Griechenland"
+
+#$lang=eng
+msgid "Georgian"
+msgstr "Georgisch"
 
 #$lang=eng
 msgid "German"
@@ -1823,6 +1866,11 @@ msgstr "Indien"
 msgid "Gothic"
 msgstr "Gotisch"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greek"
+msgstr "Griechisch"
+
 #$lang=eng
 msgid "Greek, Ancient (to 1453)"
 msgstr "Altgriechisch (bis 1453)"
@@ -1831,13 +1879,18 @@ msgstr "Altgriechisch (bis 1453)"
 msgid "Greek, Modern (1453-)"
 msgstr "Griechisch"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greenlandic"
+msgstr "Grönländisch"
+
 #$lang=eng
 msgid "Guarani"
-msgstr ""
+msgstr "Guarani"
 
 #$lang=eng
 msgid "Gujarati"
-msgstr ""
+msgstr "Gujaratisch"
 
 #$lang=eng
 msgid "Haida"
@@ -1845,7 +1898,7 @@ msgstr ""
 
 #$lang=eng
 msgid "Hausa"
-msgstr ""
+msgstr "Haussa"
 
 #$lang=eng
 msgid "Hawaiian"
@@ -1857,7 +1910,15 @@ msgstr "Hebräisch"
 
 #$lang=eng
 msgid "Herero"
-msgstr ""
+msgstr "Herero"
+
+#$lang=eng
+msgid "Hindi"
+msgstr "Hindi"
+
+#$lang=eng
+msgid "Hiri Motu"
+msgstr "Hiri Motu"
 
 #$lang=eng
 msgid "Hungarian"
@@ -1866,6 +1927,11 @@ msgstr "Ungarisch"
 #$lang=eng
 msgid "Icelandic"
 msgstr "Isländisch"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ido"
+msgstr "Ido"
 
 #$lang=eng
 msgid "Indic (Other)"
@@ -1879,13 +1945,26 @@ msgstr "Sonstige indoeuropäische Sprachen"
 msgid "Indonesian"
 msgstr "Indonesisch"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Interlingua"
+msgstr "Interlingua"
+
 #$lang=eng
 msgid "Interlingua (International Auxiliary Language Association)"
 msgstr "Interlingua (IALA)"
 
 #$lang=eng
 msgid "Interlingue"
-msgstr ""
+msgstr "Interlingue"
+
+#$lang=eng
+msgid "Inuktitut"
+msgstr "Inuktitut"
+
+#$lang=eng
+msgid "Inupiaq"
+msgstr "Inupiak"
 
 #$lang=eng
 msgid "Iranian (Other)"
@@ -1908,16 +1987,70 @@ msgid "Japanese"
 msgstr "Japanisch"
 
 #$lang=eng
+msgid "Javanese"
+msgstr "Javanisch"
+
+#$lang=eng
+msgid "Kannada"
+msgstr "Kannada"
+
+#$lang=eng
+msgid "Kashmiri"
+msgstr "Kaschmirisch"
+
+#$lang=eng
+msgid "Kazakh"
+msgstr "Kasachisch"
+
+#$lang=eng
 msgid "Khoisan (Other)"
 msgstr "Sonstige Khoisansprachen"
+
+#$lang=eng
+msgid "Kikuyu"
+msgstr "Kikuyu"
+
+#$lang=eng
+msgid "Kinyarwanda"
+msgstr "Kijarwanda"
+
+#$lang=eng
+msgid "Kirghiz"
+msgstr "Kirgisisch"
+
+#$lang=eng
+msgid "Komi"
+msgstr "Komi"
 
 #$lang=eng
 msgid "Korean"
 msgstr "Koreanisch"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Kuanyama"
+msgstr "Kuanyama"
+
+#$lang=eng
+msgid "Kurdish"
+msgstr "Kurdisch"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Laothian"
+msgstr "Laotisch"
+
+#$lang=eng
+msgid "Latin"
+msgstr "Lateinisch"
+
 #$lang=eng
 msgid "Latvian"
 msgstr "Lettisch"
+
+#$lang=eng
+msgid "Lingala"
+msgstr "Lingalisch"
 
 #$lang=eng
 msgid "Lithuanian"
@@ -1927,13 +2060,51 @@ msgstr "Litauisch"
 msgid "Low German; Low Saxon; German, Low; Saxon, Low"
 msgstr "Niedersächsisch"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Luxembourgish"
+msgstr "Luxemburgisch"
+
+#$lang=eng
+msgid "Macedonian"
+msgstr "Mazedonisch"
+
+#$lang=eng
+msgid "Malagasy"
+msgstr "Malagasisch"
+
+#$lang=eng
+msgid "Malay"
+msgstr "Malaysisch"
+
+#$lang=eng
+msgid "Malayalam"
+msgstr "Malajalam"
+
+#$lang=eng
+msgid "Maltese"
+msgstr "Maltesisch"
+
 #$lang=eng
 msgid "Manobo languages"
 msgstr "Manobo-Sprachen"
 
 #$lang=eng
 msgid "Manx"
-msgstr ""
+msgstr "Gälisch der Ile of Man"
+
+#$lang=eng
+msgid "Maori"
+msgstr "Maorisch"
+
+#$lang=eng
+msgid "Marathi"
+msgstr "Marathi"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Marshallese"
+msgstr "Marshallese"
 
 #$lang=eng
 msgid "Mayan languages"
@@ -1944,8 +2115,16 @@ msgid "Miscellaneous languages"
 msgstr "Sonstige Sprachen"
 
 #$lang=eng
+msgid "Moldavian"
+msgstr "Moldavisch"
+
+#$lang=eng
 msgid "Mon-Khmer (Other)"
 msgstr "Sonstige Mon-Khmer-Sprachen"
+
+#$lang=eng
+msgid "Mongolian"
+msgstr "Mongolisch"
 
 #$lang=eng
 msgid "Multiple languages"
@@ -1956,6 +2135,30 @@ msgid "Munda languages"
 msgstr "Munda-Sprachen"
 
 #$lang=eng
+msgid "Nauru"
+msgstr "Nauruisch"
+
+#$lang=eng
+msgid "Navajo"
+msgstr "Navajo"
+
+#$lang=eng
+msgid "Ndebele, North"
+msgstr "Ndebele, North"
+
+#$lang=eng
+msgid "Ndebele, South"
+msgstr "Ndebele, South"
+
+#$lang=eng
+msgid "Ndonga"
+msgstr "Ndonga"
+
+#$lang=eng
+msgid "Nepali"
+msgstr "Nepalisch"
+
+#$lang=eng
 msgid "Niger-Kordofanian (Other)"
 msgstr "Sonstige iranische Sprachen"
 
@@ -1964,16 +2167,50 @@ msgid "Nilo-Saharan (Other)"
 msgstr "Sonstige finno-ugaritische Sprachen"
 
 #$lang=eng
+msgid "Northern Sami"
+msgstr "Northern Sami"
+
+#$lang=eng
 msgid "Norwegian"
 msgstr "Norwegisch"
+
+#$lang=eng
+msgid "Norwegian Bokmål"
+msgstr "Norwegian Bokmål"
+
+#$lang=eng
+msgid "Norwegian Nynorsk"
+msgstr "Norwegian Nynorsk"
 
 #$lang=eng
 msgid "Nubian languages"
 msgstr "Nubische Sprachen"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Occitan"
+msgstr "Okzitanisch"
+
+#$lang=eng
+msgid "Oriya"
+msgstr "Orija"
+
+#$lang=eng
+msgid "Oromo"
+msgstr "Oromo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ossetian"
+msgstr "Ossetian"
+
 #$lang=eng
 msgid "Otomian languages"
 msgstr "Otomanische Sprachen"
+
+#$lang=eng
+msgid "Pali"
+msgstr "Pali"
 
 #$lang=eng
 msgid "Papuan (Other)"
@@ -1993,11 +2230,29 @@ msgstr "Polnisch"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "Portugiesisch"
+msgstr "Portugiensisch"
 
 #$lang=eng
 msgid "Prakrit languages"
 msgstr "Australische Sprachen"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Punjabi"
+msgstr "Pundjabisch"
+
+#$lang=eng
+msgid "Pushto"
+msgstr "Paschtu"
+
+#$lang=eng
+msgid "Quechua"
+msgstr "Quechua"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Raeto-Romance"
+msgstr "Rätoromanisch"
 
 #$lang=eng
 msgid "Romance (Other)"
@@ -2008,12 +2263,32 @@ msgid "Romanian"
 msgstr "Rumänisch"
 
 #$lang=eng
+msgid "Rundi"
+msgstr "Kirundisch"
+
+#$lang=eng
 msgid "Russian"
 msgstr "Russisch"
 
 #$lang=eng
 msgid "Sami languages (Other)"
 msgstr "Sonstige Samisprachen"
+
+#$lang=eng
+msgid "Samoan"
+msgstr "Samoanisch"
+
+#$lang=eng
+msgid "Sango"
+msgstr "Sango"
+
+#$lang=eng
+msgid "Sanskrit"
+msgstr "Sanskrit"
+
+#$lang=eng
+msgid "Sardinian"
+msgstr "Sardinian"
 
 #$lang=eng
 msgid "Semitic (Other)"
@@ -2023,9 +2298,26 @@ msgstr "Sonstige semitische Sprachen"
 msgid "Serbian"
 msgstr "Serbisch"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Serbo-Croatian"
+msgstr "Serbokroatisch"
+
+#$lang=eng
+msgid "Shona"
+msgstr "Schonisch"
+
 #$lang=eng
 msgid "Siksika"
 msgstr ""
+
+#$lang=eng
+msgid "Sindhi"
+msgstr "Zinti"
+
+#$lang=eng
+msgid "Sinhalese"
+msgstr "Singhalesisch"
 
 #$lang=eng
 msgid "Sino-Tibetan (Other)"
@@ -2044,6 +2336,14 @@ msgid "Slovenian"
 msgstr "Slowenisch"
 
 #$lang=eng
+msgid "Somali"
+msgstr "Somalisch"
+
+#$lang=eng
+msgid "Sotho, Southern"
+msgstr "Sesothisch"
+
+#$lang=eng
 msgid "South American Indian (Other)"
 msgstr "Sonstige zentralamerikanische Indianersprachen"
 
@@ -2052,28 +2352,143 @@ msgid "Spanish"
 msgstr "Spanisch"
 
 #$lang=eng
+msgid "Sundanese"
+msgstr "Sudanesisch"
+
+#$lang=eng
+msgid "Swahili"
+msgstr "Suaheli"
+
+#$lang=eng
+msgid "Swati"
+msgstr "Swasiländisch"
+
+#$lang=eng
 msgid "Swedish"
 msgstr "Schwedisch"
+
+#$lang=eng
+msgid "Tagalog"
+msgstr "Tagalog"
+
+#$lang=eng
+msgid "Tahitian"
+msgstr "Tahitian"
 
 #$lang=eng
 msgid "Tai (Other)"
 msgstr "Sonstige Tai-Sprachen"
 
 #$lang=eng
+msgid "Tajik"
+msgstr "Tadschikisch"
+
+#$lang=eng
+msgid "Tamil"
+msgstr "Tamilisch"
+
+#$lang=eng
+msgid "Tatar"
+msgstr "Tatarisch"
+
+#$lang=eng
+msgid "Telugu"
+msgstr "Telugu"
+
+#$lang=eng
+msgid "Thai"
+msgstr "Thai"
+
+#$lang=eng
 msgid "Tibetan"
-msgstr "Tibetisch"
+msgstr "Tibetanisch"
+
+#$lang=eng
+msgid "Tigrinya"
+msgstr "Tigrinja"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Tonga"
+msgstr "Tongaisch"
+
+#$lang=eng
+msgid "Tsonga"
+msgstr "Tsongaisch"
+
+#$lang=eng
+msgid "Tswana"
+msgstr "Sezuan"
 
 #$lang=eng
 msgid "Turkish"
-msgstr "Türkisch"
+msgstr "Türukisch"
+
+#$lang=eng
+msgid "Turkmen"
+msgstr "Turkmenisch"
+
+#$lang=eng
+msgid "Twi"
+msgstr "Twi"
+
+#$lang=eng
+msgid "Uighur"
+msgstr "Uighur"
+
+#$lang=eng
+msgid "Ukrainian"
+msgstr "Ukrainisch"
+
+#$lang=eng
+msgid "Urdu"
+msgstr "Urdu"
+
+#$lang=eng
+msgid "Uzbek"
+msgstr "Uzbekisch"
+
+#$lang=eng
+msgid "Vietnamese"
+msgstr "Vietnamesisch"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Volapük"
+msgstr "Volapük"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Walloon"
+msgstr "Walloon"
 
 #$lang=eng
 msgid "Welsh"
 msgstr "Walisisch"
 
 #$lang=eng
+msgid "Wolof"
+msgstr "Wolof"
+
+#$lang=eng
+msgid "Xhosa"
+msgstr "Xhosa"
+
+#$lang=eng
+msgid "Yiddish"
+msgstr "Jiddish"
+
+#$lang=eng
+msgid "Yoruba"
+msgstr "Joruba"
+
+#$lang=eng
 msgid "Zhuang"
-msgstr "Chinesisch (traditionell)"
+msgstr "Zhuang"
+
+#$lang=eng
+msgid "Zulu"
+msgstr "Zulu"
 
 #$lang=ell
 msgid ""
@@ -2865,7 +3280,7 @@ msgstr "altaïques, autres langues"
 
 #$lang=eng
 msgid "Amharic"
-msgstr "amharique"
+msgstr "Amharic"
 
 #$lang=eng
 msgid "Apache languages"
@@ -2873,7 +3288,7 @@ msgstr "apache"
 
 #$lang=eng
 msgid "Arabic"
-msgstr "Arabe"
+msgstr "arabe"
 
 #$lang=eng
 msgid "Aramaic"
@@ -2921,7 +3336,7 @@ msgstr "avar"
 
 #$lang=eng
 msgid "Avestan"
-msgstr "avestique"
+msgstr "Avestan"
 
 #$lang=eng
 msgid "Awadhi"
@@ -3017,11 +3432,11 @@ msgstr "bini"
 
 #$lang=eng
 msgid "Bislama"
-msgstr "bichlamar"
+msgstr "bêche-de-mer"
 
 #$lang=eng
 msgid "Bosnian"
-msgstr "bosniaque"
+msgstr "bosnian"
 
 #$lang=eng
 msgid "Braj"
@@ -3037,7 +3452,7 @@ msgstr "bugi"
 
 #$lang=eng
 msgid "Bulgarian"
-msgstr "Bulgare"
+msgstr "bulgare"
 
 #$lang=eng
 msgid "Buriat"
@@ -3050,6 +3465,11 @@ msgstr "birman"
 #$lang=eng
 msgid "Caddo"
 msgstr "caddo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Cambodian"
+msgstr "cambodgien"
 
 #$lang=eng
 msgid "Carib"
@@ -3089,7 +3509,7 @@ msgstr "chamorro"
 
 #$lang=eng
 msgid "Chechen"
-msgstr "tchetchène"
+msgstr "tchétchène"
 
 #$lang=eng
 msgid "Cherokee"
@@ -3103,13 +3523,18 @@ msgstr "cheyenne"
 msgid "Chibcha"
 msgstr "chibcha"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Chichewa"
+msgstr "chichewa"
+
 #$lang=eng
 msgid "Chichewa; Nyanja"
 msgstr "chichewa; nyanja"
 
 #$lang=eng
 msgid "Chinese"
-msgstr "Chinois (simplifié)"
+msgstr "chinois"
 
 #$lang=eng
 msgid "Chinook jargon"
@@ -3173,7 +3598,7 @@ msgstr "créoles et pidgins portugais, autres"
 
 #$lang=eng
 msgid "Croatian"
-msgstr "Croate"
+msgstr "croate"
 
 #$lang=eng
 msgid "Cushitic (Other)"
@@ -3181,7 +3606,7 @@ msgstr "couchitiques, autres langues"
 
 #$lang=eng
 msgid "Czech"
-msgstr "Tchèque"
+msgstr "tchèque"
 
 #$lang=eng
 msgid "Dakota"
@@ -3189,7 +3614,7 @@ msgstr "dakota"
 
 #$lang=eng
 msgid "Danish"
-msgstr "Danois"
+msgstr "danois"
 
 #$lang=eng
 msgid "Dayak"
@@ -3225,7 +3650,7 @@ msgstr "douala"
 
 #$lang=eng
 msgid "Dutch"
-msgstr "Néerlandais"
+msgstr "néerlandais"
 
 #$lang=eng
 msgid "Dutch, Middle (ca. 1050-1350)"
@@ -3237,7 +3662,7 @@ msgstr "dioula"
 
 #$lang=eng
 msgid "Dzongkha"
-msgstr "dzongkha"
+msgstr "boutani"
 
 #$lang=eng
 msgid "Efik"
@@ -3257,7 +3682,7 @@ msgstr "élamite"
 
 #$lang=eng
 msgid "English"
-msgstr "Anglais"
+msgstr "anglais"
 
 #$lang=eng
 msgid "English, Middle (1100-1500)"
@@ -3273,7 +3698,7 @@ msgstr "espéranto"
 
 #$lang=eng
 msgid "Estonian"
-msgstr "Estonien"
+msgstr "estonien"
 
 #$lang=eng
 msgid "Ewe"
@@ -3301,7 +3726,7 @@ msgstr "fidjien"
 
 #$lang=eng
 msgid "Finnish"
-msgstr "Finnois"
+msgstr "finnois"
 
 #$lang=eng
 msgid "Finno-Ugrian (Other)"
@@ -3313,7 +3738,7 @@ msgstr "fon"
 
 #$lang=eng
 msgid "French"
-msgstr "Français"
+msgstr "français"
 
 #$lang=eng
 msgid "French, Middle (ca. 1400-1600)"
@@ -3338,6 +3763,11 @@ msgstr "peul"
 #$lang=eng
 msgid "Ga"
 msgstr "ga"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Gaelic"
+msgstr "gaélique écossais"
 
 #$lang=eng
 msgid "Gaelic (Scots)"
@@ -3369,7 +3799,7 @@ msgstr "géorgien"
 
 #$lang=eng
 msgid "German"
-msgstr "Allemand"
+msgstr "allemand"
 
 #$lang=eng
 msgid "German, Middle High (ca. 1050-1500)"
@@ -3403,6 +3833,11 @@ msgstr "gothique"
 msgid "Grebo"
 msgstr "grebo"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greek"
+msgstr "grec"
+
 #$lang=eng
 msgid "Greek, Ancient (to 1453)"
 msgstr "grec ancien (jusqu'à 1453)"
@@ -3411,13 +3846,18 @@ msgstr "grec ancien (jusqu'à 1453)"
 msgid "Greek, Modern (1453-)"
 msgstr "Grec"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greenlandic"
+msgstr "groenlandais"
+
 #$lang=eng
 msgid "Guarani"
 msgstr "guarani"
 
 #$lang=eng
 msgid "Gujarati"
-msgstr "goudjrati"
+msgstr "goudjarati"
 
 #$lang=eng
 msgid "Haida"
@@ -3433,7 +3873,7 @@ msgstr "hawaïen"
 
 #$lang=eng
 msgid "Hebrew"
-msgstr "Hébreu"
+msgstr "hébreu"
 
 #$lang=eng
 msgid "Herero"
@@ -3465,7 +3905,7 @@ msgstr "hmong"
 
 #$lang=eng
 msgid "Hungarian"
-msgstr "Hongrois"
+msgstr "hongrois"
 
 #$lang=eng
 msgid "Hupa"
@@ -3477,7 +3917,12 @@ msgstr "iban"
 
 #$lang=eng
 msgid "Icelandic"
-msgstr "Islandais"
+msgstr "islandais"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ido"
+msgstr "Ido"
 
 #$lang=eng
 msgid "Igbo"
@@ -3501,7 +3946,12 @@ msgstr "indo-européennes, autres langues"
 
 #$lang=eng
 msgid "Indonesian"
-msgstr "Indonésien"
+msgstr "indonésien"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Interlingua"
+msgstr "interlingua"
 
 #$lang=eng
 msgid "Interlingua (International Auxiliary Language Association)"
@@ -3517,7 +3967,7 @@ msgstr "inuktitut"
 
 #$lang=eng
 msgid "Inupiaq"
-msgstr "inupiaq"
+msgstr "inupiak"
 
 #$lang=eng
 msgid "Iranian (Other)"
@@ -3541,11 +3991,11 @@ msgstr "iroquoises, langues (famille)"
 
 #$lang=eng
 msgid "Italian"
-msgstr "Italien"
+msgstr "italien"
 
 #$lang=eng
 msgid "Japanese"
-msgstr "Japonais"
+msgstr "japonais"
 
 #$lang=eng
 msgid "Javanese"
@@ -3589,7 +4039,7 @@ msgstr "karen"
 
 #$lang=eng
 msgid "Kashmiri"
-msgstr "kashmiri"
+msgstr "cachemiri"
 
 #$lang=eng
 msgid "Kawi"
@@ -3625,15 +4075,15 @@ msgstr "kimbundu"
 
 #$lang=eng
 msgid "Kinyarwanda"
-msgstr "rwanda"
+msgstr "rouanda"
 
 #$lang=eng
 msgid "Kirghiz"
-msgstr "kirghize"
+msgstr "kirghiz"
 
 #$lang=eng
 msgid "Komi"
-msgstr "kom"
+msgstr "komi"
 
 #$lang=eng
 msgid "Kongo"
@@ -3645,7 +4095,7 @@ msgstr "konkani"
 
 #$lang=eng
 msgid "Korean"
-msgstr "Coréen"
+msgstr "coréen"
 
 #$lang=eng
 msgid "Kosraean"
@@ -3658,6 +4108,11 @@ msgstr "kpellé"
 #$lang=eng
 msgid "Kru"
 msgstr "krou"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Kuanyama"
+msgstr "kuanyama"
 
 #$lang=eng
 msgid "Kumyk"
@@ -3691,13 +4146,18 @@ msgstr "lamba"
 msgid "Lao"
 msgstr "lao"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Laothian"
+msgstr "lao"
+
 #$lang=eng
 msgid "Latin"
 msgstr "latin"
 
 #$lang=eng
 msgid "Latvian"
-msgstr "Letton"
+msgstr "letton"
 
 #$lang=eng
 msgid "Letzeburgesch"
@@ -3713,7 +4173,7 @@ msgstr "lingala"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "Lituanien"
+msgstr "lithuanien"
 
 #$lang=eng
 msgid "Low German; Low Saxon; German, Low; Saxon, Low"
@@ -3743,13 +4203,14 @@ msgstr "lunda"
 msgid "Luo (Kenya and Tanzania)"
 msgstr "luo (Kenya et Tanzanie)"
 
+# #getiso-hack#
 #$lang=eng
-msgid "lushai"
-msgstr "Lushai"
+msgid "Luxembourgish"
+msgstr "luxembougeois"
 
 #$lang=eng
 msgid "Macedonian"
-msgstr "macédonien"
+msgstr "macédoien"
 
 #$lang=eng
 msgid "Madurese"
@@ -3805,7 +4266,7 @@ msgstr "manobo, langues"
 
 #$lang=eng
 msgid "Manx"
-msgstr "manx"
+msgstr "gaélique de l'Île de Man"
 
 #$lang=eng
 msgid "Maori"
@@ -3821,6 +4282,11 @@ msgstr "mari"
 
 #$lang=eng
 msgid "Marshall"
+msgstr "marshall"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Marshallese"
 msgstr "marshall"
 
 #$lang=eng
@@ -3889,7 +4355,7 @@ msgstr "nahuatl"
 
 #$lang=eng
 msgid "Nauru"
-msgstr "nauruan"
+msgstr "nauri"
 
 #$lang=eng
 msgid "Navajo"
@@ -3945,12 +4411,11 @@ msgstr "sami du Nord"
 
 #$lang=eng
 msgid "Norwegian"
-msgstr "Norvégien"
+msgstr "norvégien"
 
 #$lang=eng
-#$flags=2
 msgid "Norwegian Bokmål"
-msgstr "norvégien nynorsk"
+msgstr "norvégien bokmål"
 
 #$lang=eng
 msgid "Norwegian Nynorsk"
@@ -3976,6 +4441,11 @@ msgstr "nyoro"
 msgid "Nzima"
 msgstr "nzema"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Occitan"
+msgstr "occitan"
+
 #$lang=eng
 msgid "Ojibwa"
 msgstr "ojibwa"
@@ -3986,11 +4456,16 @@ msgstr "oriya"
 
 #$lang=eng
 msgid "Oromo"
-msgstr "galla"
+msgstr "oromo"
 
 #$lang=eng
 msgid "Osage"
 msgstr "osage"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ossetian"
+msgstr "ossète"
 
 #$lang=eng
 msgid "Ossetian; Ossetic"
@@ -4050,11 +4525,11 @@ msgstr "pohnpei"
 
 #$lang=eng
 msgid "Polish"
-msgstr "Polonais"
+msgstr "polonais"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "Portugais"
+msgstr "portuguais"
 
 #$lang=eng
 msgid "Prakrit languages"
@@ -4065,6 +4540,11 @@ msgstr "prâkrit"
 msgid "Provençal, Old (to 1500)"
 msgstr "irlandais ancien (jusqu'à 900)"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Punjabi"
+msgstr "pendjabi"
+
 #$lang=eng
 msgid "Pushto"
 msgstr "pachto"
@@ -4072,6 +4552,11 @@ msgstr "pachto"
 #$lang=eng
 msgid "Quechua"
 msgstr "quechua"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Raeto-Romance"
+msgstr "rhéto-roman"
 
 #$lang=eng
 msgid "Rajasthani"
@@ -4091,7 +4576,7 @@ msgstr "romanes, autres langues"
 
 #$lang=eng
 msgid "Romanian"
-msgstr "Roumain"
+msgstr "roumain"
 
 #$lang=eng
 msgid "Romany"
@@ -4099,11 +4584,11 @@ msgstr "tsigane"
 
 #$lang=eng
 msgid "Rundi"
-msgstr "rundi"
+msgstr "roundi"
 
 #$lang=eng
 msgid "Russian"
-msgstr "Russe"
+msgstr "russe"
 
 #$lang=eng
 msgid "Salishan languages"
@@ -4131,7 +4616,7 @@ msgstr "sango"
 
 #$lang=eng
 msgid "Sanskrit"
-msgstr "sanskrit"
+msgstr "sanscrit"
 
 #$lang=eng
 msgid "Santali"
@@ -4159,7 +4644,12 @@ msgstr "sémitiques, autres langues"
 
 #$lang=eng
 msgid "Serbian"
-msgstr "Serbe"
+msgstr "serbe"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Serbo-Croatian"
+msgstr "serbo-croate"
 
 #$lang=eng
 msgid "Serer"
@@ -4171,7 +4661,7 @@ msgstr "chan"
 
 #$lang=eng
 msgid "Shona"
-msgstr "shona"
+msgstr "chona"
 
 #$lang=eng
 msgid "Sidamo"
@@ -4191,7 +4681,7 @@ msgstr "sindhi"
 
 #$lang=eng
 msgid "Sinhalese"
-msgstr "singhalais"
+msgstr "cingalais"
 
 #$lang=eng
 msgid "Sino-Tibetan (Other)"
@@ -4211,11 +4701,11 @@ msgstr "slaves, autres langues"
 
 #$lang=eng
 msgid "Slovak"
-msgstr "Slovaque"
+msgstr "slovaque"
 
 #$lang=eng
 msgid "Slovenian"
-msgstr "Slovène"
+msgstr "slovène"
 
 #$lang=eng
 msgid "Sogdian"
@@ -4251,7 +4741,7 @@ msgstr "indiennes d'Amérique du Sud, autres langues"
 
 #$lang=eng
 msgid "Spanish"
-msgstr "Espagnol"
+msgstr "espagnol"
 
 #$lang=eng
 msgid "Sukuma"
@@ -4271,15 +4761,15 @@ msgstr "soussou"
 
 #$lang=eng
 msgid "Swahili"
-msgstr "swahili"
+msgstr "souahéli"
 
 #$lang=eng
 msgid "Swati"
-msgstr "swati"
+msgstr "siswati"
 
 #$lang=eng
 msgid "Swedish"
-msgstr "Suédois"
+msgstr "suédois"
 
 #$lang=eng
 msgid "Syriac"
@@ -4287,7 +4777,7 @@ msgstr "syriaque"
 
 #$lang=eng
 msgid "Tagalog"
-msgstr "tagalog"
+msgstr "tagal"
 
 #$lang=eng
 msgid "Tahitian"
@@ -4361,6 +4851,11 @@ msgstr "tok pisin"
 msgid "Tokelau"
 msgstr "tokelau"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Tonga"
+msgstr "kitonga"
+
 #$lang=eng
 msgid "Tonga (Nyasa)"
 msgstr "tonga (Nyasa)"
@@ -4379,7 +4874,7 @@ msgstr "tsonga"
 
 #$lang=eng
 msgid "Tswana"
-msgstr "tswana"
+msgstr "setchwana"
 
 #$lang=eng
 msgid "Tumbuka"
@@ -4387,7 +4882,7 @@ msgstr "tumbuka"
 
 #$lang=eng
 msgid "Turkish"
-msgstr "Turc"
+msgstr "turc"
 
 #$lang=eng
 msgid "Turkish, Ottoman (1500-1928)"
@@ -4407,7 +4902,7 @@ msgstr "touva"
 
 #$lang=eng
 msgid "Twi"
-msgstr "twi"
+msgstr "tchi"
 
 #$lang=eng
 msgid "Ugaritic"
@@ -4419,7 +4914,7 @@ msgstr "ouïgour"
 
 #$lang=eng
 msgid "Ukrainian"
-msgstr "ukrainien"
+msgstr "ukrinien"
 
 #$lang=eng
 msgid "Umbundu"
@@ -4435,7 +4930,7 @@ msgstr "ourdou"
 
 #$lang=eng
 msgid "Uzbek"
-msgstr "ouszbek"
+msgstr "ouzbek"
 
 #$lang=eng
 msgid "Vai"
@@ -4449,6 +4944,11 @@ msgstr "venda"
 msgid "Vietnamese"
 msgstr "vietnamien"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Volapük"
+msgstr "volapük"
+
 #$lang=eng
 msgid "Votic"
 msgstr "vote"
@@ -4460,6 +4960,11 @@ msgstr "wakashennes, langues"
 #$lang=eng
 msgid "Walamo"
 msgstr "walamo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Walloon"
+msgstr "wallon"
 
 #$lang=eng
 msgid "Waray"
@@ -4475,7 +4980,7 @@ msgstr "gallois"
 
 #$lang=eng
 msgid "Wolof"
-msgstr "wolof"
+msgstr "ouolof"
 
 #$lang=eng
 msgid "Xhosa"
@@ -4495,11 +5000,11 @@ msgstr "yapois"
 
 #$lang=eng
 msgid "Yiddish"
-msgstr "yiddish"
+msgstr "yidich"
 
 #$lang=eng
 msgid "Yoruba"
-msgstr "yoruba"
+msgstr "yorouba"
 
 #$lang=eng
 msgid "Yupik languages"
@@ -4519,7 +5024,7 @@ msgstr "zenaga"
 
 #$lang=eng
 msgid "Zhuang"
-msgstr "Chinois (traditionnel)"
+msgstr "zhuang"
 
 #$lang=eng
 msgid "Zulu"
@@ -4528,6 +5033,10 @@ msgstr "zoulou"
 #$lang=eng
 msgid "Zuni"
 msgstr "zuni"
+
+#$lang=eng
+msgid "lushai"
+msgstr "Lushai"
 
 #$lang=fry
 msgid ""
@@ -6378,24 +6887,126 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Abkhazian"
+msgstr "Abkhazian"
+
+#$lang=eng
+msgid "Afar"
+msgstr "Afar"
+
+#$lang=eng
 msgid "Afrikaans"
-msgstr "アフリカーンス語"
+msgstr "Afrikaans"
+
+#$lang=eng
+msgid "Albanian"
+msgstr "Albanian"
+
+#$lang=eng
+msgid "Amharic"
+msgstr "Amharic"
 
 #$lang=eng
 msgid "Arabic"
-msgstr "アラビア語"
+msgstr "Arabic"
+
+#$lang=eng
+msgid "Armenian"
+msgstr "Armenian"
+
+#$lang=eng
+msgid "Assamese"
+msgstr "Assamese"
+
+#$lang=eng
+msgid "Avestan"
+msgstr "Avestan"
+
+#$lang=eng
+msgid "Aymara"
+msgstr "Aymara"
+
+#$lang=eng
+msgid "Azerbaijani"
+msgstr "Azerbijani"
+
+#$lang=eng
+msgid "Bashkir"
+msgstr "Bashkir"
+
+#$lang=eng
+msgid "Basque"
+msgstr "Basque"
+
+#$lang=eng
+msgid "Belarusian"
+msgstr "Belarusian"
+
+#$lang=eng
+msgid "Bengali"
+msgstr "Bengali"
+
+#$lang=eng
+msgid "Bihari"
+msgstr "Bihari"
+
+#$lang=eng
+msgid "Bislama"
+msgstr "Bislama"
+
+#$lang=eng
+msgid "Bosnian"
+msgstr "Bosnian"
+
+#$lang=eng
+msgid "Breton"
+msgstr "Breton"
 
 #$lang=eng
 msgid "Bulgarian"
-msgstr "ブルガリア語"
+msgstr "Bulgarian"
+
+#$lang=eng
+msgid "Burmese"
+msgstr "Burmese"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Cambodian"
+msgstr "Cambodian"
 
 #$lang=eng
 msgid "Catalan"
-msgstr "カタロニア語"
+msgstr "Catalan"
+
+#$lang=eng
+msgid "Chamorro"
+msgstr "Chamorro"
+
+#$lang=eng
+msgid "Chechen"
+msgstr "Chechen"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Chichewa"
+msgstr "Chichewa"
 
 #$lang=eng
 msgid "Chinese"
-msgstr "中国語 (簡体)"
+msgstr "中国語"
+
+#$lang=eng
+msgid "Chuvash"
+msgstr "Chuvash"
+
+#$lang=eng
+msgid "Cornish"
+msgstr "Cornish"
+
+#$lang=eng
+msgid "Corsican"
+msgstr "Corsican"
 
 #$lang=eng
 msgid "Croatian"
@@ -6414,12 +7025,28 @@ msgid "Dutch"
 msgstr "オランダ語"
 
 #$lang=eng
+msgid "Dzongkha"
+msgstr "Dzongkha"
+
+#$lang=eng
 msgid "English"
 msgstr "英語"
 
 #$lang=eng
+msgid "Esperanto"
+msgstr "Esperanto"
+
+#$lang=eng
 msgid "Estonian"
-msgstr "エストニア語"
+msgstr "Estonian"
+
+#$lang=eng
+msgid "Faroese"
+msgstr "Faroese"
+
+#$lang=eng
+msgid "Fijian"
+msgstr "Fijian"
 
 #$lang=eng
 msgid "Finnish"
@@ -6430,24 +7057,67 @@ msgid "French"
 msgstr "フランス語"
 
 #$lang=eng
+msgid "Frisian"
+msgstr "Frisian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Gaelic"
+msgstr "Gaelic"
+
+#$lang=eng
 msgid "Gallegan"
-msgstr "ガリシア語"
+msgstr "Gallegan"
+
+#$lang=eng
+msgid "Georgian"
+msgstr "Georgian"
 
 #$lang=eng
 msgid "German"
 msgstr "ドイツ語"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greek"
+msgstr "Greek"
+
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "ギリシャ語"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greenlandic"
+msgstr "Greenlandic"
+
+#$lang=eng
+msgid "Guarani"
+msgstr "Guarani"
+
+#$lang=eng
+msgid "Gujarati"
+msgstr "Gujarati"
+
+#$lang=eng
+msgid "Hausa"
+msgstr "Hausa"
+
 #$lang=eng
 msgid "Hebrew"
-msgstr "ヘブライ語"
+msgstr "Hebrew"
+
+#$lang=eng
+msgid "Herero"
+msgstr "Herero"
 
 #$lang=eng
 msgid "Hindi"
-msgstr "ヒンディー語"
+msgstr "Hindi"
+
+#$lang=eng
+msgid "Hiri Motu"
+msgstr "Hiri Motu"
 
 #$lang=eng
 msgid "Hungarian"
@@ -6457,13 +7127,35 @@ msgstr "ハンガリー語"
 msgid "Icelandic"
 msgstr "アイスランド語"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Ido"
+msgstr "Ido"
+
 #$lang=eng
 msgid "Indonesian"
-msgstr "インドネシア語"
+msgstr "Indonesian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Interlingua"
+msgstr "Interlingua"
+
+#$lang=eng
+msgid "Interlingue"
+msgstr "Interlingue"
+
+#$lang=eng
+msgid "Inuktitut"
+msgstr "Inuktitut"
+
+#$lang=eng
+msgid "Inupiaq"
+msgstr "Inupiaq"
 
 #$lang=eng
 msgid "Irish"
-msgstr "アイルランド語"
+msgstr "Irish"
 
 #$lang=eng
 msgid "Italian"
@@ -6474,56 +7166,293 @@ msgid "Japanese"
 msgstr "日本語"
 
 #$lang=eng
+msgid "Javanese"
+msgstr "Javanese"
+
+#$lang=eng
+msgid "Kannada"
+msgstr "Kannada"
+
+#$lang=eng
+msgid "Kashmiri"
+msgstr "Kashmiri"
+
+#$lang=eng
+msgid "Kazakh"
+msgstr "Kazakh"
+
+#$lang=eng
+msgid "Kikuyu"
+msgstr "Kikuyu"
+
+#$lang=eng
+msgid "Kinyarwanda"
+msgstr "Kinyarwanda"
+
+#$lang=eng
+msgid "Kirghiz"
+msgstr "Kirghiz"
+
+#$lang=eng
+msgid "Komi"
+msgstr "Komi"
+
+#$lang=eng
 msgid "Korean"
 msgstr "韓国語"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Kuanyama"
+msgstr "Kuanyama"
+
+#$lang=eng
+msgid "Kurdish"
+msgstr "Kurdish"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Laothian"
+msgstr "Laothian"
+
+#$lang=eng
+msgid "Latin"
+msgstr "Latin"
+
 #$lang=eng
 msgid "Latvian"
-msgstr "ラトビア語"
+msgstr "Latvian"
+
+#$lang=eng
+msgid "Lingala"
+msgstr "Lingala"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "リトアニア語"
+msgstr "Lithuanian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Luxembourgish"
+msgstr "Luxembourgish"
 
 #$lang=eng
 msgid "Macedonian"
-msgstr "マケドニア語"
+msgstr "Macedonian"
+
+#$lang=eng
+msgid "Malagasy"
+msgstr "Malagasy"
+
+#$lang=eng
+msgid "Malay"
+msgstr "Malay"
+
+#$lang=eng
+msgid "Malayalam"
+msgstr "Malayalam"
+
+#$lang=eng
+msgid "Maltese"
+msgstr "Maltese"
+
+#$lang=eng
+msgid "Manx"
+msgstr "Manx"
+
+#$lang=eng
+msgid "Maori"
+msgstr "Maori"
+
+#$lang=eng
+msgid "Marathi"
+msgstr "Marathi"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Marshallese"
+msgstr "Marshallese"
+
+#$lang=eng
+msgid "Moldavian"
+msgstr "Moldavian"
+
+#$lang=eng
+msgid "Mongolian"
+msgstr "Mongolian"
+
+#$lang=eng
+msgid "Nauru"
+msgstr "Nauru"
+
+#$lang=eng
+msgid "Navajo"
+msgstr "Navajo"
+
+#$lang=eng
+msgid "Ndebele, North"
+msgstr "Ndebele, North"
+
+#$lang=eng
+msgid "Ndebele, South"
+msgstr "Ndebele, South"
+
+#$lang=eng
+msgid "Ndonga"
+msgstr "Ndonga"
+
+#$lang=eng
+msgid "Nepali"
+msgstr "Nepali"
+
+#$lang=eng
+msgid "Northern Sami"
+msgstr "Northern Sami"
 
 #$lang=eng
 msgid "Norwegian"
 msgstr "ノルウェー語"
 
 #$lang=eng
+msgid "Norwegian Bokmål"
+msgstr "Norwegian Bokmål"
+
+#$lang=eng
+msgid "Norwegian Nynorsk"
+msgstr "Norwegian Nynorsk"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Occitan"
+msgstr "Occitan"
+
+#$lang=eng
+msgid "Oriya"
+msgstr "Oriya"
+
+#$lang=eng
+msgid "Oromo"
+msgstr "Oromo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ossetian"
+msgstr "Ossetian"
+
+#$lang=eng
+msgid "Pali"
+msgstr "Pali"
+
+#$lang=eng
+msgid "Persian"
+msgstr "Persian"
+
+#$lang=eng
 msgid "Polish"
-msgstr "ポーランド語"
+msgstr "Polish"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "ポルトガル語"
+msgstr "Portuguese"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Punjabi"
+msgstr "Punjabi"
+
+#$lang=eng
+msgid "Pushto"
+msgstr "Pushto"
+
+#$lang=eng
+msgid "Quechua"
+msgstr "Quechua"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Raeto-Romance"
+msgstr "Raeto-Romance"
 
 #$lang=eng
 msgid "Romanian"
-msgstr "ルーマニア語"
+msgstr "Romanian"
+
+#$lang=eng
+msgid "Rundi"
+msgstr "Rundi"
 
 #$lang=eng
 msgid "Russian"
 msgstr "ロシア語"
 
 #$lang=eng
+msgid "Samoan"
+msgstr "Samoan"
+
+#$lang=eng
+msgid "Sango"
+msgstr "Sango"
+
+#$lang=eng
+msgid "Sanskrit"
+msgstr "Sanskrit"
+
+#$lang=eng
+msgid "Sardinian"
+msgstr "Sardinian"
+
+#$lang=eng
 msgid "Serbian"
-msgstr "セルビア語"
+msgstr "Serbian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Serbo-Croatian"
+msgstr "Serbo-Croatian"
+
+#$lang=eng
+msgid "Shona"
+msgstr "Shona"
+
+#$lang=eng
+msgid "Sindhi"
+msgstr "Sindhi"
+
+#$lang=eng
+msgid "Sinhalese"
+msgstr "Sinhalese"
 
 #$lang=eng
 msgid "Slovak"
-msgstr "スロバキア語"
+msgstr "スロヴァキア語"
 
 #$lang=eng
 msgid "Slovenian"
-msgstr "スロベニア語"
+msgstr "スロヴェニア語"
+
+#$lang=eng
+msgid "Somali"
+msgstr "Somali"
+
+#$lang=eng
+msgid "Sotho, Southern"
+msgstr "Sotho, Southern"
 
 #$lang=eng
 msgid "Spanish"
 msgstr "スペイン語"
+
+#$lang=eng
+msgid "Sundanese"
+msgstr "Sundanese"
+
+#$lang=eng
+msgid "Swahili"
+msgstr "Swahili"
+
+#$lang=eng
+msgid "Swati"
+msgstr "Swati"
 
 #$lang=eng
 msgid "Swedish"
@@ -6531,19 +7460,122 @@ msgstr "スウェーデン語"
 
 #$lang=eng
 msgid "Tagalog"
-msgstr "タガログ語"
+msgstr "Tagalog"
+
+#$lang=eng
+msgid "Tahitian"
+msgstr "Tahitian"
+
+#$lang=eng
+msgid "Tajik"
+msgstr "Tajik"
+
+#$lang=eng
+msgid "Tamil"
+msgstr "Tamil"
+
+#$lang=eng
+msgid "Tatar"
+msgstr "Tatar"
+
+#$lang=eng
+msgid "Telugu"
+msgstr "Telugu"
+
+#$lang=eng
+msgid "Thai"
+msgstr "Thai"
+
+#$lang=eng
+msgid "Tibetan"
+msgstr "Tibetan"
+
+#$lang=eng
+msgid "Tigrinya"
+msgstr "Tigrinya"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Tonga"
+msgstr "Tonga"
+
+#$lang=eng
+msgid "Tsonga"
+msgstr "Tsonga"
+
+#$lang=eng
+msgid "Tswana"
+msgstr "Tswana"
 
 #$lang=eng
 msgid "Turkish"
 msgstr "トルコ語"
 
 #$lang=eng
+msgid "Turkmen"
+msgstr "Turkmen"
+
+#$lang=eng
+msgid "Twi"
+msgstr "Twi"
+
+#$lang=eng
+msgid "Uighur"
+msgstr "Uighur"
+
+#$lang=eng
 msgid "Ukrainian"
-msgstr "ウクライナ語"
+msgstr "Ukrainian"
+
+#$lang=eng
+msgid "Urdu"
+msgstr "Urdu"
+
+#$lang=eng
+msgid "Uzbek"
+msgstr "Uzbek"
+
+#$lang=eng
+msgid "Vietnamese"
+msgstr "Vietnamese"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Volapük"
+msgstr "Volapük"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Walloon"
+msgstr "Walloon"
+
+#$lang=eng
+msgid "Welsh"
+msgstr "Welsh"
+
+#$lang=eng
+msgid "Wolof"
+msgstr "Wolof"
+
+#$lang=eng
+msgid "Xhosa"
+msgstr "Xhosa"
+
+#$lang=eng
+msgid "Yiddish"
+msgstr "Yiddish"
+
+#$lang=eng
+msgid "Yoruba"
+msgstr "Yoruba"
 
 #$lang=eng
 msgid "Zhuang"
-msgstr "中国語 (繁体)"
+msgstr "Zhuang"
+
+#$lang=eng
+msgid "Zulu"
+msgstr "Zulu"
 
 #$lang=kan
 msgid ""
@@ -8661,120 +9693,540 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Abkhazian"
+msgstr "Абхазский"
+
+#$lang=eng
+msgid "Afar"
+msgstr "Афар"
+
+#$lang=eng
+msgid "Afrikaans"
+msgstr "Африкаанс"
+
+#$lang=eng
+msgid "Albanian"
+msgstr "Албанский"
+
+#$lang=eng
+msgid "Amharic"
+msgstr "Амарик"
+
+#$lang=eng
 msgid "Arabic"
 msgstr "Арабский"
 
 #$lang=eng
+msgid "Armenian"
+msgstr "Армянский"
+
+#$lang=eng
+msgid "Assamese"
+msgstr "Ассамский"
+
+#$lang=eng
+msgid "Avestan"
+msgstr "Avestan"
+
+#$lang=eng
+msgid "Aymara"
+msgstr "Аймара"
+
+#$lang=eng
+msgid "Azerbaijani"
+msgstr "Азербайджанский"
+
+#$lang=eng
+msgid "Bashkir"
+msgstr "Башкирский"
+
+#$lang=eng
+msgid "Basque"
+msgstr "Баскский"
+
+#$lang=eng
+msgid "Belarusian"
+msgstr "Белорусский"
+
+#$lang=eng
+msgid "Bengali"
+msgstr "Бенгали"
+
+#$lang=eng
+msgid "Bihari"
+msgstr "Бихари"
+
+#$lang=eng
+msgid "Bislama"
+msgstr "Бислама"
+
+#$lang=eng
+msgid "Bosnian"
+msgstr "Bosnian"
+
+#$lang=eng
+msgid "Breton"
+msgstr "Бретонский"
+
+#$lang=eng
 msgid "Bulgarian"
-msgstr "болгарском"
+msgstr "Болгарский"
+
+#$lang=eng
+msgid "Burmese"
+msgstr "Бурмезе"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Cambodian"
+msgstr "Камбоджийский"
 
 #$lang=eng
 msgid "Catalan"
-msgstr "каталанском"
+msgstr "Каталанский"
+
+#$lang=eng
+msgid "Chamorro"
+msgstr "Chamorro"
+
+#$lang=eng
+msgid "Chechen"
+msgstr "Chechen"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Chichewa"
+msgstr "Chichewa"
 
 #$lang=eng
 msgid "Chinese"
-msgstr "китайском (упрощенном)"
+msgstr "Китайский"
+
+#$lang=eng
+msgid "Chuvash"
+msgstr "Chuvash"
+
+#$lang=eng
+msgid "Cornish"
+msgstr "Cornish"
+
+#$lang=eng
+msgid "Corsican"
+msgstr "Корсиканский"
 
 #$lang=eng
 msgid "Croatian"
-msgstr "хорватском"
+msgstr "Хорватский"
 
 #$lang=eng
 msgid "Czech"
-msgstr "чешском"
+msgstr "Чешский"
 
 #$lang=eng
 msgid "Danish"
-msgstr "датском"
+msgstr "Датский"
 
 #$lang=eng
 msgid "Dutch"
-msgstr "голландском"
+msgstr "Датский"
+
+#$lang=eng
+msgid "Dzongkha"
+msgstr "Бутанский"
 
 #$lang=eng
 msgid "English"
-msgstr "английском"
+msgstr "Английский"
+
+#$lang=eng
+msgid "Esperanto"
+msgstr "Эсперанто"
 
 #$lang=eng
 msgid "Estonian"
-msgstr "эстонском"
+msgstr "Эстонский"
+
+#$lang=eng
+msgid "Faroese"
+msgstr "Фарерский"
+
+#$lang=eng
+msgid "Fijian"
+msgstr "Фиджийский"
 
 #$lang=eng
 msgid "Finnish"
-msgstr "финском"
+msgstr "Финский"
 
 #$lang=eng
 msgid "French"
-msgstr "французском"
+msgstr "Французский"
+
+#$lang=eng
+msgid "Frisian"
+msgstr "Фризский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Gaelic"
+msgstr "Скотско-Галльский"
+
+#$lang=eng
+msgid "Gallegan"
+msgstr "Галицийский"
+
+#$lang=eng
+msgid "Georgian"
+msgstr "Грузинский"
 
 #$lang=eng
 msgid "German"
-msgstr "немецком"
+msgstr "Немецкий"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Greek"
+msgstr "Греческий"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "греческом"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greenlandic"
+msgstr "Гренландский"
+
+#$lang=eng
+msgid "Guarani"
+msgstr "Гуарани"
+
+#$lang=eng
+msgid "Gujarati"
+msgstr "Гуджарати"
+
+#$lang=eng
+msgid "Hausa"
+msgstr "Hausa"
+
 #$lang=eng
 msgid "Hebrew"
-msgstr "иврите"
+msgstr "еврейский"
+
+#$lang=eng
+msgid "Herero"
+msgstr "Herero"
+
+#$lang=eng
+msgid "Hindi"
+msgstr "Хинди"
+
+#$lang=eng
+msgid "Hiri Motu"
+msgstr "Hiri Motu"
 
 #$lang=eng
 msgid "Hungarian"
-msgstr "венгерском"
+msgstr "Венгерский"
 
 #$lang=eng
 msgid "Icelandic"
-msgstr "исландском"
+msgstr "Исландский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ido"
+msgstr "Ido"
 
 #$lang=eng
 msgid "Indonesian"
-msgstr "индонезийском"
+msgstr "Индонезийский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Interlingua"
+msgstr "Интерлигва"
+
+#$lang=eng
+msgid "Interlingue"
+msgstr "Интерлинге"
+
+#$lang=eng
+msgid "Inuktitut"
+msgstr "Инуктитут"
+
+#$lang=eng
+msgid "Inupiaq"
+msgstr "Инупьяк"
+
+#$lang=eng
+msgid "Irish"
+msgstr "Ирландский"
 
 #$lang=eng
 msgid "Italian"
-msgstr "итальянском"
+msgstr "Итальянский"
 
 #$lang=eng
 msgid "Japanese"
-msgstr "японском"
+msgstr "Японский"
+
+#$lang=eng
+msgid "Javanese"
+msgstr "Яванский"
+
+#$lang=eng
+msgid "Kannada"
+msgstr "Канада"
+
+#$lang=eng
+msgid "Kashmiri"
+msgstr "Кашмири"
+
+#$lang=eng
+msgid "Kazakh"
+msgstr "Казахский"
+
+#$lang=eng
+msgid "Kikuyu"
+msgstr "Kikuyu"
+
+#$lang=eng
+msgid "Kinyarwanda"
+msgstr "Киньяруанда"
+
+#$lang=eng
+msgid "Kirghiz"
+msgstr "Киргизский"
+
+#$lang=eng
+msgid "Komi"
+msgstr "Komi"
 
 #$lang=eng
 msgid "Korean"
-msgstr "корейском"
+msgstr "Корейский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Kuanyama"
+msgstr "Kuanyama"
+
+#$lang=eng
+msgid "Kurdish"
+msgstr "Курдский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Laothian"
+msgstr "Лаосский"
+
+#$lang=eng
+msgid "Latin"
+msgstr "Латынь"
 
 #$lang=eng
 msgid "Latvian"
-msgstr "латышском"
+msgstr "Латвийский"
+
+#$lang=eng
+msgid "Lingala"
+msgstr "Лингала"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "литовском"
+msgstr "Литовский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Luxembourgish"
+msgstr "Luxembourgish"
+
+#$lang=eng
+msgid "Macedonian"
+msgstr "Македонский"
+
+#$lang=eng
+msgid "Malagasy"
+msgstr "Мальгашский"
+
+#$lang=eng
+msgid "Malay"
+msgstr "Малайский"
+
+#$lang=eng
+msgid "Malayalam"
+msgstr "Малайалам"
+
+#$lang=eng
+msgid "Maltese"
+msgstr "Матезе"
+
+#$lang=eng
+msgid "Manx"
+msgstr "Manx"
+
+#$lang=eng
+msgid "Maori"
+msgstr "Маори"
+
+#$lang=eng
+msgid "Marathi"
+msgstr "Марати"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Marshallese"
+msgstr "Marshallese"
+
+#$lang=eng
+msgid "Moldavian"
+msgstr "Молдавский"
+
+#$lang=eng
+msgid "Mongolian"
+msgstr "Монгольский"
+
+#$lang=eng
+msgid "Nauru"
+msgstr "Науру"
+
+#$lang=eng
+msgid "Navajo"
+msgstr "Navajo"
+
+#$lang=eng
+msgid "Ndebele, North"
+msgstr "Ndebele, North"
+
+#$lang=eng
+msgid "Ndebele, South"
+msgstr "Ndebele, South"
+
+#$lang=eng
+msgid "Ndonga"
+msgstr "Ndonga"
+
+#$lang=eng
+msgid "Nepali"
+msgstr "Непальский"
+
+#$lang=eng
+msgid "Northern Sami"
+msgstr "Northern Sami"
 
 #$lang=eng
 msgid "Norwegian"
-msgstr "норвежском"
+msgstr "Норвежский"
+
+#$lang=eng
+msgid "Norwegian Bokmål"
+msgstr "Norwegian Bokmål"
+
+#$lang=eng
+msgid "Norwegian Nynorsk"
+msgstr "Norwegian Nynorsk"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Occitan"
+msgstr "Occitan"
+
+#$lang=eng
+msgid "Oriya"
+msgstr "Орийа"
+
+#$lang=eng
+msgid "Oromo"
+msgstr "Оромо"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ossetian"
+msgstr "Ossetian"
+
+#$lang=eng
+msgid "Pali"
+msgstr "Pali"
+
+#$lang=eng
+msgid "Persian"
+msgstr "Персидский"
 
 #$lang=eng
 msgid "Polish"
-msgstr "польском"
+msgstr "Польский"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "португальском"
+msgstr "Португальский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Punjabi"
+msgstr "Пунджаби"
+
+#$lang=eng
+msgid "Pushto"
+msgstr "Пушту"
+
+#$lang=eng
+msgid "Quechua"
+msgstr "Кечуа"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Raeto-Romance"
+msgstr "Рэто-Романский"
 
 #$lang=eng
 msgid "Romanian"
-msgstr "румынском"
+msgstr "Румынский"
+
+#$lang=eng
+msgid "Rundi"
+msgstr "Кирунди"
 
 #$lang=eng
 msgid "Russian"
-msgstr "русском"
+msgstr "Русский"
+
+#$lang=eng
+msgid "Samoan"
+msgstr "Самоанский"
+
+#$lang=eng
+msgid "Sango"
+msgstr "Сангхо"
+
+#$lang=eng
+msgid "Sanskrit"
+msgstr "Санскрит"
+
+#$lang=eng
+msgid "Sardinian"
+msgstr "Sardinian"
 
 #$lang=eng
 msgid "Serbian"
-msgstr "сербском"
+msgstr "Сербский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Serbo-Croatian"
+msgstr "Сербо-хорватский"
+
+#$lang=eng
+msgid "Shona"
+msgstr "Шона"
+
+#$lang=eng
+msgid "Sindhi"
+msgstr "Синдхи"
+
+#$lang=eng
+msgid "Sinhalese"
+msgstr "Сингалезский"
 
 #$lang=eng
 msgid "Slovak"
@@ -8785,20 +10237,151 @@ msgid "Slovenian"
 msgstr "Словенский"
 
 #$lang=eng
+msgid "Somali"
+msgstr "Сомали"
+
+#$lang=eng
+msgid "Sotho, Southern"
+msgstr "Сесото"
+
+#$lang=eng
 msgid "Spanish"
-msgstr "испанском"
+msgstr "Испанский"
+
+#$lang=eng
+msgid "Sundanese"
+msgstr "Суданский"
+
+#$lang=eng
+msgid "Swahili"
+msgstr "Суахили"
+
+#$lang=eng
+msgid "Swati"
+msgstr "Сисвати"
 
 #$lang=eng
 msgid "Swedish"
-msgstr "шведском"
+msgstr "Шведский"
+
+#$lang=eng
+msgid "Tagalog"
+msgstr "Тагалог"
+
+#$lang=eng
+msgid "Tahitian"
+msgstr "Tahitian"
+
+#$lang=eng
+msgid "Tajik"
+msgstr "Таджикский"
+
+#$lang=eng
+msgid "Tamil"
+msgstr "Тамильский"
+
+#$lang=eng
+msgid "Tatar"
+msgstr "Татарский"
+
+#$lang=eng
+msgid "Telugu"
+msgstr "Телугу"
+
+#$lang=eng
+msgid "Thai"
+msgstr "Тайский"
+
+#$lang=eng
+msgid "Tibetan"
+msgstr "Тибетский"
+
+#$lang=eng
+msgid "Tigrinya"
+msgstr "Тигринья"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Tonga"
+msgstr "Тонга"
+
+#$lang=eng
+msgid "Tsonga"
+msgstr "Цонга"
+
+#$lang=eng
+msgid "Tswana"
+msgstr "Сетсвана"
 
 #$lang=eng
 msgid "Turkish"
-msgstr "турецком"
+msgstr "Турецкий"
+
+#$lang=eng
+msgid "Turkmen"
+msgstr "Туркменский"
+
+#$lang=eng
+msgid "Twi"
+msgstr "Туи"
+
+#$lang=eng
+msgid "Uighur"
+msgstr "Уйгурский"
+
+#$lang=eng
+msgid "Ukrainian"
+msgstr "Украинский"
+
+#$lang=eng
+msgid "Urdu"
+msgstr "Урду"
+
+#$lang=eng
+msgid "Uzbek"
+msgstr "Узбекский"
+
+#$lang=eng
+msgid "Vietnamese"
+msgstr "Вьетнамский"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Volapük"
+msgstr "Волапюк"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Walloon"
+msgstr "Walloon"
+
+#$lang=eng
+msgid "Welsh"
+msgstr "Уэлш"
+
+#$lang=eng
+msgid "Wolof"
+msgstr "Волоф"
+
+#$lang=eng
+msgid "Xhosa"
+msgstr "Xhosa"
+
+#$lang=eng
+msgid "Yiddish"
+msgstr "Идиш"
+
+#$lang=eng
+msgid "Yoruba"
+msgstr "Йоруба"
 
 #$lang=eng
 msgid "Zhuang"
-msgstr "китайском (традиционное письмо)"
+msgstr "Жуан"
+
+#$lang=eng
+msgid "Zulu"
+msgstr "Зулуский"
 
 #$lang=slk
 msgid ""
@@ -9093,20 +10676,126 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Abkhazian"
+msgstr "abjasio"
+
+#$lang=eng
+msgid "Afar"
+msgstr "afarense"
+
+#$lang=eng
+msgid "Afrikaans"
+msgstr "afrikaans"
+
+#$lang=eng
+msgid "Albanian"
+msgstr "albanés"
+
+#$lang=eng
+msgid "Amharic"
+msgstr "amarico"
+
+#$lang=eng
 msgid "Arabic"
 msgstr "árabe"
+
+#$lang=eng
+msgid "Armenian"
+msgstr "armenio"
+
+#$lang=eng
+msgid "Assamese"
+msgstr "asamés"
+
+#$lang=eng
+msgid "Avestan"
+msgstr "avestan"
+
+#$lang=eng
+msgid "Aymara"
+msgstr "aimara"
+
+#$lang=eng
+msgid "Azerbaijani"
+msgstr "azerbaiyano"
+
+#$lang=eng
+msgid "Bashkir"
+msgstr "bashkiro"
+
+#$lang=eng
+msgid "Basque"
+msgstr "vascuence"
+
+#$lang=eng
+msgid "Belarusian"
+msgstr "bielorruso"
+
+#$lang=eng
+msgid "Bengali"
+msgstr "bengalés"
+
+#$lang=eng
+msgid "Bihari"
+msgstr "biharí"
+
+#$lang=eng
+msgid "Bislama"
+msgstr "bislama"
+
+#$lang=eng
+msgid "Bosnian"
+msgstr "bosnian"
+
+#$lang=eng
+msgid "Breton"
+msgstr "bréton"
 
 #$lang=eng
 msgid "Bulgarian"
 msgstr "búlgaro"
 
 #$lang=eng
+msgid "Burmese"
+msgstr "birmano"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Cambodian"
+msgstr "camboyano"
+
+#$lang=eng
 msgid "Catalan"
 msgstr "catalán"
 
 #$lang=eng
+msgid "Chamorro"
+msgstr "Chamorro"
+
+#$lang=eng
+msgid "Chechen"
+msgstr "chechen"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Chichewa"
+msgstr "Chichewa"
+
+#$lang=eng
 msgid "Chinese"
-msgstr "chino (simplificado)"
+msgstr "chino"
+
+#$lang=eng
+msgid "Chuvash"
+msgstr "Chuvash"
+
+#$lang=eng
+msgid "Cornish"
+msgstr "córnico"
+
+#$lang=eng
+msgid "Corsican"
+msgstr "corso"
 
 #$lang=eng
 msgid "Croatian"
@@ -9118,19 +10807,35 @@ msgstr "checo"
 
 #$lang=eng
 msgid "Danish"
-msgstr "Danés"
+msgstr "danés"
 
 #$lang=eng
 msgid "Dutch"
 msgstr "holandés"
 
 #$lang=eng
+msgid "Dzongkha"
+msgstr "butanés"
+
+#$lang=eng
 msgid "English"
 msgstr "inglés"
 
 #$lang=eng
+msgid "Esperanto"
+msgstr "esperanto"
+
+#$lang=eng
 msgid "Estonian"
 msgstr "estonio"
+
+#$lang=eng
+msgid "Faroese"
+msgstr "faroés"
+
+#$lang=eng
+msgid "Fijian"
+msgstr "jijiano"
 
 #$lang=eng
 msgid "Finnish"
@@ -9141,16 +10846,67 @@ msgid "French"
 msgstr "francés"
 
 #$lang=eng
+msgid "Frisian"
+msgstr "frisio"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Gaelic"
+msgstr "escocés"
+
+#$lang=eng
+msgid "Gallegan"
+msgstr "gallego"
+
+#$lang=eng
+msgid "Georgian"
+msgstr "georgiano"
+
+#$lang=eng
 msgid "German"
 msgstr "alemán"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Greek"
+msgstr "griego"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "griego"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greenlandic"
+msgstr "groenlandés"
+
+#$lang=eng
+msgid "Guarani"
+msgstr "guaraní"
+
+#$lang=eng
+msgid "Gujarati"
+msgstr "gujartí"
+
+#$lang=eng
+msgid "Hausa"
+msgstr "hausa"
+
 #$lang=eng
 msgid "Hebrew"
 msgstr "hebreo"
+
+#$lang=eng
+msgid "Herero"
+msgstr "Herero"
+
+#$lang=eng
+msgid "Hindi"
+msgstr "hindú"
+
+#$lang=eng
+msgid "Hiri Motu"
+msgstr "Hiri Motu"
 
 #$lang=eng
 msgid "Hungarian"
@@ -9160,9 +10916,35 @@ msgstr "húngaro"
 msgid "Icelandic"
 msgstr "islandés"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Ido"
+msgstr "Ido"
+
 #$lang=eng
 msgid "Indonesian"
-msgstr "indonesio"
+msgstr "inodnesio"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Interlingua"
+msgstr "interlingua"
+
+#$lang=eng
+msgid "Interlingue"
+msgstr "interlingue"
+
+#$lang=eng
+msgid "Inuktitut"
+msgstr "inuktitut"
+
+#$lang=eng
+msgid "Inupiaq"
+msgstr "inupiak"
+
+#$lang=eng
+msgid "Irish"
+msgstr "irlandés"
 
 #$lang=eng
 msgid "Italian"
@@ -9173,20 +10955,186 @@ msgid "Japanese"
 msgstr "japonés"
 
 #$lang=eng
+msgid "Javanese"
+msgstr "Javanese"
+
+#$lang=eng
+msgid "Kannada"
+msgstr "kanada"
+
+#$lang=eng
+msgid "Kashmiri"
+msgstr "cachemirí"
+
+#$lang=eng
+msgid "Kazakh"
+msgstr "kazajio"
+
+#$lang=eng
+msgid "Kikuyu"
+msgstr "Kikuyu"
+
+#$lang=eng
+msgid "Kinyarwanda"
+msgstr "ruandés"
+
+#$lang=eng
+msgid "Kirghiz"
+msgstr "kirguís"
+
+#$lang=eng
+msgid "Komi"
+msgstr "Komi"
+
+#$lang=eng
 msgid "Korean"
 msgstr "coreano"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Kuanyama"
+msgstr "Kuanyama"
+
+#$lang=eng
+msgid "Kurdish"
+msgstr "curdo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Laothian"
+msgstr "laosiano"
+
+#$lang=eng
+msgid "Latin"
+msgstr "latín"
 
 #$lang=eng
 msgid "Latvian"
 msgstr "letón"
 
 #$lang=eng
+msgid "Lingala"
+msgstr "lingala"
+
+#$lang=eng
 msgid "Lithuanian"
 msgstr "lituano"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Luxembourgish"
+msgstr "luxemburgués"
+
+#$lang=eng
+msgid "Macedonian"
+msgstr "macedonio"
+
+#$lang=eng
+msgid "Malagasy"
+msgstr "malgache"
+
+#$lang=eng
+msgid "Malay"
+msgstr "malayo"
+
+#$lang=eng
+msgid "Malayalam"
+msgstr "malayam"
+
+#$lang=eng
+msgid "Maltese"
+msgstr "maltés"
+
+#$lang=eng
+msgid "Manx"
+msgstr "manés"
+
+#$lang=eng
+msgid "Maori"
+msgstr "maori"
+
+#$lang=eng
+msgid "Marathi"
+msgstr "márata"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Marshallese"
+msgstr "Marshallese"
+
+#$lang=eng
+msgid "Moldavian"
+msgstr "moldavo"
+
+#$lang=eng
+msgid "Mongolian"
+msgstr "mongol"
+
+#$lang=eng
+msgid "Nauru"
+msgstr "nauruano"
+
+#$lang=eng
+msgid "Navajo"
+msgstr "Navajo"
+
+#$lang=eng
+msgid "Ndebele, North"
+msgstr "Ndebele, North"
+
+#$lang=eng
+msgid "Ndebele, South"
+msgstr "Ndebele, South"
+
+#$lang=eng
+msgid "Ndonga"
+msgstr "Ndonga"
+
+#$lang=eng
+msgid "Nepali"
+msgstr "nepalí"
+
+#$lang=eng
+msgid "Northern Sami"
+msgstr "Northern Sami"
 
 #$lang=eng
 msgid "Norwegian"
 msgstr "noruego"
+
+#$lang=eng
+msgid "Norwegian Bokmål"
+msgstr "Norwegian Bokmål"
+
+#$lang=eng
+msgid "Norwegian Nynorsk"
+msgstr "Norwegian Nynorsk"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Occitan"
+msgstr "occitano"
+
+#$lang=eng
+msgid "Oriya"
+msgstr "oriya"
+
+#$lang=eng
+msgid "Oromo"
+msgstr "oromo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ossetian"
+msgstr "Ossetian"
+
+#$lang=eng
+msgid "Pali"
+msgstr "Pali"
+
+#$lang=eng
+msgid "Persian"
+msgstr "farsi"
 
 #$lang=eng
 msgid "Polish"
@@ -9196,17 +11144,72 @@ msgstr "polaco"
 msgid "Portuguese"
 msgstr "portugués"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Punjabi"
+msgstr "punjabi"
+
+#$lang=eng
+msgid "Pushto"
+msgstr "pashto"
+
+#$lang=eng
+msgid "Quechua"
+msgstr "quechua"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Raeto-Romance"
+msgstr "retorromano"
+
 #$lang=eng
 msgid "Romanian"
 msgstr "rumano"
+
+#$lang=eng
+msgid "Rundi"
+msgstr "rundí"
 
 #$lang=eng
 msgid "Russian"
 msgstr "ruso"
 
 #$lang=eng
+msgid "Samoan"
+msgstr "samoano"
+
+#$lang=eng
+msgid "Sango"
+msgstr "sango"
+
+#$lang=eng
+msgid "Sanskrit"
+msgstr "sánscrito"
+
+#$lang=eng
+msgid "Sardinian"
+msgstr "Sardinian"
+
+#$lang=eng
 msgid "Serbian"
-msgstr "serbio"
+msgstr "servio"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Serbo-Croatian"
+msgstr "Serbo-Croatian"
+
+#$lang=eng
+msgid "Shona"
+msgstr "sonés"
+
+#$lang=eng
+msgid "Sindhi"
+msgstr "sindino"
+
+#$lang=eng
+msgid "Sinhalese"
+msgstr "cingalés"
 
 #$lang=eng
 msgid "Slovak"
@@ -9214,23 +11217,154 @@ msgstr "eslovaco"
 
 #$lang=eng
 msgid "Slovenian"
-msgstr "esloveno"
+msgstr "eslovenio"
+
+#$lang=eng
+msgid "Somali"
+msgstr "somalí"
+
+#$lang=eng
+msgid "Sotho, Southern"
+msgstr "sesotés"
 
 #$lang=eng
 msgid "Spanish"
-msgstr "español"
+msgstr "castellano"
+
+#$lang=eng
+msgid "Sundanese"
+msgstr "sundanés"
+
+#$lang=eng
+msgid "Swahili"
+msgstr "suajili"
+
+#$lang=eng
+msgid "Swati"
+msgstr "suazilandés"
 
 #$lang=eng
 msgid "Swedish"
 msgstr "sueco"
 
 #$lang=eng
+msgid "Tagalog"
+msgstr "tagalo"
+
+#$lang=eng
+msgid "Tahitian"
+msgstr "Tahitian"
+
+#$lang=eng
+msgid "Tajik"
+msgstr "tajik"
+
+#$lang=eng
+msgid "Tamil"
+msgstr "tamil"
+
+#$lang=eng
+msgid "Tatar"
+msgstr "tártaro"
+
+#$lang=eng
+msgid "Telugu"
+msgstr "telugu"
+
+#$lang=eng
+msgid "Thai"
+msgstr "tailandés"
+
+#$lang=eng
+msgid "Tibetan"
+msgstr "tibetano"
+
+#$lang=eng
+msgid "Tigrinya"
+msgstr "tigriñes"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Tonga"
+msgstr "tongués"
+
+#$lang=eng
+msgid "Tsonga"
+msgstr "tsonga"
+
+#$lang=eng
+msgid "Tswana"
+msgstr "sechuanés"
+
+#$lang=eng
 msgid "Turkish"
 msgstr "turco"
 
 #$lang=eng
+msgid "Turkmen"
+msgstr "turcomano"
+
+#$lang=eng
+msgid "Twi"
+msgstr "tui"
+
+#$lang=eng
+msgid "Uighur"
+msgstr "Uighur"
+
+#$lang=eng
+msgid "Ukrainian"
+msgstr "ucranio"
+
+#$lang=eng
+msgid "Urdu"
+msgstr "urdu"
+
+#$lang=eng
+msgid "Uzbek"
+msgstr "uzbeco"
+
+#$lang=eng
+msgid "Vietnamese"
+msgstr "vietnamita"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Volapük"
+msgstr "volapuk"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Walloon"
+msgstr "Walloon"
+
+#$lang=eng
+msgid "Welsh"
+msgstr "galés"
+
+#$lang=eng
+msgid "Wolof"
+msgstr "uolof"
+
+#$lang=eng
+msgid "Xhosa"
+msgstr "xhosa"
+
+#$lang=eng
+msgid "Yiddish"
+msgstr "yídish"
+
+#$lang=eng
+msgid "Yoruba"
+msgstr "yoruba"
+
+#$lang=eng
 msgid "Zhuang"
-msgstr "chino (tradicional)"
+msgstr "zhuang"
+
+#$lang=eng
+msgid "Zulu"
+msgstr "zulú"
 
 #$lang=sqi
 msgid ""
@@ -10821,20 +12955,126 @@ msgid ""
 msgstr ""
 
 #$lang=eng
+msgid "Abkhazian"
+msgstr "Abkhazian"
+
+#$lang=eng
+msgid "Afar"
+msgstr "Afar"
+
+#$lang=eng
+msgid "Afrikaans"
+msgstr "Afrikaans"
+
+#$lang=eng
+msgid "Albanian"
+msgstr "Albanian"
+
+#$lang=eng
+msgid "Amharic"
+msgstr "Amharic"
+
+#$lang=eng
 msgid "Arabic"
-msgstr "阿拉伯文"
+msgstr "Arabic"
+
+#$lang=eng
+msgid "Armenian"
+msgstr "Armenian"
+
+#$lang=eng
+msgid "Assamese"
+msgstr "Assamese"
+
+#$lang=eng
+msgid "Avestan"
+msgstr "Avestan"
+
+#$lang=eng
+msgid "Aymara"
+msgstr "Aymara"
+
+#$lang=eng
+msgid "Azerbaijani"
+msgstr "Azerbijani"
+
+#$lang=eng
+msgid "Bashkir"
+msgstr "Bashkir"
+
+#$lang=eng
+msgid "Basque"
+msgstr "Basque"
+
+#$lang=eng
+msgid "Belarusian"
+msgstr "Belarusian"
+
+#$lang=eng
+msgid "Bengali"
+msgstr "Bengali"
+
+#$lang=eng
+msgid "Bihari"
+msgstr "Bihari"
+
+#$lang=eng
+msgid "Bislama"
+msgstr "Bislama"
+
+#$lang=eng
+msgid "Bosnian"
+msgstr "Bosnian"
+
+#$lang=eng
+msgid "Breton"
+msgstr "Breton"
 
 #$lang=eng
 msgid "Bulgarian"
-msgstr "保加利亚文"
+msgstr "Bulgarian"
+
+#$lang=eng
+msgid "Burmese"
+msgstr "Burmese"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Cambodian"
+msgstr "Cambodian"
 
 #$lang=eng
 msgid "Catalan"
-msgstr "加泰罗尼亚文（西班牙）"
+msgstr "Catalan"
+
+#$lang=eng
+msgid "Chamorro"
+msgstr "Chamorro"
+
+#$lang=eng
+msgid "Chechen"
+msgstr "Chechen"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Chichewa"
+msgstr "Chichewa"
 
 #$lang=eng
 msgid "Chinese"
-msgstr "中文 (简体)"
+msgstr "中文"
+
+#$lang=eng
+msgid "Chuvash"
+msgstr "Chuvash"
+
+#$lang=eng
+msgid "Cornish"
+msgstr "Cornish"
+
+#$lang=eng
+msgid "Corsican"
+msgstr "Corsican"
 
 #$lang=eng
 msgid "Croatian"
@@ -10842,99 +13082,413 @@ msgstr "克罗地亚文"
 
 #$lang=eng
 msgid "Czech"
-msgstr "捷克语"
+msgstr "捷克文"
 
 #$lang=eng
 msgid "Danish"
-msgstr "丹麦语"
+msgstr "丹麦文"
 
 #$lang=eng
 msgid "Dutch"
-msgstr "荷兰语"
+msgstr "荷兰文"
+
+#$lang=eng
+msgid "Dzongkha"
+msgstr "Dzongkha"
 
 #$lang=eng
 msgid "English"
-msgstr "英语"
+msgstr "英文"
+
+#$lang=eng
+msgid "Esperanto"
+msgstr "Esperanto"
 
 #$lang=eng
 msgid "Estonian"
-msgstr "爱沙尼亚语"
+msgstr "Estonian"
+
+#$lang=eng
+msgid "Faroese"
+msgstr "Faroese"
+
+#$lang=eng
+msgid "Fijian"
+msgstr "Fijian"
 
 #$lang=eng
 msgid "Finnish"
-msgstr "芬兰语"
+msgstr "芬兰文"
 
 #$lang=eng
 msgid "French"
-msgstr "法语"
+msgstr "法文"
+
+#$lang=eng
+msgid "Frisian"
+msgstr "Frisian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Gaelic"
+msgstr "Gaelic"
+
+#$lang=eng
+msgid "Gallegan"
+msgstr "Gallegan"
+
+#$lang=eng
+msgid "Georgian"
+msgstr "Georgian"
 
 #$lang=eng
 msgid "German"
-msgstr "德语"
+msgstr "德文"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Greek"
+msgstr "Greek"
 
 #$lang=eng
 msgid "Greek, Modern (1453-)"
 msgstr "希腊语"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Greenlandic"
+msgstr "Greenlandic"
+
+#$lang=eng
+msgid "Guarani"
+msgstr "Guarani"
+
+#$lang=eng
+msgid "Gujarati"
+msgstr "Gujarati"
+
+#$lang=eng
+msgid "Hausa"
+msgstr "Hausa"
+
 #$lang=eng
 msgid "Hebrew"
-msgstr "希伯来语"
+msgstr "Hebrew"
+
+#$lang=eng
+msgid "Herero"
+msgstr "Herero"
+
+#$lang=eng
+msgid "Hindi"
+msgstr "Hindi"
+
+#$lang=eng
+msgid "Hiri Motu"
+msgstr "Hiri Motu"
 
 #$lang=eng
 msgid "Hungarian"
-msgstr "匈牙利语"
+msgstr "匈牙利文"
 
 #$lang=eng
 msgid "Icelandic"
-msgstr "冰岛语"
+msgstr "冰岛文"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ido"
+msgstr "Ido"
 
 #$lang=eng
 msgid "Indonesian"
-msgstr "印尼文"
+msgstr "Indonesian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Interlingua"
+msgstr "Interlingua"
+
+#$lang=eng
+msgid "Interlingue"
+msgstr "Interlingue"
+
+#$lang=eng
+msgid "Inuktitut"
+msgstr "Inuktitut"
+
+#$lang=eng
+msgid "Inupiaq"
+msgstr "Inupiaq"
+
+#$lang=eng
+msgid "Irish"
+msgstr "Irish"
 
 #$lang=eng
 msgid "Italian"
-msgstr "意大利语"
+msgstr "意大利文"
 
 #$lang=eng
 msgid "Japanese"
-msgstr "日语"
+msgstr "日文"
+
+#$lang=eng
+msgid "Javanese"
+msgstr "Javanese"
+
+#$lang=eng
+msgid "Kannada"
+msgstr "Kannada"
+
+#$lang=eng
+msgid "Kashmiri"
+msgstr "Kashmiri"
+
+#$lang=eng
+msgid "Kazakh"
+msgstr "Kazakh"
+
+#$lang=eng
+msgid "Kikuyu"
+msgstr "Kikuyu"
+
+#$lang=eng
+msgid "Kinyarwanda"
+msgstr "Kinyarwanda"
+
+#$lang=eng
+msgid "Kirghiz"
+msgstr "Kirghiz"
+
+#$lang=eng
+msgid "Komi"
+msgstr "Komi"
 
 #$lang=eng
 msgid "Korean"
-msgstr "朝鲜语"
+msgstr "朝鲜文"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Kuanyama"
+msgstr "Kuanyama"
+
+#$lang=eng
+msgid "Kurdish"
+msgstr "Kurdish"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Laothian"
+msgstr "Laothian"
+
+#$lang=eng
+msgid "Latin"
+msgstr "Latin"
 
 #$lang=eng
 msgid "Latvian"
-msgstr "拉脱维亚语"
+msgstr "Latvian"
+
+#$lang=eng
+msgid "Lingala"
+msgstr "Lingala"
 
 #$lang=eng
 msgid "Lithuanian"
-msgstr "立陶宛语"
+msgstr "Lithuanian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Luxembourgish"
+msgstr "Luxembourgish"
+
+#$lang=eng
+msgid "Macedonian"
+msgstr "Macedonian"
+
+#$lang=eng
+msgid "Malagasy"
+msgstr "Malagasy"
+
+#$lang=eng
+msgid "Malay"
+msgstr "Malay"
+
+#$lang=eng
+msgid "Malayalam"
+msgstr "Malayalam"
+
+#$lang=eng
+msgid "Maltese"
+msgstr "Maltese"
+
+#$lang=eng
+msgid "Manx"
+msgstr "Manx"
+
+#$lang=eng
+msgid "Maori"
+msgstr "Maori"
+
+#$lang=eng
+msgid "Marathi"
+msgstr "Marathi"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Marshallese"
+msgstr "Marshallese"
+
+#$lang=eng
+msgid "Moldavian"
+msgstr "Moldavian"
+
+#$lang=eng
+msgid "Mongolian"
+msgstr "Mongolian"
+
+#$lang=eng
+msgid "Nauru"
+msgstr "Nauru"
+
+#$lang=eng
+msgid "Navajo"
+msgstr "Navajo"
+
+#$lang=eng
+msgid "Ndebele, North"
+msgstr "Ndebele, North"
+
+#$lang=eng
+msgid "Ndebele, South"
+msgstr "Ndebele, South"
+
+#$lang=eng
+msgid "Ndonga"
+msgstr "Ndonga"
+
+#$lang=eng
+msgid "Nepali"
+msgstr "Nepali"
+
+#$lang=eng
+msgid "Northern Sami"
+msgstr "Northern Sami"
 
 #$lang=eng
 msgid "Norwegian"
-msgstr "挪威语"
+msgstr "挪威文"
+
+#$lang=eng
+msgid "Norwegian Bokmål"
+msgstr "Norwegian Bokmål"
+
+#$lang=eng
+msgid "Norwegian Nynorsk"
+msgstr "Norwegian Nynorsk"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Occitan"
+msgstr "Occitan"
+
+#$lang=eng
+msgid "Oriya"
+msgstr "Oriya"
+
+#$lang=eng
+msgid "Oromo"
+msgstr "Oromo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Ossetian"
+msgstr "Ossetian"
+
+#$lang=eng
+msgid "Pali"
+msgstr "Pali"
+
+#$lang=eng
+msgid "Persian"
+msgstr "Persian"
 
 #$lang=eng
 msgid "Polish"
-msgstr "波兰语"
+msgstr "Polish"
 
 #$lang=eng
 msgid "Portuguese"
-msgstr "葡萄牙语"
+msgstr "Portuguese"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Punjabi"
+msgstr "Punjabi"
+
+#$lang=eng
+msgid "Pushto"
+msgstr "Pushto"
+
+#$lang=eng
+msgid "Quechua"
+msgstr "Quechua"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Raeto-Romance"
+msgstr "Raeto-Romance"
 
 #$lang=eng
 msgid "Romanian"
-msgstr "罗马尼亚语"
+msgstr "Romanian"
+
+#$lang=eng
+msgid "Rundi"
+msgstr "Rundi"
 
 #$lang=eng
 msgid "Russian"
-msgstr "俄语"
+msgstr "俄文"
+
+#$lang=eng
+msgid "Samoan"
+msgstr "Samoan"
+
+#$lang=eng
+msgid "Sango"
+msgstr "Sango"
+
+#$lang=eng
+msgid "Sanskrit"
+msgstr "Sanskrit"
+
+#$lang=eng
+msgid "Sardinian"
+msgstr "Sardinian"
 
 #$lang=eng
 msgid "Serbian"
-msgstr "塞尔维亚文"
+msgstr "Serbian"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Serbo-Croatian"
+msgstr "Serbo-Croatian"
+
+#$lang=eng
+msgid "Shona"
+msgstr "Shona"
+
+#$lang=eng
+msgid "Sindhi"
+msgstr "Sindhi"
+
+#$lang=eng
+msgid "Sinhalese"
+msgstr "Sinhalese"
 
 #$lang=eng
 msgid "Slovak"
@@ -10942,21 +13496,152 @@ msgstr "斯洛伐克文"
 
 #$lang=eng
 msgid "Slovenian"
-msgstr "斯拉维尼亚文"
+msgstr "斯洛文尼亚文"
+
+#$lang=eng
+msgid "Somali"
+msgstr "Somali"
+
+#$lang=eng
+msgid "Sotho, Southern"
+msgstr "Sotho, Southern"
 
 #$lang=eng
 msgid "Spanish"
-msgstr "西班牙语"
+msgstr "西班牙文"
+
+#$lang=eng
+msgid "Sundanese"
+msgstr "Sundanese"
+
+#$lang=eng
+msgid "Swahili"
+msgstr "Swahili"
+
+#$lang=eng
+msgid "Swati"
+msgstr "Swati"
 
 #$lang=eng
 msgid "Swedish"
-msgstr "瑞典语"
+msgstr "瑞典文"
+
+#$lang=eng
+msgid "Tagalog"
+msgstr "Tagalog"
+
+#$lang=eng
+msgid "Tahitian"
+msgstr "Tahitian"
+
+#$lang=eng
+msgid "Tajik"
+msgstr "Tajik"
+
+#$lang=eng
+msgid "Tamil"
+msgstr "Tamil"
+
+#$lang=eng
+msgid "Tatar"
+msgstr "Tatar"
+
+#$lang=eng
+msgid "Telugu"
+msgstr "Telugu"
+
+#$lang=eng
+msgid "Thai"
+msgstr "Thai"
+
+#$lang=eng
+msgid "Tibetan"
+msgstr "Tibetan"
+
+#$lang=eng
+msgid "Tigrinya"
+msgstr "Tigrinya"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Tonga"
+msgstr "Tonga"
+
+#$lang=eng
+msgid "Tsonga"
+msgstr "Tsonga"
+
+#$lang=eng
+msgid "Tswana"
+msgstr "Tswana"
 
 #$lang=eng
 msgid "Turkish"
 msgstr "土耳其文"
 
 #$lang=eng
+msgid "Turkmen"
+msgstr "Turkmen"
+
+#$lang=eng
+msgid "Twi"
+msgstr "Twi"
+
+#$lang=eng
+msgid "Uighur"
+msgstr "Uighur"
+
+#$lang=eng
+msgid "Ukrainian"
+msgstr "Ukrainian"
+
+#$lang=eng
+msgid "Urdu"
+msgstr "Urdu"
+
+#$lang=eng
+msgid "Uzbek"
+msgstr "Uzbek"
+
+#$lang=eng
+msgid "Vietnamese"
+msgstr "Vietnamese"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Volapük"
+msgstr "Volapük"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Walloon"
+msgstr "Walloon"
+
+#$lang=eng
+msgid "Welsh"
+msgstr "Welsh"
+
+#$lang=eng
+msgid "Wolof"
+msgstr "Wolof"
+
+#$lang=eng
+msgid "Xhosa"
+msgstr "Xhosa"
+
+#$lang=eng
+msgid "Yiddish"
+msgstr "Yiddish"
+
+#$lang=eng
+msgid "Yoruba"
+msgstr "Yoruba"
+
+#$lang=eng
 msgid "Zhuang"
-msgstr "中文 (繁体）"
+msgstr "Zhuang"
+
+#$lang=eng
+msgid "Zulu"
+msgstr "Zulu"
 

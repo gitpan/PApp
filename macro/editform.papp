@@ -25,13 +25,15 @@ overriden.
 
 =cut
 
+use Carp ();
 use Convert::Scalar ();
 
-my $EF_KEY = "ef00000";
+my $EF_KEY;
 my $ef_args;
 my $ef_key;
 
 sub ef_nextid($;$) {
+   $EF_KEY or Carp::croak "editform called without outside ef_begin/ef_end calls\n";
    $ef_key = $_[1]{name} ||= $EF_KEY++;
    $ef_args->{"/"}{$ef_key}{ref} = $_[0] if $_[0];
    $ef_key;
@@ -41,7 +43,7 @@ sub ef_nextid($;$) {
 
 Start an editform. This directive outputs the <form> header (using
 C<PApp::multipart_form>). The arguments are treated exactly like
-PApp::surl arguments. If it contains SURL_EXEC or similar commands then
+PApp::surl arguments. If it contains callbacks or similar commands then
 these will be executed AFTER the form has been processed.
 
 =item ef_sbegin [surl-arguments]
@@ -103,6 +105,12 @@ sub _ef_parse_field($$$) {
       $data =~ s/\r//g;
    }
 
+   if (exists $field->{map}) {
+      $data = $data >= 0 && $data < @{$field->{map}}
+            ? $field->{map}[$data]
+            : fancydie "form data error: selectbox value out of range";
+   }
+
    if (exists $field->{multi}) {
       push @{$field->{multi}}, $data;
    } elsif (exists $field->{checkbox}) {
@@ -132,7 +140,7 @@ sub ef_parse_simple {
                _ef_parse_field($field, $data, $state{papp_lcs});
             }
          } elsif (exists $field->{path}) {
-            fancydie "file upload widgets are not supported with either ef_sbegin or ef_cbegin/ef_begin";
+            fancydie "file upload widgets are not supported with either ef_sbegin or ef_cbegin/ef_begin, use ef_mbegin instead";
          } elsif (exists $field->{submit}) {
             PApp::set_alternative delete $field->{submit} if $field->{submit};
          } else {
@@ -219,7 +227,8 @@ sub _ef_begin {
    my $ef_parse = shift;
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    $ef_args = {};
-   $attr, (@_ & 1 ? shift : ()), SURL_EXEC($ef_parse->($ef_args)), @_;
+   $EF_KEY = "ef00";
+   $attr, (@_ & 1 ? shift : ()), $ef_parse->($ef_args), @_;
 }
 
 sub ef_mbegin* { multipart_form _ef_begin($ef_parse_m, @_) }
@@ -232,6 +241,7 @@ sub ef_cbegin* { cform          _ef_begin($ef_parse_c, @_) }
 sub ef_end* {
    # delete $ef_args->{radioref};
    undef $ef_args; # important for database accessors
+   undef $EF_KEY;
    endform;
 }
 
@@ -302,7 +312,7 @@ Output a reset button. If C<$value> is omitted, __"Restore Values" is used.
 This rarely used function does not output an element itself but rather
 I<registers> a field name within the editform.  If the name is omitted it
 returns a newly generated name. You are responsible for creating an input
-element with the given name. since it doesn't generate an HTML element it
+element with the given name. Since it doesn't generate an HTML element it
 will of course not accept an \%attrs hash.
 
 =item ef_string fieldref, [length=20]
@@ -405,6 +415,16 @@ an array-ref a multiple-select selectbox is created, otherwise a
 simple single-select box is used. C<values>... can be as many C<value,
 description> pairs as you like.
 
+Beginning with version 0.143 of PApp, C<ef_selectbox> (and functions that
+use it, like C<ef_relation>) doesn't send the key values to the client,
+but instead enumerates them on checks wetehr submitted values are in
+range. This has two consequences: first, the client can only submit valid
+keys, and second, keys can be complex perl objects (like undef ;), where
+they could only be strings before.
+
+Equality of key values (used to find the currently "active" selection) is
+done by string comparison after stringifying the keys.
+
 =cut
 
 ]]></perl>
@@ -429,12 +449,11 @@ description> pairs as you like.
 
    my $options;
    for (my $i = 0; $i < $#$values; $i += 2) {
+      push @{$ef_args->{"/"}{$id}{map}}, $$values[$i];
       $options .= "<option" .
                   (exists $content{$$values[$i]} ? " selected='selected'" : "") .
-                  " value=" .
-                  escape_attr($$values[$i]) .
-                  ">" .
-                  escape_html($$values[$i+1]) .
+                  " value='". ($i>>1) ."'>" .
+                  (escape_html $$values[$i+1]) .
                   "</option>";
    }
 
@@ -479,9 +498,13 @@ Similar to C<ef_set>, but is based on the ENUM type in sql.
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    my ($field, $relation, @values) = @_;
    ref $relation eq "ARRAY" or die __"ef_relation: relation argument must be arrayref";
-   my ($sel, @arg) = @$relation;
-   my $st = sql_exec \my($id,$val), "select $sel", @arg;
-   push @values, $id => $val while $st->fetch;
+   unshift @$relation, $PApp::SQL::DBH unless ref $relation->[0];
+   my ($dbh, $sel, @arg) = @$relation;
+   my $st = sql_uexec $dbh, \my($id,$val), "select $sel", @arg;
+   while ($st->fetch) {
+      Convert::Scalar::utf8_on $val if Convert::Scalar::utf8_valid $val;
+      push @values, $id => $val;
+   }
    ef_selectbox $attr, $field, \@values;
 ]]></perl></macro>
 
@@ -489,7 +512,7 @@ Similar to C<ef_set>, but is based on the ENUM type in sql.
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    my ($field, $relation) = @_;
    my ($table, $fild) = @$relation;
-   my $st = sql_exec "show columns from $table like ?", $fild;
+   my $st = sql_uexec "show columns from $table like ?", $fild;
    my $type = $st->fetchrow_arrayref->[1];
    $type =~ s/^set\('(.*)'\)$/$1/ or die "ef_set: field '$fild' is not of set type\n";
 
@@ -500,7 +523,7 @@ Similar to C<ef_set>, but is based on the ENUM type in sql.
    my $attr = ref $_[0] eq "HASH" ? shift : {};
    my ($field, $relation) = @_;
    my ($table, $fild) = @$relation;
-   my $st = sql_exec "show columns from $table like ?", $fild;
+   my $st = sql_uexec "show columns from $table like ?", $fild;
    my $type = $st->fetchrow_arrayref->[1];
    $type =~ s/^enum\('(.*)'\)$/$1/ or die "ef_enum: field '$fild' is not of enum type\n";
 
@@ -526,16 +549,18 @@ If a destination path is given, the file will be replaced atomically (by
 first writing a file with a prepended "~" and renaming (success case) or
 unlinking it).
 
+Although a source path can be given, most browsers will ignore it. Some
+will display it, but not use it, so it's a rather useless feature.
+
 =cut
 
 ]]></perl>
 
 <macro name="ef_file*"><perl><![CDATA[
    my $attr = ref $_[0] eq "HASH" ? shift : {};
-   $attr->{value} ||= $_[1];
    my $id = ef_nextid(undef, $attr);
    $ef_args->{"/"}{$id}{path} = $_[0];
-   filefield $attr, $id;
+   filefield $attr, $id, $_[1];
 ]]></perl></macro>
 
 <perl><![CDATA[
@@ -565,8 +590,9 @@ hashref with additonal name => value pairs.
 
 Add a callback the is to be called at BEGINing or END of result
 processing, i.e. call every BEGIN callback before the form results are
-being processed and call every END callback after all form arguments have
-been processed.
+being processed and call every END callback after all form arguments
+have been processed. All callbacks are executed in the order they were
+registered (first in, first out).
 
 =cut
 

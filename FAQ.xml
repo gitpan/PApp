@@ -50,6 +50,18 @@ SURL_STYLE_GET, SURL_SUFFIX, "doc.ps";
 
 </qa>
 
+<qa q='How can I dynamically initialize the default database used by my app?'>
+
+<p>
+Use a perl section and call the <c>$ppkg->set_database</c> method:
+</p>
+
+<p>
+<c>&lt;perl>$ppkg->set_database(new PApp::SQL::Database ...)&lt;/perl></c>
+</p>
+
+</qa>
+
 </section>
 
 <section title='Unexplainable Errors'>

@@ -14,7 +14,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 
 package PApp::Package;
 
@@ -144,7 +144,7 @@ sub compile_xslt {
 
    # eval=onload
    eval {
-      local $SIG{__DIE__};
+      local $SIG{__DIE__} = \&PApp::Exception::diehandler;
       $pxml = $self->_eval(
             "sub { PApp::capture (sub { package $self->{package};"
             . PApp::PCode::pcode2perl($pxml) .
@@ -164,11 +164,11 @@ sub xslt_transform {
    my $name = $_[1];
    my $xslt = $_[2];
    eval {
-      local $SIG{__DIE__};
+      local $SIG{__DIE__} = \&PApp::Exception::diehandler;
       my $data = "<papp:module xmlns:papp='$PApp::xmlnspapp' package='$ppkg->{name}' module='$name'>$_[3]</papp:module>";
       $xslt->apply_string($data);
    } or do {
-      return "" unless $@; # error, "0" also is returned as ""
+      return "" unless $@; # error, 0 might also be returned as ""
       PApp::Exception::fancydie "error while applying stylesheet to $ppkg->{name}/$name:", $@,
                                 info => [ "Page Source" => PApp::Util::format_source $_[3] ];
    };
@@ -228,12 +228,11 @@ sub _eval : locked {
            "#".(join ":", caller)."\n".
            "package $ppkg->{package}; use utf8; no bytes;\n".
            "{\n$ppkg->{header};\n$data\n}\n";
-   local $SIG{__DIE__};
+   local $SIG{__DIE__} = \&PApp::Exception::diehandler;
    $sub = eval $data;
 
-   # DEVEL9916: the ref in the next line should certainly not be neccessary
    $@ and PApp::Exception::fancydie "error while compiling into $ppkg->{package}:",
-                                    (ref $@ ? $@ : "$@"), info => [source => PApp::Util::format_source($data)];
+                                    $@, info => [source => PApp::Util::format_source($data)];
 
    $sub;
 }
@@ -436,8 +435,8 @@ sub run($$) {
       *S = $state       {$curprfx};
       *A = $arguments   {$curprfx};
    } else {
-      *S = $state       {$curprfx} = {};
-      *A = $arguments   {$curprfx} = {};
+      *S = $state       {$curprfx}   = {};
+      *A = $arguments   {$curprfx} ||= {};
 
       while (defined $pmod->{nosession}) {
          $module = $$curmod->{"\x00"} = $pmod->{nosession};

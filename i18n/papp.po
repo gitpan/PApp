@@ -40,6 +40,11 @@ msgstr "&gt;&gt;&gt;WEITER&gt;&gt;&gt;"
 msgid "&lt;&lt;&lt;PREV&lt;&lt;&lt;"
 msgstr "&lt;&lt;&lt;ZURÜCK&lt;&lt;&lt;"
 
+# /root/src/PApp/macro/admin.papp:95          __"(You are not currently logged in)"<br />
+#$lang=eng
+msgid "(You are not currently logged in)"
+msgstr "(Du bist z.Zt. nicht angemeldet)"
+
 # /root/src/PApp/widget/poedit.papp:238 __"(can take a long time!)"<br />
 #$lang=eng
 msgid "(can take a long time!)"
@@ -49,11 +54,6 @@ msgstr "(kann sehr lange dauern!)"
 #$lang=eng
 msgid "(leave this field empty for no change)"
 msgstr "(leeres Feld bedeutet keine Änderung)"
-
-# /root/src/PApp/macro/admin.papp:95          __"(You are not currently logged in)"<br />
-#$lang=eng
-msgid "(You are not currently logged in)"
-msgstr "(Du bist z.Zt. nicht angemeldet)"
 
 # /root/src/PApp/macro/admin.papp:100          __"<i>Possible(!)</i> URI (for referencing) of this page:" <?alink ((reference_url 1)x2):><br />
 #$lang=eng
@@ -94,11 +94,6 @@ msgstr "<small> <b>+ausgewählt+</b>: z.Zt. zum Edieren ausgewählt.<br /> <smal
 msgid "<tt>%s</tt> is a non-standard language id"
 msgstr "<tt>%s</tt> ist eine non-standard Sprach-Id"
 
-# /root/src/PApp/widget/acedit.papp:45 __"access rights"</th>
-#$lang=eng
-msgid "access rights"
-msgstr "Zugriffsrechte verwalten"
-
 # /root/src/PApp/widget/acedit.papp:166    <h3>__"Add Group:"</h3>
 #$lang=eng
 msgid "Add Group:"
@@ -115,21 +110,6 @@ msgstr "Zusätzliche Information"
 #$flags=5
 msgid "Administration/Maintainance"
 msgstr "Administration/Wartung"
-
-# /root/src/PApp/apps/admin.papp:113 <tr><td>__"app. config"</td><td><?ef_text { nowrap => nowrap }, \$row->{config}, 60,8:></td>
-#$lang=eng
-msgid "app. config"
-msgstr "Anw.-Konfiguration"
-
-# /root/src/PApp/apps/admin.papp:102 <tr><td>__"app. name"</td><td><?ef_string \$row->{name}, 60:></td>
-#$lang=eng
-msgid "app. name"
-msgstr "Name der Anwendung"
-
-# /root/src/PApp/apps/admin.papp:101 <tr><td>__"app. set"</td><td><?ef_relation \$row->{appset}, ["id, name from appset"], 0 => 
-#$lang=eng
-msgid "app. set"
-msgstr "Gruppe"
 
 # /root/src/PApp/widget/poedit.papp:100    __"Application Set"&#160;
 #$lang=eng
@@ -154,12 +134,6 @@ msgstr "Zurück zum Übersetzungsmenü"
 #$flags=5
 msgid "Backtrace"
 msgstr "Aufrufabfolge"
-
-# /usr/app/lib/perl5/PApp/Exception.pm:72       fancydie(__"caught a die", $_[0], compatible => $_[0], skipcallers => 1);
-#$lang=eng
-#$flags=5
-msgid "caught a die"
-msgstr "Programmfehler abgefangen"
 
 #$lang=eng
 #$flags=5
@@ -192,21 +166,16 @@ msgstr "Z.Zt. aktivierte Anwendungen"
 msgid "Delete unused messages and reorganize database"
 msgstr "Unbenutze Meldungen löschen und Datenbank reorganisieren"
 
-# /root/src/PApp/widget/poedit.papp:310       <th align="left" width="10%">__"domain"</th>
-# /root/src/PApp/widget/poedit.papp:496           __"domain" $domain<br />
-#$lang=eng
-msgid "domain"
-msgstr "Domäne"
-
 # /root/src/PApp/widget/poedit.papp:236    <h2>__"Domain Management"</h2>
 #$lang=eng
 msgid "Domain Management"
 msgstr "Domänen-Management"
 
-# /root/src/PApp/widget/poedit.papp:365          <h2>__"Edit a translation entry"</h2>
+# /usr/app/lib/perl5/PApp/Exception.pm:193    $_[0]->{category} || __"ERROR";
 #$lang=eng
-msgid "Edit a translation entry"
-msgstr "Übersetzungseintrag Ändern"
+#$flags=5
+msgid "ERROR"
+msgstr "FEHLER"
 
 # /root/src/PApp/apps/admin.papp:47 <h2>__"Edit Access Rights"</h2>
 # /root/src/PApp/apps/admin.papp:179 <td><?slink __"Edit Access Rights", "admin/acedit,admin/acedit/":></td>
@@ -230,16 +199,10 @@ msgstr "Anwendungen einrichten"
 msgid "Edit Translations"
 msgstr "Übersetzungseditor"
 
-# /usr/app/lib/perl5/PApp/Exception.pm:193    $_[0]->{category} || __"ERROR";
+# /root/src/PApp/widget/poedit.papp:365          <h2>__"Edit a translation entry"</h2>
 #$lang=eng
-#$flags=5
-msgid "ERROR"
-msgstr "FEHLER"
-
-# /root/src/PApp/widget/poedit.papp:311       <th align="left" width="5%">__"flags"</th>
-#$lang=eng
-msgid "flags"
-msgstr "Hinweise"
+msgid "Edit a translation entry"
+msgstr "Übersetzungseintrag Ändern"
 
 # /root/src/PApp/apps/admin.papp:181 <td><?slink __"Flush Package Cache", SURL_EXEC($ppkg->refer('flush_cache')):></td>
 #$lang=eng
@@ -282,11 +245,6 @@ msgstr "ID"
 msgid "Interface"
 msgstr "Interface"
 
-# /root/src/PApp/widget/poedit.papp:312       <th align="left" width="5%">__"lang"</th>
-#$lang=eng
-msgid "lang"
-msgstr "Sprache"
-
 # /root/src/PApp/widget/poedit.papp:300 <tr><td>__"Limit view to entries containing"&#160;<?ef_string \$S{search}:></td></tr>
 #$lang=eng
 msgid "Limit view to entries containing"
@@ -296,11 +254,6 @@ msgstr "Anzeigen auf Meldungen mit dem folgenden Text beschränken"
 #$lang=eng
 msgid "Log In"
 msgstr "Anmelden"
-
-# /root/src/PApp/widget/acedit.papp:44 __"login"</th><th>
-#$lang=eng
-msgid "login"
-msgstr "Login"
 
 # /root/src/PApp/macro/admin.papp:45    <?errbox __"Login failed", 
 #$lang=eng
@@ -312,27 +265,10 @@ msgstr "Login fehlgeschlagen"
 msgid "Memory Usage"
 msgstr "Speicherbenutzung"
 
-# /root/src/PApp/widget/poedit.papp:313       <th align="left" width="40%">__"message"</th>
-#$lang=eng
-msgid "message"
-msgstr "Meldung"
-
 # /root/src/PApp/widget/poedit.papp:487                          sprintf __"Message (in language '%s')", $idlang:></th><th width="48%">
 #$lang=eng
 msgid "Message (in language '%s')"
 msgstr "Meldung (in Sprache '%s')"
-
-# /root/src/PApp/apps/admin.papp:108 <tr><td>__"mount config"</td><td><?ef_text { nowrap => nowrap }, \$row->{mountconfig}, 60,8:></td>
-#$lang=eng
-msgid "mount config"
-msgstr "Mount-Konfiguration"
-
-# /root/src/PApp/apps/admin.papp:28 __"Name"</th><th>
-# /root/src/PApp/apps/admin.papp:65 __"Name"</th><th>
-# /root/src/PApp/widget/acedit.papp:194    <tr><td>__"Name"</td><td><?ef_string \$row->{name}, 20:>
-#$lang=eng
-msgid "name"
-msgstr "Name"
 
 # /root/src/PApp/macro/admin.papp:101          __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p />
 #$lang=eng
@@ -343,27 +279,6 @@ msgstr "Nie, aber auch wirklich <i>NIEMALS</i> sollte eine URL mit dem hex-hash 
 #$lang=eng
 msgid "Next"
 msgstr "Weiter"
-
-# /root/src/PApp/widget/poedit.papp:180       $slang or echo '<br /><font color="red">', __"no source languages selected", '</font>';
-#$lang=eng
-msgid "no source languages selected"
-msgstr "keine Quellsprache(n) ausgewählt"
-
-# /root/src/PApp/macro/admin.papp:45 __"no such user or wrong password":>
-#$lang=eng
-msgid "no such user or wrong password"
-msgstr "Falsches Passwort oder Benutzer unbekannt"
-
-# /root/src/PApp/widget/poedit.papp:155       $tdom or echo '<br /><font color="red">', __"no translation domain selected", '</font>';
-#$lang=eng
-msgid "no translation domain selected"
-msgstr "keine Übersetzungsdomänen ausgewählt"
-
-# /usr/app/lib/perl5/PApp.pm:1204 <head><title>".__"page redirection"."</title></head>
-#$lang=eng
-#$flags=5
-msgid "page redirection"
-msgstr "Weiterleitung"
 
 # /root/src/PApp/apps/admin.papp:162 <title>__"PApp Administration Desk"</title>
 # /root/src/PApp/apps/admin.papp:165 <table width="100%"><tr><td><h1>__"PApp Administration Desk"</h1></td><td align="right">
@@ -511,11 +426,6 @@ msgstr "Dies ist leider keine echte Anwendung sondern ein Teil des PApp-Systems.
 msgid "Source Languages"
 msgstr "Quellsprache(n)"
 
-# /root/src/PApp/apps/admin.papp:105 <tr><td>__"source path"</td><td><?ef_string \$row->{path}, 60:></td>
-#$lang=eng
-msgid "source path"
-msgstr "Quelldatei"
-
 # /root/src/PApp/widget/poedit.papp:192    <h3>__"Target Language"</h3>
 # /root/src/PApp/widget/poedit.papp:250          echo __"Target Language", ": $trans";
 #$lang=eng
@@ -557,11 +467,6 @@ msgstr "Um alle Einträge zu sehen einfach Enter im Suche Schlagwort-Feld eingeb
 #$lang=eng
 msgid "Total number of messages"
 msgstr "Gesamtzahl der Meldungen"
-
-# /root/src/PApp/widget/poedit.papp:314       <th align="left" width="40%">__"translation"</th>
-#$lang=eng
-msgid "translation"
-msgstr "Übersetzung"
 
 # /root/src/PApp/widget/poedit.papp:491             sprintf __"Translation (to language '%s')", $S{lang}:>
 #$lang=eng
@@ -735,6 +640,101 @@ msgstr ""
 msgid "[try to enter]"
 msgstr "[Von hier Aufrufen]"
 
+# /root/src/PApp/widget/acedit.papp:45 __"access rights"</th>
+#$lang=eng
+msgid "access rights"
+msgstr "Zugriffsrechte verwalten"
+
+# /root/src/PApp/apps/admin.papp:113 <tr><td>__"app. config"</td><td><?ef_text { nowrap => nowrap }, \$row->{config}, 60,8:></td>
+#$lang=eng
+msgid "app. config"
+msgstr "Anw.-Konfiguration"
+
+# /root/src/PApp/apps/admin.papp:102 <tr><td>__"app. name"</td><td><?ef_string \$row->{name}, 60:></td>
+#$lang=eng
+msgid "app. name"
+msgstr "Name der Anwendung"
+
+# /root/src/PApp/apps/admin.papp:101 <tr><td>__"app. set"</td><td><?ef_relation \$row->{appset}, ["id, name from appset"], 0 => 
+#$lang=eng
+msgid "app. set"
+msgstr "Gruppe"
+
+# /usr/app/lib/perl5/PApp/Exception.pm:72       fancydie(__"caught a die", $_[0], compatible => $_[0], skipcallers => 1);
+#$lang=eng
+#$flags=5
+msgid "caught a die"
+msgstr "Programmfehler abgefangen"
+
+# /root/src/PApp/widget/poedit.papp:310       <th align="left" width="10%">__"domain"</th>
+# /root/src/PApp/widget/poedit.papp:496           __"domain" $domain<br />
+#$lang=eng
+msgid "domain"
+msgstr "Domäne"
+
+# /root/src/PApp/widget/poedit.papp:311       <th align="left" width="5%">__"flags"</th>
+#$lang=eng
+msgid "flags"
+msgstr "Hinweise"
+
+# /root/src/PApp/widget/poedit.papp:312       <th align="left" width="5%">__"lang"</th>
+#$lang=eng
+msgid "lang"
+msgstr "Sprache"
+
+# /root/src/PApp/widget/acedit.papp:44 __"login"</th><th>
+#$lang=eng
+msgid "login"
+msgstr "Login"
+
+# /root/src/PApp/widget/poedit.papp:313       <th align="left" width="40%">__"message"</th>
+#$lang=eng
+msgid "message"
+msgstr "Meldung"
+
+# /root/src/PApp/apps/admin.papp:108 <tr><td>__"mount config"</td><td><?ef_text { nowrap => nowrap }, \$row->{mountconfig}, 60,8:></td>
+#$lang=eng
+msgid "mount config"
+msgstr "Mount-Konfiguration"
+
+# /root/src/PApp/apps/admin.papp:28 __"Name"</th><th>
+# /root/src/PApp/apps/admin.papp:65 __"Name"</th><th>
+# /root/src/PApp/widget/acedit.papp:194    <tr><td>__"Name"</td><td><?ef_string \$row->{name}, 20:>
+#$lang=eng
+msgid "name"
+msgstr "Name"
+
+# /root/src/PApp/widget/poedit.papp:180       $slang or echo '<br /><font color="red">', __"no source languages selected", '</font>';
+#$lang=eng
+msgid "no source languages selected"
+msgstr "keine Quellsprache(n) ausgewählt"
+
+# /root/src/PApp/macro/admin.papp:45 __"no such user or wrong password":>
+#$lang=eng
+msgid "no such user or wrong password"
+msgstr "Falsches Passwort oder Benutzer unbekannt"
+
+# /root/src/PApp/widget/poedit.papp:155       $tdom or echo '<br /><font color="red">', __"no translation domain selected", '</font>';
+#$lang=eng
+msgid "no translation domain selected"
+msgstr "keine Übersetzungsdomänen ausgewählt"
+
+# /usr/app/lib/perl5/PApp.pm:1204 <head><title>".__"page redirection"."</title></head>
+#$lang=eng
+#$flags=5
+msgid "page redirection"
+msgstr "Weiterleitung"
+
+# /root/src/PApp/apps/admin.papp:105 <tr><td>__"source path"</td><td><?ef_string \$row->{path}, 60:></td>
+#$lang=eng
+msgid "source path"
+msgstr "Quelldatei"
+
+# /root/src/PApp/widget/poedit.papp:314       <th align="left" width="40%">__"translation"</th>
+#$lang=eng
+msgid "translation"
+msgstr "Übersetzung"
+
 #$lang=fra
 msgid ""
 msgstr ""
@@ -777,6 +777,11 @@ msgstr "&gt;&gt;&gt;NÄCHST&gt;&gt;&gt;"
 msgid "&lt;&lt;&lt;PREV&lt;&lt;&lt;"
 msgstr "&lt;&lt;&lt;ZERECK&lt;&lt;&lt;"
 
+# /root/src/PApp/macro/admin.papp:95          __"(You are not currently logged in)"<br />
+#$lang=eng
+msgid "(You are not currently logged in)"
+msgstr ""
+
 # /root/src/PApp/widget/poedit.papp:238 __"(can take a long time!)"<br />
 #$lang=eng
 msgid "(can take a long time!)"
@@ -786,11 +791,6 @@ msgstr "(kann e bessen daueren!)"
 #$lang=eng
 msgid "(leave this field empty for no change)"
 msgstr "(Dest Feld eidel lossen wann keng ännerung soll erfolegen)"
-
-# /root/src/PApp/macro/admin.papp:95          __"(You are not currently logged in)"<br />
-#$lang=eng
-msgid "(You are not currently logged in)"
-msgstr ""
 
 # /root/src/PApp/macro/admin.papp:100          __"<i>Possible(!)</i> URI (for referencing) of this page:" <?alink ((reference_url 1)x2):><br />
 #$lang=eng
@@ -812,12 +812,6 @@ msgstr "<small><b>+ausgewielt+</b>: grad ausgewielt fir ze editeiren.<br /><smal
 msgid "<tt>%s</tt> is a non-standard language id"
 msgstr "<tt>%s</tt> as keng standard Sproch id"
 
-# /root/src/PApp/widget/acedit.papp:45 __"access rights"</th>
-#$lang=eng
-#$flags=2
-msgid "access rights"
-msgstr "Zougangsrechter editeiren"
-
 # /root/src/PApp/widget/acedit.papp:166    <h3>__"Add Group:"</h3>
 #$lang=eng
 msgid "Add Group:"
@@ -833,21 +827,6 @@ msgstr "Zousätzlech Informatiounen"
 #$flags=5
 msgid "Administration/Maintainance"
 msgstr "Administratioun"
-
-# /root/src/PApp/apps/admin.papp:113 <tr><td>__"app. config"</td><td><?ef_text { nowrap => nowrap }, \$row->{config}, 60,8:></td>
-#$lang=eng
-msgid "app. config"
-msgstr "app. Konfig"
-
-# /root/src/PApp/apps/admin.papp:102 <tr><td>__"app. name"</td><td><?ef_string \$row->{name}, 60:></td>
-#$lang=eng
-msgid "app. name"
-msgstr "App. Numm"
-
-# /root/src/PApp/apps/admin.papp:101 <tr><td>__"app. set"</td><td><?ef_relation \$row->{appset}, ["id, name from appset"], 0 => 
-#$lang=eng
-msgid "app. set"
-msgstr "Applikatiounssatz"
 
 # /root/src/PApp/widget/poedit.papp:100    __"Application Set"&#160;
 #$lang=eng
@@ -871,11 +850,6 @@ msgstr "Zerëck an der Iwwersetzungsmenu"
 #$lang=eng
 msgid "Backtrace"
 msgstr ""
-
-# /usr/app/lib/perl5/PApp/Exception.pm:72       fancydie(__"caught a die", $_[0], compatible => $_[0], skipcallers => 1);
-#$lang=eng
-msgid "caught a die"
-msgstr "Do hued een sech den Doud angefangen"
 
 #$lang=eng
 #$flags=5
@@ -908,21 +882,15 @@ msgstr "Grad gemountet Applikatiounen"
 msgid "Delete unused messages and reorganize database"
 msgstr "Läschen vun netbenotzten Norichten an reorganiseiren vun der Datenbank"
 
-# /root/src/PApp/widget/poedit.papp:310       <th align="left" width="10%">__"domain"</th>
-# /root/src/PApp/widget/poedit.papp:496           __"domain" $domain<br />
-#$lang=eng
-msgid "domain"
-msgstr "Domäne"
-
 # /root/src/PApp/widget/poedit.papp:236    <h2>__"Domain Management"</h2>
 #$lang=eng
 msgid "Domain Management"
 msgstr "Domänen Management"
 
-# /root/src/PApp/widget/poedit.papp:365          <h2>__"Edit a translation entry"</h2>
+# /usr/app/lib/perl5/PApp/Exception.pm:193    $_[0]->{category} || __"ERROR";
 #$lang=eng
-msgid "Edit a translation entry"
-msgstr "Iwersetzung editeiren"
+msgid "ERROR"
+msgstr "FEHLER"
 
 # /root/src/PApp/apps/admin.papp:47 <h2>__"Edit Access Rights"</h2>
 # /root/src/PApp/apps/admin.papp:179 <td><?slink __"Edit Access Rights", "admin/acedit,admin/acedit/":></td>
@@ -946,15 +914,10 @@ msgstr "Applikatiounen editeiren"
 msgid "Edit Translations"
 msgstr "Iwersetzungen editeiren"
 
-# /usr/app/lib/perl5/PApp/Exception.pm:193    $_[0]->{category} || __"ERROR";
+# /root/src/PApp/widget/poedit.papp:365          <h2>__"Edit a translation entry"</h2>
 #$lang=eng
-msgid "ERROR"
-msgstr "FEHLER"
-
-# /root/src/PApp/widget/poedit.papp:311       <th align="left" width="5%">__"flags"</th>
-#$lang=eng
-msgid "flags"
-msgstr ""
+msgid "Edit a translation entry"
+msgstr "Iwersetzung editeiren"
 
 # /root/src/PApp/apps/admin.papp:181 <td><?slink __"Flush Package Cache", SURL_EXEC($ppkg->refer('flush_cache')):></td>
 #$lang=eng
@@ -997,11 +960,6 @@ msgstr "ID"
 msgid "Interface"
 msgstr "Schnetstell"
 
-# /root/src/PApp/widget/poedit.papp:312       <th align="left" width="5%">__"lang"</th>
-#$lang=eng
-msgid "lang"
-msgstr "Sprooch"
-
 # /root/src/PApp/widget/poedit.papp:300 <tr><td>__"Limit view to entries containing"&#160;<?ef_string \$S{search}:></td></tr>
 #$lang=eng
 msgid "Limit view to entries containing"
@@ -1012,37 +970,15 @@ msgstr "Ungewisen Einträge limiteiren op"
 msgid "Log In"
 msgstr "Melde iech un"
 
-# /root/src/PApp/widget/acedit.papp:44 __"login"</th><th>
-#$lang=eng
-msgid "login"
-msgstr "Umeldung"
-
 # /root/src/PApp/macro/admin.papp:45    <?errbox __"Login failed", 
 #$lang=eng
 msgid "Login failed"
 msgstr "Anloggen as fehgeschlohen"
 
-# /root/src/PApp/widget/poedit.papp:313       <th align="left" width="40%">__"message"</th>
-#$lang=eng
-msgid "message"
-msgstr "Noricht"
-
 # /root/src/PApp/widget/poedit.papp:487                          sprintf __"Message (in language '%s')", $idlang:></th><th width="48%">
 #$lang=eng
 msgid "Message (in language '%s')"
 msgstr "Noricht (an '%s')"
-
-# /root/src/PApp/apps/admin.papp:108 <tr><td>__"mount config"</td><td><?ef_text { nowrap => nowrap }, \$row->{mountconfig}, 60,8:></td>
-#$lang=eng
-msgid "mount config"
-msgstr "mount Konfig"
-
-# /root/src/PApp/apps/admin.papp:28 __"Name"</th><th>
-# /root/src/PApp/apps/admin.papp:65 __"Name"</th><th>
-# /root/src/PApp/widget/acedit.papp:194    <tr><td>__"Name"</td><td><?ef_string \$row->{name}, 20:>
-#$lang=eng
-msgid "name"
-msgstr "Benotzer"
 
 # /root/src/PApp/macro/admin.papp:101          __"Never, <i>EVER</i> publish a url with the hex-hash key in it(!)"<p />
 #$lang=eng
@@ -1053,26 +989,6 @@ msgstr "NIE!!! eng url matt hex-hash Schlessel publizeiren."
 #$lang=eng
 msgid "Next"
 msgstr "Nächst"
-
-# /root/src/PApp/widget/poedit.papp:180       $slang or echo '<br /><font color="red">', __"no source languages selected", '</font>';
-#$lang=eng
-msgid "no source languages selected"
-msgstr "keng Orginal Sprooch ausgewielt"
-
-# /root/src/PApp/macro/admin.papp:45 __"no such user or wrong password":>
-#$lang=eng
-msgid "no such user or wrong password"
-msgstr "onbekannten Benotzer oder falsch Passwuerd"
-
-# /root/src/PApp/widget/poedit.papp:155       $tdom or echo '<br /><font color="red">', __"no translation domain selected", '</font>';
-#$lang=eng
-msgid "no translation domain selected"
-msgstr "keng Iwersetzungs Domän ausgewielt"
-
-# /usr/app/lib/perl5/PApp.pm:1204 <head><title>".__"page redirection"."</title></head>
-#$lang=eng
-msgid "page redirection"
-msgstr "Weiderleedung"
 
 # /root/src/PApp/apps/admin.papp:162 <title>__"PApp Administration Desk"</title>
 # /root/src/PApp/apps/admin.papp:165 <table width="100%"><tr><td><h1>__"PApp Administration Desk"</h1></td><td align="right">
@@ -1209,11 +1125,6 @@ msgstr "Dathei ass keng richteg Applikatioun. ass eng Seit fir Intern PApp..."
 msgid "Source Languages"
 msgstr "Orginal Sprooch"
 
-# /root/src/PApp/apps/admin.papp:105 <tr><td>__"source path"</td><td><?ef_string \$row->{path}, 60:></td>
-#$lang=eng
-msgid "source path"
-msgstr "Orginal Pfad"
-
 # /root/src/PApp/widget/poedit.papp:192    <h3>__"Target Language"</h3>
 # /root/src/PApp/widget/poedit.papp:250          echo __"Target Language", ": $trans";
 #$lang=eng
@@ -1254,11 +1165,6 @@ msgstr "Fir nemmen registreirt Benotzer ze gesin, een einfachen _ bei Sichen ang
 #$lang=eng
 msgid "Total number of messages"
 msgstr "Gesamtzuehl un Noorichten"
-
-# /root/src/PApp/widget/poedit.papp:314       <th align="left" width="40%">__"translation"</th>
-#$lang=eng
-msgid "translation"
-msgstr "Iwersetzung"
 
 # /root/src/PApp/widget/poedit.papp:491             sprintf __"Translation (to language '%s')", $S{lang}:>
 #$lang=eng
@@ -1424,6 +1330,100 @@ msgstr "[speicheren ass nach net implementeiert]"
 #$lang=eng
 msgid "[try to enter]"
 msgstr "[Opruf versichen]"
+
+# /root/src/PApp/widget/acedit.papp:45 __"access rights"</th>
+#$lang=eng
+#$flags=2
+msgid "access rights"
+msgstr "Zougangsrechter editeiren"
+
+# /root/src/PApp/apps/admin.papp:113 <tr><td>__"app. config"</td><td><?ef_text { nowrap => nowrap }, \$row->{config}, 60,8:></td>
+#$lang=eng
+msgid "app. config"
+msgstr "app. Konfig"
+
+# /root/src/PApp/apps/admin.papp:102 <tr><td>__"app. name"</td><td><?ef_string \$row->{name}, 60:></td>
+#$lang=eng
+msgid "app. name"
+msgstr "App. Numm"
+
+# /root/src/PApp/apps/admin.papp:101 <tr><td>__"app. set"</td><td><?ef_relation \$row->{appset}, ["id, name from appset"], 0 => 
+#$lang=eng
+msgid "app. set"
+msgstr "Applikatiounssatz"
+
+# /usr/app/lib/perl5/PApp/Exception.pm:72       fancydie(__"caught a die", $_[0], compatible => $_[0], skipcallers => 1);
+#$lang=eng
+msgid "caught a die"
+msgstr "Do hued een sech den Doud angefangen"
+
+# /root/src/PApp/widget/poedit.papp:310       <th align="left" width="10%">__"domain"</th>
+# /root/src/PApp/widget/poedit.papp:496           __"domain" $domain<br />
+#$lang=eng
+msgid "domain"
+msgstr "Domäne"
+
+# /root/src/PApp/widget/poedit.papp:311       <th align="left" width="5%">__"flags"</th>
+#$lang=eng
+msgid "flags"
+msgstr ""
+
+# /root/src/PApp/widget/poedit.papp:312       <th align="left" width="5%">__"lang"</th>
+#$lang=eng
+msgid "lang"
+msgstr "Sprooch"
+
+# /root/src/PApp/widget/acedit.papp:44 __"login"</th><th>
+#$lang=eng
+msgid "login"
+msgstr "Umeldung"
+
+# /root/src/PApp/widget/poedit.papp:313       <th align="left" width="40%">__"message"</th>
+#$lang=eng
+msgid "message"
+msgstr "Noricht"
+
+# /root/src/PApp/apps/admin.papp:108 <tr><td>__"mount config"</td><td><?ef_text { nowrap => nowrap }, \$row->{mountconfig}, 60,8:></td>
+#$lang=eng
+msgid "mount config"
+msgstr "mount Konfig"
+
+# /root/src/PApp/apps/admin.papp:28 __"Name"</th><th>
+# /root/src/PApp/apps/admin.papp:65 __"Name"</th><th>
+# /root/src/PApp/widget/acedit.papp:194    <tr><td>__"Name"</td><td><?ef_string \$row->{name}, 20:>
+#$lang=eng
+msgid "name"
+msgstr "Benotzer"
+
+# /root/src/PApp/widget/poedit.papp:180       $slang or echo '<br /><font color="red">', __"no source languages selected", '</font>';
+#$lang=eng
+msgid "no source languages selected"
+msgstr "keng Orginal Sprooch ausgewielt"
+
+# /root/src/PApp/macro/admin.papp:45 __"no such user or wrong password":>
+#$lang=eng
+msgid "no such user or wrong password"
+msgstr "onbekannten Benotzer oder falsch Passwuerd"
+
+# /root/src/PApp/widget/poedit.papp:155       $tdom or echo '<br /><font color="red">', __"no translation domain selected", '</font>';
+#$lang=eng
+msgid "no translation domain selected"
+msgstr "keng Iwersetzungs Domän ausgewielt"
+
+# /usr/app/lib/perl5/PApp.pm:1204 <head><title>".__"page redirection"."</title></head>
+#$lang=eng
+msgid "page redirection"
+msgstr "Weiderleedung"
+
+# /root/src/PApp/apps/admin.papp:105 <tr><td>__"source path"</td><td><?ef_string \$row->{path}, 60:></td>
+#$lang=eng
+msgid "source path"
+msgstr "Orginal Pfad"
+
+# /root/src/PApp/widget/poedit.papp:314       <th align="left" width="40%">__"translation"</th>
+#$lang=eng
+msgid "translation"
+msgstr "Iwersetzung"
 
 #$lang=rus
 msgid ""

@@ -152,12 +152,12 @@ msgid "Brazil"
 msgstr "Brasilien"
 
 #$lang=eng
-msgid "British indian ocean territory"
-msgstr "Britisches Territorium im Indischen Ozean"
-
-#$lang=eng
 msgid "British Virgin Islands"
 msgstr "Britische Jungferninseln"
+
+#$lang=eng
+msgid "British indian ocean territory"
+msgstr "Britisches Territorium im Indischen Ozean"
 
 #$lang=eng
 msgid "Brunei"
@@ -198,11 +198,6 @@ msgstr "Karibik"
 #$lang=eng
 msgid "Cayman Islands"
 msgstr "Kaimaninseln"
-
-#$lang=eng
-#$flags=2
-msgid "Côte d'Ivoire"
-msgstr "Côte dIvoire"
 
 #$lang=eng
 msgid "Central African Republic"
@@ -275,6 +270,11 @@ msgstr "Zypern"
 #$lang=eng
 msgid "Czech Republic"
 msgstr "Tschechische Republik"
+
+#$lang=eng
+#$flags=2
+msgid "Côte d'Ivoire"
+msgstr "Côte dIvoire"
 
 #$lang=eng
 msgid "Denmark"
@@ -845,11 +845,6 @@ msgid "Saudi Arabia"
 msgstr "Saudi-Arabien"
 
 #$lang=eng
-#$flags=2
-msgid "São Tome and Principe"
-msgstr "São Tomé und Príncipe"
-
-#$lang=eng
 msgid "Senegal"
 msgstr "Senegal"
 
@@ -944,6 +939,11 @@ msgstr "Schweiz"
 #$lang=eng
 msgid "Syria"
 msgstr "Syrien, Arabische Republik"
+
+#$lang=eng
+#$flags=2
+msgid "São Tome and Principe"
+msgstr "São Tomé und Príncipe"
 
 #$lang=eng
 msgid "Taiwan"
@@ -1090,6 +1090,16 @@ msgstr "Afghanistan"
 msgid "Africa"
 msgstr "Afrique du Sud"
 
+# #getiso-hack#
+#$lang=eng
+msgid "African Intellectual Property Organization"
+msgstr "Organisation africaine de la propriété intellectuelle (OAPI)"
+
+# #getiso-hack#
+#$lang=eng
+msgid "African Regional Industrial Property Organization"
+msgstr "Organisation régionale africaine de la propriété industrielle (ARIPO)"
+
 #$lang=eng
 msgid "Albania"
 msgstr "Albanie"
@@ -1201,6 +1211,11 @@ msgstr "Bhoutan"
 msgid "Bolivia"
 msgstr "Bolivie"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Bosnia &amp; Herzegovina"
+msgstr "Bosnie-Herzégovine"
+
 #$lang=eng
 msgid "Bosnia and Herzegovina"
 msgstr "Bosnie-Herzégovine"
@@ -1210,12 +1225,21 @@ msgid "Botswana"
 msgstr "Botswana"
 
 #$lang=eng
+msgid "Bouvet island"
+msgstr "Île Bouvet"
+
+#$lang=eng
 msgid "Brazil"
 msgstr "Brésil"
 
 #$lang=eng
 msgid "British Virgin Islands"
 msgstr "Îles Vierges britanniques"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Brunei Darussalam"
+msgstr "Brunéi Darussalam"
 
 #$lang=eng
 msgid "Bulgaria"
@@ -1248,11 +1272,6 @@ msgstr "Cap-Vert"
 #$lang=eng
 msgid "Cayman Islands"
 msgstr "Îles Caïmanes"
-
-#$lang=eng
-#$flags=2
-msgid "Côte d'Ivoire"
-msgstr "Côte d'Ivoire"
 
 #$lang=eng
 msgid "Central African Republic"
@@ -1316,6 +1335,26 @@ msgid "Czech Republic"
 msgstr "République tchèque"
 
 #$lang=eng
+#$flags=2
+msgid "Côte d'Ivoire"
+msgstr "Côte d'Ivoire"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Côte dIvoire"
+msgstr "Côte d’Ivoire"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Peoples Republic of Korea"
+msgstr "République populaire démocratique de Corée"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Republic of the Congo"
+msgstr "République démocratique du Congo"
+
+#$lang=eng
 msgid "Denmark"
 msgstr "Danemark"
 
@@ -1373,9 +1412,24 @@ msgstr "Estonie"
 msgid "Ethiopia"
 msgstr "Éthiopie"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Eurasian Patent Organization"
+msgstr "Organisation eurasienne des brevets (OEAB)"
+
+# #getiso-hack#
+#$lang=eng
+msgid "European Patent Organization"
+msgstr "Office européen des brevets (OEB)"
+
 #$lang=eng
 msgid "Faeroe Islands"
 msgstr "Îles Féroé"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Falkland Islands"
+msgstr "Îles Falkland (Malvinas)"
 
 #$lang=eng
 msgid "Fiji"
@@ -1469,6 +1523,11 @@ msgstr "Saint-Siège"
 msgid "Honduras"
 msgstr "Honduras"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Hong Kong Special Administrative Region of China"
+msgstr "Région administrative spéciale de Hong Kong (République populaire de Chine)"
+
 #$lang=eng
 msgid "Hungary"
 msgstr "Hongrie"
@@ -1484,6 +1543,10 @@ msgstr "Inde"
 #$lang=eng
 msgid "Indonesia"
 msgstr "Indonésie"
+
+#$lang=eng
+msgid "Iran"
+msgstr "Iran (République islamique d’)"
 
 #$lang=eng
 msgid "Iraq"
@@ -1537,6 +1600,11 @@ msgstr "Koweït"
 msgid "Kyrgyzstan"
 msgstr "Kirghizistan"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Lao People's Democratic Republic"
+msgstr "République démocratique populaire lao"
+
 #$lang=eng
 #$flags=2
 msgid "Latin America and the Caribbean"
@@ -1558,6 +1626,11 @@ msgstr "Lesotho"
 msgid "Liberia"
 msgstr "Libéria"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Libyan Arab Jamahiriya"
+msgstr "Jamahiriya arabe libyenne"
+
 #$lang=eng
 msgid "Liechtenstein"
 msgstr "Liechtenstein"
@@ -1570,9 +1643,19 @@ msgstr "Lituanie"
 msgid "Luxembourg"
 msgstr "Luxembourg"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Macao Special Administrative Region of China"
+msgstr "Macao"
+
 #$lang=eng
 msgid "Madagascar"
 msgstr "Madagascar"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Malasia"
+msgstr "Malaisie"
 
 #$lang=eng
 msgid "Malawi"
@@ -1701,6 +1784,11 @@ msgstr "Afrique du Sud"
 msgid "Northern America"
 msgstr "Afrique du Sud"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Northern Mariana Islands"
+msgstr "Îles Mariannes du Nord"
+
 #$lang=eng
 msgid "Norway"
 msgstr "Norvège"
@@ -1766,9 +1854,19 @@ msgstr "Qatar"
 msgid "Republic of Korea"
 msgstr "République de Corée"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Republic of Moldova"
+msgstr "République de Moldova"
+
 #$lang=eng
 msgid "Romania"
 msgstr "Roumanie"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Russian Federation"
+msgstr "Fédération de Russie"
 
 #$lang=eng
 msgid "Rwanda"
@@ -1805,11 +1903,6 @@ msgstr "Saint-Marin"
 #$lang=eng
 msgid "Saudi Arabia"
 msgstr "Arabie saoudite"
-
-#$lang=eng
-#$flags=2
-msgid "São Tome and Principe"
-msgstr "Sao Tomé-et-Principe"
 
 #$lang=eng
 msgid "Senegal"
@@ -1851,6 +1944,11 @@ msgstr "Afrique du Sud"
 #$flags=2
 msgid "South America"
 msgstr "Afrique du Sud"
+
+# #getiso-hack#
+#$lang=eng
+msgid "South georgia and the south sandwich islands"
+msgstr "Géorgie du Sud et les îles Sandwich du Sud"
 
 #$lang=eng
 #$flags=2
@@ -1900,12 +1998,29 @@ msgid "Switzerland"
 msgstr "Suisse"
 
 #$lang=eng
+msgid "Syria"
+msgstr "République arabe syrienne"
+
+#$lang=eng
+msgid "São Tome and Principe"
+msgstr "Sao Tomé-et-Principe"
+
+#$lang=eng
+msgid "Taiwan"
+msgstr "Taïwan, Province de Chine"
+
+#$lang=eng
 msgid "Tajikistan"
 msgstr "Tadjikistan"
 
 #$lang=eng
 msgid "Thailand"
 msgstr "Thaïlande"
+
+# #getiso-hack#
+#$lang=eng
+msgid "The former Yugoslav Republic of Macedonia"
+msgstr "Ex-République yougoslave de Macédoine"
 
 #$lang=eng
 msgid "Togo"
@@ -1923,6 +2038,11 @@ msgstr "Tonga"
 msgid "Trinidad and Tobago"
 msgstr "Trinité-et-Tobago"
 
+# #getiso-hack#
+#$lang=eng
+msgid "Tunesia"
+msgstr "Tunisie"
+
 #$lang=eng
 msgid "Tunisia"
 msgstr "Tunisie"
@@ -1937,7 +2057,7 @@ msgstr "Turkménistan"
 
 #$lang=eng
 msgid "Turks and Caicos Islands"
-msgstr "Îles Turques et Caïques"
+msgstr "Îles Turks et Caïques"
 
 #$lang=eng
 msgid "Tuvalu"
@@ -1951,12 +2071,27 @@ msgstr "Ouganda"
 msgid "Ukraine"
 msgstr "Ukraine"
 
+# #getiso-hack#
+#$lang=eng
+msgid "United Arab Emirates"
+msgstr "Émirats arabes unis"
+
 #$lang=eng
 msgid "United Kingdom"
-msgstr "Royaume-Uni de Grande-Bretagne et d'Irlande du Nord"
+msgstr "Royaume-Uni"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Republic of Tanzania"
+msgstr "République-Unie de Tanzanie"
 
 #$lang=eng
 msgid "United States"
+msgstr "États-Unis d'Amérique"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United States of America"
 msgstr "États-Unis d'Amérique"
 
 #$lang=eng
@@ -1978,6 +2113,10 @@ msgstr "Venezuela"
 #$lang=eng
 msgid "Viet Nam"
 msgstr "Viet Nam"
+
+#$lang=eng
+msgid "Virgin Islands"
+msgstr "Îles Vierges (britanniques)"
 
 #$lang=eng
 msgid "Wallis and Futuna Islands"
@@ -2002,6 +2141,16 @@ msgstr "Sahara occidental"
 msgid "Western Sahara"
 msgstr "Sahara occidental"
 
+# #getiso-hack#
+#$lang=eng
+msgid "World Intellectual Property Office (WIPO)"
+msgstr "Organisation Mondiale de la Propriété Intellectuelle (OMPI) (Bureau international de l’)"
+
+# #getiso-hack#
+#$lang=eng
+msgid "World Intellectual Property Organization"
+msgstr "Bureau international de l’Organisation Mondiale de la Propriété Intellectuelle (OMPI)"
+
 #$lang=eng
 msgid "Yemen"
 msgstr "Yémen"
@@ -2017,4 +2166,2225 @@ msgstr "Zambie"
 #$lang=eng
 msgid "Zimbabwe"
 msgstr "Zimbabwe"
+
+#$lang=jpn
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Albania"
+msgstr "アルバニア"
+
+#$lang=eng
+msgid "Algeria"
+msgstr "アルジェリア"
+
+#$lang=eng
+msgid "Antigua and Barbuda"
+msgstr "アンティグア・バーブーダ"
+
+#$lang=eng
+msgid "Armenia"
+msgstr "アルメニア"
+
+#$lang=eng
+msgid "Australia"
+msgstr "オーストラリア"
+
+#$lang=eng
+msgid "Austria"
+msgstr "オーストリア"
+
+#$lang=eng
+msgid "Azerbaijan"
+msgstr "アゼルバイジャン"
+
+#$lang=eng
+msgid "Barbados"
+msgstr "バルバドス"
+
+#$lang=eng
+msgid "Belarus"
+msgstr "ベラルーシ"
+
+#$lang=eng
+msgid "Belgium"
+msgstr "ベルギー"
+
+#$lang=eng
+msgid "Belize"
+msgstr "ベリーズ"
+
+#$lang=eng
+msgid "Benin"
+msgstr "ベナン"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Bosnia &amp; Herzegovina"
+msgstr "ボスニア・ヘルツェゴヴィナ"
+
+#$lang=eng
+msgid "Brazil"
+msgstr "ブラジル"
+
+#$lang=eng
+msgid "Bulgaria"
+msgstr "ブルガリア"
+
+#$lang=eng
+msgid "Burkina Faso"
+msgstr "ブルキナ・ファソ"
+
+#$lang=eng
+msgid "Cameroon"
+msgstr "カメルーン"
+
+#$lang=eng
+msgid "Canada"
+msgstr "カナダ"
+
+#$lang=eng
+msgid "Central African Republic"
+msgstr "中央アフリカ"
+
+#$lang=eng
+msgid "Chad"
+msgstr "チャード"
+
+#$lang=eng
+msgid "China"
+msgstr "中国"
+
+#$lang=eng
+msgid "Congo"
+msgstr "コンゴー"
+
+#$lang=eng
+msgid "Costa Rica"
+msgstr "コスタリカ"
+
+#$lang=eng
+msgid "Croatia"
+msgstr "クロアチア"
+
+#$lang=eng
+msgid "Cuba"
+msgstr "キューバ"
+
+#$lang=eng
+msgid "Cyprus"
+msgstr "キプロス"
+
+#$lang=eng
+msgid "Czech Republic"
+msgstr "チェッコ"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Côte dIvoire"
+msgstr "コートジボアール"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Peoples Republic of Korea"
+msgstr "北朝鮮"
+
+#$lang=eng
+msgid "Denmark"
+msgstr "デンマーク"
+
+#$lang=eng
+msgid "Dominica"
+msgstr "ドミニカ"
+
+#$lang=eng
+msgid "Estonia"
+msgstr "エストニア"
+
+#$lang=eng
+msgid "Finland"
+msgstr "フィンランド"
+
+#$lang=eng
+msgid "France"
+msgstr "フランス"
+
+#$lang=eng
+msgid "Gabon"
+msgstr "ガボン"
+
+#$lang=eng
+msgid "Gambia"
+msgstr "ガンビア"
+
+#$lang=eng
+msgid "Georgia"
+msgstr "グルジア"
+
+#$lang=eng
+msgid "Germany"
+msgstr "ドイツ"
+
+#$lang=eng
+msgid "Ghana"
+msgstr "ガーナ"
+
+#$lang=eng
+msgid "Greece"
+msgstr "ギリシャ"
+
+#$lang=eng
+msgid "Grenada"
+msgstr "グレナダ"
+
+#$lang=eng
+msgid "Guinea"
+msgstr "ギニア"
+
+#$lang=eng
+msgid "Guinea-Bissau"
+msgstr "ギニア・ビサオ"
+
+#$lang=eng
+msgid "Hungary"
+msgstr "ハンガリー"
+
+#$lang=eng
+msgid "Iceland"
+msgstr "アイスランド"
+
+#$lang=eng
+msgid "India"
+msgstr "インド"
+
+#$lang=eng
+msgid "Indonesia"
+msgstr "インドネシア"
+
+#$lang=eng
+msgid "Ireland"
+msgstr "アイルランド"
+
+#$lang=eng
+msgid "Israel"
+msgstr "イスラエル"
+
+#$lang=eng
+msgid "Italy"
+msgstr "イタリア"
+
+#$lang=eng
+msgid "Japan"
+msgstr "日本"
+
+#$lang=eng
+msgid "Kazakhstan"
+msgstr "カザフスタン"
+
+#$lang=eng
+msgid "Kenya"
+msgstr "ケニア"
+
+#$lang=eng
+msgid "Kyrgyzstan"
+msgstr "キルギス"
+
+#$lang=eng
+msgid "Latvia"
+msgstr "ラトヴィア"
+
+#$lang=eng
+msgid "Lesotho"
+msgstr "レソト"
+
+#$lang=eng
+msgid "Liberia"
+msgstr "リベリア"
+
+#$lang=eng
+msgid "Liechtenstein"
+msgstr "リヒテンシュタイン"
+
+#$lang=eng
+msgid "Lithuania"
+msgstr "リトアニア"
+
+#$lang=eng
+msgid "Luxembourg"
+msgstr "ルクセンブルグ"
+
+#$lang=eng
+msgid "Madagascar"
+msgstr "マダガスカル"
+
+#$lang=eng
+msgid "Malawi"
+msgstr "マラウイ"
+
+#$lang=eng
+msgid "Mali"
+msgstr "マリ"
+
+#$lang=eng
+msgid "Mauritania"
+msgstr "モーリタニア"
+
+#$lang=eng
+msgid "Mexico"
+msgstr "メキシコ"
+
+#$lang=eng
+msgid "Monaco"
+msgstr "モナコ"
+
+#$lang=eng
+msgid "Mongolia"
+msgstr "モンゴル"
+
+#$lang=eng
+msgid "Morocco"
+msgstr "モロッコ"
+
+#$lang=eng
+msgid "Mozambique"
+msgstr "モザンビーク"
+
+#$lang=eng
+msgid "Netherlands"
+msgstr "オランダ"
+
+#$lang=eng
+msgid "New Zealand"
+msgstr "ニュージーランド"
+
+#$lang=eng
+msgid "Niger"
+msgstr "ニジェール"
+
+#$lang=eng
+msgid "Norway"
+msgstr "ノールウェー"
+
+#$lang=eng
+msgid "Poland"
+msgstr "ポーランド"
+
+#$lang=eng
+msgid "Portugal"
+msgstr "ポルトガル"
+
+#$lang=eng
+msgid "Republic of Korea"
+msgstr "韓国"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Republic of Moldova"
+msgstr "モルドヴァ"
+
+#$lang=eng
+msgid "Romania"
+msgstr "ルーマニア"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Russian Federation"
+msgstr "ロシア"
+
+#$lang=eng
+msgid "Saint Lucia"
+msgstr "セントルシア"
+
+#$lang=eng
+msgid "Senegal"
+msgstr "セネガル"
+
+#$lang=eng
+msgid "Sierra Leone"
+msgstr "シエラレオーネ"
+
+#$lang=eng
+msgid "Singapore"
+msgstr "シンガポール"
+
+#$lang=eng
+msgid "Slovakia"
+msgstr "スロヴァキア"
+
+#$lang=eng
+msgid "Slovenia"
+msgstr "スロヴェニア"
+
+#$lang=eng
+msgid "South Africa"
+msgstr "南アフリカ共和国"
+
+#$lang=eng
+msgid "Spain"
+msgstr "スペイン"
+
+#$lang=eng
+msgid "Sri Lanka"
+msgstr "スリランカ"
+
+#$lang=eng
+msgid "Sudan"
+msgstr "スーダン"
+
+#$lang=eng
+msgid "Swaziland"
+msgstr "スワジランド"
+
+#$lang=eng
+msgid "Sweden"
+msgstr "スウェーデン"
+
+#$lang=eng
+msgid "Switzerland"
+msgstr "スイス"
+
+#$lang=eng
+msgid "Tajikistan"
+msgstr "タジキスタン"
+
+# #getiso-hack#
+#$lang=eng
+msgid "The former Yugoslav Republic of Macedonia"
+msgstr "マケドニア旧ユーゴスラヴィア共和国"
+
+#$lang=eng
+msgid "Togo"
+msgstr "トーゴー"
+
+#$lang=eng
+msgid "Trinidad and Tobago"
+msgstr "トリニダッド・トバゴ"
+
+#$lang=eng
+msgid "Turkey"
+msgstr "トルコ"
+
+#$lang=eng
+msgid "Turkmenistan"
+msgstr "トルクメニスタン"
+
+#$lang=eng
+msgid "Uganda"
+msgstr "ウガンダ"
+
+#$lang=eng
+msgid "Ukraine"
+msgstr "ウクライナ"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Arab Emirates"
+msgstr "アラブ首長国連邦"
+
+#$lang=eng
+msgid "United Kingdom"
+msgstr "英国"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Republic of Tanzania"
+msgstr "タンザニア"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United States of America"
+msgstr "米国"
+
+#$lang=eng
+msgid "Uzbekistan"
+msgstr "ウズベキスタン"
+
+#$lang=eng
+msgid "Viet Nam"
+msgstr "ヴィエトナム"
+
+#$lang=eng
+msgid "Yugoslavia"
+msgstr "ユーゴースラヴィア連邦共和国"
+
+#$lang=eng
+msgid "Zimbabwe"
+msgstr "ジンバブエ"
+
+#$lang=rus
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Albania"
+msgstr "АЛБАНИЯ"
+
+#$lang=eng
+msgid "Algeria"
+msgstr "АЛЖИР"
+
+#$lang=eng
+msgid "Armenia"
+msgstr "АРМЕНИЯ"
+
+#$lang=eng
+msgid "Australia"
+msgstr "АВСТРАЛИЯ"
+
+#$lang=eng
+msgid "Austria"
+msgstr "АВСТРИЯ"
+
+#$lang=eng
+msgid "Azerbaijan"
+msgstr "АЗЕРБАЙДЖАН"
+
+#$lang=eng
+msgid "Barbados"
+msgstr "БАРБАДОС"
+
+#$lang=eng
+msgid "Belarus"
+msgstr "БЕЛАРУСЬ"
+
+#$lang=eng
+msgid "Belgium"
+msgstr "БЕЛЬГИЯ"
+
+#$lang=eng
+msgid "Belize"
+msgstr "БЕЛИЗ"
+
+#$lang=eng
+msgid "Benin"
+msgstr "БЕНИН"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Bosnia &amp; Herzegovina"
+msgstr "БОСНИЯ И ГЕРЦЕГОВИНА"
+
+#$lang=eng
+msgid "Brazil"
+msgstr "БРАЗИЛИЯ"
+
+#$lang=eng
+msgid "Bulgaria"
+msgstr "БОЛГАРИЯ"
+
+#$lang=eng
+msgid "Burkina Faso"
+msgstr "БУРКИНА ФАСО"
+
+#$lang=eng
+msgid "Cameroon"
+msgstr "КАМЕРУН"
+
+#$lang=eng
+msgid "Canada"
+msgstr "КАНАДА"
+
+#$lang=eng
+msgid "Central African Republic"
+msgstr "ЦЕНТРАЛЬНО-АФРИКАНСКАЯ РЕСПУБЛИКА"
+
+#$lang=eng
+msgid "Chad"
+msgstr "ЧАД"
+
+#$lang=eng
+msgid "China"
+msgstr "КИТАЙ"
+
+#$lang=eng
+msgid "Congo"
+msgstr "КОНГО"
+
+#$lang=eng
+msgid "Costa Rica"
+msgstr "КОСТА-РИКА"
+
+#$lang=eng
+msgid "Croatia"
+msgstr "ХОРВАТИЯ"
+
+#$lang=eng
+msgid "Cuba"
+msgstr "КУБА"
+
+#$lang=eng
+msgid "Cyprus"
+msgstr "КИПР"
+
+#$lang=eng
+msgid "Czech Republic"
+msgstr "ЧЕШСКАЯ РЕСПУБЛИКА"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Côte dIvoire"
+msgstr "КОТ ДИВУАР"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Peoples Republic of Korea"
+msgstr "КОРЕЯ, ДЕМОКРАТИЧЕСКАЯ НАРОДНАЯ РЕСПУБЛИКА"
+
+#$lang=eng
+msgid "Denmark"
+msgstr "ДАНИЯ"
+
+#$lang=eng
+msgid "Ecuador"
+msgstr "ЭКВАДОР"
+
+#$lang=eng
+msgid "Equatorial Guinea"
+msgstr "ЭКВАТОРИАЛЬНАЯ ГВИНЕЯ"
+
+#$lang=eng
+msgid "Estonia"
+msgstr "ЭСТОНИЯ"
+
+#$lang=eng
+msgid "Finland"
+msgstr "ФИНЛЯНДИЯ"
+
+#$lang=eng
+msgid "France"
+msgstr "ФРАНЦИЯ"
+
+#$lang=eng
+msgid "Gabon"
+msgstr "ГАБОН"
+
+#$lang=eng
+msgid "Gambia"
+msgstr "ГАМБИЯ"
+
+#$lang=eng
+msgid "Georgia"
+msgstr "ГРУЗИЯ"
+
+#$lang=eng
+msgid "Germany"
+msgstr "ГЕРМАНИЯ"
+
+#$lang=eng
+msgid "Ghana"
+msgstr "ГАНА"
+
+#$lang=eng
+msgid "Greece"
+msgstr "ГРЕЦИЯ"
+
+#$lang=eng
+msgid "Guinea"
+msgstr "ГВИНЕЯ"
+
+#$lang=eng
+msgid "Guinea-Bissau"
+msgstr "ГВИНЕЯ-БИСАУ"
+
+#$lang=eng
+msgid "Hungary"
+msgstr "ВЕНГРИЯ"
+
+#$lang=eng
+msgid "Iceland"
+msgstr "ИСЛАНДИЯ"
+
+#$lang=eng
+msgid "India"
+msgstr "ИНДИЯ"
+
+#$lang=eng
+msgid "Indonesia"
+msgstr "ИНДОНЕЗИЯ"
+
+#$lang=eng
+msgid "Ireland"
+msgstr "ИРЛАНДИЯ"
+
+#$lang=eng
+msgid "Israel"
+msgstr "ИЗРАИЛЬ"
+
+#$lang=eng
+msgid "Italy"
+msgstr "ИТАЛИЯ"
+
+#$lang=eng
+msgid "Japan"
+msgstr "ЯПОНИЯ"
+
+#$lang=eng
+msgid "Kazakhstan"
+msgstr "КАЗАХСТАН"
+
+#$lang=eng
+msgid "Kenya"
+msgstr "КЕНИЯ"
+
+#$lang=eng
+msgid "Kyrgyzstan"
+msgstr "КЫРГИЗСТАН"
+
+#$lang=eng
+msgid "Latvia"
+msgstr "ЛАТВИЯ"
+
+#$lang=eng
+msgid "Lesotho"
+msgstr "ЛЕСОТО"
+
+#$lang=eng
+msgid "Liberia"
+msgstr "ЛИБЕРИЯ"
+
+#$lang=eng
+msgid "Liechtenstein"
+msgstr "ЛИХТЕНШТЕЙН"
+
+#$lang=eng
+msgid "Lithuania"
+msgstr "ЛИТВА"
+
+#$lang=eng
+msgid "Luxembourg"
+msgstr "ЛЮКСЕМБУРГ"
+
+#$lang=eng
+msgid "Madagascar"
+msgstr "МАДАГАСКАР"
+
+#$lang=eng
+msgid "Malawi"
+msgstr "МАЛАВИ"
+
+#$lang=eng
+msgid "Mali"
+msgstr "МАЛИ"
+
+#$lang=eng
+msgid "Mauritania"
+msgstr "МАВРИТАНИЯ"
+
+#$lang=eng
+msgid "Mexico"
+msgstr "МЕКСИКА"
+
+#$lang=eng
+msgid "Monaco"
+msgstr "МОНАКО"
+
+#$lang=eng
+msgid "Mongolia"
+msgstr "МОНГОЛИЯ"
+
+#$lang=eng
+msgid "Morocco"
+msgstr "МАРОККО"
+
+#$lang=eng
+msgid "Mozambique"
+msgstr "МОЗАМБИК"
+
+#$lang=eng
+msgid "Netherlands"
+msgstr "НИДЕРЛАНДЫ"
+
+#$lang=eng
+msgid "New Zealand"
+msgstr "НОВАЯ ЗЕЛАНДИЯ"
+
+#$lang=eng
+msgid "Niger"
+msgstr "НИГЕР"
+
+#$lang=eng
+msgid "Norway"
+msgstr "НОРВЕГИЯ"
+
+#$lang=eng
+msgid "Philippines"
+msgstr "ФИЛИППИНЫ"
+
+#$lang=eng
+msgid "Poland"
+msgstr "ПОЛЬША"
+
+#$lang=eng
+msgid "Portugal"
+msgstr "ПОРТУГАЛИЯ"
+
+#$lang=eng
+msgid "Republic of Korea"
+msgstr "КОРЕЯ, РЕСПУБЛИКА"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Republic of Moldova"
+msgstr "МОЛДОВА, РЕСПУБЛИКА"
+
+#$lang=eng
+msgid "Romania"
+msgstr "РУМЫНИЯ"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Russian Federation"
+msgstr "РОССИЙСКАЯ ФЕДЕРАЦИЯ"
+
+#$lang=eng
+msgid "Saint Lucia"
+msgstr "СЕНТ-ЛЮСИЯ"
+
+#$lang=eng
+msgid "Senegal"
+msgstr "СЕНЕГАЛ"
+
+#$lang=eng
+msgid "Sierra Leone"
+msgstr "СЬЕРРА ЛЕОНЕ"
+
+#$lang=eng
+msgid "Singapore"
+msgstr "СИНГАПУР"
+
+#$lang=eng
+msgid "Slovakia"
+msgstr "СЛОВАКИЯ"
+
+#$lang=eng
+msgid "Slovenia"
+msgstr "СЛОВЕНИЯ"
+
+#$lang=eng
+msgid "South Africa"
+msgstr "ЮЖНАЯ АФРИКА"
+
+#$lang=eng
+msgid "Spain"
+msgstr "ИСПАНИЯ"
+
+#$lang=eng
+msgid "Sri Lanka"
+msgstr "ШРИ ЛАНКА"
+
+#$lang=eng
+msgid "Sudan"
+msgstr "СУДАН"
+
+#$lang=eng
+msgid "Swaziland"
+msgstr "СВАЗИЛЕНД"
+
+#$lang=eng
+msgid "Sweden"
+msgstr "ШВЕЦИЯ"
+
+#$lang=eng
+msgid "Switzerland"
+msgstr "ШВЕЙЦАРИЯ"
+
+#$lang=eng
+msgid "Tajikistan"
+msgstr "ТАДЖИКИСТАН"
+
+# #getiso-hack#
+#$lang=eng
+msgid "The former Yugoslav Republic of Macedonia"
+msgstr "МАКЕДОНИЯ, БЫВШАЯ ЮГОСЛАВСКАЯ РЕСПУБЛИКА"
+
+#$lang=eng
+msgid "Togo"
+msgstr "ТОГО"
+
+#$lang=eng
+msgid "Trinidad and Tobago"
+msgstr "ТРИНИДАД И ТОБАГО"
+
+#$lang=eng
+msgid "Turkey"
+msgstr "ТУРЦИЯ"
+
+#$lang=eng
+msgid "Turkmenistan"
+msgstr "ТУРКМЕНИСТАН"
+
+#$lang=eng
+msgid "Uganda"
+msgstr "УГАНДА"
+
+#$lang=eng
+msgid "Ukraine"
+msgstr "УКРАИНА"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Arab Emirates"
+msgstr "ОБЪЕДИНЁННЫЕ АРАБСКИЕ ЭМИРАТЫ"
+
+#$lang=eng
+msgid "United Kingdom"
+msgstr "СОЕДИНЁННОЕ КОРОЛЕВСТВО"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Republic of Tanzania"
+msgstr "ТАНЗАНИЯ, ОБЪЕДИНЁННАЯ РЕСПУБЛИКА"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United States of America"
+msgstr "СОЕДИНЁННЫЕ ШТАТЫ"
+
+#$lang=eng
+msgid "Uzbekistan"
+msgstr "УЗБЕКИСТАН"
+
+#$lang=eng
+msgid "Viet Nam"
+msgstr "ВЬЕТНАМ"
+
+#$lang=eng
+msgid "Yugoslavia"
+msgstr "ЮГОСЛАВИЯ"
+
+#$lang=eng
+msgid "Zimbabwe"
+msgstr "ЗИМБАБВЕ"
+
+#$lang=spa
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Afghanistan"
+msgstr "Afganistán"
+
+# #getiso-hack#
+#$lang=eng
+msgid "African Intellectual Property Organization"
+msgstr "Organización Africana de la Propiedad Intelectual (OAPI)"
+
+# #getiso-hack#
+#$lang=eng
+msgid "African Regional Industrial Property Organization"
+msgstr "Organización Regional Africana de la Propiedad Industrial (ARIPO)"
+
+#$lang=eng
+msgid "Albania"
+msgstr "Albania"
+
+#$lang=eng
+msgid "Algeria"
+msgstr "Argelia"
+
+#$lang=eng
+msgid "Andorra"
+msgstr "Andorra"
+
+#$lang=eng
+msgid "Angola"
+msgstr "Angola"
+
+#$lang=eng
+msgid "Antigua and Barbuda"
+msgstr "Antigua y Barbuda"
+
+#$lang=eng
+msgid "Armenia"
+msgstr "Armenia"
+
+#$lang=eng
+msgid "Aruba"
+msgstr "Aruba"
+
+#$lang=eng
+msgid "Australia"
+msgstr "Australia"
+
+#$lang=eng
+msgid "Austria"
+msgstr "Austria"
+
+#$lang=eng
+msgid "Azerbaijan"
+msgstr "Azerbaiyán"
+
+#$lang=eng
+msgid "Bahamas"
+msgstr "Bahamas"
+
+#$lang=eng
+msgid "Bahrain"
+msgstr "Bahrein"
+
+#$lang=eng
+msgid "Bangladesh"
+msgstr "Bangladesh"
+
+#$lang=eng
+msgid "Barbados"
+msgstr "Barbados"
+
+#$lang=eng
+msgid "Belarus"
+msgstr "Belarús"
+
+#$lang=eng
+msgid "Belgium"
+msgstr "Bélgica"
+
+#$lang=eng
+msgid "Belize"
+msgstr "Belice"
+
+#$lang=eng
+msgid "Benin"
+msgstr "Benin"
+
+#$lang=eng
+msgid "Bermuda"
+msgstr "Bermuda"
+
+#$lang=eng
+msgid "Bhutan"
+msgstr "Bhután"
+
+#$lang=eng
+msgid "Bolivia"
+msgstr "Bolivia"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Bosnia &amp; Herzegovina"
+msgstr "Bosnia y Herzegovina"
+
+#$lang=eng
+msgid "Botswana"
+msgstr "Botswana"
+
+#$lang=eng
+msgid "Bouvet island"
+msgstr "Isla Bouvet"
+
+#$lang=eng
+msgid "Brazil"
+msgstr "Brasil"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Brunei Darussalam"
+msgstr "Brunei Darussalam"
+
+#$lang=eng
+msgid "Bulgaria"
+msgstr "Bulgaria"
+
+#$lang=eng
+msgid "Burkina Faso"
+msgstr "Burkina Faso"
+
+#$lang=eng
+msgid "Burundi"
+msgstr "Burundi"
+
+#$lang=eng
+msgid "Cambodia"
+msgstr "Camboya"
+
+#$lang=eng
+msgid "Cameroon"
+msgstr "Camerún"
+
+#$lang=eng
+msgid "Canada"
+msgstr "Canadá"
+
+#$lang=eng
+msgid "Cape Verde"
+msgstr "Cabo Verde"
+
+#$lang=eng
+msgid "Cayman Islands"
+msgstr "Islas Caimán"
+
+#$lang=eng
+msgid "Central African Republic"
+msgstr "República Centroafricana"
+
+#$lang=eng
+msgid "Chad"
+msgstr "Chad"
+
+#$lang=eng
+msgid "Chile"
+msgstr "Chile"
+
+#$lang=eng
+msgid "China"
+msgstr "China"
+
+#$lang=eng
+msgid "Colombia"
+msgstr "Colombia"
+
+#$lang=eng
+msgid "Comoros"
+msgstr "Comoras"
+
+#$lang=eng
+msgid "Congo"
+msgstr "Congo"
+
+#$lang=eng
+msgid "Cook Islands"
+msgstr "Islas Cook"
+
+#$lang=eng
+msgid "Costa Rica"
+msgstr "Costa Rica"
+
+#$lang=eng
+msgid "Croatia"
+msgstr "Croacia"
+
+#$lang=eng
+msgid "Cuba"
+msgstr "Cuba"
+
+#$lang=eng
+msgid "Cyprus"
+msgstr "Chipre"
+
+#$lang=eng
+msgid "Czech Republic"
+msgstr "República Checa"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Côte dIvoire"
+msgstr "Côte d'Ivoire"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Peoples Republic of Korea"
+msgstr "República Popular Democrática de Corea"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Republic of the Congo"
+msgstr "República Democrática del Congo"
+
+#$lang=eng
+msgid "Denmark"
+msgstr "Dinamarca"
+
+#$lang=eng
+msgid "Djibouti"
+msgstr "Djibouti"
+
+#$lang=eng
+msgid "Dominica"
+msgstr "Dominica"
+
+#$lang=eng
+msgid "Dominican Republic"
+msgstr "República Dominicana"
+
+#$lang=eng
+msgid "East Timor"
+msgstr "Timor Oriental"
+
+#$lang=eng
+msgid "Ecuador"
+msgstr "Ecuador"
+
+#$lang=eng
+msgid "Egypt"
+msgstr "Egipto"
+
+#$lang=eng
+msgid "El Salvador"
+msgstr "El Salvador"
+
+#$lang=eng
+msgid "Equatorial Guinea"
+msgstr "Guinea Ecuatorial"
+
+#$lang=eng
+msgid "Eritrea"
+msgstr "Eritrea"
+
+#$lang=eng
+msgid "Estonia"
+msgstr "Estonia"
+
+#$lang=eng
+msgid "Ethiopia"
+msgstr "Etiopía"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Eurasian Patent Organization"
+msgstr "Organización Eurasiática de Patentes (EAPO)"
+
+# #getiso-hack#
+#$lang=eng
+msgid "European Patent Organization"
+msgstr "Oficina Europea de Patentes (OEP)"
+
+#$lang=eng
+msgid "Faeroe Islands"
+msgstr "Islas Feroe"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Falkland Islands"
+msgstr "Islas Falkland (Malvinas)"
+
+#$lang=eng
+msgid "Fiji"
+msgstr "Fiji"
+
+#$lang=eng
+msgid "Finland"
+msgstr "Finlandia"
+
+#$lang=eng
+msgid "France"
+msgstr "Francia"
+
+#$lang=eng
+msgid "Gabon"
+msgstr "Gabón"
+
+#$lang=eng
+msgid "Gambia"
+msgstr "Gambia"
+
+#$lang=eng
+msgid "Georgia"
+msgstr "Georgia"
+
+#$lang=eng
+msgid "Germany"
+msgstr "Alemania"
+
+#$lang=eng
+msgid "Ghana"
+msgstr "Ghana"
+
+#$lang=eng
+msgid "Gibraltar"
+msgstr "Gibraltar"
+
+#$lang=eng
+msgid "Greece"
+msgstr "Grecia"
+
+#$lang=eng
+msgid "Greenland"
+msgstr "Groenlandia"
+
+#$lang=eng
+msgid "Grenada"
+msgstr "Granada"
+
+#$lang=eng
+msgid "Guatemala"
+msgstr "Guatemala"
+
+#$lang=eng
+msgid "Guinea"
+msgstr "Guinea"
+
+#$lang=eng
+msgid "Guinea-Bissau"
+msgstr "Guinea-Bissau"
+
+#$lang=eng
+msgid "Guyana"
+msgstr "Guyana"
+
+#$lang=eng
+msgid "Haiti"
+msgstr "Haití"
+
+#$lang=eng
+msgid "Holy See"
+msgstr "Santa Sede"
+
+#$lang=eng
+msgid "Honduras"
+msgstr "Honduras"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Hong Kong Special Administrative Region of China"
+msgstr "Región Administrativa Especial de Hong Kong de la República Popular de China"
+
+#$lang=eng
+msgid "Hungary"
+msgstr "Hungría"
+
+#$lang=eng
+msgid "Iceland"
+msgstr "Islandia"
+
+#$lang=eng
+msgid "India"
+msgstr "India"
+
+#$lang=eng
+msgid "Indonesia"
+msgstr "Indonesia"
+
+#$lang=eng
+msgid "Iran"
+msgstr "Irán (República Islámica del)"
+
+#$lang=eng
+msgid "Iraq"
+msgstr "Iraq"
+
+#$lang=eng
+msgid "Ireland"
+msgstr "Irlanda"
+
+#$lang=eng
+msgid "Israel"
+msgstr "Israel"
+
+#$lang=eng
+msgid "Italy"
+msgstr "Italia"
+
+#$lang=eng
+msgid "Jamaica"
+msgstr "Jamaica"
+
+#$lang=eng
+msgid "Japan"
+msgstr "Japón"
+
+#$lang=eng
+msgid "Jordan"
+msgstr "Jordania"
+
+#$lang=eng
+msgid "Kazakhstan"
+msgstr "Kazajstán"
+
+#$lang=eng
+msgid "Kenya"
+msgstr "Kenya"
+
+#$lang=eng
+msgid "Kiribati"
+msgstr "Kiribati"
+
+#$lang=eng
+msgid "Kuwait"
+msgstr "Kuwait"
+
+#$lang=eng
+msgid "Kyrgyzstan"
+msgstr "Kirguistán"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Lao People's Democratic Republic"
+msgstr "República Democrática Popular Lao"
+
+#$lang=eng
+msgid "Latvia"
+msgstr "Letonia"
+
+#$lang=eng
+msgid "Lebanon"
+msgstr "Líbano"
+
+#$lang=eng
+msgid "Lesotho"
+msgstr "Lesotho"
+
+#$lang=eng
+msgid "Liberia"
+msgstr "Liberia"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Libyan Arab Jamahiriya"
+msgstr "Jamahiriya Árabe Libia"
+
+#$lang=eng
+msgid "Liechtenstein"
+msgstr "Liechtenstein"
+
+#$lang=eng
+msgid "Lithuania"
+msgstr "Lituania"
+
+#$lang=eng
+msgid "Luxembourg"
+msgstr "Luxemburgo"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Macao Special Administrative Region of China"
+msgstr "Macao"
+
+#$lang=eng
+msgid "Madagascar"
+msgstr "Madagascar"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Malasia"
+msgstr "Malasia"
+
+#$lang=eng
+msgid "Malawi"
+msgstr "Malawi"
+
+#$lang=eng
+msgid "Maldives"
+msgstr "Maldivas"
+
+#$lang=eng
+msgid "Mali"
+msgstr "Malí"
+
+#$lang=eng
+msgid "Malta"
+msgstr "Malta"
+
+#$lang=eng
+msgid "Mauritania"
+msgstr "Mauritania"
+
+#$lang=eng
+msgid "Mauritius"
+msgstr "Mauricio"
+
+#$lang=eng
+msgid "Mexico"
+msgstr "México"
+
+#$lang=eng
+msgid "Monaco"
+msgstr "Mónaco"
+
+#$lang=eng
+msgid "Mongolia"
+msgstr "Mongolia"
+
+#$lang=eng
+msgid "Montserrat"
+msgstr "Montserrat"
+
+#$lang=eng
+msgid "Morocco"
+msgstr "Marruecos"
+
+#$lang=eng
+msgid "Mozambique"
+msgstr "Mozambique"
+
+#$lang=eng
+msgid "Myanmar"
+msgstr "Myanmar"
+
+#$lang=eng
+msgid "Namibia"
+msgstr "Namibia"
+
+#$lang=eng
+msgid "Nauru"
+msgstr "Nauru"
+
+#$lang=eng
+msgid "Nepal"
+msgstr "Nepal"
+
+#$lang=eng
+msgid "Netherlands"
+msgstr "Países Bajos"
+
+#$lang=eng
+msgid "Netherlands Antilles"
+msgstr "Antillas Neerlandesas"
+
+#$lang=eng
+msgid "New Zealand"
+msgstr "Nueva Zelandia"
+
+#$lang=eng
+msgid "Nicaragua"
+msgstr "Nicaragua"
+
+#$lang=eng
+msgid "Niger"
+msgstr "Níger"
+
+#$lang=eng
+msgid "Nigeria"
+msgstr "Nigeria"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Northern Mariana Islands"
+msgstr "Islas Marianas Septentrionales"
+
+#$lang=eng
+msgid "Norway"
+msgstr "Noruega"
+
+#$lang=eng
+msgid "Oman"
+msgstr "Omán"
+
+#$lang=eng
+msgid "Pakistan"
+msgstr "Pakistán"
+
+#$lang=eng
+msgid "Palau"
+msgstr "Palau"
+
+#$lang=eng
+msgid "Panama"
+msgstr "Panamá"
+
+#$lang=eng
+msgid "Papua New Guinea"
+msgstr "Papua Nueva Guinea"
+
+#$lang=eng
+msgid "Paraguay"
+msgstr "Paraguay"
+
+#$lang=eng
+msgid "Peru"
+msgstr "Perú"
+
+#$lang=eng
+msgid "Philippines"
+msgstr "Filipinas"
+
+#$lang=eng
+msgid "Poland"
+msgstr "Polonia"
+
+#$lang=eng
+msgid "Portugal"
+msgstr "Portugal"
+
+#$lang=eng
+msgid "Qatar"
+msgstr "Qatar"
+
+#$lang=eng
+msgid "Republic of Korea"
+msgstr "República de Corea"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Republic of Moldova"
+msgstr "República de Moldova"
+
+#$lang=eng
+msgid "Romania"
+msgstr "Rumania"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Russian Federation"
+msgstr "Federación de Rusia"
+
+#$lang=eng
+msgid "Rwanda"
+msgstr "Rwanda"
+
+#$lang=eng
+msgid "Saint Helena"
+msgstr "Santa Helena"
+
+#$lang=eng
+msgid "Saint Kitts and Nevis"
+msgstr "Saint Kitts y Nevis"
+
+#$lang=eng
+msgid "Saint Lucia"
+msgstr "Santa Lucía"
+
+#$lang=eng
+msgid "Saint Vincent and the Grenadines"
+msgstr "San Vicente y las Granadinas"
+
+#$lang=eng
+msgid "Samoa"
+msgstr "Samoa"
+
+#$lang=eng
+msgid "San Marino"
+msgstr "San Marino"
+
+#$lang=eng
+msgid "Saudi Arabia"
+msgstr "Arabia Saudita"
+
+#$lang=eng
+msgid "Senegal"
+msgstr "Senegal"
+
+#$lang=eng
+msgid "Seychelles"
+msgstr "Seychelles"
+
+#$lang=eng
+msgid "Sierra Leone"
+msgstr "Sierra Leona"
+
+#$lang=eng
+msgid "Singapore"
+msgstr "Singapur"
+
+#$lang=eng
+msgid "Slovakia"
+msgstr "Eslovaquia"
+
+#$lang=eng
+msgid "Slovenia"
+msgstr "Eslovenia"
+
+#$lang=eng
+msgid "Solomon Islands"
+msgstr "Islas Salomón"
+
+#$lang=eng
+msgid "Somalia"
+msgstr "Somalia"
+
+#$lang=eng
+msgid "South Africa"
+msgstr "Sudáfrica"
+
+# #getiso-hack#
+#$lang=eng
+msgid "South georgia and the south sandwich islands"
+msgstr "Islas de Georgia del Sur y Sandwich del Sur"
+
+#$lang=eng
+msgid "Spain"
+msgstr "España"
+
+#$lang=eng
+msgid "Sri Lanka"
+msgstr "Sri Lanka"
+
+#$lang=eng
+msgid "Sudan"
+msgstr "Sudán"
+
+#$lang=eng
+msgid "Suriname"
+msgstr "Suriname"
+
+#$lang=eng
+msgid "Swaziland"
+msgstr "Swazilandia"
+
+#$lang=eng
+msgid "Sweden"
+msgstr "Suecia"
+
+#$lang=eng
+msgid "Switzerland"
+msgstr "Suiza"
+
+#$lang=eng
+msgid "Syria"
+msgstr "República Árabe Siria"
+
+#$lang=eng
+msgid "São Tome and Principe"
+msgstr "Santo Tomé y Príncipe"
+
+#$lang=eng
+msgid "Taiwan"
+msgstr "Taiwán, Provincia de China"
+
+#$lang=eng
+msgid "Tajikistan"
+msgstr "Tayikistán"
+
+#$lang=eng
+msgid "Thailand"
+msgstr "Tailandia"
+
+# #getiso-hack#
+#$lang=eng
+msgid "The former Yugoslav Republic of Macedonia"
+msgstr "Ex República Yugoslava de Macedonia"
+
+#$lang=eng
+msgid "Togo"
+msgstr "Togo"
+
+#$lang=eng
+msgid "Tonga"
+msgstr "Tonga"
+
+#$lang=eng
+msgid "Trinidad and Tobago"
+msgstr "Trinidad y Tabago"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Tunesia"
+msgstr "Túnez"
+
+#$lang=eng
+msgid "Turkey"
+msgstr "Turquía"
+
+#$lang=eng
+msgid "Turkmenistan"
+msgstr "Turkmenistán"
+
+#$lang=eng
+msgid "Turks and Caicos Islands"
+msgstr "Islas Turcos y Caicos"
+
+#$lang=eng
+msgid "Tuvalu"
+msgstr "Tuvalu"
+
+#$lang=eng
+msgid "Uganda"
+msgstr "Uganda"
+
+#$lang=eng
+msgid "Ukraine"
+msgstr "Ucrania"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Arab Emirates"
+msgstr "Emiratos Arabes Unidos"
+
+#$lang=eng
+msgid "United Kingdom"
+msgstr "Reino Unido"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Republic of Tanzania"
+msgstr "República Unida de Tanzanía"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United States of America"
+msgstr "Estados Unidos de América"
+
+#$lang=eng
+msgid "Uruguay"
+msgstr "Uruguay"
+
+#$lang=eng
+msgid "Uzbekistan"
+msgstr "Uzbekistán"
+
+#$lang=eng
+msgid "Vanuatu"
+msgstr "Vanuatu"
+
+#$lang=eng
+msgid "Venezuela"
+msgstr "Venezuela"
+
+#$lang=eng
+msgid "Viet Nam"
+msgstr "Viet Nam"
+
+#$lang=eng
+msgid "Virgin Islands"
+msgstr "Islas Vírgenes (Británicas)"
+
+#$lang=eng
+msgid "Western Sahara"
+msgstr "Sáhara Occidental"
+
+# #getiso-hack#
+#$lang=eng
+msgid "World Intellectual Property Office (WIPO)"
+msgstr "Organización Mundial de la Propiedad Intelectual (OMPI) (Oficina Internacional de)"
+
+# #getiso-hack#
+#$lang=eng
+msgid "World Intellectual Property Organization"
+msgstr "Oficina Internacional de la Organización Mundial de la Propiedad Intelectual (OMPI)"
+
+#$lang=eng
+msgid "Yemen"
+msgstr "Yemen"
+
+#$lang=eng
+msgid "Yugoslavia"
+msgstr "Yugoslavia"
+
+#$lang=eng
+msgid "Zambia"
+msgstr "Zambia"
+
+#$lang=eng
+msgid "Zimbabwe"
+msgstr "Zimbabwe"
+
+#$lang=zho
+msgid ""
+msgstr ""
+
+#$lang=eng
+msgid "Albania"
+msgstr "阿尔巴尼亚"
+
+#$lang=eng
+msgid "Algeria"
+msgstr "阿尔及利亚"
+
+#$lang=eng
+msgid "Antigua and Barbuda"
+msgstr "安提瓜和巴布亚"
+
+#$lang=eng
+msgid "Armenia"
+msgstr "亚美尼亚"
+
+#$lang=eng
+msgid "Australia"
+msgstr "澳大利亚"
+
+#$lang=eng
+msgid "Austria"
+msgstr "奥地利"
+
+#$lang=eng
+msgid "Azerbaijan"
+msgstr "阿塞拜疆"
+
+#$lang=eng
+msgid "Barbados"
+msgstr "巴巴多斯"
+
+#$lang=eng
+msgid "Belarus"
+msgstr "白俄罗斯"
+
+#$lang=eng
+msgid "Belgium"
+msgstr "比利时"
+
+#$lang=eng
+msgid "Belize"
+msgstr "伯利兹"
+
+#$lang=eng
+msgid "Benin"
+msgstr "贝宁"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Bosnia &amp; Herzegovina"
+msgstr "波斯尼亚-黑塞哥维那"
+
+#$lang=eng
+msgid "Brazil"
+msgstr "巴西"
+
+#$lang=eng
+msgid "Bulgaria"
+msgstr "保加利亚"
+
+#$lang=eng
+msgid "Burkina Faso"
+msgstr "布基纳法索"
+
+#$lang=eng
+msgid "Cameroon"
+msgstr "喀麦隆"
+
+#$lang=eng
+msgid "Canada"
+msgstr "加拿大"
+
+#$lang=eng
+msgid "Central African Republic"
+msgstr "中非共和国"
+
+#$lang=eng
+msgid "Chad"
+msgstr "乍得"
+
+#$lang=eng
+msgid "China"
+msgstr "中国"
+
+#$lang=eng
+msgid "Congo"
+msgstr "刚果"
+
+#$lang=eng
+msgid "Costa Rica"
+msgstr "哥斯达黎加"
+
+#$lang=eng
+msgid "Croatia"
+msgstr "克罗地亚"
+
+#$lang=eng
+msgid "Cuba"
+msgstr "古巴"
+
+#$lang=eng
+msgid "Cyprus"
+msgstr "塞浦路斯"
+
+#$lang=eng
+msgid "Czech Republic"
+msgstr "捷克共和国"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Côte dIvoire"
+msgstr "科特迪瓦"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Democratic Peoples Republic of Korea"
+msgstr "朝鲜民主主义人民共和国"
+
+#$lang=eng
+msgid "Denmark"
+msgstr "丹麦"
+
+#$lang=eng
+msgid "Dominica"
+msgstr "多米尼加"
+
+#$lang=eng
+msgid "Estonia"
+msgstr "爱沙尼亚"
+
+#$lang=eng
+msgid "Finland"
+msgstr "芬兰"
+
+#$lang=eng
+msgid "Gabon"
+msgstr "加蓬"
+
+#$lang=eng
+msgid "Gambia"
+msgstr "冈比亚"
+
+#$lang=eng
+msgid "Georgia"
+msgstr "格鲁吉亚"
+
+#$lang=eng
+msgid "Germany"
+msgstr "德国"
+
+#$lang=eng
+msgid "Ghana"
+msgstr "加纳"
+
+#$lang=eng
+msgid "Greece"
+msgstr "希腊"
+
+#$lang=eng
+msgid "Grenada"
+msgstr "格拉纳达"
+
+#$lang=eng
+msgid "Guinea"
+msgstr "几内亚"
+
+#$lang=eng
+msgid "Guinea-Bissau"
+msgstr "几内亚比绍"
+
+#$lang=eng
+msgid "Hungary"
+msgstr "匈牙利"
+
+#$lang=eng
+msgid "Iceland"
+msgstr "冰岛"
+
+#$lang=eng
+msgid "India"
+msgstr "印度"
+
+#$lang=eng
+msgid "Indonesia"
+msgstr "印度尼西亚"
+
+#$lang=eng
+msgid "Ireland"
+msgstr "爱尔兰"
+
+#$lang=eng
+msgid "Israel"
+msgstr "以色列"
+
+#$lang=eng
+msgid "Italy"
+msgstr "意大利"
+
+#$lang=eng
+msgid "Japan"
+msgstr "日本"
+
+#$lang=eng
+msgid "Kazakhstan"
+msgstr "哈萨克斯坦"
+
+#$lang=eng
+msgid "Kenya"
+msgstr "肯尼亚"
+
+#$lang=eng
+msgid "Kyrgyzstan"
+msgstr "吉尔吉斯斯坦"
+
+#$lang=eng
+msgid "Latvia"
+msgstr "拉托维亚"
+
+#$lang=eng
+msgid "Lesotho"
+msgstr "莱索托"
+
+#$lang=eng
+msgid "Liberia"
+msgstr "利比里亚"
+
+#$lang=eng
+msgid "Liechtenstein"
+msgstr "列支敦士登"
+
+#$lang=eng
+msgid "Lithuania"
+msgstr "立陶宛"
+
+#$lang=eng
+msgid "Luxembourg"
+msgstr "卢森堡"
+
+#$lang=eng
+msgid "Madagascar"
+msgstr "马达加斯加"
+
+#$lang=eng
+msgid "Malawi"
+msgstr "马拉维"
+
+#$lang=eng
+msgid "Mali"
+msgstr "马里"
+
+#$lang=eng
+msgid "Mauritania"
+msgstr "毛里塔尼亚"
+
+#$lang=eng
+msgid "Mexico"
+msgstr "墨西哥"
+
+#$lang=eng
+msgid "Monaco"
+msgstr "摩纳哥"
+
+#$lang=eng
+msgid "Mongolia"
+msgstr "蒙古"
+
+#$lang=eng
+msgid "Morocco"
+msgstr "摩洛哥"
+
+#$lang=eng
+msgid "Mozambique"
+msgstr "莫桑比克"
+
+#$lang=eng
+msgid "Netherlands"
+msgstr "荷兰"
+
+#$lang=eng
+msgid "New Zealand"
+msgstr "新西兰"
+
+#$lang=eng
+msgid "Niger"
+msgstr "尼日尔"
+
+#$lang=eng
+msgid "Norway"
+msgstr "挪威"
+
+#$lang=eng
+msgid "Poland"
+msgstr "波兰"
+
+#$lang=eng
+msgid "Portugal"
+msgstr "葡萄牙"
+
+#$lang=eng
+msgid "Republic of Korea"
+msgstr "韩国"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Republic of Moldova"
+msgstr "摩尔多瓦共和国"
+
+#$lang=eng
+msgid "Romania"
+msgstr "罗马尼亚"
+
+# #getiso-hack#
+#$lang=eng
+msgid "Russian Federation"
+msgstr "俄罗斯联邦"
+
+#$lang=eng
+msgid "Saint Lucia"
+msgstr "圣卢西亚"
+
+#$lang=eng
+msgid "Senegal"
+msgstr "塞内加尔"
+
+#$lang=eng
+msgid "Sierra Leone"
+msgstr "塞拉里昂"
+
+#$lang=eng
+msgid "Singapore"
+msgstr "新加坡"
+
+#$lang=eng
+msgid "Slovakia"
+msgstr "斯洛伐克"
+
+#$lang=eng
+msgid "Slovenia"
+msgstr "斯洛文尼亚"
+
+#$lang=eng
+msgid "South Africa"
+msgstr "南非"
+
+#$lang=eng
+msgid "Spain"
+msgstr "西班牙"
+
+#$lang=eng
+msgid "Sri Lanka"
+msgstr "斯里兰卡"
+
+#$lang=eng
+msgid "Sudan"
+msgstr "苏丹"
+
+#$lang=eng
+msgid "Swaziland"
+msgstr "斯威士兰"
+
+#$lang=eng
+msgid "Sweden"
+msgstr "瑞典"
+
+#$lang=eng
+msgid "Switzerland"
+msgstr "瑞士"
+
+#$lang=eng
+msgid "Tajikistan"
+msgstr "塔吉克斯坦"
+
+# #getiso-hack#
+#$lang=eng
+msgid "The former Yugoslav Republic of Macedonia"
+msgstr "前南斯拉夫马其顿共和国"
+
+#$lang=eng
+msgid "Togo"
+msgstr "多哥"
+
+#$lang=eng
+msgid "Trinidad and Tobago"
+msgstr "特立尼达和多巴哥"
+
+#$lang=eng
+msgid "Turkey"
+msgstr "土耳其"
+
+#$lang=eng
+msgid "Turkmenistan"
+msgstr "土库曼斯坦"
+
+#$lang=eng
+msgid "Uganda"
+msgstr "乌干达"
+
+#$lang=eng
+msgid "Ukraine"
+msgstr "乌克兰"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Arab Emirates"
+msgstr "阿拉伯联合酋长国"
+
+#$lang=eng
+msgid "United Kingdom"
+msgstr "英国"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United Republic of Tanzania"
+msgstr "坦桑尼亚"
+
+# #getiso-hack#
+#$lang=eng
+msgid "United States of America"
+msgstr "美国"
+
+#$lang=eng
+msgid "Uzbekistan"
+msgstr "乌兹别克斯坦"
+
+#$lang=eng
+msgid "Viet Nam"
+msgstr "越南"
+
+#$lang=eng
+msgid "Yugoslavia"
+msgstr "南斯拉夫"
+
+#$lang=eng
+msgid "Zimbabwe"
+msgstr "津巴布韦"
 

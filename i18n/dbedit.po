@@ -11,6 +11,11 @@ msgstr ""
 msgid ""
 msgstr ""
 
+# /root/src/PApp/widget/dbedit.papp:268       print "<p>", slink __"CREATE ROW", "row";
+#$lang=eng
+msgid "CREATE ROW"
+msgstr "NEUER DATENSATZ"
+
 # /root/src/PApp/widget/dbedit.papp:135    <h3>__"Columns (editing columns may take a long time)"</h3>
 #$lang=eng
 msgid "Columns (editing columns may take a long time)"
@@ -31,15 +36,15 @@ msgstr "Felddefinition"
 msgid "Create Database"
 msgstr "Datenbank erzeugen"
 
-# /root/src/PApp/widget/dbedit.papp:268       print "<p>", slink __"CREATE ROW", "row";
-#$lang=eng
-msgid "CREATE ROW"
-msgstr "NEUER DATENSATZ"
-
 # /root/src/PApp/widget/dbedit.papp:79           __"Create Table"&nbsp;<?textfield "text1":>
 #$lang=eng
 msgid "Create Table"
 msgstr "Tabelle erzeugen"
+
+# /root/src/PApp/apps/dbedit.papp:35 <tr><th align='left'>__"DSN"</th><th align='left'>
+#$lang=eng
+msgid "DSN"
+msgstr "DSN"
 
 # /root/src/PApp/widget/dbedit.papp:18          &gt; <?slink __"Databases", "" :>
 #$lang=eng
@@ -56,11 +61,6 @@ msgstr "Standardwert?"
 msgid "Drop"
 msgstr "Löschen"
 
-# /root/src/PApp/apps/dbedit.papp:35 <tr><th align='left'>__"DSN"</th><th align='left'>
-#$lang=eng
-msgid "DSN"
-msgstr "DSN"
-
 # /root/src/PApp/widget/dbedit.papp:159    <h3>__"Keys (changing keys often takes a long time!)"</h3>
 #$lang=eng
 msgid "Keys (changing keys often takes a long time!)"
@@ -72,15 +72,15 @@ msgstr "Schlüssel (Änderungen können sehr lange dauern!)"
 msgid "MySQL Database Editor"
 msgstr "MySQL Datenbank-Editor"
 
-# /root/src/PApp/widget/dbedit.papp:138    <tr><th align=left>__"Name"&nbsp;<th align=left>
-#$lang=eng
-msgid "Name"
-msgstr ""
-
 # /root/src/PApp/widget/dbedit.papp:186       print "<tr><td valign=baseline>".(__"NEW")." -->&nbsp;";
 #$lang=eng
 msgid "NEW"
 msgstr "NEU"
+
+# /root/src/PApp/widget/dbedit.papp:138    <tr><th align=left>__"Name"&nbsp;<th align=left>
+#$lang=eng
+msgid "Name"
+msgstr ""
 
 # /root/src/PApp/apps/dbedit.papp:35 __"Password"</th></tr>
 #$lang=eng
@@ -137,20 +137,25 @@ msgstr "[ÄNDERN]"
 msgid "[DELETE]"
 msgstr "[LÖSCHEN]"
 
-# /root/src/PApp/widget/dbedit.papp:152          print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
-#$lang=eng
-msgid "[drop default]"
-msgstr "[Standardwert löschen]"
-
 # /root/src/PApp/widget/dbedit.papp:61          print "<td>", slink __"[EDIT]", "database", db => $db;
 # /root/src/PApp/widget/dbedit.papp:107    <?slink __"[EDIT]", "table":>
 #$lang=eng
 msgid "[EDIT]"
 msgstr "[EDIEREN]"
 
+# /root/src/PApp/widget/dbedit.papp:152          print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
+#$lang=eng
+msgid "[drop default]"
+msgstr "[Standardwert löschen]"
+
 #$lang=ltz
 msgid ""
 msgstr ""
+
+# /root/src/PApp/widget/dbedit.papp:268       print "<p>", slink __"CREATE ROW", "row";
+#$lang=eng
+msgid "CREATE ROW"
+msgstr "REI UNLEEN"
 
 # /root/src/PApp/widget/dbedit.papp:135    <h3>__"Columns (editing columns may take a long time)"</h3>
 #$lang=eng
@@ -172,15 +177,15 @@ msgstr "Erstellen"
 msgid "Create Database"
 msgstr "Datebank erstellen"
 
-# /root/src/PApp/widget/dbedit.papp:268       print "<p>", slink __"CREATE ROW", "row";
-#$lang=eng
-msgid "CREATE ROW"
-msgstr "REI UNLEEN"
-
 # /root/src/PApp/widget/dbedit.papp:79           __"Create Table"&nbsp;<?textfield "text1":>
 #$lang=eng
 msgid "Create Table"
 msgstr "Tabell erstellen"
+
+# /root/src/PApp/apps/dbedit.papp:35 <tr><th align='left'>__"DSN"</th><th align='left'>
+#$lang=eng
+msgid "DSN"
+msgstr ""
 
 # /root/src/PApp/widget/dbedit.papp:18          &gt; <?slink __"Databases", "" :>
 #$lang=eng
@@ -197,11 +202,6 @@ msgstr ""
 msgid "Drop"
 msgstr "Läschen"
 
-# /root/src/PApp/apps/dbedit.papp:35 <tr><th align='left'>__"DSN"</th><th align='left'>
-#$lang=eng
-msgid "DSN"
-msgstr ""
-
 # /root/src/PApp/widget/dbedit.papp:159    <h3>__"Keys (changing keys often takes a long time!)"</h3>
 #$lang=eng
 msgid "Keys (changing keys often takes a long time!)"
@@ -213,15 +213,15 @@ msgstr "Schlessel (öfters wiesslen kann e bessen daueren!)"
 msgid "MySQL Database Editor"
 msgstr "MySQL Datenbank Editor"
 
-# /root/src/PApp/widget/dbedit.papp:138    <tr><th align=left>__"Name"&nbsp;<th align=left>
-#$lang=eng
-msgid "Name"
-msgstr "Numm"
-
 # /root/src/PApp/widget/dbedit.papp:186       print "<tr><td valign=baseline>".(__"NEW")." -->&nbsp;";
 #$lang=eng
 msgid "NEW"
 msgstr "NEI"
+
+# /root/src/PApp/widget/dbedit.papp:138    <tr><th align=left>__"Name"&nbsp;<th align=left>
+#$lang=eng
+msgid "Name"
+msgstr "Numm"
 
 # /root/src/PApp/apps/dbedit.papp:35 __"Password"</th></tr>
 #$lang=eng
@@ -278,14 +278,14 @@ msgstr "[ÄNNEREN]"
 msgid "[DELETE]"
 msgstr "[LÄSCHEN]"
 
-# /root/src/PApp/widget/dbedit.papp:152          print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
-#$lang=eng
-msgid "[drop default]"
-msgstr "[default fallenlossen]"
-
 # /root/src/PApp/widget/dbedit.papp:61          print "<td>", slink __"[EDIT]", "database", db => $db;
 # /root/src/PApp/widget/dbedit.papp:107    <?slink __"[EDIT]", "table":>
 #$lang=eng
 msgid "[EDIT]"
 msgstr "[EDITEIREN]"
+
+# /root/src/PApp/widget/dbedit.papp:152          print slink(__"[drop default]", sql => "$alter alter $name drop default") if $default;
+#$lang=eng
+msgid "[drop default]"
+msgstr "[default fallenlossen]"
 

@@ -1,10 +1,11 @@
 =head1 NAME
 
-PApp::Prefs - manage user-specific and transaction data.
+PApp::Prefs - manage user-specific data.
 
 =head1 SYNOPSIS
 
  use PApp::Prefs;
+ # see also PApp::Session and PApp::Env
 
 =head1 DESCRIPTION
 
@@ -17,11 +18,11 @@ use Compress::LZF qw(:freeze);
 use PApp::SQL;
 use PApp::Exception qw(fancydie);
 use PApp::Callback ();
-use PApp::Config qw($DBH);
+use PApp::Config qw(DBH $DBH); DBH;
 
 use base Exporter;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw( 
    lockprefs
 );
@@ -44,10 +45,7 @@ scalar context).
 sub lockprefs(&) {
    sql_fetch $DBH, "select get_lock('PAPP_PREFS_LOCK_PREFS', 60)"
       or fancydie "PApp::Prefs::lockprefs: unable to aquire database lock";
-   my $res = eval {
-      local $SIG{__DIE__};
-      $_[0]->();
-   };
+   my $res = eval { $_[0]->() };
    {
       local $@;
       sql_exec $DBH, "select release_lock('PAPP_PREFS_LOCK_PREFS')";
@@ -62,16 +60,16 @@ sub lockprefs(&) {
 
 =over 4
 
-=item $prefs = new PApp::Prefs [$path]
+=item $prefs = new PApp::Prefs [$pathref]
 
-Creates a new PApp::Prefs object for the given application path. Changes
-in the C<$path> variable are being tracked by the module, as it takes a
-reference to the variable.
+Creates a new PApp::Prefs object for the given application path. A
+reference to the path variable must be apssed in, so that changes in the
+path can be tracked by the module.
 
 =cut
 
 sub new {
-   bless { path => \$_[1] }, $_[0];
+   bless { path => $_[1] }, $_[0];
 }
 
 =item $prefs->get($key)

@@ -15,8 +15,8 @@ PApp::Callback - a workaround for the problem of nonserializable code.
 
 =head1 DESCRIPTION
 
-The problem: Code is unserializable (at the moment, but it will probably never be
-efficient to serialize code).
+The problem: Code is unserializable (at the moment, but it will probably
+never be efficient to serialize code).
 
 The workaround (B<not> the solution): This class can be used to create
 serializable callbacks (or "references"). You first have to register all
@@ -34,7 +34,7 @@ require 5.006;
 
 use base 'Exporter';
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...
@@ -43,9 +43,12 @@ Registers a function (preferably at program start) and returns a callback
 object that can be used to create callable and serializable objects.
 
 If C<functiondef> is a string it will be interpreted as a function name in
-the callers package (unless it conatins '::'). Otherwise you should use a
+the callers package (unless it contains '::'). Otherwise you should use a
 "name => <funname>" argument to uniquely identify the function. If it is
 omitted the filename and linenumber will be used, but that is fragile.
+
+The optional C<args => [arrayref]> parameter will prepended the given
+arguments to each invocation of the callback.
 
 Examples:
 
@@ -65,6 +68,15 @@ Examples:
 
 our %registry;
 
+sub new {
+   my $self = shift;
+   my %attr = @_;
+
+   bless { %$self,
+      args => $attr{args} || [],
+   }, __PACKAGE__;
+}
+
 sub register_callback(&;@) {
    shift if $_[0] eq __PACKAGE__;
    my ($package, $filename, $lineno) = caller;
@@ -74,26 +86,26 @@ sub register_callback(&;@) {
 
    if (ref $code) {
       $id = $attr{name} ? "I$attr{name}" : "A$filename:$lineno";
-      $registry{$id} = $code;
    } else {
       $code = $package."::$code" unless $code =~ /::/;
       $id = "F$code";
-      $registry{$id} = sub { goto &$code }
+      $code = sub { goto &$code };
    }
+   $registry{$id} = [$code];
 
-   my $self = bless {
+   my $self = new {
       'package' => $package,
       filename  => $filename,
       id        => $id,
-   }, __PACKAGE__;
+   }, %attr;
 
-   $attr{__do_refer} ? $self->refer : $self;
+   delete $attr{__do_refer} ? $self->refer : $self;
 }
 
 =item create_callback <same arguments as register_callback>
 
-Just like C<register_callback>, but additionally calls C<refer> on the
-result, returning the function reference directly.
+Just like C<register_callback>, but additionally calls C<refer> (see
+below) on the result, returning the function reference directly.
 
 =cut
 
@@ -110,7 +122,7 @@ code reference, e.g.:
 
  $cb->call(4,5,6);
  $cb->(4,5,6);
- &$cb; # this does not work with Storable-0.611 and below
+ &$cb;
 
 It will behave as if the original registered callback function would be
 called with the arguments given to C<register_callback> first and then the
@@ -119,13 +131,28 @@ arguments given to the C<call>-method.
 C<refer> is implemented in a fast way and the returned objects are
 optimised to be as small as possible.
 
+The current database (C<$PApp::SQL::Database>) and the corresponding
+database handle will be saved when a callback is refer'ed, and restored
+later when it is called.
+
 =cut
 
 sub refer($;@) {
    my $self = shift;
-   my @func = $self->{id};
-   push @func, [@_] if @_;
-   bless \@func, PApp::Callback::Function;
+
+   bless [$self->{id}, $PApp::SQL::Database, @{$self->{args}}, @_], PApp::Callback::Function;
+}
+
+=item $func2 = $func->append([args...])
+
+Creates a new callback by appending the given arguments to each invocation of it.
+
+=cut
+
+sub append($;@) {
+   my $self = bless { %{+shift} }, __PACKAGE__;
+   $self->{args} = [@{$self->{args}}, @_];
+   $self;
 }
 
 use overload
@@ -142,7 +169,7 @@ package PApp::Callback::Function;
 
 use Carp 'croak';
 
-# a Function is a [$id, \@args]
+# a Function is a [$id, $database, @args]
 
 =item $cb->call([args...])
 
@@ -151,9 +178,11 @@ Call the callback function with the given arguments.
 =cut
    
 sub call($;@) {
-   my $self = shift;
-   my ($id, $args) = @$self;
+   unshift @_, @{+shift};
+
+   my $id = shift;
    my $cb = $PApp::Callback::registry{$id};
+
    unless ($cb) {
       #d#
       # too bad, no callback -> try to load applications
@@ -162,10 +191,13 @@ sub call($;@) {
          $_->load_code;
          last if $cb = $PApp::Callback::registry{$id};
       }
+      $cb or croak "callback '$id' not registered";
    }
-   $cb or croak "callback '$id' not registered";
-   unshift @_, @$args;
-   goto &$cb;
+
+   local $PApp::SQL::Database = shift;
+   local $PApp::SQL::DBH      = $PApp::SQL::Database ? $PApp::SQL::Database->checked_dbh : undef;
+
+   &{$cb->[0]};
 }
 
 sub asString {

@@ -25,9 +25,9 @@ tinychar - a very tiny chat box for your server ;)
 <import pm="PApp::UserObs">username</import>
 
 <macro name="_tinychat"><pxml><![CDATA[
-<?sform -tinychat_submit => 1:>
+<?sform tinychat_submit => 1:>
 <:my $u = username || "ANON".getuid:>
-#if $A{tinychat_submit} && $P{input} && !reload_p
+#if delete $S{tinychat_submit} && $P{input} && !reload_p
 <:
    lockenv {
       use POSIX ();

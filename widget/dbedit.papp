@@ -271,8 +271,9 @@ __"rows affected:" <tt><?$st->rows:></tt><br />
    <:
       my $s = sql_exec "show keys from $S{table}";
       my %key;
-      $s->bind_columns(\my($table,$non_unique,$name,$seq,$cname,$collation,$cardinality,$sub_part,$packed,$comment));
-      while ($s->fetch) {
+      while (my $row = $s->fetchrow_arrayref) {
+         my($table,$non_unique,$name,$seq,$cname,$collation,$cardinality,$sub_part,$packed,$comment,$mysql4_a,$mysql4_b)
+            = @$row;
          $cname .= "($sub_part)" if $sub_part;
          push @{$key{$name}{col}}, $cname;
          $key{$name}{unique} = !$non_unique;

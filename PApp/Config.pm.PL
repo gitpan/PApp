@@ -7,15 +7,16 @@ $|=1;
 eval {
    require "./PApp/Config.pm";
    require "./config.pl";
-   $CFG{$k} = $v while ($k, $v) = each %PApp::Config;
+   %CFG = %PApp::Config;
 };
 if ($@) {
    print "[notice] unable to read new configuration\n";
    eval {
       require PApp::Config;
-      $CFG{$k} = $v while my ($k, $v) = each %PApp::Config;
-   };
-   print "[notice] unable to read already-installed configuration\n";
+      %CFG = %PApp::Config;
+      1;
+   } or
+      print "[notice] unable to read already-installed configuration\n";
 }
 
 if (-e $PAPPRC) {
@@ -60,8 +61,8 @@ do {
       $CFG{PAPP_UID} = getpwuid ($CFG{PAPP_UID});
    } 
    get_value 0, "PAPP_UID", "papp user id", "0";
-} until (($CFG{PAPP_UID} != getpwnam $CFG{PAPP_UID}
-          && defined getpwnam $CFG{PAPP_UID})
+} until (($CFG{PAPP_UID} ne ((getpwnam $CFG{PAPP_UID})[2])
+          && defined ((getpwnam $CFG{PAPP_UID})[2]))
          || ($CFG{PAPP_UID} =~ /^\d+$/));
 
 do {
@@ -69,8 +70,8 @@ do {
       $CFG{PAPP_GID} = getgrgid ($CFG{PAPP_GID});
    }
    get_value 0, "PAPP_GID", "papp group id", "0";
-} until (($CFG{PAPP_GID} != getgrnam $CFG{PAPP_GID}
-          && defined getgrnam $CFG{PAPP_GID})
+} until (($CFG{PAPP_GID} ne ((getgrnam $CFG{PAPP_GID})[2])
+          && defined ((getgrnam $CFG{PAPP_GID})[2]))
          || ($CFG{PAPP_GID} =~ /^\d+$/));
 
 $CFG{PAPP_UID} &&= (getpwnam $CFG{PAPP_UID})[2] || $CFG{PAPP_UID};
@@ -127,13 +128,15 @@ PApp::Config - hold common configuration settings
 
 =cut
 
-$VERSION = 0.142;
+use PApp::SQL;
+
+$VERSION = 0.143;
 
 require Exporter;
 
 @ISA = qw(Exporter);
 @EXPORT = qw();
-@EXPORT_OK = qw($DBH DBH Database);
+@EXPORT_OK = qw($DBH DBH $Database);
 
 our %papp; # loaded applications
 our %pimp; # loaded imports
@@ -205,7 +208,7 @@ print CFG2 "\n1;\n";
 print PM <<'EOF';
 );
 
-$PApp::Config{SECURE} = do "$PApp::Config{LIBDIR}/config.pl";
+$PApp::Config{SECURE} = do ($PApp::Config::CONFIG_PL ? $PApp::Config::CONFIG_PL : "$PApp::Config{LIBDIR}/config.pl");
 
 our @incpath = $PApp::Config{LIBDIR};
 
@@ -217,6 +220,9 @@ sub search_path {
 $PApp::statedb      = $PApp::Config{STATEDB};
 $PApp::statedb_user = $PApp::Config{STATEDB_USER};
 $PApp::statedb_pass = $PApp::Config{STATEDB_PASS};
+
+# "inlined" into DBH
+$Database = new PApp::SQL::Database "papp_1", $PApp::statedb, $PApp::statedb_user, $PApp::statedb_pass;
 
 sub _prepare_DBH {
    my $dbh = shift;
@@ -231,11 +237,6 @@ sub _prepare_DBH {
    $PApp::st_deletepref  = $dbh->prepare("delete from prefs where uid = ? and path = ? and name = ?");
 }
 
-sub Database() {
-   # "inlined" into next function
-   new PApp::SQL::Database "papp_1", $PApp::statedb, $PApp::statedb_user, $PApp::statedb_pass;
-}
-
 sub DBH() {
    $DBH = PApp::SQL::connect_cached("papp_1", $PApp::statedb, $PApp::statedb_user, $PApp::statedb_pass, {
       AutoCommit => 1,
@@ -243,6 +244,8 @@ sub DBH() {
       PrintError => 0,
    }, \&_prepare_DBH) or die "error connecting to papp database: $DBI::errstr";
 }
+
+DBH;
 
 1;
 

@@ -3,10 +3,6 @@
 
 #line 5 "(PApp.pm)"
 
-#FIXME#
-# DEVEL-9021 regexec/utf8_alnum=0 workaround
-#{ use utf8; local $x = "_"; $x =~ /\w|\d|\S|\p{IsPrint}/; }
-
 =head1 NAME
 
 PApp - multi-page-state-preserving web applications
@@ -111,17 +107,21 @@ use 5.006;
 use utf8;
 no bytes;
 
+no warnings;
+
 #   imports
 use Carp;
 use FileHandle ();
 use File::Basename qw(dirname);
 
-use Storable;
-
+use PApp::Storable;
 use Compress::LZF qw(:compress :freeze);
+
+Compress::LZF::set_serializer "PApp::Storable", "PApp::Storable::mstore", "PApp::Storable::mretrieve";
+
 use Crypt::Twofish2;
 
-use PApp::Config qw($DBH DBH);
+use PApp::Config qw(DBH $DBH); DBH;
 use PApp::FormBuffer;
 use PApp::Exception;
 use PApp::I18n;
@@ -133,12 +133,13 @@ use PApp::Package;
 use PApp::Util;
 use PApp::Recode ();
 use PApp::Prefs ();
+use PApp::Session ();
 use PApp::Event ();
 
 <<' */'=~m>>;
  
 /*
- * the DataRef module must be included just in case
+ * the DataRef (and Callback) module must be included just in case
  * no application has been loaded and we need to deserialize state,
  * since overloaded packages must already exist before an object becomes
  * overloaded. Ugly.
@@ -149,7 +150,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 0.142;
+   $VERSION = 0.143;
 
    use base Exporter;
 
@@ -163,22 +164,25 @@ BEGIN {
 
          SURL_PUSH SURL_UNSHIFT SURL_POP SURL_SHIFT
          SURL_EXEC SURL_SAVE_PREFS SURL_SET_LOCALE SURL_SUFFIX
+         SURL_EXEC_IMMED
 
-         surl_style
+         surl_style postpone
          SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
 
          $request $NOW *ppkg $papp *state %P *A *S
-         $userid $sessionid reload_p switch_userid save_prefs getuid
+         $userid $sessionid $session
+         reload_p switch_userid getuid
 
          dprintf dprint echo capture $request 
          
          N_ language_selector preferences_url preferences_link
-         getpref setpref
+         $prefs $curprefs getpref setpref save_prefs
    );
    @EXPORT_OK = qw(config_eval abort_with_file);
 
+   # might also get loaded in PApp::Util
    require XSLoader;
-   XSLoader::load 'PApp', $VERSION;
+   XSLoader::load PApp, $VERSION unless defined &PApp::bootstrap;
 
    unshift @ISA, PApp::Base;
 }
@@ -258,6 +262,7 @@ our $output_p = 0;# flush called already?
     $in_cleanup = 0;  # are we in a clean-up phase?
 
     $onerr      = 'sha';
+our $warn_log; # all warnings will be logged here
 
 our $url_prefix_nossl = undef;
 our $url_prefix_ssl = undef;
@@ -265,10 +270,9 @@ our $url_prefix_sslauth = undef;
 
 our $logfile = undef;
 
-our $event_count = 0;
-
-our $prefs    = new PApp::Prefs "";      # the global preferences
-our $curprefs = new PApp::Prefs $curpfx; # the current application preferences
+our $prefs    = new PApp::Prefs \"";      # the global preferences
+our $curprefs = new PApp::Prefs *curprfx; # the current application preferences
+our $session  = new PApp::Session *curprfx;
 
 %preferences = (  # system default preferences
    '' => [qw(
@@ -300,11 +304,14 @@ sub SURL_PUSH         ($$){ ( "\x00\x01", undef, @_ ) }
 sub SURL_UNSHIFT      ($$){ ( "\x00\x02", undef, @_ ) }
 sub SURL_POP          ($) { ( "\x00\x81", @_ ) }
 sub SURL_SHIFT        ($) { ( "\x00\x82", @_ ) }
-sub SURL_EXEC         ($) { SURL_PUSH("/papp_execonce" => $_[0]) }
-sub SURL_SAVE_PREFS   ()  { SURL_EXEC($save_prefs_cb) }
+#sub SURL_EXEC         ($) { SURL_PUSH("/papp_execonce" => $_[0]) }
+sub SURL_EXEC_IMMED   ($) { "\x00\x91", \$_[0] }
+sub SURL_EXEC         ($) { $_[0] }
+sub SURL_SAVE_PREFS   ()  { $save_prefs_cb }
 sub SURL_SET_LOCALE   ($) { ( SURL_SAVE_PREFS, "/papp_locale" => $_[0] ) }
 
-sub SURL_STYLE        ($) { ("\x00\x41", @_) }
+sub SURL_SUFFIX       ($) { ("\x00\x41", @_) }
+sub SURL_STYLE        ($) { ("\x00\x42", @_) }
 sub _SURL_STYLE_URL   ()  { 1 }
 sub _SURL_STYLE_GET   ()  { 2 }
 sub _SURL_STYLE_STATIC()  { 3 }
@@ -312,8 +319,6 @@ sub _SURL_STYLE_STATIC()  { 3 }
 sub SURL_STYLE_URL    ()  { SURL_STYLE(_SURL_STYLE_URL    ) }
 sub SURL_STYLE_GET    ()  { SURL_STYLE(_SURL_STYLE_GET    ) }
 sub SURL_STYLE_STATIC ()  { SURL_STYLE(_SURL_STYLE_STATIC ) }
-
-sub SURL_SUFFIX       ($) { ("\x00\x42", @_) }
 
 sub CHARSET (){ "utf-8" } # the charset used internally by PApp
 
@@ -390,6 +395,20 @@ A unique number identifying the current session (not page). You could use
 this for transactions or similar purposes. This variable might or might
 not be zero indicating that no session has been allocated yet (similar to
 C<$userid> == 0).
+
+=item $session [L<PApp::Session>]
+
+The current session object, which stores session-specific variables.
+
+  $session->get("shoppingcart");
+  $session->set("shoppingcart", $cart);
+
+=item $curprefs, $prefs [L<PApp::Prefs>]
+
+The current application's (C<$curprefs>) and the global (C<$prefs>) preferences object.
+
+  $curprefs->get("bg_color");
+  ef_string $curprefs->ref("bg_color"), 15;
 
 =item $PApp::papp (a hash-ref) [read-only] [not exported] [might get replaced by a function call]
 
@@ -492,9 +511,13 @@ Return name and version of the interface PApp runs under
 
 =cut
 
+# undocumented interface. uarg. values %{$event_handler{type}} gives coderefs
+our %event_handler;
+
 sub event {
    my $self = shift;
    my $event = shift;
+   $_->($event) for values %{$event_handler{$event}};
    for $papp (values %{$papp->{"/"}}) {
       $papp->event($event);
    }
@@ -575,7 +598,7 @@ sub PApp::Base::configured {
       $cipher_d = new Crypt::Twofish2 $key;
       $cipher_e = new Crypt::Twofish2 $key;
 
-      $event_count = sql_fetch DBH, "select count from event_count";
+      PApp::Event::skip_all_events;
 
       PApp::I18n::set_base($i18ndir);
 
@@ -784,12 +807,25 @@ The following (symbolic) modifiers can also be used:
  SURL_SHIFT(<path-or-ref>)
    treat the following state key as arrayref and pop/shift it.
 
- SURL_EXEC(<coderef>)
+ SURL_EXEC(<coderef>) [obsolete]
    treat the following parameter as code-reference and execute it
-   after all other assignments have been done.
+   after all other assignments have been done. this SURL modifier
+   is deprecated, PApp::Callback callbacks don't need this modifier
+   anymore.
+
+   Nowadays, code-references found anywhere in the surlargs are treated
+   as if they had a SURL_EXEC wrapped around them. IF you want to pass a
+   coderef, you therefore have to pass a reference to it or wrap it into
+   an object.
+
+ SURL_EXEC_IMMED(<coderef>)
+   Like SURL_EXEC, but will be executed immediately when parsing. This
+   can be used to implement special surl behaviour, because it can affect
+   values specified after this specification. Normally, you don't want
+   to use this call.
 
  SURL_SAVE_PREFS
-   call save_prefs (using SURL_EXEC)
+   call save_prefs
  
  SURL_STYLE_URL
  SURL_STYLE_GET
@@ -833,7 +869,26 @@ sub surl_style {
    $surlstyle = $_[1] || $_[0];
    $old;
 }
- 
+
+=item postpone { ... } [args...]
+
+Can only be called inside (or before) SURL_EXEC callbacks, and postpones
+the block to be executed after all other callbacks. Just like callbacks
+themeselves, these callbacks are executed in FIFO order. The current
+database handle will be restored.
+
+=cut
+
+sub postpone(&;@) {
+   my ($cb, @args) = @_;
+   my ($db, $dbh) = ($PApp::SQL::Database, $PApp::SQL::DBH);
+   push @{$state{papp_execonce}}, sub {
+      local $PApp::SQL::Database = $db;
+      local $PApp::SQL::DBH      = $dbh;
+      $cb->(@args);
+   };
+}
+
 =item $ahref = slink contents,[ module,] arg => value, ...
 
 This is just "alink shift, &url", that is, it returns a link with the
@@ -851,14 +906,21 @@ sub slink {
    alink shift, &surl;
 }
 
-=item suburl \@sublink-def [, surl-args]
+# Return current local variables as key => value pairs.
+sub current_locals {
+   map { ($_, $S{$_}) }
+       grep exists $ppkg->{local}{$_}
+            && exists $ppkg->{local}{$_}{$module},
+               keys %S;
+}
+
+=item suburl [surl-args]
 
 Creates a URL like C<surl>, but also pushes the current module state
-onto the return stack. The sublink-surlargs is an arrayref
-containing surl-args used for the "return jump" and is usually just
-C<[current_locals]>, i.e. of all local variables.
+onto the return stack. It preserves all current locals for the
+"return jump".
 
-=item sublink [sublink-surlargs], content [, surl-args]
+=item sublink content [, surl-args]
 
 Just like C<suburl> but creates an C<A HREF> link with given contents.
 
@@ -879,20 +941,16 @@ Just like returl, but creates an C<A HREF> link with the given contents.
 
 # some kind of subroutine call
 sub suburl {
-   my $chain = shift;
-   if (@$chain & 1) {
-      $chain->[0] = \eval_path $chain->[0];
-   } else {
-      unshift @$chain, \modpath_freeze $modules;
-   }
-   surl @_, SURL_PUSH(\$state{papp_return}, $chain);
+   surl @_, SURL_PUSH(\$state{papp_return}, [
+      (\modpath_freeze $modules),
+      current_locals,
+   ]);
 }
 
 # some kind of subroutine call
 sub sublink {
-   my $chain = shift;
    my $content = shift;
-   alink $content, suburl $chain, @_;
+   alink $content, suburl @_;
 }
 
 # is there a backreference?
@@ -906,27 +964,6 @@ sub returl(;@) {
 
 sub retlink {
    alink shift, &returl;
-}
-
-=item %locals = current_locals
-
-Return the current locals (defined as "local" in a state element) as key => value pairs. Useful for C<sublink>s:
-
- <? sublink [current_locals], "Log me in!", "login" :>
-
-This will create a link to the login-module. In that module, you should provide a link back
-to the current page with:
-
- <? retlink "Return to the caller" :>
-
-=cut
-
-# Return current local variables as key => value pairs.
-sub current_locals {
-   map { ($_, $S{$_}) }
-       grep exists $ppkg->{local}{$_}
-            && exists $ppkg->{local}{$_}{$module},
-               keys %S;
 }
 
 =item sform [\%attrs,] [module,] arg => value, ...
@@ -1071,15 +1108,16 @@ sub parse_multipart_form(&) {
 	    $hdr = $line;
 	 }
       } while ($line ne "");
+
       my $name = delete $cd{name};
+
       if (defined $name) {
          $ct ||= "text/plain";
          $ct{charset} ||= $state{papp_lcs} || "iso-8859-1";
-         unless ($cb->($fh, $name, $ct, \%ct, \%cd)) {
-            my $buf;
-            while ($fh->read($buf, 16384) > 0)
-              { }
-         }
+         $cb->($fh, $name, $ct, \%ct, \%cd);
+
+         # read (& skip) the remaining data, if any
+         my $buf; 1 while $fh->read($buf, 16384) > 0;
       }
    }
 
@@ -1238,7 +1276,7 @@ sub redirect {
 
 =item abort_to surl-args
 
-Similar to C<internal_redirect>, but works the arguments through
+Similar to C<internal_redirect>, but filters the arguments through
 C<surl>. This is an easy way to switch to another module/webpage as a kind
 of exception mechanism. For example, I often use constructs like these:
 
@@ -1517,7 +1555,7 @@ sub load_prefs($) {
                         "select value from prefs where uid = ? and path = ? and name = 'papp_prefs'",
                         $userid, $_[0];
       if ($st->fetch) {
-         $prefs &&= Storable::thaw decompress $prefs;
+         $prefs &&= PApp::Storable::thaw decompress $prefs;
 
          my $h = $_[0] ? $state{$_[0]} : \%state;
          @$h{keys %$prefs} = values %$prefs;
@@ -1549,7 +1587,7 @@ sub save_prefs {
    while (my ($path, $keys) = each %prefs) {
       if (%$keys) {
          $st_replacepref->execute($userid, $path, "papp_prefs", 
-                                  compress Storable::nfreeze($keys));
+                                  compress PApp::Storable::nfreeze($keys));
       } else {
          $st_deletepref->execute($uid, $path, "papp_prefs");
                         $userid, $path, "papp_prefs";
@@ -1604,7 +1642,7 @@ sub update_state {
    %arguments = %A = ();
 
    $st_insertstate->execute($stateid,
-                            compress Storable::mstore(\%state),
+                            compress PApp::Storable::mstore(\%state),
                             $userid, $prevstateid, $sessionid, $alternative)
       if @{$state{papp_alternative}};
 
@@ -1620,12 +1658,14 @@ sub flush_pkg_cache  {
 
 $SIG{__WARN__} = sub {
    my $msg = $_[0];
-   PApp->warn("Warning: $msg");
+   PApp->warn("Warning[$$]: $msg");
 };
 
 sub PApp::Base::warn {
    if ($request) {
-      $request->warn($_[1]);
+      (my $msg = $_[1]) =~ s/\n$//;
+      $request->warn($msg);
+      $warn_log .= "$msg\n";
    } else {
       print STDERR $_[1];
    }
@@ -1657,18 +1697,21 @@ sub config_eval(&) {
 }
 
 my %app_cache;
-# find app by mountid
+
+# find app by mountid or name
 sub load_app($$) {
    my $class = shift;
-   my $appid = shift;
+   my $appid_or_name = shift;
 
-   return $app_cache{$appid} if exists $app_cache{$appid};
+   return $app_cache{$appid_or_name} if exists $app_cache{$appid_or_name};
 
    my $st = sql_exec DBH,
-                     \my($name, $path, $mountconfig, $config),
-                     "select name, path, mountconfig, config from app
-                      where id = ?", $appid;
-   $st->fetch or fancydie "load_app: no such application", "appid => $appid";
+                     \my($appid, $name, $path, $mountconfig, $config),
+                     "select id, name, path, mountconfig, config from app
+                      where "
+                      . ($appid_or_name+0 eq $appid_or_name ? "id =" : "name like")
+                      . " ?", "$appid_or_name"; #D#D "" workaround for DBD::mysql
+   $st->fetch or fancydie "load_app: no such application", "appid => $appid_or_name";
 
    my %config = eval $config;
 
@@ -1678,16 +1721,17 @@ sub load_app($$) {
       info => [appid => $appid],
       info => [config => PApp::Util::format_source $_config];
 
-   $app_cache{$_[0]} = new PApp::Application
-      delayed	=> 1,
-      mountconfig	=> $mountconfig,
-      url_prefix_nossl => $url_prefix_nossl,
-      url_prefix_ssl => $url_prefix_ssl,
+   $app_cache{$appid} =
+   $app_cache{$name} = new PApp::Application
+      delayed	         => 1,
+      mountconfig	 => $mountconfig,
+      url_prefix_nossl   => $url_prefix_nossl,
+      url_prefix_ssl     => $url_prefix_ssl,
       url_prefix_sslauth => $url_prefix_sslauth,
       %config,
-      appid		=> $appid,
-      path		=> $path,
-      name		=> $name;
+      appid		 => $appid,
+      path		 => $path,
+      name		 => $name;
 }
 
 sub PApp::Base::mount_appset {
@@ -1780,22 +1824,6 @@ sub handle_error($) {
    }
 }
 
-#sub bench($) {
-#   use Time::HiRes 'time';
-#   @_ ? push @bench, time, $_[0] : @bench = (time, "BEGIN");
-#}
-#
-#sub benchlog {
-#   my $log;
-#   push @bench, time;
-#   my $time = shift @bench;
-#   while (@bench) {
-#      $log .= sprintf "%s - %.3f - ", shift @bench, $bench[0]-$time;
-#      $time = shift @bench;
-#   }
-#   warn sprintf "%.3f: %s\n",(time-$NOW),$log;
-#}
-
 ################################################################################################
 #
 #   the PApp request handler
@@ -1815,9 +1843,10 @@ sub _handler {
    $output_p = 0;
    $doutput = "";
    $output = "";
-   tie *STDOUT, PApp::Catch_STDOUT;
+   #tie *STDOUT, PApp::Catch_STDOUT;
    $content_type = "text/html";
    $output_charset = "*";
+   $warn_log = "";
 
    eval {
       local $SIG{__DIE__} = \&PApp::Exception::diehandler;
@@ -1853,7 +1882,7 @@ sub _handler {
 
          $sessionid = $state->[4];
 
-         *state = Storable::mretrieve decompress $state->[1];
+         *state = PApp::Storable::mretrieve decompress $state->[1];
 
          if ($state->[2] != $userid) {
             if ($state->[2] != $state{papp_switch_newuserid}) {
@@ -1879,17 +1908,14 @@ sub _handler {
 
          if ($request->header_in('Cookie') =~ /PAPP_1984=([0-9a-zA-Z.-]{22,22})/) {
             ($userid, undef, undef, $state{papp_cookie}) = unpack "VVVV", $cipher_d->decrypt(PApp::X64::dec $1);
+            load_prefs "";
          } else {
             $userid = 0;
-         }
-
-         if ($userid) {
-            load_prefs ""; #d# and save_prefs because papp_visits increased
          }
       }
       $state{papp_alternative} = [];
 
-      $langs = delete $state{papp_lcs};
+      $langs = $state{papp_lcs};
       if ($langs eq "utf-8") {
          # force utf8 on
          for (keys %P) {
@@ -1915,7 +1941,7 @@ sub _handler {
 
       # do not use for, as papp_execonce might actually grow during
       # execution of these callbacks.
-      &{shift @{$state{papp_execonce}}} while @{$state{papp_execonce}};
+      (shift @{$state{papp_execonce}})->() while @{$state{papp_execonce}};
       delete $state{papp_execonce};
 
       if ($state{papp_cookie} < $NOW - $cookie_reset) {

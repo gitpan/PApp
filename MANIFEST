@@ -35,8 +35,12 @@ PApp/DataRef.pm
 PApp/Log.pm
 PApp/Lock.pm
 PApp/Prefs.pm
+PApp/Session.pm
 PApp/User.pm
 PApp/UserObs.pm
+PApp/Preprocessor.pm
+PApp/MimeType.pm
+PApp/XBox.pm
 
 I18n/Makefile.PL
 I18n/I18n.pm
@@ -50,11 +54,14 @@ Recode/typemap
 Recode/t/00_load.t
 Recode/t/01_pconv.t
 
+etc/mimedb		mime database
+
 macro/admin.papp	user administration package
 macro/util.papp		some utility functions
 macro/editform.papp	very easy edit-forms for sql tables
 macro/ssl.papp		some support macros for ssl environments
 macro/tinychat.papp	very dumb, very cool server-wide chatbox
+macro/xpcse.papp        client-side edit app
 papp.dtd		xml-DTD for papp-files
 papp.vim		vim syntax file
 
@@ -94,6 +101,7 @@ i18n/iso3166.po
 
 bin/papp-env
 bin/papp-admin
+bin/papp-httpd
 
 papp-install
 i18n-upgradeutf8
@@ -105,6 +113,7 @@ eg/admin.cgi		admin-app using cgi or CGI::SpeedyCGI
 eg/exec.cgi		mount an appset using cgi/CGI::SpeedyCGI
 
 doc/intro.sdf		lame english introduction (no tutorial)
+doc/intro.html
 doc/pws2001.sdf		the perl-workshop-2001 introduction/tutorial (german)
 doc/faqhtml.xsl
 
@@ -114,3 +123,14 @@ xcms/README
 
 simple-edit/x-papp-edit	a very very simple system to do client-side editing
 simple-edit/simple-edit.papp
+
+xpcse/xpcse
+xpcse/run-mailcap
+xpcse/xpcse-demo.papp
+xpcse/README.unix
+
+Storable/README		PApp::Storable is not part of PApp
+Storable/Makefile.PL
+Storable/Storable.pm
+Storable/Storable.xs
+

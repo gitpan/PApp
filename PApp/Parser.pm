@@ -31,7 +31,7 @@ use PApp::I18n qw(normalize_langid);
 no bytes;
 use utf8;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 
 =item ($ppkg, $name, $code) = parse_file $papp, $path
 
@@ -138,7 +138,7 @@ sub parse_file {
 
             if (defined $attr{src}) {
                # this is merely an include
-               my $src = PApp::Util::find_file $attr{src}, ["papp"];
+               my $src = PApp::Util::find_file $attr{src}, ["papp"], URI->new_abs (".", $path);
                eval { $load_fragment->($src) };
                $@ and fancydie "file '$attr{src}', included in line ".$self->current_line, $@;
             }
@@ -248,7 +248,9 @@ sub parse_file {
          } elsif ($element eq "include") {
             $attr{src} or $self->xpcroak("<include>: required attrbiute 'src' missing");
 
-            my $src = PApp::Util::find_file $attr{src}, ["papp"];
+            my $src = PApp::Util::find_file $attr{src}, ["papp"], URI->new_abs(".", $path)
+               or $self->xpcroak("<include>: src file '$attr{src}' not found");
+
             $load_fragment->($src);
 
             $end = sub {
@@ -275,7 +277,7 @@ sub parse_file {
             } else {
                $attr{src} or $self->xpcroak("<import>: required attribute 'src' not specified");
                $attr{export} eq "yes" and $self->xpcroak("<import>: attribute export=yes currently unsupported");#FIXME#NYI
-               my $path = PApp::Util::find_file $attr{src}, ["papp"];
+               my $path = PApp::Util::find_file $attr{src}, ["papp"], $path;
                defined $path or $self->xpcroak("<import>: imported file '$attr{src}' not found");
                $ppkg->{import}{$path}++;
             }
@@ -402,7 +404,7 @@ sub parse_file {
             }
 
          } elsif ($element eq "language") {
-	    warn("element <language> is deprecated and does no longer server any purpose, while parsing $path\n");
+	    warn("element <language> is deprecated and does no longer serve any purpose, while parsing $path\n");
 
          } elsif ($element eq "fragment") {
             # empty semantics

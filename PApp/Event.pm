@@ -8,7 +8,18 @@ PApp::Event - catch/broadcast various events
 
 =head1 DESCRIPTION
 
-None yet. Experimental.
+This module allows you to broadcast asynchroneous events to all other papp
+applications.
+
+Why is this useful? A common scenario is this: Often you want to implement
+some internal data caching. PApp itself caches it's translation files,
+content management systems often cache frequently-used content objects.
+
+Whenever these caches are invalidated, one papp application (or an
+external program) needs to signal all running application instances (maybe
+even on multiple machines) to delete all or some specific cache entry.
+
+This is what this module is for.
 
 =over 4
 
@@ -19,12 +30,13 @@ package PApp::Event;
 require 5.006;
 
 use PApp::SQL;
-use PApp::Config qw($DBH);
+use PApp::Config qw(DBH $DBH); DBH;
+use PApp::Exception ();
 use Compress::LZF ':freeze';
 
-#use base 'Exporter';
+$VERSION = 0.143;
 
-$VERSION = 0.142;
+our $event_count;
 
 =item on "event_type" => \&coderef
 
@@ -34,38 +46,93 @@ consist of all the scalars that have been broadcasted (i.e. multiple
 events of the same type get "bundled" into one call), sorted in the order
 of submittal, i.e. the newest event data comes last.
 
+When called in a scalar context (as opposed to void context), it returns
+an a handler id. When this handler id is destroyed (e.g. by going out of
+scope), the handler itself will be removed.
+
+The current contents of $PApp::SQL::Database/DBH will be saved and
+restored while the handler runs.
+
 =cut
 
-sub on ($&) {
-   push @{$handler{$_[0]}}, $_[1];
+sub PApp::Event::handler::DESTROY {
+   my $handlers = $handler{$_[0][0]};
+
+   for (0 .. $#handlers) {
+      if ($handlers[$_] == $_[0][1]) {
+         splice @$handlers, $_, 1;
+         return;
+      }
+   }
+
 }
 
-=item broadcast "event_type" => $data
+sub on ($&) {
+   my $handler = [$_[1], $PApp::SQL::Database];
 
-Broadcast an event of the named type, together with a single scalar.
+   push @{$handler{$_[0]}}, $handler;
+   no warnings;
+   return bless [ $_[0], $handler ], PApp::Event::handler:: if defined wantarray;
+}
+
+=item broadcast "event_type" => $data[, $data...]
+
+Broadcast an event of the named type, together with any number of scalars
+(each representing a single event!). The event handlers registered in
+the current process for the given type will be executed before this call
+returns, other events might or might not be processed. If you want to
+force processing of events, call C<PApp::Event::check>.
 
 =cut
 
-sub broadcast($$) {
-   my $event = $_[0];
-   my $data = sfreeze_cr $_[1];
+sub broadcast($;@) {
+   my $event = shift;
+   my $id;
 
    sql_exec $DBH, "lock tables event write, event_count write";
 
-   my $id = sql_insertid
-      sql_exec $DBH,
-               "insert into event (id, ctime, event, data) values (NULL,NULL,?,?)",
-               $event, $data;
+   for (@_) {
+      $id = sql_insertid sql_exec $DBH,
+                  "insert into event (id, ctime, event, data) values (NULL,NULL,?,?)",
+                  $event, sfreeze_cr $_;
 
+   }
    sql_exec $DBH, "update event_count set count = ? where count < ?", $id, $id;
 
    sql_exec $DBH, "unlock table";
 
+   if ($id < $event_count && @_) {
+      # TODO this die doesn't get rhough... it dies, but message is empty, WHY#d#
+      PApp::Exception::fancydie "event table corrupted", "new id $id < current event_count $event_count",
+                                abridged => 1;
+   }
+
    handle_events($id);
 }
 
+sub skip_all_events {
+   $event_count = eval { sql_fetch $DBH, "select count from event_count" };
+}
+
+skip_all_events;
+
+=item check
+
+Check for any outstanding events and execute them, if any.
+
+=cut
+
+sub check() {
+   handle_events(sql_fetch $DBH, "select count from event_count");
+}
+
 sub handle_event {
-   &$_ for @{$handler{$_[0]}};
+   for (@{$handler{$_[0]}}) {
+      local $PApp::SQL::Database = $_->[1];
+      local $PApp::SQL::DBH      = $_->[1] ? $_->[1]->checked_dbh : ();
+
+      &{$_->[0]};
+   }
 }
 
 sub handle_events {
@@ -77,8 +144,8 @@ sub handle_events {
                       from event
                       where id > ? and id <= ?
                       order by id, event",
-                     $PApp::event_count, $new_count;
-   $PApp::event_count = $new_count;
+                     $event_count, $new_count;
+   $event_count = $new_count;
 
    my $levent;
    my @ldata;
@@ -95,6 +162,47 @@ sub handle_events {
    PApp::Event::handle_event($levent, @ldata) if @ldata;
 }
 
+1;
+
+=head1 EXAMPLE
+
+This example implements caching of a costly operation in a local hash:
+
+  our %cache;
+
+  sub fetch_element {
+     my $id = shift;
+
+     return
+        $cache{$id}
+           ||= costly_operation (sql_fetch "...", $id));
+  }
+
+C<costly_operation> will only be run when the C<%cache> doesn't yet
+contain a cached version. Whenever the SQL database is updated, all other
+clients must invalidate their caches. A simple version (that just removes
+ALL entries) is this:
+
+  PApp::Event::on demo_flush_cache => sub {
+     %cache = ();
+  };
+
+  # after changes in the database:
+  PApp::Even::broadcast demo_flush_cache => undef;
+
+A more efficient version (when updates are frequent) only deletes the
+entries that were updated. The C<$id> is given as the argument to
+C<broadcast> (which only accepts a single scalar). The C<on>-handler,
+however, receives all arguments in one run:
+
+  PApp::Event::on demo_flush_cache => sub {
+     shift; # get rid of event_type
+     delete $cache{$_} for @_; # iterate over all arguments
+  };
+
+  # after changes in the database:
+  PApp::Even::broadcast demo_flush_cache => $id;
+  
 =head1 SEE ALSO
 
 L<PApp>.

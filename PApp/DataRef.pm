@@ -27,7 +27,7 @@ package PApp::DataRef;
 
 use Convert::Scalar ();
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 
 =item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...
 
@@ -97,21 +97,27 @@ Create a new handle that fetches and stores a file. [NYI]
 
 Create a scalar reference that calls your callbacks when accessed. Valid arguments are:
 
-  fetch => coderef
+  fetch => coderef($self)          # ref not present
+  fetch => coderef($self, $ref)    # ref present
     A coderef which is to be called for every read access
 
   value => constant
     As an alternative to fetch, always return a constant on read accesses
 
-  store => coderef
-    A coderef which is to be called with the new value for every write access
-
   ref => scalar-ref
     When present, this references the scalar that is passed to the fetch
     method or overwritten by the store method.
 
-Either C<fetch> or C<value> must be present. If C<store> is missing,
-stored values get thrown away.
+  store => coderef($value, $value) # ref not present (first argument is DEPRECATED)
+  store => coderef($self, $value)  # ref present
+    A coderef which is to be called with the new value for every write
+    access. If ref is given, the new value should be returned from this
+    callback. If the callback returns the empty list, the value won't be
+    changed.
+
+For read access, either C<fetch>, C<value> or C<ref> must be present (they
+are checked in this order). If C<store> is missing, stored values are
+thrown away.
 
 =cut
 
@@ -164,9 +170,13 @@ package PApp::DataRef::Scalar;
 sub new {
    my $class = shift;
 
+   no warnings;
+
    my $handle;
-   tie $handle, (ref $class ? (ref $class, %$class) : $class), @_;
-   \$handle;
+   tie $handle, ref $class ? ref $class : $class,
+                ref $class ? %$class : (),
+                @_;
+   bless \$handle, PApp::DataRef::Scalar::Proxy;
 }
 
 sub TIESCALAR {
@@ -195,7 +205,7 @@ sub STORE {
          my @data = $self->{store}($self, $_[1]);
          ${$self->{ref}} = $data[0] if @data;
       } else {
-         $self->{store}($_[1]);
+         $self->{store}($_[1], $_[1]);
       }
    } else {
       # might become a warning or fatal error
@@ -222,7 +232,7 @@ sub new {
                 autocommit => 1,
                 ref $class ? %$class : (),
                 @_;
-   bless \%handle, PApp::DataRef::DB_row::Proxy;
+   bless \%handle, PApp::DataRef::Hash::Proxy;
 }
 
 sub new_locked {
@@ -230,7 +240,7 @@ sub new_locked {
    my %handle;
 
    tie %handle, $class, autocommit => 0, delay => 1, preload => 1, cache => 1, @_;
-   bless \%handle, PApp::DataRef::DB_row::Proxy;
+   bless \%handle, PApp::DataRef::Hash::Proxy;
 }
 
 sub dbh {
@@ -292,6 +302,7 @@ sub TIEHASH {
          # try to preload, enable caching
          $preload = ref $preload ? join ",", @$preload : "*";
          my $st = eval {
+            local $SIG{__DIE__};
             sql_exec $self->{database}->dbh,
                      "select $preload from $self->{table} where $self->{key_expr}",
                      @{$self->{id}};
@@ -524,7 +535,7 @@ sub flush {
          delete $self->{preload}; # preload also acts as a "we know all columns" flag
       } else {
          &$update;
-         $sql_exec > 0 or eval { $insrep->("insert") };
+         $sql_exec > 0 or eval { local $SIG{__DIE__}; $insrep->("insert") };
          $sql_exec > 0 or &$update;
       }
    }
@@ -597,7 +608,23 @@ sub DESTROY {
    }
 }
 
-package PApp::DataRef::DB_row::Proxy;
+package PApp::DataRef::Scalar::Proxy;
+
+# merely a proxy class to re-route method calls
+
+sub AUTOLOAD {
+   my $package = ref tied ${$_[0]};
+   (my $method = $AUTOLOAD) =~ s/.*(?=::)/$package/se;
+   *{$AUTOLOAD} = sub {
+      unshift @_, tied ${+shift};
+      goto &$method;
+   };
+   goto &$AUTOLOAD;
+}
+
+sub DESTROY { }
+
+package PApp::DataRef::Hash::Proxy;
 
 # merely a proxy class to re-route method calls
 

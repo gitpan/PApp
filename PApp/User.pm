@@ -25,13 +25,13 @@ use Convert::Scalar ();
 use PApp::SQL;
 use PApp::Exception qw(fancydie);
 use PApp::Callback ();
-use PApp::Config qw(DBH $DBH);
+use PApp::Config qw(DBH $DBH); DBH;
 use PApp::Event ();
 use PApp qw($userid *state getuid);
 
 use base Exporter;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw( 
    authen_p access_p
 
@@ -117,6 +117,16 @@ sub access_p($) {
       and (exists $access->{$_[0]} or exists $access->{"$papp::papp->{name}\000$_[0]"});
 }
 
+=item enum_access [$uid]
+
+Return all access rights of the logged-in (or specified) user.
+
+=cut
+
+sub enum_access {
+   die "enum_access NYI";
+}
+
 =item grant_access [$userid, ]accessright
 
 Grant the specified access right to the logged-in (or specified) user.
@@ -160,8 +170,6 @@ Find all users (uid's) with the given access right.
 sub find_access {
    sql_fetchall $DBH, "select userid from usergrp where grpid = ?", grpid $_[0];
 }
-
-=cut
 
 1;
 

@@ -16,11 +16,11 @@ WriteMakefile(
 	           },
     'NAME'	=> 'PApp',
     'VERSION_FROM' => 'PApp.pm',
-    'DIR'	=> [qw(I18n Recode)],
+    'DIR'	=> [qw(I18n Recode Storable)],
     'LIBS'	=> [''],
     'DEFINE'	=> '',
     'INC'	=> '',
-    'EXE_FILES'	=> ['bin/papp-env', 'bin/papp-admin'],
+    'EXE_FILES'	=> ['bin/papp-env', 'bin/papp-admin', 'xpcse/xpcse', 'xpcse/run-mailcap'],
     'PM'	=> {
 		    'PApp.pm'		=> '$(INST_LIBDIR)/PApp.pm',
 		    'PApp/Apache.pm'	=> '$(INST_LIBDIR)/PApp/Apache.pm',
@@ -47,14 +47,18 @@ WriteMakefile(
 		    'PApp/XSLT/LibXSLT.pm'	=> '$(INST_LIBDIR)/PApp/XSLT/LibXSLT.pm',
 		    'PApp/Admin.pm'	=> '$(INST_LIBDIR)/PApp/Admin.pm',
 		    'PApp/Prefs.pm'	=> '$(INST_LIBDIR)/PApp/Prefs.pm',
+		    'PApp/Session.pm'	=> '$(INST_LIBDIR)/PApp/Session.pm',
 		    'PApp/User.pm'	=> '$(INST_LIBDIR)/PApp/User.pm',
 		    'PApp/UserObs.pm'	=> '$(INST_LIBDIR)/PApp/UserObs.pm',
+		    'PApp/Preprocessor.pm'	=> '$(INST_LIBDIR)/PApp/Preprocessor.pm',
+		    'PApp/XBox.pm'	=> '$(INST_LIBDIR)/PApp/XBox.pm',
+		    'PApp/MimeType.pm'	=> '$(INST_LIBDIR)/PApp/MimeType.pm',
                    },
     'PREREQ_PM'	=> {
-		    PApp::SQL		=> 0.121,
-                    Compress::LZF	=> 0.1041,
+		    PApp::SQL		=> 0.14,
+                    Compress::LZF	=> 0.1045,
                     String::Similarity	=> 0.02,
-                    Convert::Scalar	=> 0.06,
+                    Convert::Scalar	=> 0.09,
                     Crypt::Twofish2	=> 0.01,
 
                     URI			=> 1.12,
@@ -100,15 +104,23 @@ predist: setver i18n
 	\$(MAKE) tardist
 
 install :: config.pl all
+	\$(PERL) ./papp-install --install
+
+install :: config.pl all
 	\@echo
 	\@echo '*****'
 	\@echo '***** Please run:'
 	\@echo '*****'
-	\@echo '***** \$(PERL) papp-install'
-	\@echo '*****'
-	\@echo '***** now to initialize the papp databases, if necessary.'
+	\@echo '***** make init		to initialize the papp database'
+	\@echo '***** make update	to update an existing papp installation'
 	\@echo '*****'
 	\@echo
+
+init: config.pl all
+	\$(PERL) ./papp-install --init
+
+update: config.pl all
+	\$(PERL) ./papp-install --update
 
 ";
 

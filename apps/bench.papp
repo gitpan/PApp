@@ -10,6 +10,8 @@
    <html><body>
    recursion count: <?$S{x}:><br />
    reload_p: <?0&&reload_p:><br />
+   <?$P{string}:>
+   <?"hi":>
 #if 0
 <:
 $request->header_out("Set-Cookie" => "TEST=".time."; PATH=/");

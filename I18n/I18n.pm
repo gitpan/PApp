@@ -56,7 +56,7 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 0.142;
+   $VERSION = 0.143;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
@@ -677,7 +677,8 @@ sub export_dpo($$;$$) {
                         "select id, msg
                          from msgid i, msgstr s
                          where i.domain = ? and i.nr = s.nr and s.lang = ?
-                               and s.flags & 1 and msg != ''",
+                               and s.flags & 1 and msg != ''
+                         order by 2",
                         $domain, $lang;
       my $rows = $st->rows;
       if ($rows) {
@@ -1118,7 +1119,7 @@ akk		Akkadian
 ale		Aleut
 alg		Algonquian languages
 amh	am	Amharic
-ang		English, Old
+ang		English, Old (ca. 450-1100)
 apa		Apache languages
 ara	ar	Arabic
 arc		Aramaic
@@ -1206,16 +1207,16 @@ div		Divehi
 doi		Dogri
 dra		Dravidian (Other)
 dua		Duala
-dum		Dutch, Middle
+dum		Dutch, Middle (ca. 1050-1350)
 dyu		Dyula
 dzo	dz	Dzongkha
 efi		Efik
 egy		Egyptian (Ancient)
 eka		Ekajuk
-ell	el	Greek, Modern
+ell	el	Greek, Modern (1453-)
 elx		Elamite
 eng	en	English
-enm		English, Middle
+enm		English, Middle (1100-1500)
 epo	eo	Esperanto
 est	et	Estonian
 eus	eu	Basque
@@ -1230,8 +1231,8 @@ fin	fi	Finnish
 fiu		Finno-Ugrian (Other)
 fon		Fon
 fra	fr	French
-frm		French, Middle
-fro		French, Old
+frm		French, Middle (ca. 1400-1600)
+fro		French, Old (842-ca. 1400)
 fry	fy	Frisian
 ful		Fulah
 fur		Friulian
@@ -1245,13 +1246,13 @@ gla	gd	Gaelic (Scots)
 gle	ga	Irish
 glg	gl	Gallegan
 glv	gv	Manx
-gmh		German, Middle High
-goh		German, Old High
+gmh		German, Middle High (ca. 1050-1500)
+goh		German, Old High (ca. 750-1050)
 gon		Gondi
 gor		Gorontalo
 got		Gothic
 grb		Grebo
-grc		Greek, Ancient
+grc		Greek, Ancient (to 1453)
 grn	gn	Guarani
 guj	gu	Gujarati
 gwi		Gwich´in
@@ -1276,7 +1277,7 @@ ijo		Ijo
 iku	iu	Inuktitut
 ile	ie	Interlingue
 ilo		Iloko
-ina	ia	Interlingua
+ina	ia	Interlingua (International Auxiliary Language Association)
 inc		Indic (Other)
 ind	id	Indonesian
 ine		Indo-European (Other)
@@ -1350,7 +1351,7 @@ mar	mr	Marathi
 mas		Masai
 mdr		Mandar
 men		Mende
-mga		Irish, Middle
+mga		Irish, Middle (900-1200)
 mic		Micmac
 min		Minangkabau
 mis		Miscellaneous languages
@@ -1380,7 +1381,7 @@ nav	nv	Navajo
 nbl	nr	Ndebele, South
 nde	nd	Ndebele, North
 ndo	ng	Ndonga
-nds		Low German; Low Saxon
+nds		Low German; Low Saxon; German, Low; Saxon, Low
 nep	ne	Nepali
 new		Newari
 nia		Nias
@@ -1398,13 +1399,13 @@ nym		Nyamwezi
 nyn		Nyankole
 nyo		Nyoro
 nzi		Nzima
-oci	oc	Occitan; Provençal
+oci	oc	Occitan (post 1500); Provençal
 oji		Ojibwa
 ori	or	Oriya
 orm	om	Oromo
 osa		Osage
 oss	os	Ossetian; Ossetic
-ota		Turkish, Ottoman
+ota		Turkish, Ottoman (1500-1928)
 oto		Otomian languages
 paa		Papuan (Other)
 pag		Pangasinan
@@ -1413,14 +1414,14 @@ pam		Pampanga
 pan	pa	Panjabi
 pap		Papiamento
 pau		Palauan
-peo		Persian, Old
+peo		Persian, Old (ca. 600-400 b.c.)
 phi		Philippine (Other)
 pli	pi	Pali
 pol	pl	Polish
 pon		Pohnpeian
 por	pt	Portuguese
 pra		Prakrit languages
-pro		Provençal, Old
+pro		Provençal, Old (to 1500)
 pus	ps	Pushto
 que	qu	Quechua
 raj		Rajasthani

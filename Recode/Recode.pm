@@ -25,7 +25,7 @@ package PApp::Recode;
 use Convert::Scalar ();
 
 BEGIN {
-   $VERSION = 0.142;
+   $VERSION = 0.143;
 
    require XSLoader;
    XSLoader::load 'PApp::Recode', $VERSION;
@@ -75,6 +75,10 @@ each time it is called (it does remember state, though. A call without
 arguments resets the state).
 
 Perl's internal utf8-flag is ignored on input and not set on output.
+
+Example: create a converter that converts utf-8 into ascii, html-escaping any non-ascii characters:
+
+   new PApp::Recode "ascii", "utf-8", sub { sprintf "&#x%x;", $_[0] };
 
 =item $converter = to_utf8 PApp::Recode "source-character-set" [, \&fallback]
 

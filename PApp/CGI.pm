@@ -40,7 +40,7 @@ use Exporter;
 BEGIN {
    @ISA = (PApp::Base::);
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 0.142;
+   $VERSION = 0.143;
 }
 
 =head2 FUNCTIONS
@@ -56,6 +56,7 @@ sub kill_self {
    eval {
       require CGI::SpeedyCGI;
       my $sp = new CGI::SpeedyCGI;
+      $sp->shutdown_now;
       $sp->setopt('MAXRUNS', 1);
    };
    exit(1);

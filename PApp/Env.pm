@@ -5,6 +5,7 @@ PApp::Env - communicate between processes and the outside.
 =head1 SYNOPSIS
 
  use PApp::Env;
+ # See also PApp::Prefs and PApp::Session
 
 =head1 DESCRIPTION
 
@@ -31,7 +32,7 @@ currently true in all cases.
 
 package PApp::Env;
 
-use PApp::Config qw($DBH DBH);
+use PApp::Config qw(DBH $DBH); DBH;
 use PApp::SQL;
 use PApp::Exception;
 
@@ -39,7 +40,7 @@ use Compress::LZF ();
 
 use base Exporter;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT = qw(setenv getenv unsetenv modifyenv lockenv listenv);
 
 DBH;

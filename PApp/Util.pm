@@ -19,13 +19,19 @@ use URI;
 
 use base 'Exporter';
 
-$VERSION = 0.142;
-@EXPORT_OK = qw(
-      format_source dumpval sv_peek
-      digest
-      append_string_hash uniq
-      find_file fetch_uri load_file
-);
+BEGIN {
+   $VERSION = 0.143;
+   @EXPORT_OK = qw(
+         format_source dumpval sv_peek sv_dump
+         digest
+         append_string_hash uniq
+         find_file fetch_uri load_file
+   );
+
+   # I was lazy, all the util xs functions are in PApp.xs
+   require XSLoader;
+   XSLoader::load PApp, $VERSION unless defined &PApp::bootstrap;
+}
 
 =item format_source $source
 
@@ -136,13 +142,11 @@ sub uniq {
 
 =item sv_peek $sv
 
+=item sv_dump $sv
+
 Returns a very verbose dump of the internals of the given sv. Calls the
-C<sv_peek> core function. If you don't know what I am talking then this
-function is not for you.
-
-=cut
-
-# in PApp.xs currently ;(
+C<sv_peek> (C<sv_dump>) core function. If you don't know what I am talking
+about then this function is not for you. Or maybe you should try it ;)
 
 =item fetch_uri $uri
 
@@ -210,6 +214,69 @@ sub load_file {
    my $path = &find_file
       or return;
    return fetch_uri $path;
+}
+
+=back
+
+=head2 SOURCE FILTERING
+
+A very primitive form of source filtering can be implemented using
+C<filter_add>, C<filter_read> and C<filter_simple>. Better use the
+L<Filter> module family, though.
+
+=over 4
+
+=cut
+
+sub filter_simple(&) {
+   my $cb = $_[0];
+   my $buf;
+
+   sub {
+      unless (defined $buf) {
+         local $_ = "";
+         1 while 0 > ($buf = PApp::Util::filter_read $_[0] + 1, $_, 65536);
+         return $buf if $buf < 0;
+
+         &$cb;
+
+         $buf = $_;
+      }
+
+      my $len;
+
+      if ($_[2]) {
+         $len = $_[2];
+      } else {
+         $len = index $buf, $/;
+         $len = $len < 0 ? length $buf : $len + length $/;
+      }
+
+      $_[1] .= substr $buf, 0, $len, "";
+      return length $_[1];
+   }
+}
+
+# internal benchmark funs
+
+sub bench(;$) {
+   use Time::HiRes 'time';
+   if (@_) {
+      push @bench, time, $_[0];
+   } else {
+      @bench = (time, "BEGIN");
+   }
+}
+
+sub benchlog {
+   my $log;
+   push @bench, time;
+   my $time = shift @bench;
+   while (@bench) {
+      $log .= sprintf "%s - %.3f - ", shift @bench, $bench[0]-$time;
+      $time = shift @bench;
+   }
+   warn sprintf "%.3f: %s\n",(time-$NOW),$log;
 }
 
 1;

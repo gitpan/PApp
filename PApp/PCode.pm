@@ -7,7 +7,7 @@ PApp::PCode - PCode compiler/decompiler and various other utility functions.
 =head1 DESCRIPTION
 
 PApp stores a lot of things in pcode format, which is simply an escaping
-mechanism to store pxml/xml/html/pelr sections inside a single data
+mechanism to store pxml/xml/html/perl sections inside a single data
 structure that can be efficiently converted to pxml or perl code.
 
 You will rarely if ever need to use this module directly.
@@ -28,7 +28,7 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 0.142;
+$VERSION = 0.143;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"
@@ -46,11 +46,15 @@ by prefixing the string with "E<lt>:?>".
  <?	start perl expression (single expr, result will be interpolated)
  ?>	illegal(!) (was deprecated before)
 
+INTERNATIONALISATION (__"xxx")
+
 Within plain and interpolated string sections you can also use the
 __I<>"string" construct to mark (and map) internationalized text. The
 construct must be used verbatim: two underlines, one double-quote, text,
 and a trailing double-quote. For more complex uses, just escape to perl
 (e.g. <?__I<>"xxx"?>).
+
+PREPROCESSOR COMMANDS ("#if...")
 
 In string sections (and only there!), you can also use preprocessor
 commands (the C<#> must be at the beginning of the line, between the C<#>
@@ -72,15 +76,40 @@ reflected in the output).
 White space will be mostly preserved (especially line-number and
 -ordering).
 
-=begin comment
+CALLBACKS ("{: xxx :}(args)")
 
-And also these experimental preprocessor commands (these currently trash
-the line number info, though!)
+Within perl sections, one can automatically create PApp::Callback
+objects by enclosing code in C<{:> and C<:}> pairs. This creates a
+PApp::Callback object from the enclosed code fragment. A refer will be
+created automatically If the closing bracket is followed by an opening
+parenthesis, e.g.:
 
- #?? condition ?? if-yes-phtml-code
- #?? condition ?? if-yes-phtml-code ?? if-no-phtml-code
+ # callback object alone
+ my $cb = {: print "hallo" :};
 
-=end comment
+ # callback & refer
+ surl {: warn "called with $_[0]" :}(55);
+
+Implementation: a callback of the form "{:code:}(args)" will be compiled
+like this (which might change anytime).
+
+ +do {
+    BEGIN {
+       $_some_global_var = {{register_function}} sub { {{callback_preamble}} code }, name => "hash";
+       # hash is a hash of the code, i.e. code changes => callback changes.
+    }
+    $_some_global_var
+ }->({{argument_preamble}}arguments)
+
+An experimental facility (a.k.a. hack and subject to change!) to overwrite all parts marked as
+C<{{}}> is available:  The global variable
+
+   $PApp::PCode::register_callback
+
+contains a hash with strings for all marked parts of a callback.  Remember
+that the function is being called when the code is eval'ed. A valid trick
+to pass extra context information is to store something like C<funcname
+5,6,> as the callback name.
 
 =item xml2pcode "string"
 
@@ -89,7 +118,7 @@ Convert the string into pcode without interpreting it.
 =item perl2pcode "perl source"
 
 Protect the given perl sourcecode, i.e. convert it in a similar way as
-C<phtml_to_pcode>.
+C<pxml_to_pcode>, registering any callbacks it sees.
 
 =item pcode2perl $pcode
 
@@ -114,6 +143,37 @@ sub _unquote_perl($) {
       join "\n",
          map pack("H*", $_),
             split /[ \011\012\015]/, $_[0], -1;
+}
+
+our $register_callback = {
+   register_function => "register_callback",
+   callback_preamble => "",
+   argument_preamble => "",
+};
+
+sub __compile_cb {
+   my ($cb, $hasargs) = @_;
+
+   require PApp::Util;
+   require PApp::Callback;
+
+   (my $hash = PApp::Util::digest($cb)) =~ y/a-zA-Z0-9//cd;
+
+   if ($hasargs) {
+      $hasargs = $register_callback->{argument_preamble} ? "->($register_callback->{argument_preamble}," : "->(";
+   } else {
+      $hasargs = $register_callback->{argument_preamble} ? "->append($register_callback->{argument_preamble})" : "";
+   }
+
+   "+do{BEGIN{\$papp_pcode_cb_$hash=$register_callback->{register_function} "
+   ."sub{$register_callback->{callback_preamble}$cb},name=>'$hash'}\$papp_pcode_cb_$hash}$hasargs";
+}
+
+
+sub _register_callbacks($) {
+   local $_ = $_[0];
+   s/\{: ( (?:[^:]+|:[^}])* ) :\}\s*(\()?/__compile_cb $1, $2 eq "("/gex;
+   $_;
 }
 
 my ($dx, $dy, $dq);
@@ -166,15 +226,15 @@ sub pxml2pcode($) {
       # CODE
       $data =~ /\G<([:?])((?:[^:?]+|[:?][^>])*)/gcs or last;
       $res .= $1 eq ":" ? $dx : $dy;
-      $res .= _quote_perl $2;
+      $res .= _quote_perl _register_callbacks $2;
 
    }
-   $data !~ /\G(.{1,20})/gcs or croak "trailing characters in xml string ($1)";
+   $data !~ /\G(.{1,20})/gcs or croak "trailing characters in pxml string ($1)";
    substr $res, 1;
 }
 
 sub perl2pcode($) {
-   $dx . (_quote_perl shift) . $dx;
+   $dx . (_quote_perl _register_callbacks shift) . $dx;
 }
 
 sub xml2pcode($) {
@@ -195,12 +255,12 @@ sub pcode2perl($) {
       if ($src ne "") {
          #$mode = $mode eq $dx ? '' : 'qq'; # allow ?>
          $src =~ s/\\/\\\\/g; $src =~ s/'/\\'/g;
-         utf8_on $src; #d# #FIXME##5.7.0# bug, see testcase #1
          $res .= "\$PApp::output .= '$src';";
       }
 
       # CODE
-      $pcode =~ /\G([$dx$dy])([0-9a-f \010\012\015]*)/gcso or last;
+      # $pcode =~ /\G([$dx$dy])([0-9a-f \010\012\015]*)/gcso or last; # faster, but #d#DEVEL17205
+      $pcode =~ /\G([$dx$dy])((?:[0-9a-f \010\012\015]*)*)/gcso or last; # double *)*) is just #d#DEVEL17205 fix(!)
       ($mode, $src) = ($1, $2);
       $src = _unquote_perl $src;
       if ($src !~ /^[ \t]*$/) {
