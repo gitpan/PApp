@@ -35,28 +35,33 @@ sub authen_p*() {
    $state{papp}{access_valid};
 }
 
+sub _gid($) {
+   my $gid = $PApp::gid_cache{$_[0]};
+   unless ($gid) {
+      $gid = $PApp::gid_cache{$_[0]} =
+         sql_fetch $PApp::statedbh,
+                   "select id from grp where name like ?",
+                   $_[0];
+   }
+   $gid;
+}
+
 sub access_p*($) {
-   exists $state{papp}{access}{$_[0]};
+   exists $state{papp}{access}{_gid shift};
 }
 
 sub admin_p*() {
-   exists $state{papp}{access}{"admin"};
+   exists $state{papp}{access}{_gid "admin"};
 }
 
 sub known_user_p*(;$) {
-   my $access_p = shift;
-   my $st = $PApp::statedbh->prepare("select access, user from user where id = ?");
-   $st->execute($userid);
-   if (my ($access, $username) = $st->fetchrow_array) {
-      if ($access_p ne "") {
-         for (split /[, \t\r\n]+/, $access) {
-            return $username if $_ eq $access_p;
-         }
-         return ();
-      }
-      return $username;
+   my $user = sql_fetch $PApp::statedbh, "select user from user where id = ?", $userid;
+   if (@_) {
+      (sql_exists $PApp::statedbh,
+                  "usergrp where userid = ? and grpid = ?",
+                  $userid, _gid shift) ? $user : ();
    } else {
-      return ();
+      $user;
    }
 }
 
@@ -67,18 +72,13 @@ sub _nuke_access() {
 
 # get access info from database
 sub _fetch_access() {
-   my $st = $PApp::statedbh->prepare("select access from user where id = ?");
-   $st->execute($userid);
-
    _nuke_access;
-   $state{papp}{access}{$_} = 1 for split /[, \t\r\n]+/, $st->fetchrow_arrayref->[0];
-   $state{papp}{access_valid} = 1;
-}
 
-# store access info into the database
-sub _store_access() {
-   my $st = $PApp::statedbh->prepare("update user set access = ? where id = ?");
-   $st->execute((join ",", keys %{$state{papp}{access}}), $userid);
+   my $st = sql_exec $PApp::statedbh, \my($gid), "select grpid from usergrp where userid = ?", $userid;
+   while ($st->fetch) {
+      $state{papp}{access}{$gid} = 1;
+   }
+   $state{papp}{access_valid} = 1;
 }
 
 =head2 update_login $user, $pass
@@ -104,7 +104,6 @@ sub update_username*($;$) {
    if (sql_fetch $PApp::statedbh, "select count(*) from user where user = ? and id != ?", $user, $userid) {
       undef $userid;
    } else {
-      warn "update user set user = ? where id = ?, $user, $userid\n";#d#
       sql_exec $PApp::statedbh, "update user set user = ? where id = ?", $user, $userid;
    }
    $PApp::statedbh->do("unlock tables");
@@ -151,9 +150,8 @@ Grant the specified access right to the logged-in user.
 =cut
 <perl><![CDATA[
    if (authen_p) {
+      sql_exec $PApp::statedbh, "replace into usergrp values (?, ?)", $userid, _gid $right;
       _fetch_access;
-      $state{papp}{access}{$right} = 1;
-      _store_access;
    } else {
       fancydie "Internal error", "grant_access was called but no user was logged in";
    }
@@ -167,9 +165,8 @@ Revoke the specified access right to the logged-in user.
 =cut
 <perl><![CDATA[
    if (authen_p) {
+      sql_exec $PApp::statedbh, "delete from usergrp where userid = ? and grpid = ?", $userid, _gid $right;
       _fetch_access;
-      delete $state{papp}{access}{$right};
-      _store_access;
    } else {
       fancydie "Internal error", "revoke_access was called but no user was logged in";
    }
@@ -224,13 +221,13 @@ Display a login box.
       <table width="100%" bgcolor="#ffff00" cellpadding=0 cellspacing=0 border=0>
          <tr><td>&nbsp;</td><td><font color="#000000">
             &nbsp;<p>
-            You may log-in now!
+            __"You may log-in now!"
          </font></td></tr><tr><td><font color="#000000">
-            Username:</td><td><?textfield "papp_user", value => $user,  size => 12, maxlength => 32:></td>
+            __"Username:"</td><td><?textfield "papp_user", value => $user,  size => 12, maxlength => 32:></td>
          </font></td></tr><tr><td><font color="#000000">
-            Password:</td><td><?password_field "papp_pass", size => 12, maxlength => 32:></td>
+            __"Password:"</td><td><?password_field "papp_pass", size => 12, maxlength => 32:></td>
          </font></td></tr><tr><td>&nbsp;</td><td><font color="#000000">
-            <?submit "login" => "Log In":>
+            <?submit "login" => __"Log In":>
             <p>&nbsp;
          </font></td></tr>
       </table>

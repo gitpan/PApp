@@ -33,6 +33,8 @@ PApp::Apache - multi-page-state-preserving web applications
 
 =head1 DESCRIPTION
 
+=over 4
+
 =cut
 
 package PApp::Apache;
@@ -47,7 +49,7 @@ use File::Basename qw(dirname);
 use PApp;
 use PApp::Parser;
 
-$VERSION = 0.03;
+$VERSION = 0.04;
 
 *PApp::apache_request = \&Apache::request;
 

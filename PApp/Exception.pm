@@ -5,7 +5,7 @@ require Exporter;
 use PApp::HTML;
 
 @ISA = qw(Exporter);
-$VERSION = 0.03;
+$VERSION = 0.04;
 @EXPORT = qw(fancydie);
 
 sub new($$;$@) {

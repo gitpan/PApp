@@ -8,36 +8,35 @@ PApp::I18n - internationalization support for PApp
 
 =cut
 
-$VERSION = 0.03;
-
-# GDBM_File is faster then DB_File, and creates smaller files
-# SDBM_File is (much) faster&smaller than GDBM_File, but limits the size of key/value pairs too much
-# this is not easily configurable
-
-use GDBM_File;
-
-use File::Glob qw(:glob);
+use File::Glob;
 
 use PApp::Exception;
 
-require Exporter;
+BEGIN {
+   require Exporter;
+   require DynaLoader;
 
-@ISA = qw(Exporter);
-@EXPORT = qw(
-      open_translator
-);
-@EXPORT_OK = qw(
-      scan_file scan_init scan_end scan_field export_po export_dbm
-);
+   $VERSION = 0.04;
+   @ISA = qw(Exporter DynaLoader);
+   @EXPORT = qw(
+         open_translator
+   );
+   @EXPORT_OK = qw(
+         scan_file scan_init scan_end scan_field export_po export_dbm
+   );
 
-=item open_translator $path
+   bootstrap PApp::I18n $VERSION;
+}
+
+=item open_translator $path, lang1, lang2...
 
 open an existing translation directory
 
 =cut
 
 sub open_translator {
-   new PApp::I18n path => $_[0];
+   my ($path, @langs) = @_;
+   new PApp::I18n path => $path, langs => \@langs;
 }
 
 sub new {
@@ -58,21 +57,19 @@ sub expand_lang {
    my %lang;
    @lang{@_} = @_;
 
-   lang_loop:
    for (split /,/, $langs) {
       $lang = $_; $lang =~ s/^\s+//; $lang =~ s/\s+$//; $lang =~ y/-/_/;
       next unless $lang;
-      last if exists $lang{$lang};
+      return $lang if exists $lang{$lang};
       $lang =~ s/_.*$//;
-      last if exists $lang{$lang};
+      return $lang if exists $lang{$lang};
       for (keys %lang) {
          if (/^${lang}_/) {
-            $lang = $_;
-            last lang_loop;
+            return $_;
          }
       }
    }
-   $lang || "default";
+   ();
 }
 
 =item ($lang, $table) = $translator->get_language($languages)
@@ -89,29 +86,37 @@ sub get_language {
    # first, map the "langs" into a real language code
    my $lang = $self->{lang}{$langs};
    unless ($lang) {
-      my @langs = map { s/^.*\///; s/\.dpo$//; $_ } File::Glob::glob "$self->{path}/*.dpo", GLOB_NOSORT;
-      $self->{lang}{$langs} = $lang = expand_lang $langs, @langs;
+      #my @langs = map { s/^.*\///; s/\.dpo$//; $_ } File::Glob::glob "$self->{path}/*.dpo", GLOB_NOSORT;
+      $self->{lang}{$langs} = $lang = expand_lang $langs, @{$self->{langs}};
    }
-   # then map the lang into the corresponding GDBM_File
+   # then map the lang into the corresponding .dpo file
    my $db = $self->{db}{$lang};
    unless ($db) {
-      $self->{db}{$lang} = $db = tie %{$self->{tie} = {}}, 'GDBM_File', "$self->{path}/$lang.dpo", &GDBM_READER, 0000;
-      $db or fancydie "unable to find default translation table '$lang'", "in directory '$self->{path}'";
+      my $path = "$self->{path}/$lang.dpo";
+      $self->{db}{$lang} = $db = new PApp::I18n::Table -r $path ? $path : ();
+      $db or fancydie "unable to open translation table '$lang'", "in directory '$self->{path}'";
    }
    ($lang, $db);
 }
 
-=item $translation = $table->fetch($message)
+=item $translation = $table->gettext($msgid)
 
-Find the translation for $message.
+Find the translation for $msgid, or return the original string if no
+translation is found. If the msgid starts with the two characters "\"
+and "{", then these characters and all remaining characters until the
+closing '}' are skipped before attempting a translation. If you do want
+to include these two characters at the beginning of the string, use the
+sequence "\{\{". This can be used to specify additional arguments to some
+translation steps (like the language used). Here are some examples:
+
+  string      =>    translation
+  \{\string   =>    \translation
+  \{\{string  =>    \{translation
+  \{}string   =>    translation
+
+To assure that the string is translated "as is" just prefix it with "\{}".
 
 =cut
-
-sub PApp::I18n::Table::fetch {
-   #warn "called from @{[caller]}, db $_[0] for '$_[1]'\n";#d#
-   my $msg = GDBM_File::FETCH($_[0], $_[1]);
-   defined $msg ? $msg : $_[1];
-}
 
 #############################################################################
 
@@ -149,9 +154,10 @@ sub scan_file($$) {
 
 sub scan_field {
    my ($dsn, $field, $lang) = @_;
+   my $table;
    print "field $field for '$scan_app' in '$lang'\n";
    my $db = DBI->connect(@$dsn);
-   my ($table, $field) = split /\./, $field;
+   ($table, $field) = split /\./, $field;
    my $st = $db->prepare("show columns from $table like ?"); $st->execute($field);
    my $type = $st->fetchrow_arrayref;
    $type or fancydie "no such table", $table;
@@ -189,6 +195,7 @@ sub fuzzy_search  {
 }
 
 sub scan_end {
+   my $refine = shift() ? "and flags & 1 = 1" : "";
    while (my ($lang, $v) = each %scan_msg) {
       while (my ($msg, $context) = each %$v) {
          $context = join "\n", @$context;
@@ -201,7 +208,7 @@ sub scan_end {
          my $best;
          for my $lang2 (@$scan_langs) {
             next if $lang eq $lang2;
-            my $msg2 = sql_fetch "select msg from msgstr where nr = ? and lang = ? and flags & 1",
+            my $msg2 = sql_fetch "select msg from msgstr where nr = ? and lang = ? $refine",
                                  $nr, $lang2;
             if (!$msg2) {
                $best = fuzzy_search $msg unless $best;
@@ -216,18 +223,6 @@ sub scan_end {
    ($scan_app, $scan_lang, %scan_msg) = ();
 }
 
-sub _went {
-   my ($refs, $msgid, $msgstr) = @_;
-   for ($msgid, $msgstr) {
-      s/"/\\"/g;
-      s/\n/\\n/g;
-   }
-
-   print "#$_\n" for grep $_ ne "", split "\n", $refs;
-   print "msgid \"$msgid\"\n";
-   print "msgstr \"$msgstr\"\n\n";
-}
-
 sub export_po {
    my $pmod = shift;
    my $base = "$pmod->{i18ndir}/$pmod->{name}";
@@ -235,30 +230,35 @@ sub export_po {
    for my $lang (grep !ref$pmod->{lang}{$_}, keys %{$pmod->{lang}}) {
       my $pofile = "$base/$lang.po";
       local *POFILE;
-      print "exporting $pofile...\n";
       open POFILE, ">", $pofile or die "unable to create $pofile: $!";
       my $st = sql_exec \my($context, $id, $msg),
                         "select context, id, msg from msgid, msgstr
                          where msgid.app = ? and msgid.nr = msgstr.nr and msgstr.lang = ? and msgstr.flags & 1",
                         $pmod->{name}, $lang;
-      while ($st->fetch) {
-         select POFILE;
-         _went $context, $id, $msg;
-         select STDOUT;
+      if ($st->rows) {
+         my $po = PApp::I18n::PO_Writer->new($pofile);
+         while ($st->fetch) {
+            $po->add($id, $msg, ",lang=$lang", map ":$_", split /\n/, $context);
+         }
+         print "exported $pofile\n";
+      } else {
+         unlink $pofile;
       }
    }
    local *POTFILE;
    my $potfile = "$base/$pmod->{name}.pot";
-   print "exporting $potfile...\n";
-   open POTFILE, ">", $potfile or die "unable to create $potfile: $!";
    my $st = sql_exec \my($context, $id, $lang),
                      "select context, id, lang from msgid
                       where app = ?",
                      $pmod->{name};
-   while ($st->fetch) {
-      select POTFILE;
-      _went "$context\n,lang=$lang", $id, $msg;
-      select STDOUT;
+   if ($st->rows) {
+      my $po = PApp::I18n::PO_Writer->new($potfile);
+      while ($st->fetch) {
+         $po->add($id, "", ",lang=$lang", map ":$_", split /\n/, $context);
+      }
+      print "exported $potfile\n";
+   } else {
+      unlink $potfile;
    }
 }
 
@@ -266,21 +266,172 @@ sub export_dbm {
    my $pmod = shift;
    my $base = "$pmod->{i18ndir}/$pmod->{name}";
    mkdir $base, 0755;
-   for my $lang ('default', grep !ref$pmod->{lang}{$_}, keys %{$pmod->{lang}}) {
+   for my $lang (grep !ref$pmod->{lang}{$_}, keys %{$pmod->{lang}}) {
       my $pofile = "$base/$lang.dpo";
-      print "exporting $pofile...\n";
-      my %db;
-      tie %db, 'GDBM_File', "$pofile~", &GDBM_NEWDB|&GDBM_FAST, 0666;
       my $st = sql_exec \my($id, $msg),
                         "select id, msg from msgid, msgstr
                          where msgid.app = ? and msgid.nr = msgstr.nr and msgstr.lang = ? and msgstr.flags & 1 and msg != ''",
                         $pmod->{name}, $lang;
-      while ($st->fetch) {
-         $db{$id} = $msg;
+      my $rows = $st->rows;
+      if ($rows) {
+         my $prime = int ($rows * 4 / 3) | 1;
+         {
+            use integer;
+
+            NUM:
+            for (;; $prime += 2) {
+               my $max = int sqrt $prime;
+               for (my $i = 3; $i <= $max; $i += 2) {
+                  next NUM unless $prime % $i;
+               }
+               last;
+            }
+         }
+         my $dpo = new PApp::I18n::DPO_Writer "$pofile~", $prime;
+         $dpo->add($id,$msg) while $st->fetch;
+         undef $dpo;
+         rename "$pofile~", $pofile;
+         print "exported $pofile\n";
+      } else {
+         unlink $pofile;
       }
-      untie %db;
-      rename "$pofile~", $pofile;
    }
+}
+
+sub quote {
+   no bytes;
+   local $_ = shift;
+   s/\"/\\"/g;
+   s/\n/\\n/g;
+   s/\r/\\r/g;
+   s/\t/\\t/g;
+   s/[\x00-\x1f\x80-\x9f]/sprintf "\\x%02x", unpack "c", $1/ge;
+   #s/[\x{0100}-\x{ffff}/sprintf "\\x{%04x}", ord($1)/ge;
+   s/\\/\\\\/g;
+   $_;
+}
+
+sub unquote {
+   no bytes;
+   local $_ = shift;
+   s/\\\\/\\/g;
+   s/\\"/\"/g;
+   s/\\n/\n/g;
+   s/\\r/\r/g;
+   s/\\t/\t/g;
+   s/\\x([0-9a-fA-F]{2,2})/pack "c", hex($1)/ge;
+   s/\\x\{([0-9a-fA-F]+})\}/chr(hex($1))/ge;
+   $_;
+}
+
+package PApp::I18n::PO_Reader;
+
+use Carp;
+
+sub new {
+   my ($class, $path) = @_;
+   my $self;
+
+   $self->{path} = $path;
+   open $self->{fh}, ">", $path or croak "unable to open '$path' for reading: $!";
+
+   bless $self, $class;
+}
+
+=for nobody
+
+($msgid, $msgstr, @comments) = $po->next;
+
+=cut
+
+sub peek {
+   my $self = shift;
+   unless ($self->{line}) {
+      do {
+         chomp ($self->{line} = $self->{fh}->getline);
+      } while defined $self->{line} && $self->{line} =~ /^\s*$/;
+   }
+   $self->{line};
+}
+
+sub line {
+   my $self = shift;
+   $self->peek;
+   delete $self->{line};
+}
+
+sub perr {
+   my $self = shift;
+   croak "$_[0], at $self->{path}:$.";
+}
+
+sub next {
+   my $self = shift;
+   my ($id, $str, @c);
+
+   while ($self->peek =~ /^\s*#(.*)$/) {
+      push @c, $1;
+      $self->line;
+   }
+   if ($self->peek =~ /^\s*msgid/) {
+      while ($self->peek =~ /^\s*(?:msgid\s+)?\"(.*)\"\s*$/) {
+         $id .= PApp::I18n::unquote $1;
+         $self->line;
+      }
+      if ($self->peek =~ /^\s*msgstr/) {
+         while ($self->peek =~ /^\s*(?:msgstr\s+)?\"(.*)\"\s*$/) {
+            $str .= PApp::I18n::unquote $1;
+            $self->line;
+         }
+      } elsif ($self->peek =~ /\S/) {
+         $self->perr("expected msgstr, not ");
+      } else {
+         return;
+      }
+   } elsif ($self->peek =~ /\S/) {
+      $self->perr("expected msgid");
+   } else {
+      return;
+   }
+   ($id, $str, @c);
+}
+
+package PApp::I18n::PO_Writer;
+
+use Carp;
+
+sub new {
+   my ($class, $path) = @_;
+   my $self;
+
+   $self->{path} = $path;
+   open $self->{fh}, ">", $path or croak "unable to open '$path' for writing: $!";
+
+   bless $self, $class;
+}
+
+=for nobody
+
+$po->add($msgid, $msgstr, @comments);
+
+=cut
+
+sub splitstr {
+   local $_ = "\"" . PApp::I18n::quote(shift) . "\"\n";
+   # do not split into multilines yet
+   $_;
+}
+
+sub add {
+   my $self = shift;
+   my ($id, $str, @c) = @_;
+
+   $self->{fh}->print(
+      (map "#$_\n", @c),
+      "msgid ", splitstr($id),
+      "msgstr ", splitstr($str),
+      "\n"
+   );
 }
 
 1;

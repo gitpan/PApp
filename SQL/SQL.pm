@@ -23,12 +23,11 @@ use DBI;
 
 #use PApp::Exception; # not yet used
 
-$VERSION = 0.03;
-
 BEGIN {
+   require Exporter;
    require DynaLoader;
 
-   $VERSION = 0.03;
+   $VERSION = 0.04;
    @ISA = qw/Exporter DynaLoader/;
    @EXPORT = qw(
          sql_exec sql_fetch sql_fetchall sql_exists sql_insertid $sql_exec
@@ -44,7 +43,7 @@ my %dbcache;
 
 sub connect_cached {
    my ($id, $dsn, $user, $pass, $flags, $connect) = @_;
-   my $id = "$id\0$dsn\0$user\0$pass";
+   $id = "$id\0$dsn\0$user\0$pass";
    unless ($dbcache{$id} && $dbcache{$id}->ping) {
       #warn "connecting to ($dsn|$user|$pass|$flags)\n";#d#
       # first, nuke our cache (sooory ;)
@@ -158,14 +157,6 @@ Examples:
 
 =cut
 
-sub sql_exists($;@) {
-   my $select = shift;
-   my @args = @_;
-   $select = "select count(*) > 0 from $select limit 1";
-   @_ = ($select, @_);
-   goto &sql_fetch;
-}
-
 # uncodumented, since unportable. yet it is exportet (aaargh!)
 sub sql_insertid {
    $DBH->{mysql_insertid};
@@ -224,6 +215,14 @@ sub sql_fetchall {
    ref $r && @$r ? @{$r->[0]}==1 ? map @$_,@$r
                                  : @$r
 		 : ();
+}
+
+sub sql_exists($;@) {
+   my $select = shift;
+   my @args = @_;
+   $select = "select count(*) > 0 from $select limit 1";
+   @_ = ($select, @_);
+   goto &sql_fetch;
 }
 
 =cut

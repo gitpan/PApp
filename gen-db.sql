@@ -25,6 +25,17 @@ CREATE TABLE error (
 );
 
 #
+# Table structure for table 'grp'
+#
+
+CREATE TABLE grp (
+  id int(10) unsigned NOT NULL auto_increment,
+  name varchar(20) DEFAULT '' NOT NULL,
+  longdesc text DEFAULT '' NOT NULL,
+  PRIMARY KEY (id)
+);
+
+#
 # Table structure for table 'msgid'
 #
 
@@ -73,9 +84,18 @@ CREATE TABLE user (
   prefs blob DEFAULT '' NOT NULL,
   user varchar(20) DEFAULT '' NOT NULL,
   pass varchar(14) DEFAULT '' NOT NULL,
-  access varchar(255) DEFAULT '' NOT NULL,
   comment varchar(255) DEFAULT '' NOT NULL,
   PRIMARY KEY (id),
   KEY user (user)
+);
+
+#
+# Table structure for table 'usergroup'
+#
+
+CREATE TABLE usergroup (
+  userid int(10) unsigned DEFAULT '0' NOT NULL,
+  groupid int(8) unsigned DEFAULT '0' NOT NULL,
+  PRIMARY KEY (userid,groupid)
 );
 

@@ -2,8 +2,6 @@
 #include "perl.h"
 #include "XSUB.h"
 
-#include <stdio.h> /*D*/
-
 #define is_dbh(sv) (sv && SvROK (sv) && sv_derived_from (sv, "DBI::db"))
 
 typedef struct lru_node {
@@ -133,8 +131,8 @@ PROTOTYPES: DISABLE
 
 BOOT:
    lru_init;
-   sql_exec = gv_fetchpv ("sql_exec", TRUE, SVt_PV);
-   DBH      = gv_fetchpv ("DBH"     , TRUE, SVt_PV);
+   sql_exec = gv_fetchpv ("PApp::SQL::sql_exec", TRUE, SVt_PV);
+   DBH      = gv_fetchpv ("PApp::SQL::DBH"     , TRUE, SVt_PV);
 
 int
 cachesize(size = -1)
@@ -156,6 +154,7 @@ sql_exec(...)
 	ALIAS:
         	sql_fetch    = 1
                 sql_fetchall = 2
+                sql_exists   = 4
 	PPCODE:
 {
 	if (items == 0)
@@ -202,6 +201,15 @@ sql_exec(...)
               croak ("sql_exec: sql-statement must be a string");
 
             sql = ST(arg); arg++;
+
+            if (ix == 4)
+              {
+                SV *neu = sv_2mortal (newSVpv ("select count(*) > 0 from ", 0));
+                sv_catsv (neu, sql);
+                sv_catpv (neu, " limit 1");
+                sql = neu;
+                ix = 1; /* sql_fetch */
+              }
 
             /* check cache for existing statement handle (NYI) */
             sth = lru_fetch (dbh, sql);

@@ -19,7 +19,7 @@ use Carp;
 use XML::Parser::Expat;
 use PApp::Exception;
 
-$VERSION = 0.03;
+$VERSION = 0.04;
 
 =item phtml2perl "pthml-code";
 
@@ -142,7 +142,7 @@ sub compile {
    @{$pmod->{package}."::EXPORT"} = @{$pmod->{export}};
    @{$pmod->{package}."::ISA"} = qw(PApp::Base);
    ${$pmod->{package}."::papp_translator"} =
-      PApp::I18n::open_translator("$pmod->{i18ndir}/$pmod->{name}");
+      PApp::I18n::open_translator("$pmod->{i18ndir}/$pmod->{name}", keys %{$pmod->{lang}});
 
    $pmod->_eval("
       use PApp;
@@ -152,10 +152,10 @@ sub compile {
 
 #line 1 \"(internal gettext)\"
       sub gettext(\$) {
-         PApp::I18n::Table::fetch(\$papp_table, \$_[0]);
+         PApp::I18n::Table::gettext(\$papp_table, \$_[0]);
       }
       sub __(\$) {
-         PApp::I18n::Table::fetch(\$papp_table, \$_[0]);
+         PApp::I18n::Table::gettext(\$papp_table, \$_[0]);
       }
    ");
 
@@ -179,6 +179,14 @@ sub compile {
       next if $module eq "init";
       $pmod->{module}{$module}{cb} = $pmod->_eval("sub {\n$pmod->{module}{$module}{cb_src}\n}");
    }
+}
+
+sub mark_statekey {
+   my ($pmod, $key, $attr, $extra) = @_;
+   $pmod->{state}{preferences}{$key}   = 1 if $attr eq "preferences";
+   $pmod->{state}{sysprefs}{$key}      = 1 if $attr eq "sysprefs";
+   $pmod->{state}{import}{$key}        = 1 if $attr eq "import";
+   $pmod->{state}{local}{$key}{$extra} = 1 if $attr eq "local";
 }
 
 my %import;
@@ -340,11 +348,10 @@ sub load_file {
             }
          } elsif ($element eq "state") {
             defined $attr{keys} or $self->xpcroak("<state>: required attribute 'keys' is missing");
-            for (split / /, $attr{keys}) {
-               $pmod->{state}{preferences}{$_}        = 1 if $attr{preferences} eq "yes";
-               $pmod->{state}{sysprefs}{$_}           = 1 if $attr{sysprefs}    eq "yes";
-               $pmod->{state}{import}{$_}             = 1 if $attr{import}      eq "yes";
-               $pmod->{state}{local}{$_}{$curmod[-1]} = 1 if $attr{local}       eq "yes";
+            while (my ($attr, $value) = each %attr) {
+               for (split / /, $attr{keys}) {
+                  $pmod->mark_statekey($_, $attr, $curmod[-1]) if $value eq "yes";
+               }
             }
          } elsif ($element eq "database") {
             $pmod->{database} = [

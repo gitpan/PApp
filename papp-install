@@ -1,0 +1,196 @@
+#!/usr/bin/perl
+
+use File::Copy;
+use File::Glob;
+use DBI;
+
+require "PApp/Config.pm";
+require "./config";
+
+$|=1;
+
+*CFG = \%PApp::Config::Config;
+
+my $lib = $CFG{LIBDIR};
+
+sub crdir {
+   local $_ = shift;
+   print "making directory $_... ";
+   if (-d $_) {
+      print "already exists\n";
+   } else {
+      mkdir $_, 0777 or die "$!\n";
+      print "ok\n";
+   }
+}
+
+crdir $lib;
+crdir $CFG{I18NDIR};
+
+for my $app (File::Glob::glob "apps/*.papp", GLOB_ERR|GLOB_NOCHECK|GLOB_NOSORT) {
+   $app =~ s/.*?([^\/]+)\.papp$/$1/;
+   print "apps/$app.papp => $lib/apps...";
+   File::Copy::copy("apps/$app.papp", "$lib/apps/$app.papp~") or die "$!\n";
+   rename "$lib/apps/$app.papp~", "$lib/apps/$app.papp" or die "$!\n";
+   print "ok\n";
+}
+
+for my $app (File::Glob::glob "macro/*.papp", GLOB_ERR|GLOB_NOCHECK|GLOB_NOSORT) {
+   $app =~ s/.*?([^\/]+)\.papp$/$1/;
+   print "macro/$app.papp => $lib/macro...";
+   File::Copy::copy("macro/$app.papp", "$lib/macro/$app.papp~") or die "$!\n";
+   rename "$lib/macro/$app.papp~", "$lib/macro/$app.papp" or die "$!\n";
+   print "ok\n";
+}
+
+print <<EOF;
+
+This program (papp-install) initializes the database and library
+directories used by PApp. It assumes that the DBD driver understands the
+"func" method. MySQL currently does this.
+
+You can re-run ./papp-install from the (configured) installation directory
+to reset the database and re-install the library directry as often as you
+want.
+
+EOF
+
+print "trying to open state database... ";
+
+$dbi = DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, { RaiseError => 0, PrintError => 1 });
+
+if (!$dbi) {
+   print "failed\n";
+   $CFG{STATEDB} =~ /DBI:([^:]+):([^:]+).*?(?:host=([^;]*))?/i or die "unable to parse database name ($CFG{STATEDB})\n";
+
+   my ($driver, $db, $host) = ($1, $2, $3||"'localhost'");
+   print "trying to create $driver-database '$db' on host $host\n";
+   print "(might only work for mysql)... ";
+
+   $drh = DBI->install_driver($driver) or die "unable to find DBI driver $driver\n";
+   $drh->func("createdb", $db, "localhost", $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, "admin");
+
+   $dbi = DBI->connect($CFG{STATEDB}, $CFG{STATEDB_USER}, $CFG{STATEDB_PASS}, { RaiseError => 1 });
+   $dbi or die "unable to create database $CFG{STATEDB}, please create it manually and re-run papp-install\n";
+
+   print "seems to have worked\n";
+} else {
+   print "already exists (good)\n";
+}
+
+print <<EOF;
+
+Now creating tables (that do not already exist). existing tables will
+_not_ be dropped, so if you want to upgrade to a new & incompatible
+version you have to drop the database manually.
+
+EOF
+
+$dbi->do(<<SQL);
+   CREATE TABLE error (
+     id mediumint(6) unsigned NOT NULL auto_increment,
+     ctime timestamp(14),
+     data blob DEFAULT '' NOT NULL,
+     comment text DEFAULT '' NOT NULL,
+     PRIMARY KEY (id)
+   )
+SQL
+
+$dbi->do(<<SQL);
+   CREATE TABLE msgid (
+     nr mediumint(6) unsigned NOT NULL auto_increment,
+     id blob DEFAULT '' NOT NULL,
+     app varchar(30) DEFAULT '' NOT NULL,
+     lang varchar(5) DEFAULT '' NOT NULL,
+     context text DEFAULT '' NOT NULL,
+     PRIMARY KEY (nr)
+   )
+SQL
+
+$dbi->do(<<SQL);
+   CREATE TABLE msgstr (
+     nr mediumint(6) unsigned DEFAULT '0' NOT NULL,
+     lang varchar(5) DEFAULT '' NOT NULL,
+     flags set('valid','fuzzy') DEFAULT '' NOT NULL,
+     msg blob DEFAULT '' NOT NULL,
+     UNIQUE nr (nr,lang)
+   )
+SQL
+
+$dbi->do(<<SQL);
+   CREATE TABLE state (
+     id int(10) unsigned NOT NULL auto_increment,
+     ctime timestamp(14),
+     previd int(10) unsigned DEFAULT '0' NOT NULL,
+     userid int(10) unsigned DEFAULT '0' NOT NULL,
+     state blob DEFAULT '' NOT NULL,
+     PRIMARY KEY (id),
+     KEY previd (previd)
+   )
+SQL
+
+$dbi->do(<<SQL);
+   CREATE TABLE user (
+     id int(10) unsigned NOT NULL auto_increment,
+     ctime timestamp(14),
+     prefs blob DEFAULT '' NOT NULL,
+     user varchar(20) DEFAULT '' NOT NULL,
+     pass varchar(14) DEFAULT '' NOT NULL,
+     comment varchar(255) DEFAULT '' NOT NULL,
+     PRIMARY KEY (id),
+     KEY user (user)
+   )
+SQL
+
+$dbi->do(<<SQL);
+   CREATE TABLE grp (
+     id int(10) unsigned NOT NULL auto_increment,
+     name varchar(20) DEFAULT '' NOT NULL,
+     longdesc text DEFAULT '' NOT NULL,
+     PRIMARY KEY (id)
+   )
+SQL
+
+$dbi->do(<<SQL);
+   CREATE TABLE usergrp (
+     userid int(10) unsigned DEFAULT '0' NOT NULL,
+     grpid int(8) unsigned DEFAULT '0' NOT NULL,
+     PRIMARY KEY (userid,grpid)
+   )
+SQL
+
+print <<EOF;
+
+Now populating tables (that hopefully do exist now). Any errors in this
+section are supposedly fatal(!!).
+
+EOF
+
+print "creating admin user and admin group... ";
+eval {
+   my $pass = crypt "public", "xx";
+   $dbi->do("insert into user values (1, NULL, '', 'admin', '$pass', 'Main Administrator')")
+   and $dbi->do("insert into grp  values (1, 'admin', 'hyperuser access rights')")
+   and $dbi->do("insert into usergrp values (1, 1)")
+   or die;
+   print <<EOF;
+ok
+
+********* the admin user is named 'admin'       *********
+********* and has the initial password 'public' *********
+********* Please change this ASAP                ********
+
+EOF
+};
+if ($@) {
+   print "failed (or already exists)\n";
+}
+
+print "(i18n tables and files are not being installed yet, this is a bug!)\n";
+
+
+
+
+
+
+

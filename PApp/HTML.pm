@@ -15,7 +15,7 @@ use Carp;
 use FileHandle ();
 
 BEGIN {
-   $VERSION = 0.03;
+   $VERSION = 0.04;
    @ISA = qw/Exporter/;
    @EXPORT = qw(
 
@@ -23,7 +23,7 @@ BEGIN {
 
          alink mailto_url filefield param submit textfield password_field
          textarea escape_html escape_uri hidden unixtime2http checkbox
-         radio reset_button
+         radio reset_button submit_image
 
    );
 }
@@ -79,6 +79,8 @@ Render a two-part error-box, very distinctive, very ugly, very visible!
 
 =item submit
 
+=item submit_image
+
 =item reset_button
 
 *FIXME*
@@ -94,6 +96,10 @@ sub errbox {
 
 sub submit {
    "<input type=submit name=$_[0]".(@_>1 ? " value=\"$_[1]\"" : "").">";
+}
+
+sub submit_image {
+   "<input type=image src=\"$_[1]\" name=$_[0]".(@_>2 ? " $_[2]" : "").">";
 }
 
 sub reset_button {

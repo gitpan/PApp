@@ -35,23 +35,31 @@
    <li><?sform:>__"Search username/comment:" <?textfield "search":><?endform:>
    </ul>
 
-   __"To see all users, enter  nothing in the 'Search' entry"<br>
+   __"To see all users, enter nothing in the 'Search' entry"<br>
    __"To see only registered users, enter a single underscore in the 'Search' entry"<p>
 
 #if exists $S{search}
    <:
-      my $st = sql_exec \my($id, $user, $pass, $access, $comment),
-                        "select id, user, pass, access, comment
+      my $st = sql_exec \my($id, $user, $pass, $comment),
+                        "select id, user, pass, comment
                          from user
                          where user like ? or comment like ?",
                          ("%$S{search}%")x2;
    :>
    <table rules=all frame=box border=1>
-   <tr><th>ID<th>login<th>password<th>access<th>comment
-   <: while ($st->fetch) {?>
-      <tr><td>$id<td>$user<td>$pass<td>$access<td><?substr $comment, 0, 20?>
-          <td><?slink __"[EDIT]", "edit", userid => $id:>
-   <:}:>
+   <tr><th>ID<th>login<th>password<th>comment<th>&nbsp;
+   <: while ($st->fetch) {
+         $comment ||= "&nbsp;"
+         ?>
+            <tr><td>$id<td>$user<td>$pass<td><?substr $comment, 0, 20?>
+                <td><?slink __"[EDIT]", "edit", userid => $id:>
+         <:
+         my $st = sql_exec \my($access), "select g.name from usergrp u, grp g where u.grpid = g.id and userid = ?", $id;
+         while ($st->fetch) {
+            ?><td>$access<:
+         }
+      }
+   :>
    </table>
 #endif
 <:}:>
@@ -61,24 +69,49 @@
 <state keys="userid" local="yes"/>
 <phtml><![CDATA[
 <:page {:>
-   <h1>__"Access-Editor"</h1>
-
    <?slink __"Go Back", "":><p>
 
+#if $A{delete_grp}
+   <:sql_exec "delete from usergrp where userid = ? and grpid = ?", $S{userid}, $A{delete_grp}:>
+#endif
+#if $A{add_grp}
+   <:sql_exec "replace into usergrp values (?, ?)", $S{userid}, $P{grpid}:>
+#endif
    <:ef_begin "user", ["id", $S{userid}]:>
    <:
-     sql_fetch \my($user, $pass, $access, $comment),
-               "select user, pass, access, comment from user where id = ?",
+     sql_fetch \my($user, $pass, $comment),
+               "select user, pass, comment from user where id = ?",
                $S{userid};
    :>
    <table>
-   <tr><td>User<td><:ef_string $user, "user", 20:>
-   <tr><td>Pass<td><:ef_string $pass, "pass", 14:>
-   <tr><td>Access<td><:ef_text $access, "access", 60, 5:>
-   <tr><td>Comment<td><:ef_text $comment, "comment", 60, 8:>
+   <tr><td>User</td><td><:ef_string $user, "user", 20:>
+   <tr><td>Pass</td><td><:ef_string $pass, "pass", 14:>
+   <tr><td>Comment</td><td><:ef_text $comment, "comment", 60, 8:>
+   <:
+      my $st = sql_exec \my($id, $name),
+                        "select g.id, g.name from usergrp u, grp g where u.grpid = g.id and userid = ?",
+                        $S{userid};
+      while ($st->fetch) {
+         ?>
+            <tr><td>Group:</td><td>$name <?slink __"[DELETE]", -delete_grp => $id:>
+         <:
+      }
+   :>
    </table>
-
    <:ef_end:>
+   __"Add Group:"
+      <?sform -add_grp => 1:>
+      <select name=grpid>
+      <:
+         my $st = sql_exec \my($id, $name),
+                           "select id, name from grp";
+         while ($st->fetch) {
+            ?><option value=$id>$name</option><:
+         }
+      :>
+      </select>
+      <?submit "add", "add":>
+      <?endform:>
 <:}:>
 ]]></phtml></module>
 

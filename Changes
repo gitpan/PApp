@@ -1,6 +1,17 @@
 Revision history for Perl extension PApp
 
-0.02
+0.04  Thu May 11 03:24:07 CEST 2000
+	- too many things to remember.
+        - a first try at an instalaltino script and a config mechanism
+        - PApp::I18n now uses it's own format. With the
+          (not-yet-implemented) pre-sorting it should require less random
+          accesses then gettext. Also supports binary formats (i.e. you
+          could gettextize images) and allows tagging info to be added to
+          the string.
+
+0.03  ???
+
+0.02  ???
 	- added multipart-parsing functions.
         - added %arg hash, and "one-shot arguments" (see surl).
         - modularization: many modules were split off into their

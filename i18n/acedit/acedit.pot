@@ -1,37 +1,46 @@
-#/root/src/Fluffball/apps/acedit.papp:66    <?slink [TEXT], "":><p>
 #,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:72    <?slink [TEXT], "":><p>
 msgid "Go Back"
 msgstr ""
 
-#/root/src/Fluffball/apps/acedit.papp:53           <td><?slink [TEXT], "edit", userid => $id:>
 #,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:55                 <td><?slink [TEXT], "edit", userid => $id:>
 msgid "[EDIT]"
 msgstr ""
 
-#/root/src/Fluffball/apps/acedit.papp:35    <li><?sform:>[TEXT] <?textfield "search":><?endform:>
 #,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:35    <li><?sform:>[TEXT] <?textfield "search":><?endform:>
 msgid "Search username/comment:"
 msgstr ""
 
-#/root/src/Fluffball/apps/acedit.papp:38    [TEXT]<br>
 #,lang=en
-msgid "To see all users, enter  nothing in the 'Search' entry"
-msgstr ""
-
-#/root/src/Fluffball/apps/acedit.papp:33    [TEXT]
-#,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:33    [TEXT]
 msgid "There are currently $cnt users in the database."
 msgstr ""
 
-#/root/src/Fluffball/apps/acedit.papp:20    access_page "admin", [TEXT], sub {
-#/root/src/Fluffball/apps/acedit.papp:22          <h1>[TEXT]</h1>
-#/root/src/Fluffball/apps/acedit.papp:64    <h1>[TEXT]</h1>
 #,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:20    access_page "admin", [TEXT], sub {
+#:/root/src/Fluffball/apps/acedit.papp:22          <h1>[TEXT]</h1>
 msgid "Access-Editor"
 msgstr ""
 
-#/root/src/Fluffball/apps/acedit.papp:39    [TEXT]<p>
 #,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:96             <tr><td>Group:</td><td>$name <?slink [TEXT], -delete_grp => $id:>
+msgid "[DELETE]"
+msgstr ""
+
+#,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:39    [TEXT]<p>
 msgid "To see only registered users, enter a single underscore in the 'Search' entry"
+msgstr ""
+
+#,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:102    [TEXT]
+msgid "Add Group:"
+msgstr ""
+
+#,lang=en
+#:/root/src/Fluffball/apps/acedit.papp:38    [TEXT]<br>
+msgid "To see all users, enter nothing in the 'Search' entry"
 msgstr ""
 

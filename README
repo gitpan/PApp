@@ -18,7 +18,7 @@ DESCRIPTION
     this is only due to the extra database request to fetch and restore
     state, which typically you would do anyway. To the contrary: a
     non-trivial Apache::Registry page is much slower than the equivalent
-    PApp application.
+    PApp application (or much, much more complicated);
     * Embedded Perl. You can freely embed perl into your documents. In fact,
     You can do things like these:
            <h1>Names and amounts</h1>
@@ -55,6 +55,16 @@ DESCRIPTION
     improved to accomodate new features (like CGI-only operation).
     * No documentation. Especially tutorials are missing, so you are most
     probably on your own.
+    * Perl5.6 is required. While not originally an disadvantage in my eyes,
+    Randal Schwartz asked me to provide some explanationm on why this is so:
+        "As for an explanation, I require perl5.6 because I require a whole
+        lot of features of 5.6 (e.g. DB.pm, utf-8 support, "our", bugfixes,
+        3-argument open, regex improvements, probably many others,
+        especially changes on the XS level). In the future it will likely
+        require weak references, filehandle autovivification, the XSLoader
+        for extra speed in rare circumstances... I don't want to backport
+        this to older versions ;)"
+
     Be advised that, IF YOU WANT TO USE THIS MODULE, PELASE DROP THE AUTHOR
     (Marc Lehmann <pcg@goof.com>) A MAIL. HE WILL HELP YOU GETTING STARTED.
 
@@ -123,16 +133,17 @@ FUNCTIONS/METHODS
     PApp->configure(name => value...);
          pappdb        The (mysql) database to use as papp-database
                        (default "DBI:mysql:papp")
-         cipherkey*    The Twofish-Key to use (16 binary bytes,)
+         pappdb_user   The username when connecting to the database
+         pappdb_pass   The password when connecting to the database
+         cipherkey     The Twofish-Key to use (16 binary bytes),
                        BIG SECURITY PROBLEM if not set!
+                       (use mcookie twice to generate one)
          cookie_reset  delay in seconds after which papp tries to
                        re-set the cookie (default: one day)
          cookie_expires time in seconds after which a cookie shall expire
                        (default: one year)
          checkdeps     when set, papp will check the .papp file dates for
                        every request (slow!!) and will reload the app when necessary.
-
-         [*] required attributes
 
     PApp->mount(location => 'uri', src => 'file.app', ... );
          location[*]   The URI the application is moutned under, must start with "/"

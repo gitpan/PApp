@@ -17,7 +17,7 @@
 
 <macro name="page(&amp;)" args="$body"><phtml><![CDATA[
 <:
-   access_page "dbedit", __"MySQL Database Editor", sub {
+   access_page "admin", __"MySQL Database Editor", sub {
       :>
          <h1>__"MySQL Database Editor"</h1>
 #if retlink_p

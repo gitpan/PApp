@@ -19,11 +19,11 @@ Advantages:
 
 =over 4
 
-=item * Speed. PApp isn't much slower than a hand-coded mod_perl
-handler, and this is only due to the extra database request to fetch and
-restore state, which typically you would do anyway. To the contrary: a
-non-trivial Apache::Registry page is much slower than the equivalent
-PApp application.
+=item * Speed. PApp isn't much slower than a hand-coded mod_perl handler,
+and this is only due to the extra database request to fetch and restore
+state, which typically you would do anyway. To the contrary: a non-trivial
+Apache::Registry page is much slower than the equivalent PApp application
+(or much, much more complicated);
 
 =item * Embedded Perl. You can freely embed perl into your documents. In
 fact, You can do things like these:
@@ -74,6 +74,17 @@ CGI-only operation).
 =item * No documentation. Especially tutorials are missing, so you are
 most probably on your own.
 
+=item * Perl5.6 is required. While not originally an disadvantage in my
+eyes, Randal Schwartz asked me to provide some explanationm on why this is
+so:
+
+"As for an explanation, I require perl5.6 because I require a whole
+lot of features of 5.6 (e.g. DB.pm, utf-8 support, "our", bugfixes,
+3-argument open, regex improvements, probably many others, especially
+changes on the XS level). In the future it will likely require weak
+references, filehandle autovivification, the XSLoader for extra speed in
+rare circumstances... I don't want to backport this to older versions ;)"
+
 =back
 
 Be advised that, IF YOU WANT TO USE THIS MODULE, PELASE DROP THE AUTHOR
@@ -99,6 +110,7 @@ use Storable;
 use Compress::LZV1;
 use Crypt::Twofish2;
 
+use PApp::Config;
 use PApp::FormBuffer;
 use PApp::Exception;
 use PApp::I18n;
@@ -107,7 +119,7 @@ use PApp::HTML;
 BEGIN {
    require DynaLoader;
 
-   $VERSION = 0.03;
+   $VERSION = 0.04;
    @ISA = qw/Exporter DynaLoader/;
    @EXPORT = qw(
 
@@ -144,9 +156,11 @@ BEGIN {
    $cipher_e;
    $cipher_d;
    $statedb;
+   $statedb_user;
+   $statedb_pass;
 
-my $stateid;     # uncrypted state-id
-my $prevstateid;
+   $stateid;     # uncrypted state-id
+   $prevstateid;
 
 our $userid;      # uncrypted user-id
 our $alternative; # number of alternatives already generated
@@ -265,16 +279,17 @@ Add a directory in where to search for included/imported/"module'd" files.
 
  pappdb        The (mysql) database to use as papp-database
                (default "DBI:mysql:papp")
- cipherkey*    The Twofish-Key to use (16 binary bytes,)
+ pappdb_user   The username when connecting to the database
+ pappdb_pass   The password when connecting to the database
+ cipherkey     The Twofish-Key to use (16 binary bytes),
                BIG SECURITY PROBLEM if not set!
+               (use mcookie twice to generate one)
  cookie_reset  delay in seconds after which papp tries to
                re-set the cookie (default: one day)
  cookie_expires time in seconds after which a cookie shall expire
                (default: one year)
  checkdeps     when set, papp will check the .papp file dates for
                every request (slow!!) and will reload the app when necessary.
-
- [*] required attributes
 
 =item PApp->mount(location => 'uri', src => 'file.app', ... );
 
@@ -306,7 +321,10 @@ sub configure {
    $libdir  ||= "/fluffball"; #d# ERROR
    $i18ndir ||= "$libdir/i18n";
 
+   exists $a{libdir} and $libdir = $a{libdir};
    exists $a{pappdb} and $statedb = $a{pappdb};
+   exists $a{pappdb_user} and $statedb_user = $a{pappdb_user};
+   exists $a{pappdb_pass} and $statedb_user = $a{pappdb_pass};
    exists $a{cookie_reset} and $cookie_reset = $a{cookie_reset};
    exists $a{cookie_expires} and $cookie_expires = $a{cookie_expires};
    exists $a{checkdeps} and $checkdeps = $a{checkdeps};
@@ -326,8 +344,6 @@ sub configured {
       $cipher_d = new Crypt::Twofish2 $key;
       $cipher_e = new Crypt::Twofish2 $key;
 
-      $translator = PApp::I18n::open_translator("$i18ndir/papp");
-
       # fake module for papp itself
 
       $papp{""} = {
@@ -345,6 +361,8 @@ sub configured {
             $INC{"PApp/Parser.pm"}        => { lang => 'en' },
          },
       };
+
+      $translator = PApp::I18n::open_translator("$i18ndir/papp", keys %{$papp{""}{lang}});
 
       $configured = 1;
 
@@ -959,6 +977,8 @@ sub handler {
    # create a request object (not sure if needed)
    apache_request('Apache', $request);
 
+   $sent_http_headers = 0;
+
    $stdout = tie *STDOUT, PApp::FHCatcher;
    $stderr = tie *STDERR, PApp::FHCatcher;
 
@@ -970,7 +990,7 @@ sub handler {
    eval {
       $newuser = 0;
 
-      $statedbh = PApp::SQL::connect_cached(1, $statedb, "", "", {
+      $statedbh = PApp::SQL::connect_cached(1, $statedb, $statedb_user, $statedb_pass, {
          RaiseError => 1,
       }, sub {
          my $dbh = shift;

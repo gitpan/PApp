@@ -24,7 +24,7 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.03;
+$VERSION = 0.04;
 
 use PApp::Exception;
 

@@ -34,7 +34,7 @@
    <pre>
 <:
    use PApp::I18n qw(scan_file scan_init scan_end scan_field);
-   for my $pmod ($papp_pmod, values %PApp::papp) {
+   for my $pmod (values %PApp::papp) {
       scan_init $pmod->{name}, [
          grep !ref$pmod->{lang}{$_}, keys %{$pmod->{lang}}
       ];
@@ -44,7 +44,7 @@
       while (my($field, $lang) = each %{$pmod->{translate}}) {
          scan_field $pmod->{database}, $field, $lang;
       }
-      scan_end;
+      scan_end($A{refine});
    }
 
    my $st = sql_exec "select msgid.nr, msgstr.lang from msgid, msgstr
@@ -68,7 +68,7 @@
    <pre>
 <:
    use PApp::I18n qw(export_po);
-   for my $pmod ($papp_pmod, values %PApp::papp) {
+   for my $pmod (values %PApp::papp) {
       export_po $pmod;
    }
 :>
@@ -79,7 +79,7 @@
    <pre>
 <:
    use PApp::I18n qw(export_dbm);
-   for my $pmod ($papp_pmod, values %PApp::papp) {
+   for my $pmod (values %PApp::papp) {
       export_dbm $pmod;
    }
    # hack: assume that getppid = our apache httpd (!)
@@ -91,7 +91,8 @@
 
    <h2>__"Application Control"</h2>
    <ul>
-   <li><?slink __"Scan all loaded applications", -scan_apps => 1?> __"(can take a long time!)"
+   <li><?slink __"Scan all loaded applications", -scan_apps => 1?> __"(can take a long time!)"<br>
+       <?slink __"(scan &amp; reset fuzzy messages)", -scan_apps => 1, -refine => 1?> __"(can take even longer!)"
    <li><?slink __"Export PO", -export_po => 1?>
    <li><?slink __"Write translation tables and restart", -export_dbm => 1?>
    </ul>
@@ -150,28 +151,33 @@
 
    <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $S{begin} > $S{window} ? $S{begin} - $S{window} : 0:> ===
    <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $S{begin} + $S{window}:>
-   <table cellspacing=1 cellpadding=1 border=1>
-   <table>
-   <tr><th>msgid</th><th>msgstr</th><th>flags</th>
+   <table cellspacing=0 cellpadding=2 border=0 width="100%">
+   <tr>
+      <th align=left>app</th>
+      <th align=left>flags</th>
+      <th align=left>msgid</th>
+      <th align=left>msgstr</th>
    <:
       if ($P{search}) {
          $S{where} = "id like '%$P{search}%' or msg like '%$P{search}%'";
       }
-      my $st = sql_exec \my($nr,$msgid,$idlang,$msgstr,$ok),
-                        "select msgid.nr, id, msgid.lang, msg, flags
+      my $st = sql_exec \my($nr,$msgid,$idlang,$idapp,$msgstr,$ok),
+                        "select msgid.nr, id, msgid.lang, msgid.app, msg, flags
                                 from msgid, msgstr
                                 where msgid.nr = msgstr.nr and msgstr.lang = ? and ($S{where})
-                                order by msgid.nr limit ?,?",
+                                order by msgid.app, msgid.nr limit ?,?",
                         $state{lang},
                         $S{begin}||0, $S{window}||20;
 
+      my $count = 0;
       while($st->fetch) {
-         echo "<tr>";
+         printf "<tr bgcolor='#%s'>", $count++ & 1 ? "ffffff" : "e0e0e0";
          for ($msgid, $msgstr) {
-            $_ = substr $_, 0, 40; 
-            s/([\x00-\x1f])/"\\c{".ord($1)."}"/ge;
+            $_ = (substr $_, 0, 38)."..." if length($_) > 40;
+            #s/([\x00-\x1f])/"\\c{".ord($1)."}"/ge;
          }
-         echo "<td>", (slink $_ || "&nbsp;", "edit", nr => $nr), "</td>" for ("$msgid/$lang", $msgstr, $ok);
+         echo "<td>", $idapp;
+         echo "<td>", (slink escape_html($_) || "&nbsp;", "edit", nr => $nr), "</td>" for ($ok, "$msgid/$lang", $msgstr);
       }
    :>
    </table>
