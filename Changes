@@ -1,5 +1,12 @@
 Revision history for Perl extension PApp
 
+0.07  Fri Jun  9 22:14:36 CEST 2000
+	- fixed dumb typoe in macro/util.papp :(
+        - added PApp::Env module.
+        - dbedit now assumes primary keys are strings that
+          do not need quoting.
+        - added PApp::Callback module.
+
 0.06  Wed Jun  7 21:52:15 CEST 2000
 	- poedit now uses the statedb.
         - admin now included poedit access right by default.

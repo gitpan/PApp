@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+
+use PApp::Env;
+
+$unset = 0;
+
+if (@ARGV) {
+   for (@ARGV) {
+      if ($_ eq "-u") {
+         $unset = 1;
+      } elsif (/^([^=]+)=(.*)$/) {
+         setenv $1, $2;
+      } else {
+         if ($unset) {
+            unsetenv $_;
+         } else {
+            print getenv $_;
+         }
+      }
+   }
+} else {
+   for (listenv) {
+      print "$_=", getenv($_),"\n";
+   }
+}
+
+=head1 NAME
+
+papp-env - get/set/clear/display environment variables
+
+=head1 SYNOPSIS
+
+List all environment variables in name=value format (I<warning>, might
+contain binary data):
+
+   papp-env
+
+List the value of a single environment variable (I<without> trailing newline):
+
+   papp-env myvar
+
+Set some env-variables:
+
+   papp-env var1=value1 var2=value2 "var3=value 3" var4="contains == equal!"
+
+Unset some env-variables:
+ 
+   papp-env -u var1 var2 var3
+
+Combine almost all of the above:
+
+   papp-env var=value printvar1 -u v2 v3 v4
+
+=head1 DESCRIPTION
+
+Not yet ;)
+
+=head1 SEE ALSO
+
+L<PApp>.
+
+=head1 BUGS
+
+- no handling of binary data or perl-structures
+
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
+
+=cut
+
+

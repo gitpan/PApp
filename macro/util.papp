@@ -46,8 +46,7 @@ Use it like this:
 =back
 
 =cut
-
-]]></perl>
+</perl>
 
 <import src="macro/admin"/>
 

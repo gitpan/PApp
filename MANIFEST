@@ -14,6 +14,8 @@ PApp/HTML.pm
 PApp/CGI.pm
 PApp/Apache.pm
 PApp/XML.pm
+PApp/Env.pm
+PApp/Callback.pm
 SQL/Makefile.PL
 SQL/SQL.pm
 SQL/SQL.xs
@@ -21,6 +23,8 @@ I18n/Makefile.PL
 I18n/I18n.pm
 I18n/I18n.xs
 I18n/typemap
+
+bin/papp-env
 
 macro/admin.papp	user administration package
 macro/util.papp		some utility functions

@@ -19,6 +19,7 @@ WriteMakefile(
     'LIBS'	=> [''],
     'DEFINE'	=> '',
     'INC'	=> '',
+    'EXE_FILES'	=> ['bin/papp-env'],
     'PM'	=> {
     		    'PApp.pm'		=> '$(INST_LIBDIR)/PApp.pm',
     		    'PApp/Apache.pm'	=> '$(INST_LIBDIR)/PApp/Apache.pm',

@@ -115,7 +115,7 @@ use PApp::I18n;
 use PApp::HTML;
 
 BEGIN {
-   $VERSION = 0.06;
+   $VERSION = 0.07;
 
    @ISA = qw/Exporter/;
 
@@ -998,7 +998,7 @@ sub handler {
    eval {
       $newuser = 0;
 
-      $statedbh = PApp::SQL::connect_cached(1, $statedb, $statedb_user, $statedb_pass, {
+      $statedbh = PApp::SQL::connect_cached("PAPP_1", $statedb, $statedb_user, $statedb_pass, {
          RaiseError => 1,
       }, sub {
          my $dbh = shift;
@@ -1037,7 +1037,7 @@ sub handler {
       }
 
       if ($pmod->{database}) {
-         $PApp::SQL::DBH = PApp::SQL::connect_cached(2, @{$pmod->{database}})
+         $PApp::SQL::DBH = PApp::SQL::connect_cached("PAPP_2", @{$pmod->{database}})
             or fancydie "error connecting to database $pmod->{database}[0]", $DBI::errstr;
       }
 

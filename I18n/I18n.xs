@@ -17,6 +17,11 @@
  * should have done it in perl in the first place, but this implementation
  * uses very little memory, and our .dpo files might get LARGE. */
 
+/* the next version might instead use the cdb format
+ * (http://cr.yp.to/cdb/cdb.txt), but that's not sure (it might
+ * be worse.
+ */
+
 #define DPO_VERSION 1
 #define HASHSIZE 997
 #define MAXHASH 40 /* the number of bytes to hash at most */

@@ -267,7 +267,7 @@
             print "<td>$data";
          }
          if ($priid) {
-            print "<td>", slink "[DELETE]", sql => "delete from $S{table} where $S{pri_key} = $priid";
+            print "<td>", slink "[DELETE]", sql => "delete from $S{table} where $S{pri_key} = '$priid'";
          }
       }
       print "</table>\n";

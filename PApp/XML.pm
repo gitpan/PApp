@@ -24,7 +24,7 @@ special pappxml directives that can be used to create links etc...
 
 package PApp::XML;
 
-$VERSION = 0.06;
+$VERSION = 0.07;
 
 =item new PApp::XML parameter => value...
 
@@ -181,6 +181,41 @@ sub error {
    $self->{error};
 }
 
+=item xml_quote $string
+
+Quotes (and returns) the given string using CDATA so that it's contents
+won't be interpreted by an XML parser.
+
+=item xml_unquote $string
+
+Unquotes (and returns) an XML string (by resolving it's
+entities). Currently, only the named predefined xml entities and decimal
+character constants are resolved. Everything else is silently ignored.
+
+=cut
+
+sub xml_quote {
+   local $_ = shift;
+   s/\]\]>/]]>]]&gt;<![CDATA[/g;
+   "<![CDATA[$_]]>";
+}
+
+sub xml_unquote($) {
+   local $_ = shift;
+   s{&([^;]+);}{
+      if (substr($1,0,1) eq "#") {
+         if (substr($1,1,1) eq "x") {
+            # hex not yet supported
+         } else {
+            chr substr $1,1;
+         }
+      } else {
+        { gt => '>', lt => '<', amp => '&', quot => '"', apos => "'" }->{$1}
+      }
+   }ge;
+   $_;
+}
+
 package PApp::XML::Template;
 
 use PApp::Parser ();
@@ -232,10 +267,7 @@ sub __dom2sub($) {
                   __dom2sub($node);
                   $_res;
                };
-               $res =~ s{&([^;]+);}{
-                    { gt => '>', lt => '<', amp => '&', quot => '"', apos => "'" }->{$1}
-               }ge;
-               $_res .= $res;
+               $_res .= PApp::XML::xml_unquote $res;
             } else {
                $_res .= "&lt;&lt;&lt; undefined pappxml element '$name' containing '";
                __dom2sub($node);

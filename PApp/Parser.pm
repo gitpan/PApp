@@ -22,7 +22,7 @@ use Carp;
 use XML::Parser::Expat;
 use PApp::Exception;
 
-$VERSION = 0.06;
+$VERSION = 0.07;
 
 =item phtml2perl "pthml-code";
 
@@ -229,7 +229,6 @@ sub load_file {
    $pmod->{file}{$path}{mtime} = (stat $path)[9];
 
    my $parser = new XML::Parser::Expat(
-      Namespaces => 0,
       ErrorContext => 0,
       ParseParamEnt => 0,
       Namespaces => 1,

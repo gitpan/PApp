@@ -8,6 +8,8 @@ PApp::I18n - internationalization support for PApp
 
 =cut
 
+no warnings;
+
 use File::Glob;
 
 use PApp::Exception;
@@ -15,7 +17,7 @@ use PApp::Exception;
 BEGIN {
    require Exporter;
 
-   $VERSION = 0.06;
+   $VERSION = 0.07;
    @ISA = qw(Exporter);
    @EXPORT = qw(
          open_translator
@@ -30,7 +32,11 @@ BEGIN {
 
 =item open_translator $path, lang1, lang2...
 
-open an existing translation directory
+Open an existing translation directory. A translation directory can
+contain any number of language translation tables. The additional
+arguments must list all translations one is interested in. The translator
+will always choose a translation table in this list. (In future versions
+this might be autodetected).
 
 =cut
 

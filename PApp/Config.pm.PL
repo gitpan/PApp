@@ -84,7 +84,7 @@ PApp::Config - hold common configuration settings
 
 =cut
 
-$VERSION = 0.06;
+$VERSION = 0.07;
 
 require Exporter;
 
@@ -92,8 +92,8 @@ require Exporter;
 @EXPORT = qw();
 @EXPORT_OK = qw();
 
-%papp; # loaded applications
-%pimp; # loaded imports
+our %papp; # loaded applications
+our %pimp; # loaded imports
 
 =item @paths = search_path [path...]
 

@@ -22,7 +22,7 @@ require Exporter;
 use PApp::HTML;
 
 @ISA = qw(Exporter);
-$VERSION = 0.06;
+$VERSION = 0.07;
 @EXPORT = qw(fancydie);
 
 =item $errobj = new arg => value..

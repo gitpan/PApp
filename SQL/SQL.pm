@@ -26,7 +26,7 @@ use DBI;
 BEGIN {
    require Exporter;
 
-   $VERSION = 0.06;
+   $VERSION = 0.07;
    @ISA = qw/Exporter/;
    @EXPORT = qw(
          sql_exec sql_fetch sql_fetchall sql_exists sql_insertid $sql_exec
@@ -54,7 +54,9 @@ C<DBI->connect>.
 
 The database handle will be cached under the unique id C<$id>. If the same
 id is requested later, the cached handle will be checked (using ping), and
-the connection will be re-established if necessary.
+the connection will be re-established if necessary (be sure to prefix your
+application or module name to the id to make it "more" unique. Things like
+__PACKAGE__ . __LINE__ work fine as well).
 
 If specified, C<$connect> is a callback (e.g. a coderef) that will be
 called each time a new connection is being established, with the new

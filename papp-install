@@ -100,7 +100,7 @@ SQL
 
 $dbi->do(<<SQL);
    CREATE TABLE env (
-     name varchar(255) not null,
+     name varchar(255) binary not null,
      value blob not null,
      PRIMARY KEY (name)
    )
