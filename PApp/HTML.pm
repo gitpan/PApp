@@ -15,7 +15,7 @@ use Carp;
 use FileHandle ();
 
 BEGIN {
-   $VERSION = 0.04;
+   $VERSION = 0.05;
    @ISA = qw/Exporter/;
    @EXPORT = qw(
 
@@ -23,7 +23,7 @@ BEGIN {
 
          alink mailto_url filefield param submit textfield password_field
          textarea escape_html escape_uri hidden unixtime2http checkbox
-         radio reset_button submit_image
+         radio reset_button submit_image selectbox
 
    );
 }
@@ -42,7 +42,7 @@ sub escape_html($) {
 
 sub escape_uri($) {
    local $_ = shift;
-   s/([()<>%&?, ='"\x00-\x1f\x80-\x9f])/sprintf "%%%02X", ord($1)/ge;
+   s/([()<>%&?,; ='"\x00-\x1f\x80-\x9f])/sprintf "%%%02X", ord($1)/ge;
    $_;
 }
 
@@ -64,13 +64,15 @@ sub unixtime2http {
 
 =item $ahref = alink contents, url
 
-Create "a link" (a href) with the given contents, pointing at the given url.
+Create "a link" (a href) with the given contents, pointing at the given
+url. It uses single quotes to delimit the url, so watch out and escape
+yourself!
 
 =cut
 
 # "link content, url"
 sub alink {
-   "<a href=\"$_[1]\">$_[0]</a>";
+   "<a href='$_[1]'>$_[0]</a>";
 }
 
 =item errbox $error, $explanation
@@ -128,7 +130,7 @@ sub input_field {
 
 =item checkbox
 
-=item radio
+=item radiobutton
 
 =item filefield
 
@@ -143,6 +145,20 @@ sub hidden		{ input_field "input type=hidden", @_ }
 sub checkbox		{ input_field "input type=checkbox", @_ }
 sub radio		{ input_field "input type=radio", @_ }
 sub filefield		{ input_field "input type=file", @_ }
+
+=item selectbox name, [], attr => value... NYI
+
+=cut
+
+# not yet implemented
+sub selectbox {
+   my $option = splice @_, 1, 1, ();
+   input_field "select", @_;
+   while (@$option) {
+      my ($key, $val) = splice @$option, 0, 2, ();
+   }
+   PApp::echo("</select>");
+}
 
 =item mailto_url $mailaddr, key => value, ...
 
@@ -195,5 +211,5 @@ L<PApp>.
  Marc Lehmann <pcg@goof.com>
  http://www.goof.com/pcg/marc/
 
-
+=cut
 

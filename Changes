@@ -1,5 +1,14 @@
 Revision history for Perl extension PApp
 
+0.05  Sat May 27 22:25:51 CEST 2000
+	- added PApp::XML. Boring, but together with XML::XSLT it rocks!
+	- implemented N_($).
+        - addedd attrs to papp's macro element (specify subroutine
+          attributes).
+        - #endif and #else now allow whitespace on the same line
+        - translate styel can be specified "plain" - full text,
+          "code" - scan for __ substrings or "auto" for autodetect.
+
 0.04  Thu May 11 03:24:07 CEST 2000
 	- too many things to remember.
         - a first try at an instalaltino script and a config mechanism

@@ -45,7 +45,7 @@ That is, mixing html and perl at statement boundaries.
 preserved during the session. Everything you save there will be available
 in any subsequent pages that the user accesses.
 
-=item * XML. PApp-paplications are written in XML. While this is no
+=item * XML. PApp-applications are written in XML. While this is no
 advantage in itself, it means that it uses a standardized file format that
 can easily be extended. PApp comes with a DTD and a vim syntax
 file, even ;)
@@ -65,17 +65,15 @@ Disadvantages:
 
 =over 4
 
-=item * Unfinished Interface: To admit it, this module is a
-hack. HMTL::Mason (for example) not only is older and probably larger
-and more powerful, it has also a more standardized API. PApp
-will certainly be changed and improved to accomodate new features (like
-CGI-only operation).
+=item * Unfinished Interface: To admit it, this module is young and many
+features have a kind-of-unfinished interface. PApp will certainly be
+changed and improved to accomodate new features (like CGI-only operation).
 
 =item * No documentation. Especially tutorials are missing, so you are
 most probably on your own.
 
 =item * Perl5.6 is required. While not originally an disadvantage in my
-eyes, Randal Schwartz asked me to provide some explanationm on why this is
+eyes, Randal Schwartz asked me to provide some explanation on why this is
 so:
 
 "As for an explanation, I require perl5.6 because I require a whole
@@ -117,10 +115,10 @@ use PApp::I18n;
 use PApp::HTML;
 
 BEGIN {
-   require DynaLoader;
+   $VERSION = 0.05;
 
-   $VERSION = 0.04;
-   @ISA = qw/Exporter DynaLoader/;
+   @ISA = qw/Exporter/;
+
    @EXPORT = qw(
 
          debugbox
@@ -140,7 +138,8 @@ BEGIN {
 
    );
 
-   bootstrap PApp $VERSION;
+   require XSLoader;
+   XSLoader::load PApp, $VERSION;
 }
 
 #   globals
@@ -200,6 +199,8 @@ sub __($) {
    #$translator->get_language($langs)->fetch($_[0]);
    $_[0];
 }
+
+sub N_($) { $_[0] }
 
 =head1 GLOBAL VARIABLES
 
@@ -283,7 +284,7 @@ Add a directory in where to search for included/imported/"module'd" files.
  pappdb_pass   The password when connecting to the database
  cipherkey     The Twofish-Key to use (16 binary bytes),
                BIG SECURITY PROBLEM if not set!
-               (use mcookie twice to generate one)
+               (you can use 'mcookie' from util-linux twice to generate one)
  cookie_reset  delay in seconds after which papp tries to
                re-set the cookie (default: one day)
  cookie_expires time in seconds after which a cookie shall expire
@@ -295,7 +296,7 @@ Add a directory in where to search for included/imported/"module'd" files.
 
  location[*]   The URI the application is moutned under, must start with "/"
  src[*]        The .papp-file to mount there
- config        Will be available to the module as $pmod->{config]
+ config        Will be available to the module as $pmod->{config}
 
  [*] required attributes
 
@@ -1222,5 +1223,5 @@ The C<macro/admin>-package on the distribution, the demo-applications
  Marc Lehmann <pcg@goof.com>
  http://www.goof.com/pcg/marc/
 
-
+=cut
 

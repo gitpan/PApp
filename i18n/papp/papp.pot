@@ -1,5 +1,5 @@
 #,lang=en
-#:/usr/app/lib/perl5/PApp.pm:710 <head><title>".[TEXT]."</title></head>
+#:/usr/app/lib/perl5/PApp.pm:712 <head><title>".[TEXT]."</title></head>
 msgid "page redirection"
 msgstr ""
 
@@ -9,7 +9,7 @@ msgid "Send me back to wherever I came from"
 msgstr ""
 
 #,lang=en
-#:/usr/app/lib/perl5/PApp.pm:715 ".[TEXT]."
+#:/usr/app/lib/perl5/PApp.pm:717 ".[TEXT]."
 msgid "The automatic redirection  has failed. Please try a <i>slightly</i> newer browser next time, and in the meantime <i>please</i> follow this link ;)"
 msgstr ""
 

@@ -24,7 +24,7 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 0.04;
+$VERSION = 0.05;
 
 use PApp::Exception;
 
@@ -118,6 +118,15 @@ sub READLINE {
 =head1 FINAL WORDS
 
 Boy, was this a mess to write :(
+
+=head1 SEE ALSO
+
+L<PApp>.
+      
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
 
 =cut
 

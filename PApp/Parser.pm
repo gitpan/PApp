@@ -9,6 +9,9 @@ PApp::Parser - PApp format file parser
 This module manages papp files (parsing, compiling etc..). Sorry, you have
 to look at the examples to understand the descriptions here :(
 
+This module exports nothing at the moment, but might soon export C<phtml2perl>
+and other nifty functions.
+
 =over 4
 
 =cut
@@ -19,7 +22,7 @@ use Carp;
 use XML::Parser::Expat;
 use PApp::Exception;
 
-$VERSION = 0.04;
+$VERSION = 0.05;
 
 =item phtml2perl "pthml-code";
 
@@ -94,13 +97,13 @@ sub phtml2perl {
                   $q = "q";
                }
                # __ "text", use [_]_ so it doesn't get mis-identified by pxgettext ;)
-               s/([_]_"(?:(?:[^"\\]+|\\.)*)")/\x01.($1).q$q\x01/g;
+               s/([_]_"(?:(?:[^"\\]+|\\.)*)")/\x01.($1).q$q\x01/gs;
                # preprocessor commands
                #s/^#\s*\?\?\s(.*)\?\?(.*?)(?:\?\?(.*))?$/#if 1:$1\n2:$2\n#else\n3:$3\n#endif\nXXXX/gm;
                s/^#\s*if\s(.*)$/\x01; if ($1) { \$PApp::output .= q$q\x01/gm;
                s/^#\s*elsif\s(.*)$/\x01} elsif ($1) { \$PApp::output .= q$q\x01/gm;
-               s/^#\s*else\S*$/\x01} else { \$PApp::output .= q$q\x01/gm;
-               s/^#\s*endif\S*$/\x01} \$PApp::output .= q$q\x01/gm;
+               s/^#\s*else\s*$/\x01} else { \$PApp::output .= q$q\x01/gm;
+               s/^#\s*endif\s*$/\x01} \$PApp::output .= q$q\x01/gm;
             }
             $perl .= "\$PApp::output .= q$q\x01$s\x01; ";
          }
@@ -312,14 +315,16 @@ sub load_file {
          } elsif ($element eq "macro") {
             defined $attr{name} or $self->xpcroak("<macro>: required attribute 'name' not specified");
             $attr{name} =~ s/(\(.*\))$//;
-            my $prototype = $1;
-            my $args;
+            my ($prototype, $args, $attrs) = $1;
             if ($attr{args}) {
                $args = "my (".(join ",", split /\s+/, $attr{args}).") = \@_;";
             }
+            if ($attr{attrs}) {
+               $attrs = " : ".$attr{attrs};
+            }
             push @{$pmod->{export}}, $attr{name} if $attr{name} =~ s/\*$//;
             $end  = sub {
-               $curchr[-1] .= "sub $attr{name}$prototype { $args\n" . $_[0] . "\n}\n";
+               $curchr[-1] .= "sub $attr{name}$prototype$attrs { $args\n" . $_[0] . "\n}\n";
             };
          } elsif ($element eq "phtml") {
             my $li = &$lineinfo;
@@ -361,7 +366,7 @@ sub load_file {
             ];
          } elsif ($element eq "translate") {
             for (split / /, $attr{fields}) {
-               $pmod->{translate}{$_} = $attr{lang};
+               $pmod->{translate}{$_} = [$attr{lang}, $attr{style}||"plain"];
             }
          } elsif ($element eq "language") {
             defined $attr{lang} or $self->xpcroak("<language>: required attribute 'lang' is missing");
@@ -408,5 +413,5 @@ L<PApp>.
  Marc Lehmann <pcg@goof.com>
  http://www.goof.com/pcg/marc/
 
-
+=cut
 

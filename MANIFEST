@@ -13,6 +13,7 @@ PApp/Config.pm.PL
 PApp/HTML.pm
 PApp/CGI.pm
 PApp/Apache.pm
+PApp/XML.pm
 SQL/Makefile.PL
 SQL/SQL.pm
 SQL/SQL.xs

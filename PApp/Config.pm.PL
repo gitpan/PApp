@@ -84,7 +84,7 @@ PApp::Config - hold common configuration settings
 
 =cut
 
-$VERSION = 0.04;
+$VERSION = 0.05;
 
 require Exporter;
 

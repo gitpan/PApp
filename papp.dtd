@@ -4,7 +4,7 @@
    (c)2000 Marc Lehmann <pcg@goof.com>
 -->
 
-<!ENTITY % version    "1.1">
+<!ENTITY % version    "1.2">
 
 <!ENTITY % control    "(translate|state)">
 <!ENTITY % perlcode   "(perl|xperl|phtml|%control;)*">
@@ -67,10 +67,12 @@
 
 <!-- embed a perl macro -->
 <!-- args is a whitespace seperated list of parameter names -->
+<!-- attrs is a whitespace seperated list of subroutine attributes -->
 <!ELEMENT macro    %perlcode;>
 <!ATTLIST macro
-    name CDATA #REQUIRED
-    args CDATA #IMPLIED
+    name  CDATA #REQUIRED
+    args  CDATA #IMPLIED
+    attrs CDATA #IMPLIED
 >
 
 <!-- set default database for the sql_* family of commands -->
@@ -84,13 +86,17 @@
 >
 
 <!--
-    translate a single field (columns) of a database. lang is the (optional)
-    language tag.
+    translate a single field (columns) of a database. lang is the
+    (optional) language tag. "style" is either plain (the whole field is
+    to be translated) or code (the field is scanned like it were a phtml
+    section). auto can be used to select either plain or code, depending
+    on wether __"xx" can be found.
 -->
 <!ELEMENT translate  EMPTY>
 <!ATTLIST translate
     fields   CDATA #REQUIRED
     lang     CDATA #IMPLIED
+    style    (plain|code|auto) "plain"
 >
 
 <!-- define a supported language, together with aliases -->
@@ -118,8 +124,4 @@
     local   %yesno;     "no"
 >
 
-<!--
-<database dsn="DBI:mysql:papp">
-</database>
--->
 

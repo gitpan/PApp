@@ -178,7 +178,7 @@ ok
 
 ********* the admin user is named 'admin'       *********
 ********* and has the initial password 'public' *********
-********* Please change this ASAP                ********
+********* Please change this ASAP !!!           *********
 
 EOF
 };

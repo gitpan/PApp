@@ -1,3 +1,20 @@
+=head1 NAME
+
+PApp::Exception - exception handling for PApp
+
+=head1 SYNOPSIS
+
+ use PApp::Exception;
+ # to be written
+
+=head1 DESCRIPTION
+
+# to be written
+
+=over 4
+
+=cut
+
 package PApp::Exception;
 
 require Exporter;
@@ -5,8 +22,21 @@ require Exporter;
 use PApp::HTML;
 
 @ISA = qw(Exporter);
-$VERSION = 0.04;
+$VERSION = 0.05;
 @EXPORT = qw(fancydie);
+
+=item $errobj = new arg => value..
+
+Create and return a new exception object. The object is overloaded,
+stringification will call C<as_string>.
+
+ title      exception page title (default "PApp:Exception")
+ body       the exception page body
+ error      the error message
+ info       additional info (multi-line)
+ backtrace  optional backtrace info
+
+=cut
 
 sub new($$;$@) {
    my $class = shift;
@@ -17,9 +47,25 @@ sub new($$;$@) {
    }
 }
 
+=item $errobj->throw
+
+Throw the exception.
+
+=cut
+
 sub throw {
    die shift;
 }
+
+=item $errobj->as_string
+
+Return the full exception information as simple text string.
+
+=item $errobj->as_html
+
+Return the full exception information as a fully formatted html page.
+
+=cut
 
 sub as_string {
    my $self = shift;
@@ -127,4 +173,17 @@ sub fancydie {
 }
 
 1;
+
+=back
+
+=head1 SEE ALSO
+
+L<PApp>.
+
+=head1 AUTHOR
+
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
+
+=cut
 

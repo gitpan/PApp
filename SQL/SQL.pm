@@ -25,21 +25,42 @@ use DBI;
 
 BEGIN {
    require Exporter;
-   require DynaLoader;
 
-   $VERSION = 0.04;
-   @ISA = qw/Exporter DynaLoader/;
+   $VERSION = 0.05;
+   @ISA = qw/Exporter/;
    @EXPORT = qw(
          sql_exec sql_fetch sql_fetchall sql_exists sql_insertid $sql_exec
    );
+   @EXPORT_OK = qw(
+         connect_cached
+   );
 
-   bootstrap PApp::SQL $VERSION;
+   require XSLoader;
+   XSLoader::load PApp::SQL, $VERSION;
 }
 
 $sql_exec;  # last result of sql_exec's execute call
 $DBH;       # the default database handle
 
 my %dbcache;
+
+=item $dbh = connect_cached $id, $dsn, $user, $pass, $flags, $connect
+
+(not exported by by default)
+
+Connect to the database given by C<($dsn,$user,$pass)>, while using the
+flags from C<$flags>. These are just the same arguments as given to
+C<DBI->connect>.
+
+The database handle will be cached under the unique id C<$id>. If the same
+id is requested later, the cached handle will be checked (using ping), and
+the connection will be re-established if necessary.
+
+If specified, C<$connect> is a callback (e.g. a coderef) that will be
+called each time a new connection is being established, with the new
+C<$dbh> as first argument.
+
+=cut
 
 sub connect_cached {
    my ($id, $dsn, $user, $pass, $flags, $connect) = @_;
@@ -179,7 +200,7 @@ construct can be used:
 
 =cut
 
-=for nobody
+=begin comment
 
 # this is of historical interest at best ;) well, actually the
 # calls to fancydie are quite nice...
@@ -225,6 +246,8 @@ sub sql_exists($;@) {
    goto &sql_fetch;
 }
 
+=end comment
+
 =cut
 
 1;
@@ -239,10 +262,14 @@ As of this writing, sql_fetch and sql_fetchall are not very well tested
 sql_exists could be faster (it is written very ugly to not change the
 current package).
 
+=head1 SEE ALSO
+
+L<PApp>.
+
 =head1 AUTHOR
 
  Marc Lehmann <pcg@goof.com>
  http://www.goof.com/pcg/marc/
 
-
+=cut
 

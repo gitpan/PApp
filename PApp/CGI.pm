@@ -18,9 +18,9 @@ package PApp::CGI;
 require Exporter;
 
 @ISA = qw(Exporter);
-$VERSION = 0.04;
+$VERSION = 0.05;
 @EXPORT = qw();
-$VERSION = 0.04;
+$VERSION = 0.05;
 
 1;
 
@@ -28,7 +28,8 @@ $VERSION = 0.04;
 
 =head1 AUTHOR
 
-Marc Lehmann <pcg@goof.com>
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
 
 =cut
 

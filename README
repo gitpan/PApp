@@ -37,7 +37,7 @@ DESCRIPTION
     * State-preserving: The global hash `%S' is automaticaly preserved
     during the session. Everything you save there will be available in any
     subsequent pages that the user accesses.
-    * XML. PApp-paplications are written in XML. While this is no advantage
+    * XML. PApp-applications are written in XML. While this is no advantage
     in itself, it means that it uses a standardized file format that can
     easily be extended. PApp comes with a DTD and a vim syntax file, even ;)
     * Easy internationalization. I18n has never been that easy: just mark
@@ -49,14 +49,14 @@ DESCRIPTION
     functionality.
     Disadvantages:
 
-    * Unfinished Interface: To admit it, this module is a hack. HMTL::Mason
-    (for example) not only is older and probably larger and more powerful,
-    it has also a more standardized API. PApp will certainly be changed and
-    improved to accomodate new features (like CGI-only operation).
+    * Unfinished Interface: To admit it, this module is young and many
+    features have a kind-of-unfinished interface. PApp will certainly be
+    changed and improved to accomodate new features (like CGI-only
+    operation).
     * No documentation. Especially tutorials are missing, so you are most
     probably on your own.
     * Perl5.6 is required. While not originally an disadvantage in my eyes,
-    Randal Schwartz asked me to provide some explanationm on why this is so:
+    Randal Schwartz asked me to provide some explanation on why this is so:
         "As for an explanation, I require perl5.6 because I require a whole
         lot of features of 5.6 (e.g. DB.pm, utf-8 support, "our", bugfixes,
         3-argument open, regex improvements, probably many others,
@@ -137,7 +137,7 @@ FUNCTIONS/METHODS
          pappdb_pass   The password when connecting to the database
          cipherkey     The Twofish-Key to use (16 binary bytes),
                        BIG SECURITY PROBLEM if not set!
-                       (use mcookie twice to generate one)
+                       (you can use 'mcookie' from util-linux twice to generate one)
          cookie_reset  delay in seconds after which papp tries to
                        re-set the cookie (default: one day)
          cookie_expires time in seconds after which a cookie shall expire
@@ -148,7 +148,7 @@ FUNCTIONS/METHODS
     PApp->mount(location => 'uri', src => 'file.app', ... );
          location[*]   The URI the application is moutned under, must start with "/"
          src[*]        The .papp-file to mount there
-         config        Will be available to the module as $pmod->{config]
+         config        Will be available to the module as $pmod->{config}
 
          [*] required attributes
 

@@ -14,10 +14,9 @@ use PApp::Exception;
 
 BEGIN {
    require Exporter;
-   require DynaLoader;
 
-   $VERSION = 0.04;
-   @ISA = qw(Exporter DynaLoader);
+   $VERSION = 0.05;
+   @ISA = qw(Exporter);
    @EXPORT = qw(
          open_translator
    );
@@ -25,7 +24,8 @@ BEGIN {
          scan_file scan_init scan_end scan_field export_po export_dbm
    );
 
-   bootstrap PApp::I18n $VERSION;
+   require XSLoader;
+   XSLoader::load PApp::I18n, $VERSION;
 }
 
 =item open_translator $path, lang1, lang2...
@@ -123,9 +123,10 @@ To assure that the string is translated "as is" just prefix it with "\{}".
 use PApp::SQL;
 use String::Similarity 'fstrcmp';
 
-my %scan_msg;
-my $scan_app;
-my $scan_langs;
+# our because of my due to mod_perl bugs
+our %scan_msg;
+our $scan_app;
+our $scan_langs;
 
 sub scan_init {
    ($scan_app, $scan_langs) = @_;
@@ -134,33 +135,44 @@ sub scan_init {
    sql_exec "update msgid set context = '' where app = ?", $scan_app;
 }
 
+sub scan_str($$$) {
+   my ($prefix, $string, $lang) = @_;
+   my $line = 1;
+   # macintoshes not supported, but who cares ;-<
+   local $_ = $string;
+   for(;;) {
+      if (m/\G([^\012_]*[N_]_\(?"((?:[^"\\]+|\\.)+)"\)?[^\012_]*)/sgc) {
+         my ($context, $id) = ($1, $2);
+         push @{$scan_msg{$lang}{$id}}, "$prefix:$line $context";
+         $line += $context =~ y%\012%%;
+      } elsif (m/\G\012/sgc) {
+         $line++;
+      } elsif (m/\G(.)/sgc) {
+         # if you think this is slow then consider the first pattern
+      } else {
+         last;
+      }
+   }
+}
+
 sub scan_file($$) {
    my ($path, $lang) = @_;
    local *FILE;
    print "file '$path' for '$scan_app' in '$lang'\n";
    open FILE, "<", $path or fancydie "unable to open file for scanning", "$path: $!";
-   my $file;
-   while(<FILE>) {
-      chomp;
-      while (s/[N_]_\(?"((?:[^"\\]+|\\.)+)"\)?/[TEXT]/) {
-         push @{$scan_msg{$lang}{$1}}, "$path:$. $_";
-      }
-      $file .= $_."\n";
-   }
-   while ($file =~ /[N_]_\(?"((?:[^"\\]+|\\.)+)"\)?/sg) {
-      push @{$scan_msg{$lang}{$1}}, "$path:(multiline)";
-   }
+   local $/;
+   scan_str($path, scalar<FILE>, $lang);
 }
 
 sub scan_field {
-   my ($dsn, $field, $lang) = @_;
+   my ($dsn, $field, $style, $lang) = @_;
    my $table;
    print "field $field for '$scan_app' in '$lang'\n";
    my $db = DBI->connect(@$dsn);
    ($table, $field) = split /\./, $field;
    my $st = $db->prepare("show columns from $table like ?"); $st->execute($field);
    my $type = $st->fetchrow_arrayref;
-   $type or fancydie "no such table", $table;
+   $type or fancydie "no such table", "$table.$field";
    $type = $type->[1];
    $st->finish;
    if ($type =~ /^(set|enum)\('(.*)'\)$/) {
@@ -170,8 +182,15 @@ sub scan_field {
    } else {
       my $st = $db->prepare("select $field from $table"); $st->execute;
       $st->bind_columns(\my($msgid));
+      my $prefix = "DB:$dsn->[0]:$table:$field";
       while ($st->fetch) {
-         push @{$scan_msg{$lang}{$msgid}}, "DB:$dsn->[0]:$table:$field" if $field ne "";
+         if ($style eq "code"
+             or ($style eq "auto"
+                 and $msgid =~ /[_]_"(?:[^"\\]+|\\.)+"/s)) {
+            scan_str "$prefix $msgid", $msgid, $lang;
+         } else {
+            push @{$scan_msg{$lang}{$msgid}}, $prefix;
+         }
       }
    }
    $db->disconnect;
@@ -288,7 +307,10 @@ sub export_dbm {
             }
          }
          my $dpo = new PApp::I18n::DPO_Writer "$pofile~", $prime;
-         $dpo->add($id,$msg) while $st->fetch;
+         while ($st->fetch) {
+            next if $id eq $msg or $msg =~ /^\s+$/;
+            $dpo->add($id,$msg);
+         }
          undef $dpo;
          rename "$pofile~", $pofile;
          print "exported $pofile\n";
@@ -328,19 +350,35 @@ package PApp::I18n::PO_Reader;
 
 use Carp;
 
+=back
+
+=head1 CLASS PApp::I18n::PO_Reader
+
+This class can be used to read serially through a .po file. (where "po
+file" is about the same thing as a standard "Portable Object" file from
+the NLS standard developed by Uniforum).
+
+=over 4
+
+=item $po = new PApp::I18n::PO_Reader $pathname
+
+Opens the given file for reading.
+
+=cut
+
 sub new {
    my ($class, $path) = @_;
    my $self;
 
    $self->{path} = $path;
-   open $self->{fh}, ">", $path or croak "unable to open '$path' for reading: $!";
+   open $self->{fh}, "<", $path or croak "unable to open '$path' for reading: $!";
 
    bless $self, $class;
 }
 
-=for nobody
+=item ($msgid, $msgstr, @comments) = $po->next;
 
-($msgid, $msgstr, @comments) = $po->next;
+Read the next entry. Returns nothing on end-of-file.
 
 =cut
 
@@ -400,6 +438,22 @@ package PApp::I18n::PO_Writer;
 
 use Carp;
 
+=back
+
+=head1 CLASS PApp::I18n::PO_Writer
+
+This class can be used to write a new .po file. (where "po file" is about
+the same thing as a standard "Portable Object" file from the NLS standard
+developed by Uniforum).
+
+=over 4
+
+=item $po = new PApp::I18n::PO_Writer $pathname
+
+Opens the given file for writing.
+
+=cut
+
 sub new {
    my ($class, $path) = @_;
    my $self;
@@ -410,9 +464,9 @@ sub new {
    bless $self, $class;
 }
 
-=for nobody
+=item $po->add($msgid, $msgstr, @comments);
 
-$po->add($msgid, $msgstr, @comments);
+Write another entry to the po file. See PO_Reader's C<next> method.
 
 =cut
 
@@ -440,7 +494,8 @@ sub add {
 
 =head1 AUTHOR
 
-Marc Lehmann <pcg@goof.com>
+ Marc Lehmann <pcg@goof.com>
+ http://www.goof.com/pcg/marc/
 
 =cut
 

@@ -2,10 +2,14 @@
 
 <import src="macro/admin"/>
 
-<macro name="plain_header*(;$)" args="$title"><phtml><![CDATA[
+<macro name="plain_header*(;$)" args="$head"><phtml><![CDATA[
+#if !ref $head
+<: $head = { title => $head } :>
+#endif
 <html>
  <head>
-  <title><?$title?></title>
+ <title><?$head->{title}?></title>
+ <?$head->{head}?>
  </head>
  <body link="#a000000" alink="#a00000" vlink="#a00000" text="#000000" bgcolor="#ffffb4">
 ]]></phtml></macro>

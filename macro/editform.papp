@@ -97,7 +97,11 @@ sub ef_edit*() {
 ]]></phtml></macro>
 
 <macro name="ef_may_edit*"><phtml><![CDATA[
-   <?slink __"[Edit this page]", ef_edit => 1:><p>
+#if $S{ef_edit}
+   <?slink __"[Leave Edit Mode]", ef_edit => undef:><p>
+#else
+   <?slink __"[Enter Edit Mode]", ef_edit => 1:><p>
+#endif
 ]]></phtml></macro>
 
 <macro name="ef_submit*"><phtml><![CDATA[

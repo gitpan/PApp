@@ -7,7 +7,7 @@
 typedef struct lru_node {
   struct lru_node *next;
   struct lru_node *prev;
-  U32 hash; /* we do not really do any hashing, yet */
+  U32 hash;
   SV *dbh;
   SV *sql;
 

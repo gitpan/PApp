@@ -5,7 +5,11 @@
 <language lang="en" desc="English"/>
 <language lang="de" desc="Deutsch"/>
 
-<macro name="header"><phtml><![CDATA[
+<import src="macro/util"/>
+
+<macro name="page(&amp;)" args="$body"><phtml><![CDATA[
+<: access_page "poedit", __"PO-Editor", sub {
+   :>
    <html>
    <head>
    <title>__"PO-Editor"</title>
@@ -15,18 +19,19 @@
 #if retlink_p
    <?retlink __"Go Back":><p>
 #endif
-]]></phtml></macro>
 
-<macro name="footer"><phtml><![CDATA[
+   <: &$body :>
+
 #if 1
    <:$S{papp_debug}=1;debugbox:>
 #endif
    </body>
    </html>
+<:}:>
 ]]></phtml></macro>
 
 <phtml><![CDATA[
-   <:header:>
+<:page {:>
    <:my $selected = 0:>
 
 #if $A{scan_apps} && !reload_p
@@ -41,15 +46,16 @@
       while (my($path, $v) = each %{$pmod->{file}}) {
          scan_file $path, $v->{lang};
       }
-      while (my($field, $lang) = each %{$pmod->{translate}}) {
-         scan_field $pmod->{database}, $field, $lang;
+      while (my($field, $o) = each %{$pmod->{translate}}) {
+         my ($lang, $style) = @$o;
+         scan_field $pmod->{database}, $field, $style, $lang;
       }
       scan_end($A{refine});
    }
 
    my $st = sql_exec "select msgid.nr, msgstr.lang from msgid, msgstr
                       where msgid.nr = msgstr.nr and msgid.lang = msgstr.lang";
-   while (my($nr, $lang) = $st->fetchrow_array) {
+   while (my($nr, $lang,$s) = $st->fetchrow_array) {
       echo "deleting ($nr|$lang)\n";
       sql_exec "delete from msgstr where nr = ? and lang = ?", $nr, $lang;
    }
@@ -136,14 +142,15 @@
    __"Untranslated or fuzzy messages": <?$unt:>
 #endif
 
-   <:footer:>
+<:}:>
 ]]></phtml>
 
 <module name="view" nosession="">
 <state keys="where begin" local="yes"/>
 <state keys="window" preferences="yes"/>
 <phtml><![CDATA[
-   <:header:>
+<:page {:>
+
    <?slink __"Back to the toplevel menu", "":><p>
 
    <: $S{begin}  ||=  0 :>
@@ -184,7 +191,7 @@
    <?slink "&lt;&lt;&lt;&lt;&lt;", begin => $S{begin} > $S{window} ? $S{begin} - $S{window} : 0:> ===
    <?slink "&gt;&gt;&gt;&gt;&gt;", begin => $S{begin} + $S{window}:>
 
-   <:footer:>
+<:}:>
 ]]></phtml></module>
 
 <module name="edit" nosession="">
@@ -192,7 +199,7 @@
 <state keys="msgstr msgid" local="yes"/>
 <state keys="width" preferences="yes"/>
 <phtml><![CDATA[
-   <:header:>
+<:page {:>
    <?slink __"Return to the directory view", "view":><p>
    <?$state{lang}:>
 
@@ -242,12 +249,13 @@
       for ($msgid, $msgstr, $context) {
          $_ = PApp::escape_html $_;
       }
+      $msgid =~ s/\r?\n/\n<br>/g;
       $context =~ s/\n/<br>/g;
 
       $S{width} ||= 40;
 
-      $S{width}++ if $P{incwidth};
-      $S{width}-- if $P{decwidth};
+      $S{width} += 3 if $P{incwidth};
+      $S{width} -= 3 if $P{decwidth};
 
       save_prefs;
 
@@ -278,7 +286,8 @@
        </td>
    </table>
    <?endform:>
-   <:footer:>
+
+<:}:>
 ]]></phtml></module>
 
 </papp>

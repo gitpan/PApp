@@ -49,7 +49,7 @@ use File::Basename qw(dirname);
 use PApp;
 use PApp::Parser;
 
-$VERSION = 0.04;
+$VERSION = 0.05;
 
 *PApp::apache_request = \&Apache::request;
 
@@ -106,5 +106,6 @@ L<PApp>.
  Marc Lehmann <pcg@goof.com>
  http://www.goof.com/pcg/marc/
 
+=cut
 
 
