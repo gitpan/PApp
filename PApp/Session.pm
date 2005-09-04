@@ -18,6 +18,13 @@ PApp::Session - manage session-specific data.
 
 =head1 DESCRIPTION
 
+This module manages session-specific variables, that is, values that get
+associated with all accesses within a single session. Session variables
+keep their value when old states get re-requested, as opposed to state
+variables that change back to their old value, and can be used for
+transactions or other data that belongs to a whole session and not a
+single access.
+
 =cut
 
 package PApp::Session;
@@ -31,14 +38,14 @@ use PApp::Config qw(DBH $DBH); DBH;
 
 use base Exporter;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw( 
    locksession
 );
 
 use Convert::Scalar ();
 
-=head2 FUNCTIONS
+=head2 Functions
 
 =over 4
 
@@ -65,63 +72,51 @@ sub locksession(&) {
 
 =back
 
-=head2 METHODS
+=head2 Methods
 
 =over 4
 
-=item $session = new PApp::Session [$pathref]
-
-Creates a new PApp::Session object for the given session id and
-application path. A reference to the path variable must be apssed in, so
-that changes in the path can be tracked by the module.
-
-=cut
-
-sub new {
-   bless { path => $_[1] }, $_[0];
-}
-
-=item $session->get($key)
+=item PApp::Session::get ($key)
 
 Return the named session variable (or undef, when the variable does not
 exist).
 
-=item $session->set($key, $value)
+=item PApp::Session::set ($key, $value)
 
 Set the named session variable. If C<$value> is C<undef>, then the
 variable will be deleted. You can pass in (serializable) references.
 
-=item $ref = $session->ref($key)
+=item PApp::Session::ref ($key)
 
 Return a reference to the session value (i.e. a L<PApp::DataRef>
-object). Updates to the referee will be seen by all processes.
+object). Updates to the referend will be seen by all processes.
 
 =cut
 
-sub get($$) {
+sub get ($) {
    sthaw sql_ufetch $DBH, "select value from session where sid = ? and name = ?",
-                    $PApp::sessionid, Convert::Scalar::utf8_upgrade "${$_[0]{path}}/$_[1]";
+                    $PApp::sessionid, Convert::Scalar::utf8_upgrade "$_[0]";
 }
 
-sub set($$;$) {
-   if (defined $_[2]) {
+sub set ($;$) {
+   if (defined $_[1]) {
       sql_exec $DBH, "replace into session (sid, name, value) values (?, ?, ?)",
-               $PApp::sessionid, Convert::Scalar::utf8_upgrade "${$_[0]{path}}/$_[1]", 
-               sfreeze_cr $_[2];
+               $PApp::sessionid, Convert::Scalar::utf8_upgrade "$_[0]", 
+               sfreeze_cr $_[1];
    } else {
       sql_exec $DBH, "delete from session where sid = ? and name = ?",
-               $PApp::sessionid, Convert::Scalar::utf8_upgrade "${$_[0]{path}}/$_[1]";
+               $PApp::sessionid, Convert::Scalar::utf8_upgrade "$_[0]";
    }
 }
 
-sub ref($$) {
+sub ref($) {
    require PApp::DataRef;
 
    \(new PApp::DataRef 'DB_row',
          database => $PApp::Config::Database,
          table    => "session", 
          key      => [qw(sid name)],
-         id       => [$PApp::sessionid, "${$_[0]{path}}/$_[1]"],
+         id       => [$PApp::sessionid, $_[0]],
          utf8     => 1,
    )->{
       ["value", PApp::DataRef::DB_row::filter_sfreeze_cr]
@@ -136,8 +131,8 @@ L<PApp::Prefs>, L<PApp::Env>, L<PApp>, L<PApp::User>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

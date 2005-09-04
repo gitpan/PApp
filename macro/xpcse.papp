@@ -6,8 +6,8 @@
 
 <macro name="remote_edit_parse*"><perl><![CDATA[
    my $buf;
-   $request->read($buf, $request->header_in("Content-Length"));
-   if ($request->header_in("Content-Type") =~ /^text\//) {
+   $request->read($buf, $request->header_in ("Content-Length"));
+   if ($request->header_in ("Content-Type") =~ /^text\//) {
         Convert::Scalar::utf8_valid $buf or die "format violation - only utf8 supported\n";
         Convert::Scalar::utf8_on $buf;
 
@@ -19,7 +19,7 @@
 
 <macro name="remote_edit_store*" args="$fh"><perl><![CDATA[
    my $buf;
-   my $len = $request->header_in("Content-Length");
+   my $len = $request->header_in ("Content-Length");
    while($len) {
       my $rlen = ($len > 8192) ? 8192 : $len;
       $request->read($buf, $rlen);
@@ -42,8 +42,8 @@
             for my $c (qw(pver command ostype)) {
                die "Required header \"$c\" missing\n" unless exists $P{$c};
             }
-            if($P{command} eq "store") {
-               if(exists $data->{file}) {
+            if ($P{command} eq "store") {
+               if (exists $data->{file}) {
                   my $dest = $data->{file};
                   open my $fh, ">", "$dest.$$" or die "open $dest.$$";
                   remote_edit_store($fh);
@@ -103,7 +103,7 @@
             $outflags{"Line"}                   = $flags{line} if exists $flags{line};
 
             my $outflags;
-            while(my ($x,$y) = each %outflags) {
+            while (my ($x,$y) = each %outflags) {
                $x =~ s/[ \t:\012\015]//g;
                $outflags .= "$x: $y\015\012";
             }
@@ -133,6 +133,10 @@
 
    if (defined $PApp::papp->{xpcse_prefix}) {
       $url = $PApp::papp->{xpcse_prefix};
+   } elsif (length $request->header_in ("Host")) {
+      $url = "http://"
+           . $request->header_in ("Host")
+           . $url;
    } else {
       $url = "http://"
            . $request->hostname
@@ -222,7 +226,7 @@ L<PApp>
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
+ Marc Lehmann <schmorp@schmorp.de>
  http://www.goof.com/pcg/marc/
 
 =cut

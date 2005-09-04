@@ -17,10 +17,10 @@ PApp::DataRef - reference data stored in scalars, databases...
 
 =head1 DESCRIPTION
 
-You often want to store return values from forms (e.g. L<macro/editform>)
-or other "action at a distance" events in your state variable or in a
-database (e.g. after updates). The L<DBIx::Recordset|DBIx::Recordset>
-provides similar functionality.
+You often want to store return values from HTML forms
+(e.g. L<macro/editform>) or other "action at a distance" events
+in your state variable or in a database (e.g. after updates). The
+L<DBIx::Recordset|DBIx::Recordset> provides similar functionality.
 
 C<PApp::DataRef> provides the means to create "handles" that can act like
 normal perl references. When accessed they fetch/store data from the
@@ -36,7 +36,7 @@ package PApp::DataRef;
 
 use Convert::Scalar ();
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 =item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...
 
@@ -54,7 +54,7 @@ accesses. (Future versions might be more intelligent).
 
 As a special case, if the C<value> part of the C<where> agruments is
 undef, it will be replaced by some valid (newly created) id on the first
-STORE operation. This currently only works for mysql ;*)
+STORE operation. This currently only works for mysql.
 
 Parameters
 
@@ -83,7 +83,6 @@ Parameters
                  describes how to allocate a new id).
    utf8          can be set to a boolean, an arrayref or hashref that decides
                  wether to force the utf8 bit on or off for the selected fields.
-                 [THIS IS AN EXPERIMENTAL EXTENSION]
 
 =item $hd = new $dataref arg => value, ...
 
@@ -97,10 +96,6 @@ parameters and use this form of the method invocation to "specialise", e.g.
       my $row = $template->new(id => $_);
       ...
    }
-
-=item $hd = new PApp::DataRef 'File', path => ..., perm => ...
-
-Create a new handle that fetches and stores a file. [NYI]
 
 =item $hd = new PApp::DataRef 'Scalar', fetch => ..., ...
 
@@ -651,7 +646,7 @@ sub DESTROY { }
 
 =back
 
-=head1 HOW FLUSHES ARE IMPLEMENTED
+=head1 How Flushes are Implemented
 
 When a single value (delay => 0) is being read or written, DataRef creates
 a single access:
@@ -687,8 +682,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

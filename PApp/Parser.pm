@@ -15,8 +15,8 @@ PApp::Parser - PApp format file parser
 
 =head1 DESCRIPTION
 
-This module manages papp files (parsing, compiling etc..). Sorry, you have
-to look at the examples to understand the descriptions here :(
+This module manages F<.papp> files (parsing, compiling etc..). You have to
+look at the examples to understand the descriptions here :(
 
 This module exports nothing (and might never do).
 
@@ -40,7 +40,7 @@ use PApp::I18n qw(normalize_langid);
 no bytes;
 use utf8;
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 =item ($ppkg, $name, $code) = parse_file $papp, $path
 
@@ -489,8 +489,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

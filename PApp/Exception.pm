@@ -14,11 +14,13 @@ PApp::Exception - exception handling for PApp
 =head1 SYNOPSIS
 
  use PApp::Exception;
- # to be written
 
 =head1 DESCRIPTION
 
-# to be written
+This module implements a exception class that is able to carry backtrace
+information and other information useful for tracking own bugs.
+
+It's the standard exception class used by PApp.
 
 =over 4
 
@@ -33,7 +35,7 @@ use PApp::HTML;
 
 use utf8;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw(fancydie try catch);
 
 no warnings;
@@ -433,8 +435,14 @@ rest of the arguments (unless they are C<catch>'ed).
 
 =item catch BLOCK args...
 
-Not yet implemented. If used as an argument to C<try>, execute the block when
-an error occurs.
+Not yet implemented. If used as an argument to C<try>, execute the block
+when an error occurs. Example:
+
+   try {
+      ... code
+   } catch {
+      ... code to be executed when an exception was raised
+   };
 
 =cut
 
@@ -470,6 +478,9 @@ an error page for the user. Better overwrite the following methods, not this one
 =item $html = $exc->ep_login
 
 =item $html = $exc->ep_wrap(...)
+
+Various parts of the error page that cna be generated independently of the
+others.
 
 =cut
 
@@ -648,8 +659,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

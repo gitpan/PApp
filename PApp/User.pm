@@ -40,7 +40,7 @@ use PApp qw($userid *state getuid);
 
 use base Exporter;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw( 
    authen_p access_p
 
@@ -53,7 +53,7 @@ DBH;
 
 sub PAPP_USER_MAX_CACHE (){ 1000 }
 
-=head2 FUNCTIONS
+=head2 Functions
 
 =over 4
 
@@ -190,8 +190,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

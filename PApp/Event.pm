@@ -43,7 +43,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 use PApp::Exception ();
 use Compress::LZF ':freeze';
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 our $event_count;
 
@@ -101,6 +101,8 @@ sub broadcast($;@) {
    sql_exec $DBH, "lock tables event write, event_count write";
 
    for (@_) {
+      #use PApp::Util; print STDERR "broadcast $event: ", PApp::Util::dumpval $_, "\n";#d#
+
       $id = sql_insertid sql_exec $DBH,
                   "insert into event (id, ctime, event, data) values (NULL,NULL,?,?)",
                   $event, sfreeze_cr $_;
@@ -112,7 +114,7 @@ sub broadcast($;@) {
 
    if (@_) {
       $id > $event_count
-         or die "FATAL: event table corrupted; new id $id < current event_count $event_count";
+         or die "FATAL: event table corrupted; new id $id <= current event_count $event_count";
 
       handle_events($id) if @_;
    }
@@ -172,7 +174,7 @@ sub handle_events {
 
 1;
 
-=head1 EXAMPLE
+=head1 Example
 
 This example implements caching of a costly operation in a local hash:
 
@@ -210,15 +212,16 @@ however, receives all arguments in one run:
 
   # after changes in the database:
   PApp::Even::broadcast demo_flush_cache => $id;
-  
+
 =head1 SEE ALSO
 
 L<PApp>.
 
+
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

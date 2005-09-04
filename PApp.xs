@@ -243,7 +243,6 @@ agni_store (SV *self, SV *key, SV *value)
 {
   dSP;
 
-  HE *he;
   HV *hv = (HV*) SvRV (self);
 
   /* _-keys go into $self, non-_-keys are store'ed immediately */
@@ -265,14 +264,6 @@ agni_store (SV *self, SV *key, SV *value)
       SvRMAGICAL_off (hv);
       hvc = (HV *)SvRV (HeVAL (hv_fetch_ent (hv, CACHEs, 0, CACHEh)));
       SvRMAGICAL_on (hv);
-      he = hv_fetch_ent (hvc, key, 0, 0);
-
-      if (he)
-        {
-          /* always update cache, if it exists */
-          SvREFCNT_dec (HeVAL (he));
-          HeVAL (he) = newSVsv (value);
-        }
 
       PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (value); PUSHs (self); PUTBACK;
       c = call_method ("freeze", G_SCALAR | G_EVAL);

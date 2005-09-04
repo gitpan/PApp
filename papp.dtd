@@ -1,7 +1,7 @@
 <!--
    DTD for PApp-files
    has never been tested!
-   (c)2000 Marc Lehmann <pcg@goof.com>
+   (c)2000 Marc Lehmann <schmorp@schmorp.de>
 -->
 
 <!ENTITY % version    "2.02">

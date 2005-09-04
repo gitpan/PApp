@@ -130,9 +130,11 @@ $PApp::SQL::DBH = $DBH;
 
 print <<EOF;
 
-Now creating tables (that do not already exist). existing tables will
-_not_ be dropped, so if you want to upgrade to a new & incompatible
-version you have to drop the database manually.
+Now creating tables (that do not already exist). Existing tables will
+_not_ be dropped, so if you want to upgrade to a new (& incompatible)
+version, or you want to downgrade again, you have to drop the database
+manually. This is not normally required, as papp will automatically
+upgrade tables from older releases transparently.
 
 EOF
 

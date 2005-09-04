@@ -12,9 +12,10 @@ macro/util - some utility functions
 
 =head1 DESCRIPTION
 
-*sigh* :(
+This macro package contains some utility functions that make sense in a
+pure PApp environment only. It's of little use elsewhere.
 
-=head1 FUNCTIONS
+=head1 Functions
 
 =over 4
 
@@ -92,11 +93,11 @@ Use it like this:
 <perl><![CDATA[
 =head1 SEE ALSO
 
-L<PApp>
+L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
+ Marc Lehmann <schmorp@schmorp.de>
  http://www.goof.com/pcg/marc/
 
 =cut

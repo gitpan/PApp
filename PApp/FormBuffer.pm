@@ -16,20 +16,26 @@ PApp::FormBuffer - a re-blocking buffer for multipart streams
 =head1 SYNOPSIS
 
  use PApp::FormBuffer;
- # not yet
 
 =head1 DESCRIPTION
 
-In flux ;-> See C<parse_multipart_form> in L<PApp>.
+PApp::FormBuffer is a utility class that converts a file handle into a
+filehandle that emulates multiple virtual files that are separated by a
+boundary strings, just what's required to parse multipart form data. It
+should be used via perls tie interface.
 
-=head2 new attr => val, ...
+=over 4
+
+=item new attr => val, ...
 
  fh         filehandle to use (only read()) is ever called
  boundary   the "file"-part boundary
  rsize      max. number of bytes to read
  bufsize    the approx. buffer size (def. 32768)
 
-=head2 supported methods
+=back
+
+=head2 Supported Methods
 
  READ
  READLINE
@@ -39,7 +45,7 @@ In flux ;-> See C<parse_multipart_form> in L<PApp>.
 
 =cut
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 no utf8;
 use bytes;
@@ -142,18 +148,14 @@ sub READLINE {
 
 *read = \&READ;
 
-=head1 FINAL WORDS
-
-Boy, was this a mess to write :(
-
 =head1 SEE ALSO
 
 L<PApp>.
       
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

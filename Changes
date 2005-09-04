@@ -1,5 +1,36 @@
 Revision history for Perl extension PApp
 
+1.1  Sun Sep  4 16:19:14 CEST 2005
+        - don't update the _cache entry on STORE, this is the job
+          of the store method.
+	- bin/agni: fix --force option.
+        - xpcse now uses the Host: header, if available, to generate
+          it's URL.
+	- switched to real I18n instead of stubs in Agni namespaces.
+        - agni statementhandles weren't properly initialized on first
+          database connect.
+        - accept PR-xinclude-20040930 in addition to the 1999 version
+          in PApp::XML::xml_include.
+        - handle #default-namespace used in newer expats in xml_include.
+        - upgraded to Storable-2.15.
+        - new function: PApp::Util::mime_header.
+        - PApp::HTML::mailto_url now uses the above function to encode
+          headers.
+        - blindly accept anything when neither encoding is given, or
+          encoding is ascii|us-ascii|iso-8859-1, when processing
+          form data.
+        - abort_with_file no longer sends the file when $request->header_only
+          is true.
+        - session variables are no longer PApp-path-specific, PApp::Session
+          uses function interface instead of method interface.
+
+1.01 Sun Feb 27 18:43:42 CET 2005
+        - improved speed of Agni fetch and store.
+	- PApp::ECMAScript::escape_string_* now also escape "<"
+          characters, to avoid common de-quoting bugs in browsers.
+        - implement --force option in bin/agni.
+        - PApp::ECMAScript string quoting functions will also quote &.
+
 1.0  Tue Nov 23 18:08:14 CET 2004
 	- check obj_gidseq validity after every import.
 	- various exceptions could cause an agni object to become

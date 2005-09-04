@@ -2,7 +2,7 @@
 
 !define DOC_NAME           "PApp - creating applications for the WorldWideWeb"
 !define DOC_TYPE           "[Vortrag]"
-!define DOC_AUTHOR         "(c) 2000 Marc Lehmann <pcg@goof.com>"
+!define DOC_AUTHOR         "(c) 2000 Marc Lehmann <schmorp@schmorp.de>"
 !build_title
 
 H1: PApp - what is it?
@@ -319,15 +319,6 @@ database), PApp conviniently allows applications to gather statistical
 data from individual "hits", using almost the same environment as at
 runtime. Expiring and data gathering can, of course, be done seperately if
 necessary.
-
-H2: PApp is Free Software
-
-Although we are not sure wether we'll publish all versions of PApp
-under the GPL, or which modules from our own applications might become
-standard components (like the forum), we are determined to make PApp free
-software. The principal PApp architect (me!) did a lot of free software
-modules and works at quite a few free software programs (like GCC or The
-Gimp) and is determined to make PApp as free and as powerful as possible.
 
 H1: Disadvantages
 

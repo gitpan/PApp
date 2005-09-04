@@ -28,7 +28,7 @@ didn't visit your site for a long time.
 This module helps doing this, while at the same time giving you the
 ability to analyze the access patterns on your site/application, for
 example anonymizing and summarizing user behaviour to get the highly
-needed statistics for your customers ;)
+needed statistics for your customers.
 
 There are two different tasks: logging of state/user entries (as done by
 C<log_state>) und cleaning the state/user database of expired entries (done
@@ -50,16 +50,13 @@ use PApp::Env;
 
 use base Exporter;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw();
 
-=head2 CALLBACKS
+=head2 Callbacks
 
 During logging, the following callbacks will be called for the applications
 that define them:
-
-(ALL of this is not yet implemented, sicne logging should be seperated
-from the applications, actually).
 
 =over 4
 
@@ -72,7 +69,7 @@ from the applications, actually).
 Add a callback that is called for each user once before she is
 removed. The callback is called with (userid, username, comment, prefs),
 where C<prefs> is a hash representing the user's preferences in PApp's
-internal format which will change anytime ;->.
+internal format which will change anytime.
 
 =item for_state <BLOCK>, [option => value...]
 
@@ -175,7 +172,7 @@ sub decode_state {
 
 =back
 
-=head2 FUNCTIONS
+=head2 Functions
 
 =over 4
 
@@ -292,18 +289,14 @@ EOF
 
 =back
 
-=head1 BUGS
-
- - this module has not been written yet ;->
-
 =head1 SEE ALSO
 
 L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

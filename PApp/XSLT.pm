@@ -13,15 +13,17 @@ PApp::XSLT - wrapper for an XSLT implementation
 
 =head1 SYNOPSIS
 
- use PApp::XSLT::Sablotron;
- use PApp::XSLT::LibXSLT;
- # to be written
+ use PApp::XSLT; # try to find any implementation, OR
+
+ use PApp::XSLT::Sablotron; # choose sablotron
+ use PApp::XSLT::LibXSLT;   # or choose libxslt
+ use PApp::XSLT;            # before loading PApp::XSLT
 
 =head1 DESCRIPTION
 
 The PApp::XSLT module is more or less a wrapper around an unnamed XSLT
-implementation (currently XML::Sablotron or XML::LibXSLT, should be
-moderately easy to add XML::Transformiix or XML::XSLT).
+implementation (currently XML::Sablotron or XML::LibXSLT, chosen at
+runtime, should be moderately easy to add XML::Transformiix or XML::XSLT).
 
 =over 4
 
@@ -29,7 +31,7 @@ moderately easy to add XML::Transformiix or XML::XSLT).
 
 package PApp::XSLT;
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 no bytes;
 
@@ -214,8 +216,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

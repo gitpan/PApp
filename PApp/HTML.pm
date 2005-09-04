@@ -13,22 +13,28 @@ PApp::HTML - utility functions for html generation
 
 =head1 SYNOPSIS
 
+  use PApp::HTML;
+
 =head1 DESCRIPTION
+
+This module provides a host of HTML-related convinience functions, most of
+which output HTML elements.
 
 =cut
 
 package PApp::HTML;
 
-#   imports
 use Carp;
 use FileHandle ();
+
+use PApp::Util;
 
 use base Exporter;
 
 use utf8;
 no bytes;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw(
 
       errbox
@@ -40,7 +46,7 @@ $VERSION = 1;
       checkbox radio reset_button submit_image selectbox optiontag javascript button
 );
 
-=head1 FUNCTIONS
+=head1 Functions
 
 =over 4
 
@@ -186,8 +192,6 @@ Submits a graphical submit button. C<$img_url> must be the url to the image that
 
 =item reset_button [\%attrs,] $name 
 
-*FIXME*
-
 =item textfield [\%attrs,] $name [, $value]
 
 Creates an input element of type text named C<$name>. Examples:
@@ -239,7 +243,7 @@ sub textarea		{ tag "textarea", { ref $_[0] eq "HASH" ? %{+shift} : (), name => 
 
 Creates an input element of type select(box) named C<$name>. C<$selected>
 should be the currently selected value (or an arrayref containing all
-selected values). All remaining arguments are trated as name (displayed)
+selected values). All remaining arguments are treated as name (displayed)
 => value (submitted) pairs.
 
 =cut
@@ -300,7 +304,7 @@ sub javascript($) {
 Create a mailto url with the specified headers (see RFC 2368). All values
 will be properly escaped for you. Example:
 
- mailto_url "pcg@goof.com",
+ mailto_url "schmorp@schmorp.de",
             subject => "Mail from me",
             body => "(generated from ".reference_url(1).")";
 
@@ -313,7 +317,8 @@ sub mailto_url {
       for(;;) {
          my $key = shift;
          my $val = shift;
-         $url .= $key."=".escape_uri($val);
+         $val = PApp::Util::mime_header $val unless $key =~ /^body$/i;
+         $url .= $key . "=" . escape_uri $val;
          last unless @_;
          $url .= "&amp;";
       }
@@ -337,12 +342,12 @@ sub parse_params($) {
 
 =head1 SEE ALSO
 
-L<PApp>.
+L<PApp>, L<PApp::XML>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

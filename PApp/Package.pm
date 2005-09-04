@@ -13,6 +13,8 @@ PApp::Package - Application Package Class.
 
 =head1 SYNOPSIS
 
+   # not normally "use"d in application code.
+
 =head1 DESCRIPTION
 
 Every application in PApp is represented as a PApp::Package (currently
@@ -23,7 +25,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 package PApp::Package;
 
@@ -342,7 +344,7 @@ sub mark_statekey {
    $ppkg->{local}{$key}{$extra} = 1 if $attr eq "local";
 }
 
-=item $ppkg->insert($name, $module, $conf) *EXPERIMENTAL*
+=item $ppkg->insert($name, $module, $conf) [EXPERIMENTAL]
 
 Insert the given package at the current position, optionally setting the
 default module to C<$module> and C<$PApp::curconf> to C<$conf>. If no name
@@ -378,7 +380,7 @@ sub insert($;$$$) {
    PApp::Package::run($ppkg, \$$curmod->{$name});
 }
 
-=item $ppkg->embed($name, $module, $conf) *EXPERIMENTAL*
+=item $ppkg->embed($name, $module, $conf) [EXPERIMENTAL]
 
 Embed the given package. This function is identical to the insert method
 above with the exception of the namespace (eg. %S) , which will NOT be
@@ -494,8 +496,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

@@ -386,6 +386,58 @@ papp-admin - administrate papp
 
 =head1 SYNOPSIS
 
+   Usage: papp-admin [opts...]
+
+       -h | --help             this list
+       -v | --verbose          be more verbose
+       -q | --quiet            be very quiet
+       -V | --version          show papp version string
+          
+            --initdb           initialize/upgrade database (NYI)
+          | --addset <set>     create appset <set>
+          | --delset <set>     delete appset <set>
+            --list-apps        list applications
+            --list-appsets     list application sets
+            --list-users       list (registered) users
+            --list-groups      list groups / access rights
+
+       -a | --app <name>       select/create application <name>
+            --appset <name>    set application set <name>
+            --path <path>      set application path
+            --mount <cfg>      set <cfg> as mountconfig (or location)
+            --config <cfg>     set <cfg> as application config
+
+       -g | --group <name>     select/create group <name>
+            --comment <text>   set the group comment string
+
+       -u | --user <name>      select/create user <name>
+            --password <pw>    set new password (dangerous!)
+            --comment <text>   set the user comment string
+            --grant <group>    add user to <group>
+            --revoke <group>   remove user from <group>
+
+       -d | --delete           delete selected object
+       -s | --show             show currently selected object
+
+            --expire           expire the state and user db
+                               see the following arguments
+            --keepuser t       keep anon. users this long
+            --keepreguser t    keep registeres users this long
+            --keepstate t      keep state entries this long
+
+            --flush-cache      flush package cache (and other things)
+
+            --domain <dom>     select/create translation domain <dom>
+            --import-po <src>  import po-like files from directory <dst>
+            --export-po <dst>  export po-like file(s) into directory <dst>
+            --import <src>     import domain(s) from file <src>
+            --export <dst>     export selected domain to file <dst>
+                              
+            --reorganize       reorganize/check various databases, like the
+                               translation messages.
+
+=head2 Examples
+
  # list all applications
  papp-admin --list-apps
 
@@ -407,7 +459,8 @@ papp-admin - administrate papp
 
 =head1 DESCRIPTION
 
-Uh sorry...
+This utility is used to manage PApp applications, users, groups and their
+associated state/session/preferences data.
 
 =head1 SEE ALSO
 
@@ -415,7 +468,7 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
+ Marc Lehmann <schmorp@schmorp.de>
  http://www.goof.com/pcg/marc/
 
 =cut

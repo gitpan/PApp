@@ -42,6 +42,8 @@ PApp::Apache2 - multi-page-state-preserving web applications
 
 =head1 DESCRIPTION
 
+This module interfaces PApp to the Apache web browser, version 2.
+
 =over 4
 
 =cut
@@ -161,7 +163,7 @@ use PApp::Package;
 BEGIN {
    our @ISA = PApp::Base::;
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 1;
+   $VERSION = 1.1;
 }
 
 *PApp::OK = sub { OK };
@@ -273,8 +275,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
  Stefan Traby <oesi@schmorp.de>
 

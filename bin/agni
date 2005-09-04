@@ -6,11 +6,28 @@ agni - commandline access to the I<PApp!Agni System>.
 
 =head1 SYNOPSIS
 
-agni [option]...
+   Usage: /opt/bin/agni ...
+
+      --file <file>                 write output to file or read input from file
+      --daemon                      go into daemon mode
+      -i | --interval <seconds>     sleep interval for daemon mode
+      --export-path path            write path to file (or stdout)
+      --import-path path            import path from file
+
+      --load-image <file>           load a saved backup file <file>
+      --save-image <file>           save a backup file <file>
+
+      --gar                         starts garbagecollector
+
+      --paths                       show paths
+      --newpath <path>              creates a new path
+      
+      -e | --exec-cmd path command  executes a command as defined in util::cmdline
+                                    path specifies the path to the object.
 
 =head1 DESCRIPTION
 
-agni works as a shell interface to the I<PApp!Agni System>.
+F<agni> works as a shell interface to the I<PApp!Agni System>.
 
 =head1 OPTIONS
 
@@ -62,6 +79,10 @@ load a saved backup file B<file>
 
 save a backup file B<file>
 
+=item --force
+
+import objects even if there is a gidseq mismatch
+
 =back
 
 =over 4
@@ -77,7 +98,7 @@ show paths
 =item --newpath B<path>
 
 creates a new Bpath
-   
+
 =item -e, --exec-cmd B<path> B<command>
 
 executes a B<command> as defined in util::cmdline
@@ -161,6 +182,8 @@ use MIME::Base64;
 use Convert::Scalar qw(utf8_valid);
 
 use Agni;
+
+my $opt_force;
 
 sub do_some_tests {
    warn "heiheihei\n";#d#
@@ -330,7 +353,7 @@ sub save_image {
       $paths
          = $map_path{$paths}
             ||= join ",",
-               sort
+               sort { $a <=> $b }
                   map $map_path[$_],
                      grep { Agni::and64 $paths, Agni::bit64 $_ } sort @pathids;
 
@@ -414,7 +437,7 @@ sub load_image {
       sql_exec "optimize table $table";
    }
 
-   Agni::check_gidseq;
+   Agni::check_gidseq $opt_force;
 
    sql_exec "unlock tables";
 }
@@ -471,7 +494,7 @@ sub import_path {
 
    @$paths and die "file contains paths attributes, might be an image file. not imported.";
 
-   Agni::import_objs($objs, $pathid, 0);
+   Agni::import_objs($objs, $pathid, 0, $opt_force);
 }
 
 sub garbage_collect {
@@ -539,6 +562,7 @@ my $fn;
 
 GetOptions(
    "file=s" => sub { $fn = $_[1] },
+   "force"  => \$opt_force,
    "interval|i=i" => sub {
       $interval = shift;
    },

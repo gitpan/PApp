@@ -17,6 +17,9 @@ PApp::Util - various utility functions that didn't fit anywhere else
 
 =head1 DESCRIPTION
 
+This module offers various utility functions that cannot be grouped into
+other categories easily.
+
 =over 4
 
 =cut
@@ -29,12 +32,13 @@ use URI;
 use base 'Exporter';
 
 BEGIN {
-   $VERSION = 1;
+   $VERSION = 1.1;
    @EXPORT_OK = qw(
          format_source dumpval sv_peek sv_dump
          digest
          append_string_hash uniq
          find_file fetch_uri load_file
+         mime_header
    );
 
    # I was lazy, all the util xs functions are in PApp.xs
@@ -150,7 +154,7 @@ sub uniq {
 
 Returns a very verbose dump of the internals of the given sv. Calls the
 C<sv_peek> (C<sv_dump>) core function. If you don't know what I am talking
-about then this function is not for you. Or maybe you should try it ;)
+about then this function is not for you. Or maybe you should try it.
 
 =item fetch_uri $uri
 
@@ -220,9 +224,62 @@ sub load_file {
    return fetch_uri $path;
 }
 
+=item mime_header $text
+
+Takes text and transforms it to a mime message header suitable for message
+headers. If the text is US-ASCII it will be returned unchanged, otherwise
+it will be encoded according to RFC 2047 (it will be split into multiple
+CRLF-Tab-separated components of no longer than 75 characters, with the
+first component not be longer than 40 characters).
+
+=cut
+
+sub mime_header($) {
+   my ($text) = @_;
+
+   return $text if $text =~ /^[\x20-\x7e]{0,40}$/
+                   and $text !~ /=\?/;
+
+   my $enc;
+   my $fraglen = 40;
+   my @frag;
+
+   while (length $text) {
+      my $len = $fraglen;
+      my $frag;
+
+      for (;;) {
+         $frag = substr $text, 0, $len;
+
+         if ($frag =~ /^[\x20-\xff]+$/) {
+            # latin-1 only
+            $enc = "iso-8859-1";
+         } else {
+            utf8::encode $frag;
+            $enc = "utf-8";
+         }
+
+         $frag =~ s/([^\x21-\x3c\x3e\x40-\x7e])/sprintf "=%02X", ord $1/ge;
+
+         $frag = "=?$enc?q?$frag?=";
+
+         last if length $frag < $fraglen;
+
+         $len--; # fragment too long
+      }
+
+      push @frag, $frag;
+      $fraglen = 75;
+
+      substr $text, 0, $len, "";
+   }
+
+   join "\015\012\011", @frag;
+}
+
 =back
 
-=head2 SOURCE FILTERING
+=head2 Source Filtering
 
 A very primitive form of source filtering can be implemented using
 C<filter_add>, C<filter_read> and C<filter_simple>. Better use the
@@ -293,8 +350,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

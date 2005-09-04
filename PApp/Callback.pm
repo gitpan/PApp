@@ -43,7 +43,7 @@ require 5.006;
 
 use base 'Exporter';
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...
@@ -56,7 +56,7 @@ the callers package (unless it contains '::'). Otherwise you should use a
 "name => <funname>" argument to uniquely identify the function. If it is
 omitted the filename and linenumber will be used, but that is fragile.
 
-The optional C<args => [arrayref]> parameter will prepended the given
+The optional C<< args => [arrayref] >> parameter will prepended the given
 arguments to each invocation of the callback.
 
 Examples:
@@ -242,8 +242,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

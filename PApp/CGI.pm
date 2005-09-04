@@ -27,11 +27,11 @@ PApp::CGI - use PApp in a CGI environment
 
 =head1 DESCRIPTION
 
-This module can be used to run PApp applications without Apache/mod_perl,
-e.g. using L<CGI::SpeedyCGI>.  The startup-penalty for PApp is immense
-(a second or so) and is dominated by compilation time, so while PApp is
-usable with "pure" CGI in some applicaitons a CGI-Accelerator is certainly
-recommended.
+This module can be used to run PApp applications in CGI environments e.g.
+using L<CGI::SpeedyCGI> or plain CGI.  The startup-penalty for PApp is
+immense (a second or so) and is dominated by compilation time, so while
+PApp is usable with "pure" CGI in some applications a CGI-Accelerator that
+keeps application in memory is certainly recommended.
 
 The C<$PApp::request>-object (as returned by new <PApp::CGI::Request>) is
 mostly compatible to L<Apache>, except for missing methods (which could be
@@ -49,10 +49,10 @@ use Exporter;
 BEGIN {
    @ISA = (PApp::Base::);
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 1;
+   $VERSION = 1.1;
 }
 
-=head2 FUNCTIONS
+=head2 Functions
 
 =over 4
 
@@ -83,7 +83,7 @@ sub config_error {
 
 =back
 
-=head2 THE PApp::CGI CLASS
+=head2 The PApp::CGI Class
 
 This class only contains one user-visible-method: C<init>.
 
@@ -183,11 +183,11 @@ sub configured {
 
 =back
 
-=head2 THE PApp::CGI::Request CLASS
+=head2 The PApp::CGI::Request Class
 
 This class implements the C<$request> object required by a PApp
 handler. The methods in this class are mostly identical to the methods
-supported by the L<Apache> module (but should nevertheless be documented).
+supported by the L<Apache> module.
 
 =over 4
 
@@ -423,12 +423,11 @@ package PApp::CGI::Connection;
 
 =back
 
-=head2 THE PApp::CGI::Connection CLASS
+=head2 The PApp::CGI::Connection Class
 
 This class implements the connection object returned by
 C<$request->conenction).  The methods in this class are mostly identical
-to the methods supported by the conenction object in the L<Apache> module
-(but should nevertheless be documented).
+to the methods supported by the conenction object in the L<Apache> module.
 
 =over 4
 
@@ -467,8 +466,8 @@ sub remote_addr {
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

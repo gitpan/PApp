@@ -1,7 +1,7 @@
 !init OPT_STYLE="paper"
 
 !define DOC_NAME	"PApp - Perl-Anwendungen für die Zukunft des WWW"
-!define DOC_AUTHOR	"Marc Lehmann <pcg@goof.com>"
+!define DOC_AUTHOR	"Marc Lehmann <schmorp@schmorp.de>"
 !build_title
 
 H1: PApp - Wie beschreibt man ein Chamäleon?
@@ -603,7 +603,8 @@ Die Daten schreibt man dann bei Bedarf in die Datenbank:
 !block perl
  #if $row->dirty
  # if $err
-    <error>__"The entered Data is invalid, please surrender or die (or correct it ;)</error>
+    <error>__"The entered Data is invalid, please
+              surrender or die (or correct it ;)</error>
  # else
     <:$row->flush:>
     __"The record has been updated."

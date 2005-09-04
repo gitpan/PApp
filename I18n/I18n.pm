@@ -11,7 +11,7 @@ package PApp::I18n;
 
 =head1 NAME
 
-PApp::I18n - internationalization support for PApp
+PApp::I18n - internationalisation support for PApp
 
 =head1 SYNOPSIS
 
@@ -27,7 +27,7 @@ PApp::I18n - internationalization support for PApp
 This module provides basic translation services, .po-reader and writer
 support and text and database scanners to identify tagged strings.
 
-=head2 ANATOMY OF A LANGUAGE/LOCALE ID
+=head2 Anatomy of a Language/Locale ID
 
 A "language" can be designated by either a free-form-string (that doesn't
 match the following formal definition) or a language-region code that must match the
@@ -65,7 +65,7 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 1;
+   $VERSION = 1.1;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
@@ -154,7 +154,7 @@ sub normalize_langid($) {
 
 Decode the first C<langid> into a description of itself and translate it
 into the language specified by the second C<langid> (the latter does not
-work yet). The output of this function also gets cached.
+work yet). The result of this function is being cached.
 
 =cut
 
@@ -181,15 +181,15 @@ sub translate_langid($;$) {
          my ($l, $c) = ($1, $2);
          $l = iso639_a3_name $l;
          if (@_) {
-            $tlid_iso639 ||= open_translator("iso639", "en");
-            $l = _ucfirst $tlid_iso639->get_table($_[0])->gettext($l);
+            $tlid_iso639 ||= open_translator ("iso639", "en");
+            $l = _ucfirst $tlid_iso639->get_table ($_[0])->gettext ($l);
          }
          if ($c) {
             $c = iso3166_a3_name $c;
             if (@_) {
                no bytes;
-               $tlid_iso3166 ||= open_translator("iso3166", "en");
-               $c = _ucfirst $tlid_iso3166->get_table($_[0])->gettext($c);
+               $tlid_iso3166 ||= open_translator ("iso3166", "en");
+               $c = _ucfirst $tlid_iso3166->get_table ($_[0])->gettext ($c);
             }
             return "$l ($c)" if $c;
          } elsif ($l) {
@@ -203,7 +203,7 @@ sub translate_langid($;$) {
 =item locale_charsets $locale
 
 Returns a list of character sets that might be good to use for this
-locale. This definition is neccessarily imprecise ;)
+locale. This definition is neccessarily imprecise.
 
 The charsets returned should be considered to be in priority order, i.e.
 the first charset is the best. The intention of this function is to
@@ -252,7 +252,7 @@ END {
 
 =back
 
-=head2 TRANSLATION SUPPORT
+=head2 Translation Support
 
 =over 4
 
@@ -411,7 +411,7 @@ use PApp::SQL;
 
 =back
 
-=head2 SCANNING SUPPORT
+=head2 Scanning Support
 
 As of yet undocumented
 
@@ -526,7 +526,7 @@ sub fuzzy_translation  {
 our %scan_msg;
 our $scan_app;
 
-=item scan_init $domain, $languages
+=item scan_init $domain
 
 =cut
 
@@ -725,7 +725,7 @@ use Carp;
 
 =back
 
-=head2 PO READING AND WRITING
+=head2 PO Reading and Writing
 
 CLASS PApp::I18n::PO_Reader
 
@@ -878,8 +878,8 @@ package PApp::I18n;
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

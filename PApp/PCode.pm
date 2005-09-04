@@ -13,6 +13,12 @@ PApp::PCode - PCode compiler/decompiler and various other utility functions.
 
 =head1 SYNOPSIS
 
+   use PApp::PCode;
+
+   eval pcode2perl perl2pcode "pcode";
+   eval pcode2perl pxml2pcode "pcode";
+   eval pcode2perl xml2pcode "pcode";
+
 =head1 DESCRIPTION
 
 PApp stores a lot of things in pcode format, which is simply an escaping
@@ -37,13 +43,13 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"
 
 Protect the contents of the phtml or pxml string (xml with embedded perl
-sections), i.e. make it an xml-parseble-document by resolving all E<lt>: and
+sections), i.e. make it an xml-parseable-document by resolving all E<lt>: and
 E<lt>? sections.
 
 The following four mode-switches are allowed, the initial mode is ":>"
@@ -328,8 +334,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

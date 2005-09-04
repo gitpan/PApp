@@ -18,6 +18,9 @@ PApp::Prefs - manage user-specific data.
 
 =head1 DESCRIPTION
 
+This module manages user-specific preferences, which are simply values
+that get associated with a particular user.
+
 =cut
 
 package PApp::Prefs;
@@ -31,14 +34,14 @@ use PApp::Config qw(DBH $DBH); DBH;
 
 use base Exporter;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw( 
    lockprefs
 );
 
 use Convert::Scalar ();
 
-=head2 FUNCTIONS
+=head2 Functions
 
 =over 4
 
@@ -65,7 +68,7 @@ sub lockprefs(&) {
 
 =back
 
-=head2 METHODS
+=head2 Methods
 
 =over 4
 
@@ -173,8 +176,8 @@ L<PApp>, L<PApp::User>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

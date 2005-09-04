@@ -1,7 +1,7 @@
 " Vim syntax file for the "papp" file format (_p_erl _app_lication)
 "
 " Language:	papp
-" Maintainer:	Marc Lehmann <pcg@goof.com>
+" Maintainer:	Marc Lehmann <schmorp@schmorp.de>
 " Last Change:	2001 May 10
 " Filenames:    *.papp *.pxml *.pxsl
 " URL:		http://papp.plan9.de/

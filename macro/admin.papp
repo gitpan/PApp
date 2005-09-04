@@ -108,12 +108,11 @@ be executed so you can add page-specific  info.
 
 <macro name="check_login*"><phtml><![CDATA[<:
 
-=item check_login
+=item check_login [DEPRECATED]
 
-- if the user is not logged in, show a loginbox
-- if the user has logged in, display some info about him
+If the user is not logged in, show a loginbox.
 
-*DEPRECATED*
+If the user has logged in, display some info about him.
 
 =cut
 
@@ -147,7 +146,7 @@ L<PApp>
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
+ Marc Lehmann <schmorp@schmorp.de>
  http://www.goof.com/pcg/marc/
 
 =cut

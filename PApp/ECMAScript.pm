@@ -23,7 +23,7 @@ PApp::ECMAScript - make javascript horrors less horrible
 
 package PApp::ECMAScript;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw($js escape_string_sq escape_string_dq);
 
 use base Exporter;
@@ -80,7 +80,7 @@ the right function to minimize impact.
 
 sub escape_string_sq($) {
    local $_ = shift;
-   s{([^\x20-\x26\x28-\x5b\x5d-\x7e])}{
+   s{([^\x20-\x25\x28-\x3b\x3d-\x5b\x5d-\x7e])}{
       my $ord = ord $1;
       sprintf $ord < 256 ? '\\x%02x' : '\\u%04x', $ord;
    }ge;
@@ -89,7 +89,7 @@ sub escape_string_sq($) {
 
 sub escape_string_dq($) {
    local $_ = shift;
-   s{([^\x20-\x21\x23-\x5b\x5d-\x7e])}{
+   s{([^\x20-\x21\x23-\x25\x27-\x3b\x3d-\x5b\x5d-\x7e])}{
       my $ord = ord $1;
       sprintf $ord < 256 ? '\\x%02x' : '\\u%04x', $ord;
    }ge;
@@ -412,7 +412,9 @@ function papp_iw() {
 
 package PApp::ECMAScript::Layer;
 
-=head2 CLASS PApp::ECMAScript::Layer
+=back
+
+=head2 The PApp::ECMAScript::Layer Class
 
 This class manages floating cxx objects (i.e. objects with style invisible
 that can be shown, hidden, moved etc... using javascript).
@@ -423,6 +425,7 @@ use PApp::HTML qw(tag);
 
 my $papp_layer = "papplayer000";
 
+=over 4
 =item $layer = new PApp::ECMAScript::Layer arg => val, ...
 
 Create a new layer object (does not output anything).
@@ -562,8 +565,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

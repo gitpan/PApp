@@ -55,7 +55,7 @@ sub ef_nextid($;$) {
 
 Start an editform. This directive outputs the <form> header (using
 C<PApp::multipart_form>). The arguments are treated exactly like
-PApp::surl arguments. If it contains callbacks or similar commands then
+PApp::surl arguments. If it contains callbacks or similar commands, then
 these will be executed AFTER the form has been processed.
 
 If, inside C<ef_begin>/C<ef_end>, another form is embedded, the outside
@@ -67,7 +67,7 @@ Please note that this doesn't work when you change the module, as only the
 outside C<ef_begin> call will have the module name honoured, so always use
 a C<ef_submit> to do this, or things will go very wrong.
 
-NOTE: editform does not currently check wether a nested form specifies a;
+NOTE: editform does not currently check wether a nested form specifies a
 module name. Behaviour in this case is undefined, and will most likely
 result in an obscure error from surl.
 
@@ -139,7 +139,7 @@ sub _ef_parse_field($$$) {
          $charset = lc $charset;
          if ($charset eq "utf-8") {
             Convert::Scalar::utf8_on $data;
-         } elsif ($charset ne "" and $charset ne "iso-8859-1") {
+         } elsif ($charset !~ /^(?:|ascii|us-ascii|iso-8859-1)$/) {
             my $pconv = PApp::Recode::Pconv::open PApp::CHARSET, $charset
                            or fancydie "charset conversion from $charset not available";
             $data = Convert::Scalar::utf8_on $pconv->convert($data);
@@ -317,7 +317,7 @@ sub ef_end* {
    }
 }
 
-=item ef_edit [group] #DEPRECATED
+=item ef_edit [group] [DEPRECATED]
 
 Returns wether the global edit-mode is active (i.e. if C<$S{ef_edit}> is
 true). If the argument C<group> is given, additionally check for the stated
@@ -329,7 +329,7 @@ sub ef_edit*(;$) {
    $S{ef_edit} and (!@_ or access_p $_[0]);
 }
 
-=item ef_may_edit #DEPRECATED
+=item ef_may_edit [DEPRECATED]
 
 Display a link that activates or de-activates global edit-mode (see
 C<ef_edit>).
@@ -731,11 +731,11 @@ like. If this function isn't called, no name attribute will be created.
 
 =head1 SEE ALSO
 
-L<PApp>
+L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
+ Marc Lehmann <schmorp@schmorp.de>
  http://www.goof.com/pcg/marc/
 
 =cut

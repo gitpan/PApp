@@ -34,7 +34,7 @@ use PApp::Event ();
 
 use base Exporter;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw( 
    authen_p access_p admin_p known_user_p update_username choose_username
    update_password update_comment username user_login user_logout userid
@@ -55,7 +55,7 @@ use PApp::User qw(
 
 sub grpid($);
 
-=head2 FUNCTIONS
+=head2 Functions
 
 =over 4
 
@@ -334,8 +334,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

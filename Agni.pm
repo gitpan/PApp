@@ -15,8 +15,9 @@ Agni - persistent data and objects
 
 =head1 SYNOPSIS
 
- * This module requires the PApp module to be installed and working     *
- * Please read the LICENSE file (Agni is neither GPL nor BSD licensed). *
+I<This module requires the PApp module to be installed and working. Please
+read the LICENSE file: this version of Agni is neither GPL nor BSD
+licensed).>
 
 =head1 DESCRIPTION
 
@@ -45,6 +46,7 @@ use PApp::Preprocessor;
 use PApp::PCode qw(pxml2pcode perl2pcode pcode2perl);
 use PApp::Callback ();
 use PApp::Exception;
+use PApp::I18n ();
 
 use Convert::Scalar ":utf8";
 
@@ -188,13 +190,48 @@ our @sqlcol = (
 
 our %sqlcol = map +($_ => 1), @sqlcol;
 
+our %fetch_sqlcol;
+our %storefetch_sqlcol;
+our %storeupdate_sqlcol;
+
 our %sqlcol_is_numeric = (
    d_double => 1,
    d_int    => 1,
 );
 
+our %sqlcol_dbi_type = (
+  d_int      => SQL_INTEGER,
+  d_double   => SQL_NUMERIC,
+  d_string   => SQL_BINARY,
+  d_blib     => SQL_BINARY,
+  d_fulltext => SQL_BINARY,
+);
+
+sub prepare_papp_dbh {
+  my $dbh = shift;
+  
+  for (@sqlcol) {
+    $fetch_sqlcol{$_} = 
+      $dbh->prepare ("select data from $_ where id = ? and type = ?");
+
+    my $st = $storefetch_sqlcol{$_} = 
+      $dbh->prepare ("select data <=> ? from $_ where id = ? and type = ?");
+      
+    $st->bind_param (1, undef, { TYPE => $Agni::sqlcol_dbi_type{$_} });
+
+    my $st = $storeupdate_sqlcol{$_} = 
+      $dbh->prepare ("update $_ set data = ? where (not (data <=> ?)) and id = ? and type = ?");
+
+    $st->bind_param (1, undef, { TYPE => $Agni::sqlcol_dbi_type{$_} });
+    $st->bind_param (2, undef, { TYPE => $Agni::sqlcol_dbi_type{$_} });
+  }
+};
+
+$PApp::Config::prepare_papp_dbh{"Agni::sqlcol"} = \&prepare_papp_dbh;
+prepare_papp_dbh $PApp::Config::DBH;
+
 sub lock_all_tables {
-   "lock tables obj write, ". join ", ", map "$_ write", @sqlcol, @_;
+   "lock tables obj_gidseq write, obj write, ". join ", ", map "$_ write", @sqlcol, @_;
 }
 
 sub new_objectid() {
@@ -291,6 +328,12 @@ sub update(@) {
 sub gid($) {
    ref $_[0] ? $_[0]{_gid} : $_[0];
 }
+
+=item path_obj_by_gid $path, $gid
+
+Returns a object by gid in a specified path.
+
+=cut
 
 sub path_obj_by_gid($$) {
    $obj_cache{$_[1]}[$_[0]]
@@ -411,7 +454,7 @@ sub get_package {
 
          use Agni qw(*env *app path_obj_by_gid gid obj_of);
 
-         use vars qw($PATH $PACKAGE);
+         use vars qw($PATH $PACKAGE $papp_translator);
 
          sub obj($) {
             ref $_[0] ? $_[0] : path_obj_by_gid PATH, $_[0];
@@ -424,9 +467,8 @@ sub get_package {
          use PApp::UserObs;
          use PApp::PCode qw(pxml2pcode perl2pcode pcode2perl);
 
-         our $papp_translator = PApp::I18n::open_translator ("$PApp::i18ndir/mercury", "eng");
-         sub __      ($){ PApp::I18n::Table::gettext(PApp::I18n::get_table($papp_translator, $PApp::langs), $_[0]) }
-         sub gettext ($){ PApp::I18n::Table::gettext(PApp::I18n::get_table($papp_translator, $PApp::langs), $_[0]) }
+         sub __      ($){ PApp::I18n::Table::gettext (PApp::I18n::get_table ($papp_translator, $PApp::langs), $_[0]) }
+         sub gettext ($){ PApp::I18n::Table::gettext (PApp::I18n::get_table ($papp_translator, $PApp::langs), $_[0]) }
 
          for my $src (qw(macro/editform macro/xpcse)) {
             my $imp = PApp::Application::find_import PApp::Util::find_file $src, ["papp"]
@@ -440,6 +482,8 @@ sub get_package {
 
       ${"$package->{_package_name}::PATH"}    = $path;
       ${"$package->{_package_name}::PACKAGE"} = $package;
+      ${"$package->{_package_name}::papp_translator"}
+         = PApp::I18n::open_translator ("$PApp::i18ndir/" . eval { $package->domain }, $package->{lang});
 
       $package->eval(qq~
             sub PATH() { $path }
@@ -500,7 +544,7 @@ sub compile_method_perl {
    $code =~ s/->SUPER(?!\w)/->$isa_class\::$name/g;
 
    #d# make the "3" in the next line configurable
-   compile "sub $class\::$name { my ($args) = \@_;\n"
+   compile "sub $class\::$name { my ($args) = \@_; ();\n"
          . "#line 3 \"{$pathname[$self->{_path}]$self->{_gid}::$name}\"\n"
          . "$code\n"
          . "}";
@@ -553,6 +597,10 @@ sub Agni::BootPackage::initialize {
       # nop, for now
       1;
    };
+}
+
+sub Agni::BootPackage::domain {
+   "agni"
 }
 
 # a very complicated thing happens here: the initial loading of the
@@ -882,12 +930,6 @@ sub update_isa {
    sql_exec "replace into d_int (id, type, data) values (?, ?, ?)", $self->{_id}, $OID_ISA, $self->{_isa}{_gid};
 }
 
-sub agni::object::obj {
-   my ($self, $gid_or_obj) = @_;
-
-   die "self->obj is obsolete, use 'obj gid' instead";
-}
-
 =item path_gid2name $path, $gid
 
 Tries to return the name of the object, or some other descriptive string, in
@@ -1085,16 +1127,19 @@ sub commit_objs {
    };
 }
 
-sub check_gidseq {
+sub check_gidseq($) {
+   my ($force) = @_;
+
    my $seq = sql_fetch "select seq from obj_gidseq";
    my $max = sql_fetch "select max(gid) from obj where gid < (? | 0xffffffff)", $seq;
 
    $seq > $max
-      or die "FATAL, DATABASE OR IMAGE CORRUPTION: obj_gidseq points to allocated objects. Duplicate SYSID?\n";
+      or $force ? warn "WARNING: obj_gidseq points to allocated objects. Duplicate SYSID?\n"
+                : die "FATAL, DATABASE OR IMAGE CORRUPTION: obj_gidseq points to allocated objects. Duplicate SYSID?\n";
 }
 
 sub import_objs {
-   my ($objs, $pathid, $delete_layer) = @_;
+   my ($objs, $pathid, $delete_layer, $force) = @_;
 
    defined $pathid or croak "import_objs: undefined pathid\n";
 
@@ -1185,7 +1230,7 @@ sub import_objs {
       Agni::update @event;
    };
 
-   check_gidseq;
+   check_gidseq $force;
 
    sql_exec "unlock tables";
 
@@ -1538,8 +1583,8 @@ The C<bin/agni> commandline tool, the agni online documentation.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

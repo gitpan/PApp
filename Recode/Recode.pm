@@ -31,13 +31,13 @@ package PApp::Recode;
 use Convert::Scalar ();
 
 BEGIN {
-   $VERSION = 1;
+   $VERSION = 1.1;
 
    require XSLoader;
    XSLoader::load 'PApp::Recode', $VERSION;
 }
 
-=head2 FUNCTIONS
+=head2 Functions
 
 =over 4
 
@@ -67,7 +67,7 @@ sub charset_valid {
 
 =cut
 
-=head2 THE PApp::Recode CLASS
+=head2 The PApp::Recode Class
 
 This class can be used to convert textual data between various encodings.
 
@@ -129,7 +129,7 @@ sub utf8_to($$;$) {
 
 =back
 
-=head2 THE PApp::Recode::Pconv CLASS
+=head2 The PApp::Recode::Pconv Class
 
 This is the class that actually implements character conversion. It should not be used directly.
 
@@ -139,13 +139,26 @@ This is the class that actually implements character conversion. It should not b
 
 =item new PApp::Recode::Pconv tocode, fromcode [, fallback]
 
+Create a new encoding convert that encodes from C<fromcode> to C<tocode>,
+optionally invoking the C<fallback> code reference for every character
+that is not representable in the target encoding.
+
 =item PApp::Recode::Pconv::open tocode, fromcode [, fallback]
+
+Convinience function that calls C<new> and returns the converter.
 
 =item $pconv->convert($string [, reset])
 
+Convert the given string. If C<reset> is true, the internal multibyte
+state is reset before conversion.
+
 =item $pconv->reset
 
-=item $pconv->convert_fresh($string)
+Reset the multibyte state.
+
+=item $pconv->convert_fresh ($string)
+
+Same as C<convert> with C<reset> set to true.
 
 =cut
 
@@ -157,8 +170,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

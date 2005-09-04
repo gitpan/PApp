@@ -64,10 +64,10 @@ WriteMakefile(
 		    'Agni.pm'		=> '$(INST_LIBDIR)/Agni.pm',
                    },
     'PREREQ_PM'	=> {
-		    PApp::SQL		=> 0.142,
+		    PApp::SQL		=> 1.0,
                     Compress::LZF	=> 1.0,
                     String::Similarity	=> 0.02,
-                    Convert::Scalar	=> 0.1,
+                    Convert::Scalar	=> 1.02,
                     Crypt::Twofish2	=> 0.01,
 
                     URI			=> 1.22,

@@ -18,8 +18,9 @@ PApp - multi-page-state-preserving web applications
 
 =head1 SYNOPSIS
 
- * This module requires quite an elaborate setup (see the INSTALL file). *
- * Please read the LICENSE file (PApp is neither GPL nor BSD licensed).  *
+I<This module requires quite an elaborate setup (see the INSTALL
+file). Please read the LICENSE file: this version of PApp is neither GPL
+nor BSD licensed).>
 
 =head1 DESCRIPTION
 
@@ -36,9 +37,7 @@ Advantages:
 and this is only due to the extra database request to fetch and restore
 state, which typically you would do anyway. To the contrary: a non-trivial
 Apache::Registry page is slower than the equivalent PApp application (or
-much, much more complicated); Note: as of version 0.10, this is no longer
-true, but I am working on it ;) It is, however, much easier to use than
-anything else (while still not being slow).
+much, much more complicated). 
 
 =item * Embedded Perl. You can freely embed perl into your documents. In
 fact, You can do things like these:
@@ -64,7 +63,7 @@ advantage in itself, it means that it uses a standardized file format that
 can easily be extended. PApp comes with a DTD and a vim syntax
 file, even ;)
 
-=item * Easy internationalization. I18n has never been that easy:
+=item * Easy internationalisation. I18n has never been that easy:
 just mark you strings with __C<>"string", either in html or in the perl
 source. The "poedit"-demo-application enables editing of the strings
 on-line, so translaters need not touch any text files and can work
@@ -75,36 +74,11 @@ small-but-nice-to-have functionality.
 
 =back
 
-Disadvantages:
-
-=over 4
-
-=item * Unfinished Interface: To admit it, this module is young and many
-features have a kind-of-unfinished interface. PApp will certainly be
-changed and improved to accomodate new features (like CGI-only operation).
-
-=item * No documentation. Especially tutorials are missing, so you are
-most probably on your own.
-
-=item * Perl5.8.0 is required (actually, a non-released bugfixed version
-of 5.8.1). While not originally an disadvantage in my eyes, Randal Schwartz
-asked me to provide some explanation on why this is so (at the time I only
-required 5.6):
-
-"As for an explanation, I require perl5.6 because I require a whole
-lot of features of 5.6 (e.g. DB.pm, utf-8 support, "our", bugfixes,
-3-argument open, regex improvements, probably many others, especially
-changes on the XS level). In the future it will likely require weak
-references, filehandle autovivification, the XSLoader for extra speed in
-rare circumstances... I don't want to backport this to older versions ;)"
-
-=back
-
-To get a quick start, read the bench.papp module, the dbedit.papp module,
-the cluster.papp module and the papp.dtd description of the papp file
+To get a quick start, read the F<bench.papp> module, the F<dbedit.papp> module,
+the F<cluster.papp> module and the F<papp.dtd> description of the papp file
 format.
 
-Also, have a look at the doc/ subdirectory of the distribution, which will
+Also, have a look at the F<doc/> subdirectory of the distribution, which will
 have some tutorials in sdf and html format.
 
 =cut
@@ -159,7 +133,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 1;
+   $VERSION = 1.1;
 
    use base Exporter;
 
@@ -179,7 +153,7 @@ BEGIN {
          SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
 
          $request $NOW *ppkg $papp *state %P *A *S
-         $userid $sessionid $session
+         $userid $sessionid
          reload_p switch_userid getuid
 
          dprintf dprint echo capture $request 
@@ -284,7 +258,6 @@ our $logfile = undef;
 
 our $prefs    = new PApp::Prefs \"";      # the global preferences
 our $curprefs = new PApp::Prefs *curprfx; # the current application preferences
-our $session  = new PApp::Session *curprfx;
 
 %preferences = (  # system default preferences
    '' => [qw(
@@ -346,7 +319,7 @@ sub N_($) { $_[0] }
 # constant
 our $xmlnspapp = "http://www.plan9.de/xmlns/papp";
 
-=head1 GLOBAL VARIABLES
+=head1 Global Variables
 
 Some global variables are free to use and even free to change (yes, we
 still are about speed, not abstraction). In addition to these variables,
@@ -400,7 +373,7 @@ Is empty at the beginning of a request and will be cleared at request end.
 =item $userid [read-only]
 
 The current userid. User-Id's are automatically assigned, you are
-encouraged to use them for your own user-databases, but you mustn't trust
+encouraged to use them for your own user-databases, but you must not trust
 them. C<$userid> is zero in case no userid has been assigned yet. In this
 case you can force a userid by calling the function C<getuid>, which
 allocated one if necessary,
@@ -411,13 +384,6 @@ A unique number identifying the current session (not page). You could use
 this for transactions or similar purposes. This variable might or might
 not be zero indicating that no session has been allocated yet (similar to
 C<$userid> == 0).
-
-=item $session [L<PApp::Session>]
-
-The current session object, which stores session-specific variables.
-
-  $session->get("shoppingcart");
-  $session->set("shoppingcart", $cart);
 
 =item $curprefs, $prefs [L<PApp::Prefs>]
 
@@ -456,7 +422,7 @@ faster to use this variable than to call C<time>.
 
 =back
 
-=head1 FUNCTIONS/METHODS
+=head1 Functions/Methods
 
 =over 4
 
@@ -705,16 +671,15 @@ or the name of a registered character set (STD 2). The special value
 C<undef> suppresses output character conversion entirely. If not given,
 the previous value will be unchanged (the default; currently "*").
 
-The following is not yet implemented and will probably never be:
+Charset-negotiation is not yet implemented, but when it is implemented it
+will work like this:
 
 The charset argument might also be an array-reference giving charsets that
 should be tried in order (similar to the language preferences). The last
 charset will be I<forced>, i.e. characters not representable in the output
 will be replaced by some implementation defined way (if possible, this
-will be C<&#charcode;>, which is as good a replacement as any other ;)
-
-How this interacts with Accept-Charset is still an open issue (for
-non-microsoft browsers that actually generate this header ;)
+will be C<&#charcode;>, which is at least as good a replacement as any
+other ;)
 
 =cut
 
@@ -812,8 +777,6 @@ Otherwise the argument name is treated similar to a path under unix: If it
 has a leading "/", it is assumed to start at the server root, i.e. with
 the application location. Relative paths are resolved as you would expect
 them. Examples:
-
-(most of the following hasn't been implemented yet)
 
  /papp_locale  $state{papp_locale}
  /tt/var       $state{'/tt'}{var} -OR- $S{var} in application /tt
@@ -1355,7 +1318,7 @@ sub redirect {
 
 Similar to C<internal_redirect>, but filters the arguments through
 C<surl>. This is an easy way to switch to another module/webpage as a kind
-of exception mechanism. For example, I often use constructs like these:
+of exception mechanism. For example:
 
  my ($name, ...) = sql_fetch "select ... from game where id = ", $S{gameid};
  abort_to "games_overview" unless defined $name;
@@ -1405,22 +1368,22 @@ does its job you should not leave references to the file around.
 
 sub _send_file($$$) {
    my ($fh, $ct, $inclen) = @_;
-   $request->content_type($ct) if $ct;
-   $request->header_out('Content-Length' => $inclen + (-s _) - tell $fh) if -f $fh;
+   $request->content_type ($ct) if $ct;
+   $request->header_out ('Content-Length' => $inclen + (-s _) - tell $fh) if -f $fh;
    $request->send_http_header;
-   $request->send_fd($fh);
+   $request->send_fd ($fh) unless $request->header_only;
 }
 
 sub abort_with_file($;$) {
    my ($fh, $ct) = @_;
    send_upcall {
-      _send_file($fh, $ct, 0);
+      _send_file ($fh, $ct, 0);
       return &OK;
    }
 }
 
 sub set_cookie {
-   $request->header_out(
+   $request->header_out (
       'Set-Cookie',
       "PAPP_1984="
       . (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, 0, 0, $state{papp_cookie}))
@@ -1502,7 +1465,8 @@ Create (and output) html code that allows the user to select one of the
 languages reachable through the C<$translator>. If C<$current_langid> is
 missing, uses $PApp::langs to select a suitable candidate.
 
-This function might move elsewhere, as it is clearly out-of-place here ;)
+This function is slightly out-of-place in the PApp module and might move
+to a more appropriate place in the future.
 
 Usually used like this:
 
@@ -2029,7 +1993,7 @@ sub _handler {
          for (keys %P) {
             utf8_on $_ for ref $P{$_} ? @{$P{$_}} : $P{$_};
          }
-      } elsif ($langs ne "" and $langs ne "iso-8859-1") {
+      } elsif ($langs !~ /^(?:|ascii|us-ascii|iso-8859-1)$/i) {
          my $pconv = PApp::Recode::Pconv::open CHARSET, $langs
                         or fancydie "charset conversion from $langs not available";
          for (keys %P) {
@@ -2132,8 +2096,8 @@ The C<macro/admin>-package in the distribution, the demo-applications
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

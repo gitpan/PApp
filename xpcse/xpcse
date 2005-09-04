@@ -69,7 +69,7 @@ our $quiet = 0;
 our $line = "";
 
 our $PROTOCOL_VERSION = "1.1";
-our $VERSION = 0.2;
+our $VERSION = 1.0;
 
 BEGIN {
    $TEMPDIR = tempdir TEMPDIR => 1;
@@ -92,7 +92,7 @@ sub prompt {
    my ($msg1, $msg2) = @_;
    my $cmd = "/bin/echo \Q$msg1\E; /bin/echo -n \Q$msg2\E; stty -echo; read answer; /bin/echo -n \$answer >$TEMPDIR/answer";
    system "$TERMINAL sh -c \Q$cmd\E";
-   open my $answer, "<$TEMPDIR/answer"
+   open my $answer, "<", "$TEMPDIR/answer"
       or die "error while prompting user\n";
    unlink "$TEMPDIR/answer";
    <$answer>;
@@ -174,9 +174,9 @@ sub download {
    my $res = request ($ua, new HTTP::Request GET => "$hdr{url}?command=fetch$ch", $http_headers, "");
 
    if($res->is_success) {
-      open my $f, ">", $file or die "can't open file '$file' $!";
-      print $f $res->content;
-      close $f;
+      open my $fh, ">", $file or die "can't open file '$file' $!";
+      binmode $fh;
+      print $fh $res->content;
    } else {
       die $res->error_as_HTML;
    }
@@ -184,8 +184,10 @@ sub download {
 
 # 2. parse
 
-open my $request, "<$ARGV[0]\000"
+open my $request, "<", $ARGV[0]
    or die "unable to open submitted command file: $!\n";
+
+binmode $request;
 
 our %hdr = parse_header $request;
 close $request;
@@ -252,9 +254,10 @@ if (0 == ($editpid = fork)) {
 
 sub upload {
    my $file = do {
-      local($/);
-      open my $fh, "<$TEMP\000"
+      local $/;
+      open my $fh, "<", $TEMP
          or die "$TEMP: $!";
+      binmode $fh;
       <$fh>;
    };
 
@@ -264,7 +267,8 @@ sub upload {
    $MTIME = (stat $TEMP)[9] - 1;
    utime $MTIME, $MTIME, $TEMP;
 
-   $http_headers->content_type($hdr{'content-type'});
+   $http_headers->content_type ($hdr{'content-type'});
+   $http_headers->content_length (length $file);
    my $res = request ($ua, new HTTP::Request POST => "$hdr{url}?command=store$ch", $http_headers, $file);
 
    if ($res->is_success) {

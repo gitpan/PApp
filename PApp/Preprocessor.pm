@@ -9,7 +9,7 @@
 
 =head1 NAME
 
-PApp::Preprocessor - preprocess sourcelike like "pxml"
+PApp::Preprocessor - preprocess source like "pxml"
 
 =head1 SYNOPSIS
 
@@ -35,7 +35,7 @@ be switched to literal text mode using :>, and switched back to perl using
 
 package PApp::Preprocessor;
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 use PApp::PCode ();
 use PApp::Util ();
@@ -54,8 +54,8 @@ L<PApp::PCode>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

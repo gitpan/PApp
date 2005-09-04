@@ -148,13 +148,15 @@ package PApp::Config;
 
 PApp::Config - hold common configuration settings
 
+=head1 Functions
+
 =over 4
 
 =cut
 
 use PApp::SQL;
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 require Exporter;
 
@@ -173,7 +175,7 @@ returned path entries might or might not include the arguments).
 
 =back
 
-=head2 DEFINED KEYS IN THE C<%PApp::Config> HASH
+=head1 Defined Keys in the C<%PApp::Config> Hash
 
 The following configuration items are available in the C<%PApp::Config>
 hash. Keys marked with a star (*) are access-restricted and can only be
@@ -248,6 +250,8 @@ $PApp::statedb_pass = $PApp::Config{STATEDB_PASS};
 # "inlined" into DBH
 $Database = new PApp::SQL::Database "papp_1", $PApp::statedb, $PApp::statedb_user, $PApp::statedb_pass;
 
+our %prepare_papp_dbh;
+
 sub _prepare_DBH {
    my $dbh = shift;
 
@@ -259,6 +263,8 @@ sub _prepare_DBH {
    $PApp::st_newuserid   = $dbh->prepare("update user_seq set seq = last_insert_id(seq) + 1");
    $PApp::st_replacepref = $dbh->prepare("replace into prefs (uid, path, name, value) values (?,?,?,?)");
    $PApp::st_deletepref  = $dbh->prepare("delete from prefs where uid = ? and path = ? and name = ?");
+
+   $_->($dbh) for values %prepare_papp_dbh;
 }
 
 sub DBH() {
@@ -279,7 +285,7 @@ L<PApp>.
 
 =head1 AUTHOR
 
-Marc Lehmann <pcg@goof.com>
+Marc Lehmann <schmorp@schmorp.de>
 
 =cut
 EOF

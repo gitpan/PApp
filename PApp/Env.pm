@@ -49,7 +49,7 @@ use Compress::LZF ();
 
 use base Exporter;
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT = qw(setenv getenv unsetenv modifyenv lockenv listenv);
 
 =item setenv key => value
@@ -152,8 +152,8 @@ sub listenv {
 
  - should also support a tied hash interface.
 
- - setenv requires mysql (actually a replace command), but it's so much
-   easier & faster that way.
+ - setenv requires mysql (actually the replace sql command), but it's so
+   much easier & faster that way.
 
 =head1 SEE ALSO
 
@@ -161,8 +161,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

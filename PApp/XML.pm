@@ -14,19 +14,16 @@ PApp::XML - pxml sections and more
 =head1 SYNOPSIS
 
  use PApp::XML;
- # to be written
 
 =head1 DESCRIPTION
 
 Apart from providing XML convinience functions, the PApp::XML module
-manages XML templates containing papp xml directives and perl code similar
-to phtml sections. Together with stylesheets (L<XML::XSLT>) this can be
+manages XML templates containing pappxml directives and perl code similar
+to phtml sections. Together with stylesheets (L<PApp::XSLT>) this can be
 used to almost totally seperate content from layout. Image a database
 containing XML documents with customized tags.  A stylesheet can then be
 used to transform this XML document into html + special pappxml directives
 that can be used to create links etc...
-
-# to be written
 
 =cut
 
@@ -39,21 +36,21 @@ use PApp::Exception qw(fancydie);
 
 use base 'Exporter';
 
-$VERSION = 1;
+$VERSION = 1.1;
 @EXPORT_OK = qw(
       xml_quote xml_attr xml_unquote xml_tag xml_cdata
-      xml_check xml_encoding xml2utf8
+      xml_check xml_encoding xml2utf8 pod2xml
       xml_include expand_pi xml_errorparser
 );
 
-=head2 FUNCTIONS FOR GENERATING XML
+=head2 Functions for XML-Generation
 
 =over 4
 
 =item xml_quote $string
 
 Quotes (and returns) the given string so that it's contents won't be
-interpreted by an XML parser (quotes ', ", <, & and ]]>). Example:
+interpreted by an XML parser (quotes ', ", <, & and > to avoid ]]>). Example:
 
    print xml_quote q( <xx> & <[[]]> );
    => &lt;xx> &amp; &lt;[[]]&gt;
@@ -78,7 +75,7 @@ ignored. Example:
 
 =item xml_attr $attr => $value [, $attr2 => $value2, ...]
 
-Returns a fully quoted $attr => $value pairs. Example:
+Returns fully quoted $attr => $value pairs. Example:
 
    print xml_attr authors => q(Alan Cox & Linus "kubys" Torvalds);
    => authors="Alan Cox & Linus &quot;kubys&quot; Torvalds"
@@ -101,7 +98,8 @@ sub xml_quote {
    local $_ = shift;
    s/&/&amp;/g;
    s/</&lt;/g;
-   s/]]>/]]&gt;/g;
+   s/>/&gt;/g;
+   #s/]]>/]]&gt;/g; # avoids problems when ]] and > are quoted in seperate calls
    $_;
 }
 
@@ -157,7 +155,7 @@ sub xml_unquote($) {
 
 =back
 
-=head2 FUNCTIONS FOR ANALYZING XML
+=head2 Functions for Analyzing XML
 
 =over 4
 
@@ -354,7 +352,7 @@ sub xml_errorparser {
    utf8_upgrade $output; # just for your convinience
 }
 
-=item xml_encoding xml-string [deprecated]
+=item xml_encoding xml-string [DEPRECATED]
 
 Convinience function to detect the encoding used by the given xml
 string. It uses a variety of heuristics (mainly as given in appendix F
@@ -393,7 +391,7 @@ sub xml_encoding($) {
 
 =back
 
-=head2 FUNCTIONS FOR MODIFYING XML
+=head2 Functions for Modifying XML
 
 =over 4
 
@@ -511,15 +509,15 @@ the href attribute and the current base URI to the C<$uri_handler> with
 this URI (-object).  The C<$uri_handler> should fetch the document and
 return it (or C<undef> on error).
 
-Example (see http://www.w3.org/TR/xinclude/ for the preliminary definition
-of xinclude):
+Example (see http://www.w3.org/TR/xinclude/ for the definition of
+xinclude):
 
-   <document xmlns:xinclude="http://www.w3.org/1999/XML/xinclude">
+   <document xmlns:xinclude="http://www.w3.org/2001/XInclude">
       <xinclude:include href="http://some.host/otherdoc.xml"/>
       <xinclude:include href="/etc/passwd" parse="text"/>
    </document>
 
-The result of running xml_xinclude on this document will have the first
+The result of running xml_include on this document will have the first
 include element replaced by the document element (and it's contents) of
 C<http://some.host/otherdoc.xml> and the second include element replaced
 by a (correctly quoted) copy of your C</etc/passwd> file.
@@ -529,7 +527,7 @@ stylesheets. Using xinclude for these cases is faster than xsl's
 include/import machanism since xinclude expansion can be done after file
 loading while, while xsl's include mechanism is evaluated on every parse.
 
-   <include xmlns="http://www.w3.org/1999/XML/xinclude"
+   <include xmlns="http://www.w3.org/2001/XInclude"
             href="style/xtable.xsl"
             parse="verbatim"/>
 
@@ -547,7 +545,8 @@ consideration.
 
 =cut
 
-my $xmlns_xinclude = "http://www.w3.org/1999/XML/xinclude";
+my $xmlns_xinclude1999 = "http://www.w3.org/1999/XML/xinclude";
+my $xmlns_xinclude2001 = "http://www.w3.org/2001/XInclude";
 
 sub xml_include {
    require XML::Parser::Expat;
@@ -556,7 +555,7 @@ sub xml_include {
    my $get = $_[2] || \&PApp::Util::load_file;
    my $nested = $_[3];
    my $ignore = $nested;
-   my ($self, $xinclude, $doc, $prefix, @context);
+   my ($self, $xinclude1999, $xinclude2001, $doc, $prefix, @context);
 
    my $qualify = sub {
       $prefix{$self->namespace($_[0])}.$_[0];
@@ -566,7 +565,8 @@ sub xml_include {
    $self->setHandlers(
       Start => sub {
          $ignore = 0;
-         if ($self->eq_name($_[1], $xinclude)) {
+         if ($self->eq_name ($_[1], $xinclude1999)
+             || $self->eq_name ($_[1], $xinclude2001)) {
             my (undef, undef, %attr) = @_;
             my $parse = $attr{parse} || "xml";
             my $href = $attr{href};
@@ -576,13 +576,13 @@ sub xml_include {
             if (defined $file) {
                if ($parse eq "pxml") {
                   require PApp::PCode;
-                  $file = PApp::PCode::pxml2pcode($file);
-                  $file = xml_include($file, $href, $get, $nested + 1);
-                  $file = PApp::PCode::pcode2pxml($file);
+                  $file = PApp::PCode::pxml2pcode ($file);
+                  $file = xml_include ($file, $href, $get, $nested + 1);
+                  $file = PApp::PCode::pcode2pxml ($file);
                } elsif ($parse eq "xml") {
-                  $file = xml_include($file, $href, $get, $nested + 1);
+                  $file = xml_include ($file, $href, $get, $nested + 1);
                } elsif ($parse eq "text") {
-                  $file = $self->xml_escape($file);
+                  $file = $self->xml_escape ($file);
                } elsif ($parse eq "verbatim") {
                   #
                } else {
@@ -597,11 +597,16 @@ sub xml_include {
             my $xmlns;
             for ($self->new_ns_prefixes) {
                $context[-1]{$_} = delete $prefix{$_};
-               my $uri = $self->expand_ns_prefix($_);
+               my $uri = $self->expand_ns_prefix ($_);
                # the values of $_ before and after this
                # comment do not need to be the same
-               $prefix{$uri} = $_.":";
-               $xmlns .= " xmlns:$_='$uri'";
+               if ($_ eq "#default") {
+                  $prefix{$uri} = "";
+                  $xmlns .= " xmlns='$uri'";
+               } else {
+                  $prefix{$uri} = $_ . ":";
+                  $xmlns .= " xmlns:$_='$uri'";
+               }
             }
             my $tag = $qualify->($_[1]);
             $context[-1]{"\0"} = $tag;
@@ -651,7 +656,8 @@ sub xml_include {
          $doc .= $_[1] unless $ignore;
       },
    );
-   $xinclude = $self->generate_ns_name("include", $xmlns_xinclude);
+   $xinclude1999 = $self->generate_ns_name("include", $xmlns_xinclude1999);
+   $xinclude2001 = $self->generate_ns_name("include", $xmlns_xinclude2001);
    eval {
       local $SIG{__DIE__};
       $self->parse($_[0]);
@@ -662,9 +668,91 @@ sub xml_include {
    $doc;
 }
 
+=item pod2xml $pod
+
+Converts a POD string (which can be either a fragment or a whole document)
+
+=cut
+
+{
+   package PApp::XML::Pod2xml;
+
+   sub stag { (PApp::XML::xml_tag @_) }
+   sub title_tag {
+      my ($name, $title, $cont, @a) = @_;
+      stag $name, @a,
+        (stag 'title' => $title) 
+        . (stag 'content' => $cont)
+   }
+
+   sub view_item  { 
+      my $t = $_[1]->title->present ($_[0]);
+      my $bullet;
+      if ($t =~ s/^\s*\*\s+//) {
+         $bullet = "*";
+      } elsif ($t =~ s/^\s*(\d+\.)\s+//) {
+         $bullet = $1;
+      }
+      title_tag item  => $t
+                      => $_[1]->content->present ($_[0]),
+                      $bullet ? (bullet => $bullet) : ()
+   }
+
+   sub view_begin {
+      $_[1]->format eq "xmlpod"
+         ? $_[1]->content->present ($_[0])
+         : stag for => format => $_[1]->format, $_[1]->content->present ($_[0])
+   }
+
+   sub view_for {
+      $_[1]->format eq "xmlpod"
+         ? $_[1]->text
+         : stag for => $_[1]->text;
+   }
+
+   sub view_pod   { stag pod => xmlns => "http://www.nethype.de/xmlns/xmlpod" => $_[1]->content->present ($_[0]) }
+
+   sub view_head1 { title_tag head1 => $_[1]->title->present ($_[0]) => $_[1]->content->present ($_[0]) }
+   sub view_head2 { title_tag head2 => $_[1]->title->present ($_[0]) => $_[1]->content->present ($_[0]) }
+   sub view_head3 { title_tag head3 => $_[1]->title->present ($_[0]) => $_[1]->content->present ($_[0]) }
+   sub view_head4 { title_tag head4 => $_[1]->title->present ($_[0]) => $_[1]->content->present ($_[0]) }
+
+   sub view_over       { stag over  => indent => $_[1]->indent, $_[1]->content->present ($_[0]) }
+   sub view_begin      { stag begin => format => $_[1]->format, $_[1]->content->present ($_[0]) }
+
+   sub view_verbatim   { stag verbatim => PApp::XML::xml_cdata $_[1] }
+   sub view_textblock  { stag para     => $_[1] }
+   
+   sub view_seq_code   { stag code => $_[1] } 
+   sub view_seq_bold   { stag bold => $_[1] }
+   sub view_seq_italic { stag italic => $_[1] }
+   sub view_seq_link   { stag link  => $_[1] }
+   sub view_seq_index  { stag index => $_[1] }
+   sub view_seq_file   { stag file => $_[1] }
+   sub view_seq_zero   { "" } 
+   sub view_seq_space  { PApp::XML::xml_quote $_[1] }
+   sub view_seq_text   { PApp::XML::xml_quote $_[1] }
+   sub view_seq_entity { PApp::XML::xml_quote $_[1] } 
+}
+
+sub pod2xml($) {
+   my ($pod) = @_;
+
+   return "" if not $pod;
+
+   require Pod::POM;
+
+   my $parser = Pod::POM->new 
+      or die "Couldn't create POM object";
+   my $pom = $parser->parse_text ("=pod\n\n".$pod)
+      or die $parser->error ();
+
+   $pom->present (PApp::XML::Pod2xml::);
+}
+
 =back
 
-=head2 The PApp::XML factory object.
+=head2 The PApp::XML Factory Class
 
 =over 4
 
@@ -725,12 +813,9 @@ Which defines a C<link> element that can be used like this:
 
 =cut
 
-use PApp qw(echo sublink slink current_locals);
-
-            BEGIN {
-               defined &sublink or die;
-            }
 sub new($;%) {
+   require PApp;
+
    my $class = shift,
    my %args = @_;
    my $self = bless {}, $class;
@@ -747,9 +832,9 @@ sub new($;%) {
             $k =~ s/^_/-/;
             push @args, $k, $v;
          }
-         echo $sublink eq "yes"
-            ? sublink [current_locals], $content, @args
-            : slink $content, @args;
+         PApp::echo ($sublink eq "yes")
+            ? PApp::sublink ([PApp::current_locals ()], $content, @args)
+            : PApp::slink ($content, @args);
       },
       %{delete $args{special} || {}},
    };
@@ -1038,7 +1123,7 @@ sub print($) {
 
 =back
 
-=head1 WIZARD EXAMPLE
+=head1 Wizard Example
 
 In this section I'll try to sketch out a "wizard example" that shows how
 C<PApp::XML> could be used in the real world.
@@ -1235,8 +1320,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 

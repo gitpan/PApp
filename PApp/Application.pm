@@ -19,7 +19,7 @@ PApp::Application - a class representing a single mountable application
 
 =head1 DESCRIPTION
 
-What?
+This class is the base class for all mountable PApp applications.
 
 =over 4
 
@@ -39,7 +39,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 1;
+$VERSION = 1.1;
 
 =item $papp = new PApp::Application args...
 
@@ -53,7 +53,7 @@ sub new {
 
 =item $ppkg->preprocess
 
-Parse the package (includign all subpackages) and store the configuration
+Parse the package (including all subpackages) and store the configuration
 and code data in the PApp Package Cache(tm) for use by load_config and
 load_code.
 
@@ -545,6 +545,8 @@ sub run {
    $papp->{obj}->show;
 }
 
+=over 4
+
 =item $papp->uncaught_exception
 
 The Agni-specific version of this method calls the C<uncaught_exception>
@@ -573,8 +575,8 @@ L<PApp>.
 
 =head1 AUTHOR
 
- Marc Lehmann <pcg@goof.com>
- http://www.goof.com/pcg/marc/
+ Marc Lehmann <schmorp@schmorp.de>
+ http://home.schmorp.de/
 
 =cut
 
