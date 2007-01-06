@@ -34,7 +34,7 @@ use base Exporter;
 use utf8;
 no bytes;
 
-$VERSION = 1.1;
+$VERSION = 1.2;
 @EXPORT = qw(
 
       errbox
@@ -237,7 +237,8 @@ sub checkbox		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shi
 sub radio		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, (shift) ? (checked => "checked") : (), type => 'radio'    } }
 sub filefield		{ tag "input", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift, value => shift, type => 'file'     } }
 
-sub textarea		{ tag "textarea", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift }, "\n", @_ }
+sub textarea		{ tag "textarea", { ref $_[0] eq "HASH" ? %{+shift} : (), name => shift },
+                                          ($PApp::content_type eq "application/xhtml+xml" ? "" : "\n"), @_ }
 
 =item selectbox [\%attrs,] $name, [$selected, [, $key => $text...]]
 

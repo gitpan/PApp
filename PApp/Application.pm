@@ -39,7 +39,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 1.1;
+$VERSION = 1.2;
 
 =item $papp = new PApp::Application args...
 
@@ -81,6 +81,16 @@ sub unload {
    delete $self->{translate};
    delete $self->{file};
    delete $self->{root}; # this might trigger a lot of memory freeing!
+}
+
+=item $papp->upgrade
+
+Called to upgrade an applicaiton.
+
+=cut
+
+sub upgrade {
+   # nop
 }
 
 =item $papp->event("event")
@@ -254,7 +264,7 @@ The default implementation just rethrows.
 =cut
 
 sub uncaught_exception {
-   PApp::handle_error ($_[0]);
+   PApp::handle_error ($_[1]);
 }
 
 =item $papp->new_package(same arguments as PApp::Package->new)
@@ -543,6 +553,14 @@ sub run {
    local $PApp::SQL::DBH      = $PApp::Config::DBH;
 
    $papp->{obj}->show;
+}
+
+sub upgrade {
+   my $papp = shift;
+
+   Agni::agni_exec (sub {
+      $papp->{obj}->upgrade;
+   });
 }
 
 =over 4

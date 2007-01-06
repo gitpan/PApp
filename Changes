@@ -1,11 +1,34 @@
 Revision history for Perl extension PApp
 
+1.2  Sat Jan  6 20:27:32 CET 2007
+	- editform/checkbox now uses Agni::*64 functions.
+        - textarea now removes the leading newline when the content type
+          is "application/xhtml+xml" (this is a hack, it's impossible to
+          detect how the browser interprets the page, so one cannot work
+          around this incompatibility between html<=4 and xhtml).
+	- other callbacks were errornously executed at the next request
+          when one callback called any abort_ function.
+        - ef_submit surlargs get interpreted after form processing and
+          after ef_cb_end callbacks have been executed.
+        - small memory optimization: _type and _attr get shared between
+          similar agni objects.
+        - abstracted _type and _cache management.
+        - fixed error reporting for non-Agni applications.
+        - on full-image import, bin/agni now resets the mysql insertid
+          to 1.
+        - mass_delete_objects did errornously keep some attributes
+          (still does, much less often, though).
+        - further optimized agni_fetch by avoiding sv_mortalcopy.
+        - implement papp-admin --upgrade-apps.
+        - added SURL_START_SESSION.
+        - add from_json/to_json to PApp::Util.
+
 1.1  Sun Sep  4 16:19:14 CEST 2005
         - don't update the _cache entry on STORE, this is the job
           of the store method.
 	- bin/agni: fix --force option.
         - xpcse now uses the Host: header, if available, to generate
-          it's URL.
+          its URL.
 	- switched to real I18n instead of stubs in Agni namespaces.
         - agni statementhandles weren't properly initialized on first
           database connect.

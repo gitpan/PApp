@@ -50,7 +50,7 @@ use PApp::Env;
 
 use base Exporter;
 
-$VERSION = 1.1;
+$VERSION = 1.2;
 @EXPORT = qw();
 
 =head2 Callbacks

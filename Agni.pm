@@ -9,6 +9,8 @@
 
 package Agni;
 
+=encoding utf-8
+
 =head1 NAME
 
 Agni - persistent data and objects
@@ -32,6 +34,8 @@ packaged in a nicer way.
 =over 4
 
 =cut
+
+use strict 'vars';
 
 use utf8;
 
@@ -60,10 +64,10 @@ our %temporary; # used by the "temporary" attribute type
 BEGIN {
    # I was lazy, all the util xs functions are in PApp.xs
    require XSLoader;
-   XSLoader::load PApp, $VERSION unless defined &PApp::bootstrap;
+   XSLoader::load PApp, $PApp::VERSION unless defined &PApp::bootstrap;
 }
 
-@EXPORT = qw(
+our @EXPORT = qw(
       require_path new_objectid
 
       %obj_cache
@@ -75,7 +79,7 @@ BEGIN {
       agni_exec agni_refresh
 );
 
-@EXPORT_OK = (@EXPORT, qw(
+our @EXPORT_OK = (@EXPORT, qw(
       *app *env
 ));
 
@@ -99,38 +103,39 @@ our $last_compile_status;
 # reserved object gids
 # <20 == must only use string types and perl methods, for bootstrapping.
 
-$OID_OBJECT		= 1;
-$OID_ATTR		= 2;
-$OID_ATTR_NAMED		= 3;
-$OID_METHOD		= 4;
-$OID_METHOD_ARGS	= 5;
-$OID_DATA		= 6;
-$OID_DATA_STRING	= 7;
-$OID_METHOD_PERL	= 8;
-$OID_ATTR_SQLCOL	= 9;
+our $OID_OBJECT			= 1;
+our $OID_ATTR			= 2;
+our $OID_ATTR_NAMED		= 3;
+our $OID_METHOD			= 4;
+our $OID_METHOD_ARGS		= 5;
+our $OID_DATA			= 6;
+our $OID_DATA_STRING		= 7;
+our $OID_METHOD_PERL		= 8;
+our $OID_ATTR_SQLCOL		= 9;
 
-$OID_METHOD_PXML	= 20;
-$OID_META		= 21;
-$OID_META_DESC		= 22;
-$OID_META_NAME		= 23;
-$OID_ATTR_NAME		= 24;
-$OID_ATTR_CONTAINER     = 25;
-$OID_DATA_REF           = 26;
-$OID_IFACE_CONTAINER	= 27; # object has a gc_enum, + obj_enum methods (NYI)
-$OID_META_NOTE		= 28; # notes/flags for objects
-$OID_ATTR_TAG		= 29; # objects used as tags for containers
-$OID_META_PACKAGE	= 30; # perl package name
-$OID_INTERFACE		= 31; # class interface
-$OID_ROOTSET		= 32; # a container containing all objects that are alive "by default"
-$OID_ISA		= 33; # the data/method parent for lookups
-$OID_ISA_METHOD		= 5100001742; # the gids start to get ugly here
-$OID_ISA_DATA		= 5100001741;
-$OID_CMDLINE_HANDLER    = 21474836484; # util::cmdline
-$OID_META_PACKAGE	= 4295048763;
-$OID_PACKAGE_DEFAULT	= 4295049779; # lots of special-casing for that one
-$OID_META_PARCEL	= 5100000280;
-$OID_NAMESPACES         = 5100003444; # circular reference of namespace_base to namespace
-$OID_ISA_NAMESPACE      = 5100003446;
+our $OID_METHOD_PXML		= 20;
+our $OID_META			= 21;
+our $OID_META_DESC		= 22;
+our $OID_META_NAME		= 23;
+our $OID_ATTR_NAME		= 24;
+our $OID_ATTR_CONTAINER     	= 25;
+our $OID_DATA_REF           	= 26;
+our $OID_IFACE_CONTAINER	= 27; # object has a gc_enum, + obj_enum methods (NYI)
+our $OID_META_NOTE		= 28; # notes/flags for objects
+our $OID_ATTR_TAG		= 29; # objects used as tags for containers
+our $OID_META_PACKAGE		= 30; # perl package name
+our $OID_INTERFACE		= 31; # class interface
+our $OID_ROOTSET		= 32; # a container containing all objects that are alive "by default"
+our $OID_ISA			= 33; # the data/method parent for lookups
+our $OID_ISA_METHOD		= 5100001742; # the gids start to get ugly here
+our $OID_ISA_DATA		= 5100001741;
+our $OID_CMDLINE_HANDLER    	= 21474836484; # util::cmdline
+our $OID_META_PACKAGE		= 4295048763;
+our $OID_PACKAGE_DEFAULT	= 4295049779; # lots of special-casing for that one
+our $OID_META_PARCEL		= 5100000280;
+our $OID_NAMESPACES         	= 5100003444; # circular reference of namespace_base to namespace
+our $OID_ISA_NAMESPACE      	= 5100003446;
+our $OID_COMMITINFO         	= 5100004671; # used in split_obj, the committer, and more
 
 our %BOOTSTRAP_LEVEL; # indexed by {gid}
 
@@ -500,6 +505,8 @@ sub get_package {
 }
 
 BEGIN {
+   no strict;
+
    $objtag_start    = "\x{10f101}";
    $objtag_type_lo  = "\x{10f102}";
    $objtag_obj      = "\x{10f102}"; # inline object
@@ -512,6 +519,8 @@ BEGIN {
 # compile code into the current package... also expands the special method gids
 
 sub compile {
+   no strict;
+
    my $code = $_[0];
 
    $code =~ s{
@@ -717,6 +726,55 @@ sub update_isa_mem($$) {
    $self->{_isa} = $isa;
 }
 
+#############################################################################
+# support functions for _cache and _type management
+
+my %type_hash_cache;
+my %name_hash_cache;
+
+sub _obj_member_add($$$) {
+   my ($obj, $name, $tobj) = @_;
+
+   my %type = %{ $obj->{_type} };
+
+   $type{$name} = $tobj;
+
+   my $key = join ",", sort %type;
+   Scalar::Util::weaken ($name_hash_cache{$key} ||= \%type);
+   $obj->{_type} = $name_hash_cache{$key};
+}
+
+sub _obj_member_del($$) {
+   my ($obj, $name) = @_;
+
+   my %type = %{ $obj->{_type} };
+
+   delete $type{$name};
+
+   my $key = join ",", sort %type;
+   Scalar::Util::weaken ($name_hash_cache{$key} ||= \%type);
+   $obj->{_type} = $name_hash_cache{$key};
+}
+
+sub _obj_cache_set($$$) {
+#   my ($obj, $gid, $value) = @_;
+   $_[0]{_cache}{$_[1]} = $_[2];
+}
+
+sub _obj_cache_del($$) {
+   my ($obj, $gid) = @_;
+
+   delete $obj->{_cache}{$gid};
+}
+
+sub _obj_cache_exists($$) {
+   my ($obj, $gid) = @_;
+
+   exists $obj->{_cache}{$gid};
+}
+
+#############################################################################
+
 sub update_class($) {
    my $self = $_[0];
 
@@ -754,20 +812,26 @@ sub update_class($) {
 
    $update_level < 100 or croak "deep recursion in object loader (check for circular isa?)";
 
-   my (%data, %type);
+   my (%data, $types, @types);
 
    for (@sqlcol) {
       my $st = sql_exec \my($type, $data),
                         "select type, data
                          from $_
-                         where id = ?",
+                         where id = ?
+                         order by type",
                         $id;
 
       while ($st->fetch) {
          $data{$type} = $data;
-         undef $type{$type};
+         push @types, $type;
       }
    }
+
+   $types = $type_hash_cache{join ",", @types}
+            ||= {
+               map { $_ => undef } @types
+            };
 
    # use populate for these, too! #d# #FIXME#
    update_isa_mem $self, delete $data{$OID_ISA};
@@ -815,11 +879,11 @@ sub update_class($) {
 
          } elsif ($isnamed) { # no args attribute but named, must be data
             # pretend to be able to handle descendents of OID_DATA_STRING and nothing else.
-            $self->{_cache}{$type} = $data if $superclass eq $OID_DATA_STRING;
+            _obj_cache_set $self, $type, $data if $superclass eq $OID_DATA_STRING;
 
             # plant a bomb, so other accesses than fetch die
-            $self->{_type}{$name} = bless { _gid => $type }, 
-                                    "non-bootstrap data access during bootstrap ($self->{_path}/$self->{_gid}\{$type=$name}";
+            _obj_member_add $self, $name, bless { _gid => $type }, 
+                                           "non-bootstrap data access during bootstrap ($self->{_path}/$self->{_gid}\{$type=$name}";
 
             $postponed->{$type} = $data;
          } else {
@@ -839,7 +903,7 @@ sub update_class($) {
 
       # cannot happen during bootstrap
       for (keys %{$self->{_attr}}) {
-         unless (exists $type{$_}) {
+         unless (exists $types->{$_}) {
             my $tobj = path_obj_by_gid ($self->{_path}, $_)
                or croak "agni::$self->{_path}::$self->{_gid}: unable to load type object $_, unable to depopulate\n";
             $tobj->depopulate ($self);
@@ -853,14 +917,19 @@ sub update_class($) {
    # for other purposes, too.
    delete $self->{_loading};
 
+   $self->{_attr} = $types;
+
    rmagical_on $self;
 
-   $self->{_attr} = \%type;
-
-   $self;
+   $self
 }
 
 #############################################################################
+
+sub update_commitinfo($$) {
+   sql_exec "replace into d_string (id, type, data) values (?, ?, ?)",
+            $_[1], $OID_COMMITINFO, "$PApp::NOW $PApp::stateid $_[0]";
+}
 
 # make sure the object described by $paths|$gid|$id is copied into the
 # target layer. returns the new id on copy or undef otherwise.
@@ -870,7 +939,7 @@ sub update_class($) {
 sub split_obj {
    my ($paths, $gid, $id, $target) = @_;
 
-   sql_exec lock_all_tables();
+   sql_exec lock_all_tables ();
 
    my $newid = eval {
       local $SIG{__DIE__};
@@ -887,6 +956,7 @@ sub split_obj {
                   $newid, $type, $data
             while $st->fetch;
       }
+      update_commitinfo split => $newid;
 
       sql_exec "unlock tables";
 
@@ -894,7 +964,8 @@ sub split_obj {
    } else {
       sql_exec "unlock tables";
    }
-   $newid;
+
+   $newid
 }
 
 sub agni::object::copy_to_path {
@@ -921,7 +992,7 @@ sub agni::object::name     { "\x{4e0a}" }
 sub agni::object::fullname { "\x{4e0a}" }
 
 sub agni::object::isa_obj {
-   $_[0]{_isa};
+   $_[0]{_isa}
 }
 
 sub update_isa {
@@ -940,7 +1011,7 @@ might load other objects in memory.
 
 sub path_gid2name($$) {
    my ($path, $gid) = @_;
-   if (my $obj = $obj_cache[$path]{$gid}) {
+   if (my $obj = $obj_cache{$gid}[$path]) {
       return $obj->name;
    } else {
       my $st = sql_exec \my ($nsname, $oname),
@@ -1035,6 +1106,8 @@ sub commit_objs {
 
             :>gid <?$obj_gid:>...<:
 
+            my ($obj_paths, $obj_id);
+
             if (my $obj = $obj_cache{$obj_gid}[$src]) {
                ($obj_paths, $obj_id) = ($obj->{_paths}, $obj->{_id});
             } else {
@@ -1070,7 +1143,7 @@ sub commit_objs {
                             $obj_gid, $dst;
 
                   # can't happen anymore?
-                  $id != $obj_id or croak "FATAL, pls report! commit_objs: src_path $src_path not the highest path of object $obj_gid";
+                  $id != $obj_id or croak "FATAL, pls report! commit_objs: src_path $src not the highest path of object $obj_gid";
                             
                   if ($id) {
                      # remove it from the target path
@@ -1096,6 +1169,7 @@ sub commit_objs {
                   }
 
                   sql_exec "update obj set paths = ? where id = ?", $dst_paths, $obj_id;
+                  update_commitinfo commit => $obj_id;
                   push @event, [UPDATE_CLASS, (or64 $dst_paths, $obj_paths), $obj_gid];
                } else {
                   :><?"removing $obj_id...":><:
@@ -1391,16 +1465,19 @@ sub mass_delete_objects {
    # adjust paths... should instead call an object method instead
    for my $id (@$ids) {
       my ($gid, $paths) = sql_fetch "select gid, paths from obj where id = ?", $id;
+
       sql_exec "update obj set paths = paths | ? where gid = ? and paths & ? <> 0",
                $paths, $gid, $parpathmask[top_path($paths)];
 
       for my $table (@sqlcol) {
+         # find all attributes in this table that are not referencable in other paths
          my $st = sql_exec \my($did),
                            "select obj.id from obj
                                inner join $table on ($table.id = obj.id and $table.type = ?)
-                               left join obj typ on (obj.paths & typ.paths <> 0 and typ.gid = ? and typ.id <> ?)
+                               left join obj typ on (obj.paths & typ.paths & ? <> 0 and typ.gid = ? and typ.id <> ?)
                             where typ.gid is null",
-                           $gid, $gid, $id;
+                           $gid,
+                           $paths, $gid, $id;
 
          sql_exec "delete from $table where id = ? and type = ?", $did, $gid
             while $st->fetch;

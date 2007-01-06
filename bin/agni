@@ -17,6 +17,8 @@ agni - commandline access to the I<PApp!Agni System>.
       --load-image <file>           load a saved backup file <file>
       --save-image <file>           save a backup file <file>
 
+      --force                       force import even on gidseq mismatches
+
       --gar                         starts garbagecollector
 
       --paths                       show paths
@@ -153,6 +155,13 @@ all existing data.
 This command calls a method in object F<ra/settings::class>, agni-path
 B<root/agni/staging/data/> called B<ra_upgrade>. Use this feature with
 caution! 
+
+To give the method call arguments simply write them on the command line:
+
+	agni -e root/agni/staging/nethype_data/ call mercury_nethype/report::own_summary summary 0 2141167600
+
+This calls the summary method on the report::own_summary object with the two arguments
+0 and 2141167600 (unix timestamps btw.).
 
 =head1 COPYRIGHT
 
@@ -382,21 +391,9 @@ sub load_image {
 
    my %sqlcol;
 
-   # do upgrade translation
-   my %replace = (
-      "string", "d_string",
-      "text",   "d_blob",
-      "int",    "d_int",
-      "double", "d_double",
-   );
-   @replace{@Agni::sqlcol} = @Agni::sqlcol;
-   
    # gather info
    for (@$objs) {
       if (exists $_->{attr}{$Agni::OID_ATTR_SQLCOL}) {
-         # first upgrade old sqlcol values
-         $_->{attr}{$Agni::OID_ATTR_SQLCOL} = $sqlcol{$_->{gid}} = $replace{$_->{attr}{$Agni::OID_ATTR_SQLCOL}};
-
          $sqlcol{$_->{gid}} = $_->{attr}{$Agni::OID_ATTR_SQLCOL};
       }
    }
@@ -404,7 +401,7 @@ sub load_image {
    # check attr consistency
    for (@$objs) {
       if (my @extra = grep !exists $sqlcol{$_}, keys %{$_->{attr}}) {
-         die "object $_->{paths}/$_->{gid} references types (@extra) not in dump";
+         die "object $_->{paths}/$_->{gid} references types (@extra) without sqlcol";
       }
    }
 
@@ -412,8 +409,9 @@ sub load_image {
 
    for my $table ("obj", "obj_path", @Agni::sqlcol) {
       sql_exec "delete from $table";
-      sql_exec "alter table $table disable keys";
+      sql_exec "alter table $table disable keys"; # mysql
    }
+   sql_exec "alter table obj auto_increment=1"; # mysql
 
    # create paths
    for my $id (0 .. $#$paths) {
@@ -494,7 +492,7 @@ sub import_path {
 
    @$paths and die "file contains paths attributes, might be an image file. not imported.";
 
-   Agni::import_objs($objs, $pathid, 0, $opt_force);
+   Agni::import_objs ($objs, $pathid, 0, $opt_force);
 }
 
 sub garbage_collect {
@@ -542,6 +540,8 @@ Usage: $0 ...
 
    --load-image <file>           load a saved backup file <file>
    --save-image <file>           save a backup file <file>
+
+   --force                       force import even on gidseq mismatches
 
    --gar                         starts garbagecollector
 

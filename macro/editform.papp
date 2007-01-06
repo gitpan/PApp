@@ -104,16 +104,18 @@ sub _ef_parse_end($) {
 
    &$_ for @{$ef->{cb_begin}};
 
+   my @surlargs;
+
    for my $field (values %{$ef->{"/"}}) {
       if (exists $field->{submit}) {
-         PApp::set_alternative delete $field->{submit}
+         push @surlargs, delete $field->{submit}
             if $field->{submit} && delete $field->{value};
       } elsif (exists $field->{checkbox}) {
          if ($field->{checkbox}) {
             if (delete $field->{value}) {
-               ${$field->{ref}} |= $field->{checkbox};
+               ${$field->{ref}} = Agni::or64     ${$field->{ref}}, $field->{checkbox};
             } else {
-               ${$field->{ref}} &= ~$field->{checkbox};
+               ${$field->{ref}} = Agni::andnot64 ${$field->{ref}}, $field->{checkbox};
             }
          } else {
             ${$field->{ref}} = ! ! delete $field->{value};
@@ -127,6 +129,9 @@ sub _ef_parse_end($) {
    }
 
    &$_ for @{$ef->{cb_end}};
+
+   PApp::set_alternative $_
+      for @surlargs;
 }
 
 sub _ef_parse_field($$$) {
@@ -355,6 +360,8 @@ destination module is given, the module destination from the C<ef_begin>
 macro is used instead of overwriting the destination with the module (as
 C<surl> usually does).
 
+The surl-args are interpreted after callbacks specified via L<ef_cb_end>.
+
 =item ef_reset [\%attrs,] [$value]
 
 Output a reset button. If C<$value> is omitted, __"Restore Values" is used.
@@ -480,7 +487,7 @@ cannot guarentee this).
 
 <macro name="ef_checkbox*"><perl><![CDATA[
    my $attr = ref $_[0] eq "HASH" ? shift : {};
-   $attr->{checked} = "checked" if $_[1] ? ${$_[0]} & $_[1] : ${$_[0]};
+   $attr->{checked} = "checked" if $_[1] ? Agni::and64 ${$_[0]}, $_[1] : ${$_[0]};
    my $id = ef_nextid($_[0], $attr);
    $ef_args->{"/"}{$id}{checkbox} = $_[1];
    checkbox $attr, $id;
@@ -497,7 +504,7 @@ cannot guarentee this).
 
 <perl><![CDATA[
 
-=item ef_selectbox $ref, values...
+=item ef_selectbox fieldref, values...
 
 Creates an selectbox for the given values. If $$ref evaluates to
 an array-ref a multiple-select selectbox is created, otherwise a
@@ -685,9 +692,10 @@ hashref with additonal name => value pairs.
 
 Add a callback the is to be called at BEGINing or END of result
 processing, i.e. call every BEGIN callback before the form results are
-being processed and call every END callback after all form arguments
-have been processed. All callbacks are executed in the order they were
-registered (first in, first out).
+being processed and call every END callback after all form arguments have
+been processed (except submit buttons, which are processed after ef_cb_end
+callbacks). All callbacks are executed in the order they were registered
+(first in, first out).
 
 =cut
 

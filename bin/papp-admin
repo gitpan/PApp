@@ -31,6 +31,8 @@ Usage: $self [opts...]
             --list-users       list (registered) users
             --list-groups      list groups / access rights
 
+            --upgrade-apps     upgrade all mounted applications.
+
        -a | --app <name>       select/create application <name>
             --appset <name>    set application set <name>
             --path <path>      set application path
@@ -291,6 +293,10 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
          } 0, $_[1], 1;
       },
 
+      "upgrade-apps" => sub {
+         call { &upgrade_apps };
+      },
+
       "reorganize|reorg" => sub {
          call { &reorganize };
       },
@@ -304,6 +310,21 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
 
 &{pop @calls} while @calls;
 &{pop @clean} while @clean;
+
+sub upgrade_apps {
+   my $st = sql_exec 
+               \my($name),
+               "select name from app
+                where appset is not null
+                order by name";
+
+   $| = 1;
+   while ($st->fetch) {
+      print "$name...";
+      (load_app PApp $name)->upgrade;
+      print "ok\n";
+   }
+}
 
 sub list_apps {
    my $st = sql_exec 
@@ -400,6 +421,8 @@ papp-admin - administrate papp
             --list-appsets     list application sets
             --list-users       list (registered) users
             --list-groups      list groups / access rights
+
+            --upgrade-apps     upgrade all mounted applications.
 
        -a | --app <name>       select/create application <name>
             --appset <name>    set application set <name>

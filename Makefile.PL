@@ -64,7 +64,7 @@ WriteMakefile(
 		    'Agni.pm'		=> '$(INST_LIBDIR)/Agni.pm',
                    },
     'PREREQ_PM'	=> {
-		    PApp::SQL		=> 1.0,
+		    PApp::SQL		=> 0.143,
                     Compress::LZF	=> 1.0,
                     String::Similarity	=> 0.02,
                     Convert::Scalar	=> 1.02,
@@ -75,6 +75,7 @@ WriteMakefile(
                     Storable		=> 2.05,
                     DBI			=> 1.30,
                     Digest::SHA1	=> 1.01,
+                    JSON::Syck		=> 0.0,
 
                     DBD::mysql		=> 2.04,
 

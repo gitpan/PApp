@@ -1,7 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         PApp
-version:      1.1
+version:      1.2
 version_from: PApp.pm
 installdirs:  site
 requires:
@@ -11,7 +11,8 @@ requires:
     DBD::mysql:                    2.04
     DBI:                           1.3
     Digest::SHA1:                  1.01
-    PApp::SQL:                     1
+    JSON::Syck:                    0
+    PApp::SQL:                     0.143
     Storable:                      2.05
     String::Similarity:            0.02
     URI:                           1.22
@@ -19,4 +20,4 @@ requires:
     XML::Sablotron:                0.98
 
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.23
+generated_by: ExtUtils::MakeMaker version 6.30

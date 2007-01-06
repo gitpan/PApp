@@ -168,7 +168,7 @@ agni_fetch (SV *self, SV *key)
       SvRMAGICAL_on (hv);
 
       if (he)
-        ret = sv_mortalcopy (HeVAL (he));
+        ret = HeVAL (he);
     }
   else
     {
@@ -191,7 +191,7 @@ agni_fetch (SV *self, SV *key)
 
           /* if cached, do not call fetch */
           if (he)
-            ret = sv_mortalcopy (HeVAL (he));
+            ret = HeVAL (he);
           else
             {
               SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
@@ -301,7 +301,8 @@ agni_fetch_op (pTHX)
       || PL_op->op_private & (OPpDEREF | OPpLVAL_DEFER)
       || !SvRMAGICAL (TOPm1s)
       || !(mg = mg_find (TOPm1s, PERL_MAGIC_tied))
-      || mg->mg_virtual != &vtbl_agni_object)
+      || mg->mg_virtual != &vtbl_agni_object
+      )
     return Perl_pp_helem (aTHX);
 
   {

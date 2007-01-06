@@ -31,7 +31,7 @@ use Convert::Scalar ':utf8';
 
 use base 'Exporter';
 
-$VERSION = 1.1;
+$VERSION = 1.2;
 @EXPORT = qw();
 
 our $verbose = 1;
@@ -86,7 +86,7 @@ sub export_po {
 
    my $st = sql_exec \my($id, $lang1, $context, $lang2, $flags, $msg),
                      "select i.id, i.lang, i.context, s.lang, s.flags*1, s.msg
-                      from msgid i, msgstr s where i.nr = s.nr and i.domain = ?
+                      from msgid i left join msgstr s on (i.nr = s.nr) where i.domain = ?
                       order by 4,1,2,6",
                      $domain;
 

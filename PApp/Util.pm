@@ -32,7 +32,7 @@ use URI;
 use base 'Exporter';
 
 BEGIN {
-   $VERSION = 1.1;
+   $VERSION = 1.2;
    @EXPORT_OK = qw(
          format_source dumpval sv_peek sv_dump
          digest
@@ -106,6 +106,30 @@ sub dumpval {
       $d =~ s/([\x00-\x07\x09\x0b\x0c\x0e-\x1f])/sprintf "\\x%02x", ord($1)/ge;
       $d;
    } || "[unable to dump $_[0]: '$@']";
+}
+
+=item $ref = from_json $json
+
+Converts a JSON string into the corresponding perl data structure.
+
+=cut
+
+sub from_json($) {
+   require JSON::Syck;
+   local $JSON::Syck::ImplicitUnicode = 1; # work around JSON::Syck bugs
+   JSON::Syck::Load ($_[0])
+}
+
+=item $json = to_json $ref
+
+Converts a perl data structure into its JSON representation.
+
+=cut
+
+sub to_json($) {
+   require JSON::Syck;
+   local $JSON::Syck::ImplicitUnicode = 0;  # work around JSON::Syck bugs
+   JSON::Syck::Dump ($_[0])
 }
 
 =item digest(args...)

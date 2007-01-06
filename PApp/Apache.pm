@@ -63,7 +63,7 @@ use PApp::Package;
 BEGIN {
    @ISA = PApp::Base::;
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 1.1;
+   $VERSION = 1.2;
 }
 
 *PApp::OK = \&Apache::Constants::OK;

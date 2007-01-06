@@ -7,6 +7,121 @@ msgstr ""
 "Content-Type: text/plain: charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#$lang=
+msgid ""
+msgstr ""
+
+# /root/src/PApp/widget/poedit.papp:253          printf __"\"<tt>%s</tt>\" is a non-standard language id", $S{lang};
+#$lang=eng
+#$flags=
+msgid "\"<tt>%s</tt>\" is a non-standard language id"
+msgstr ""
+
+# /root/src/PApp/apps/admin.papp:138 <h1>__"<tt>B::TerseSize</tt> and <tt>Devel::Symdump</tt> required."</h1>
+#$lang=eng
+#$flags=
+msgid "<tt>B::TerseSize</tt> and <tt>Devel::Symdump</tt> required."
+msgstr ""
+
+# /root/src/PApp/apps/admin.papp:166 <h1>__"Administration/Maintenance"</h1>
+#$lang=eng
+#$flags=
+msgid "Administration/Maintenance"
+msgstr ""
+
+# /root/src/PApp/widget/poedit.papp:23    <?ef_sbegin:>__"Encoding:" <?ef_string \$S{encoding}, 12:><?ef_end:>
+#$lang=eng
+#$flags=
+msgid "Encoding:"
+msgstr ""
+
+# /root/src/PApp/apps/admin.papp:129 <tr><th>__"Module"</th><th>
+#$lang=eng
+#$flags=
+msgid "Module"
+msgstr ""
+
+# /root/src/PApp/apps/admin.papp:127 <h1>__"Module Memory Usage"</h1>
+#$lang=eng
+#$flags=
+msgid "Module Memory Usage"
+msgstr ""
+
+# /root/src/PApp/widget/acedit.papp:43    __"Only the first 20 matches shown currently."<br />
+#$lang=eng
+#$flags=
+msgid "Only the first 20 matches shown currently."
+msgstr ""
+
+# /root/src/PApp/macro/editform.papp:324 Output a submit button. If C<$value> is C<undef> or omitted, __"Save
+# Changes" is used. The rest of the arguments is interpreted in exactly the
+#$lang=eng
+#$flags=
+msgid ""
+"Save\n"
+"Changes"
+msgstr ""
+
+# /root/src/PApp/widget/poedit.papp:103    <?ef_submit __"Set/Refresh":>
+#$lang=eng
+#$flags=
+msgid "Set/Refresh"
+msgstr ""
+
+# /root/src/PApp/apps/admin.papp:129 __"Total Opcount"</th><th>
+#$lang=eng
+#$flags=
+msgid "Total Opcount"
+msgstr ""
+
+# /root/src/PApp/apps/admin.papp:129 __"Total Opsize"</th></tr>
+#$lang=eng
+#$flags=
+msgid "Total Opsize"
+msgstr ""
+
+# /opt/perl/lib/perl5/PApp.pm:1522    alink __"[Preferences]", &preferences_url;
+#$lang=eng
+#$flags=
+msgid "[Preferences]"
+msgstr ""
+
+# /opt/perl/lib/perl5/PApp/Exception.pm:615    } or __"[unable to enter error browser at this time]";
+#$lang=eng
+#$flags=
+msgid "[unable to enter error browser at this time]"
+msgstr ""
+
+# /opt/perl/lib/perl5/PApp/Exception.pm:597    } || __"[unable to enter error browser: $@]";
+#$lang=eng
+#$flags=
+msgid "[unable to enter error browser: $@]"
+msgstr ""
+
+# /opt/perl/lib/perl5/PApp/Exception.pm:582    } || __"[unable to save error information: $@]";
+#$lang=eng
+#$flags=
+msgid "[unable to save error information: $@]"
+msgstr ""
+
+# /root/src/PApp/macro/editform.papp:545    ref $relation eq "ARRAY" or die __"ef_relation: relation argument must be arrayref";
+#$lang=eng
+#$flags=
+msgid "ef_relation: relation argument must be arrayref"
+msgstr ""
+
+# /opt/perl/lib/perl5/PApp/Exception.pm:591       $output .= "<br />".__"please enter a short description, this will help us fix the problem. thanks. ";
+#$lang=eng
+#$flags=
+msgid "please enter a short description, this will help us fix the problem. thanks. "
+msgstr ""
+
+# /opt/perl/lib/perl5/PApp/Exception.pm:589       $output .= sprintf __"saved as error report #%d", $id;
+#$lang=eng
+#$flags=
+msgid "saved as error report #%d"
+msgstr ""
+
 #$lang=deu
 msgid ""
 msgstr ""

@@ -450,7 +450,7 @@ if ($installed_version < 0.2) {
 
 sql_exec <<SQL;
    CREATE TABLE obj (
-     id int unsigned not null auto_increment default '0',
+     id int unsigned not null auto_increment,
      gid bigint unsigned NOT NULL default '0',
      paths bigint unsigned NOT NULL default '0',
      primary key (id),

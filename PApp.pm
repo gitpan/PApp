@@ -133,7 +133,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 1.1;
+   $VERSION = 1.2;
 
    use base Exporter;
 
@@ -147,7 +147,7 @@ BEGIN {
 
          SURL_PUSH SURL_UNSHIFT SURL_POP SURL_SHIFT
          SURL_EXEC SURL_SAVE_PREFS SURL_SET_LOCALE SURL_SUFFIX
-         SURL_EXEC_IMMED
+         SURL_EXEC_IMMED SURL_START_SESSION
 
          surl_style postpone
          SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
@@ -285,6 +285,10 @@ our $save_prefs_cb = create_callback {
    &save_prefs if $userid;
 } name => "papp_save_prefs";
 
+our $start_session_cb = create_callback {
+   &start_session;
+} name => "papp_start_session";
+
 sub SURL_PUSH         ($$){ ( "\x00\x01", undef, @_ ) }
 sub SURL_UNSHIFT      ($$){ ( "\x00\x02", undef, @_ ) }
 sub SURL_POP          ($) { ( "\x00\x81", @_ ) }
@@ -294,6 +298,7 @@ sub SURL_EXEC_IMMED   ($) { "\x00\x91", \$_[0] }
 sub SURL_EXEC         ($) { $_[0] }
 sub SURL_SAVE_PREFS   ()  { $save_prefs_cb }
 sub SURL_SET_LOCALE   ($) { ( SURL_SAVE_PREFS, "/papp_locale" => $_[0] ) }
+sub SURL_START_SESSION()  { SURL_EXEC_IMMED ($start_session_cb) }
 
 sub SURL_SUFFIX       ($) { ("\x00\x41", @_) }
 sub SURL_STYLE        ($) { ("\x00\x42", @_) }
@@ -814,6 +819,11 @@ The following (symbolic) modifiers can also be used:
  SURL_SAVE_PREFS
    call save_prefs
 
+ SURL_START_SESSION
+   start a new session, tearing the connection to the current session.
+   must be specified early in the surlargs. Right now, the %state is not
+   being cleared and retains its old values, so watch out!
+
  SURL_STYLE_URL
  SURL_STYLE_GET
  SURL_STYLE_STATIC
@@ -1205,7 +1215,7 @@ sub flush_snd {
    $request->send_http_header unless $output_p++;
    # $routput should suffice in the next line, but it sometimes doesn't,
    # so just COPY THAT DAMNED THING UNTIL MODPERL WORKS. #d##FIXME#TODO#
-   $request->print($$routput) unless $request->header_only;
+   $request->print ($$routput) unless $request->header_only;
 
    $$routput = "";
 }
@@ -1638,6 +1648,10 @@ sub save_prefs {
    }
 }
 
+sub start_session {
+   ($sessionid, $prevstateid, $alternative) = ($stateid, 0, 0);
+}
+
 =item switch_userid $newuserid
 
 Switch the current session to a new userid. This is useful, for example,
@@ -1901,7 +1915,7 @@ sub bench {
 #
 sub _handler {
    # for debugging only, maybe?
-   local $SIG{QUIT} = sub { die "SIGQUIT" };
+   local $SIG{QUIT} = sub { Carp::confess "SIGQUIT" };
 
    $NOW = time;
 
@@ -1972,7 +1986,7 @@ sub _handler {
                              info => [appid => $state{papp_appid}];
 
       } else {
-         ($sessionid, $prevstateid, $alternative) = ($stateid, 0, 0);
+         start_session;
 
          $state{papp_appid} = $papp->{appid};
 
@@ -2040,6 +2054,8 @@ sub _handler {
 
       1;
    } or do {
+      delete $state{papp_execonce};
+
       if (UNIVERSAL::isa $@, PApp::Upcall::) {
          my $upcall = $@;
          eval { update_state };
