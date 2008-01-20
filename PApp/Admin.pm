@@ -31,7 +31,7 @@ use Convert::Scalar ':utf8';
 
 use base 'Exporter';
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 @EXPORT = qw();
 
 our $verbose = 1;
@@ -116,7 +116,7 @@ sub export_po {
          }
       }
 
-      if ($flags != 2 or $msg ne "") {
+      if (($flags != 2 or $msg ne "") and $id ne "") {
          $cnt{$lang2}++;
          $po{$lang2}->add(
                $id,

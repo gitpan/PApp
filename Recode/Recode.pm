@@ -31,7 +31,7 @@ package PApp::Recode;
 use Convert::Scalar ();
 
 BEGIN {
-   $VERSION = 1.2;
+   $VERSION = 1.4;
 
    require XSLoader;
    XSLoader::load 'PApp::Recode', $VERSION;
@@ -145,7 +145,7 @@ that is not representable in the target encoding.
 
 =item PApp::Recode::Pconv::open tocode, fromcode [, fallback]
 
-Convinience function that calls C<new> and returns the converter.
+Convenience function that calls C<new> and returns the converter.
 
 =item $pconv->convert($string [, reset])
 

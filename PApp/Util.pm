@@ -28,15 +28,18 @@ package PApp::Util;
 
 use Carp;
 use URI;
+use Socket ();
+use JSON::XS;
 
 use base 'Exporter';
 
 BEGIN {
-   $VERSION = 1.2;
+   $VERSION = 1.4;
+   @EXPORT = qw(dumpval uniq);
    @EXPORT_OK = qw(
-         format_source dumpval sv_peek sv_dump
+         format_source  sv_peek sv_dump
          digest
-         append_string_hash uniq
+         append_string_hash
          find_file fetch_uri load_file
          mime_header
    );
@@ -108,29 +111,21 @@ sub dumpval {
    } || "[unable to dump $_[0]: '$@']";
 }
 
-=item $ref = from_json $json
+=item $ref = decode_json $json
 
 Converts a JSON string into the corresponding perl data structure.
 
 =cut
 
-sub from_json($) {
-   require JSON::Syck;
-   local $JSON::Syck::ImplicitUnicode = 1; # work around JSON::Syck bugs
-   JSON::Syck::Load ($_[0])
-}
+*decode_json = \&JSON::XS::decode_json;
 
-=item $json = to_json $ref
+=item $json = encode_json $ref
 
 Converts a perl data structure into its JSON representation.
 
 =cut
 
-sub to_json($) {
-   require JSON::Syck;
-   local $JSON::Syck::ImplicitUnicode = 0;  # work around JSON::Syck bugs
-   JSON::Syck::Dump ($_[0])
-}
+*encode_json = \&JSON::XS::encode_json;
 
 =item digest(args...)
 
@@ -300,6 +295,20 @@ sub mime_header($) {
 
    join "\015\012\011", @frag;
 }
+
+=item ntoa $bin
+
+=item aton $text
+
+Same as inet_ntoa/inet_aton, but works on (numerical) IPv4 and IPv6
+addresses.
+
+ipv6 not yte implemented
+
+=cut
+
+*ntoa = \&Socket::inet_ntoa;
+*aton = \&Socket::inet_aton;
 
 =back
 

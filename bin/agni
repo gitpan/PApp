@@ -16,6 +16,7 @@ agni - commandline access to the I<PApp!Agni System>.
 
       --load-image <file>           load a saved backup file <file>
       --save-image <file>           save a backup file <file>
+      --clear-database              delete all objects and paths
 
       --force                       force import even on gidseq mismatches
 
@@ -384,6 +385,14 @@ sub save_image {
    sql_exec "unlock tables"; 
 }
 
+sub clear_database {
+   for my $table ("obj", "obj_path", @Agni::sqlcol) {
+      sql_exec "delete from $table";
+      sql_exec "alter table $table disable keys"; # mysql
+   }
+   sql_exec "alter table obj auto_increment=1"; # mysql
+}
+
 sub load_image {
    my ($file) = @_;
 
@@ -407,11 +416,7 @@ sub load_image {
 
    sql_exec Agni::lock_all_tables "obj_path";
 
-   for my $table ("obj", "obj_path", @Agni::sqlcol) {
-      sql_exec "delete from $table";
-      sql_exec "alter table $table disable keys"; # mysql
-   }
-   sql_exec "alter table obj auto_increment=1"; # mysql
+   clear_database;
 
    # create paths
    for my $id (0 .. $#$paths) {
@@ -540,10 +545,11 @@ Usage: $0 ...
 
    --load-image <file>           load a saved backup file <file>
    --save-image <file>           save a backup file <file>
+   --clear-database              delete all objects
 
    --force                       force import even on gidseq mismatches
 
-   --gar                         starts garbagecollector
+   --gar                         run the garbage collector
 
    --paths                       show paths
    --newpath <path>              creates a new path
@@ -582,6 +588,9 @@ GetOptions(
    },
    "load-image=s" => sub {
       my $path = $_[1]; push @exec, sub { load_image $path };
+   },
+   "clear-database" => sub {
+      my $path = $_[1]; push @exec, sub { clear_database $path };
    },
    "export-path=s" => sub {
       my $layer = $_[1]; push @exec, sub { export_path $layer, $fn };

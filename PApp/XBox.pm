@@ -28,12 +28,14 @@ in normal Perl modules. More often, you
 
 package PApp::XBox;
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 
 use PApp::PCode ();
 use PApp::Util ();
 
 1;
+
+=back
 
 =head1 SEE ALSO
 

@@ -43,7 +43,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 use PApp::Exception ();
 use Compress::LZF ':freeze';
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 
 our $event_count;
 
@@ -116,7 +116,7 @@ sub broadcast($;@) {
       $id > $event_count
          or die "FATAL: event table corrupted; new id $id <= current event_count $event_count";
 
-      handle_events($id) if @_;
+      handle_events ($id) if @_;
    }
 }
 
@@ -133,7 +133,7 @@ Check for any outstanding events and execute them, if any.
 =cut
 
 sub check() {
-   handle_events(sql_fetch $DBH, "select count from event_count");
+   handle_events (sql_fetch $DBH, "select count from event_count");
 }
 
 sub handle_event {
@@ -147,6 +147,8 @@ sub handle_event {
 
 sub handle_events {
    my $new_count = $_[0];
+
+   return if $new_count == $event_count;
 
    my $st = sql_exec $DBH,
                      \my($event, $data),
@@ -162,17 +164,19 @@ sub handle_events {
 
    while ($st->fetch) {
       if ($levent ne $event) {
-         PApp::Event::handle_event($levent, @ldata) if @ldata;
+         handle_event $levent, @ldata if @ldata;
          $levent = $event;
          @ldata = ();
       }
       push @ldata, sthaw $data;
    }
 
-   PApp::Event::handle_event($levent, @ldata) if @ldata;
+   handle_event $levent, @ldata if @ldata;
 }
 
 1;
+
+=back
 
 =head1 Example
 
@@ -198,7 +202,7 @@ ALL entries) is this:
   };
 
   # after changes in the database:
-  PApp::Even::broadcast demo_flush_cache => undef;
+  PApp::Event::broadcast demo_flush_cache => undef;
 
 A more efficient version (when updates are frequent) only deletes the
 entries that were updated. The C<$id> is given as the argument to
@@ -211,7 +215,7 @@ however, receives all arguments in one run:
   };
 
   # after changes in the database:
-  PApp::Even::broadcast demo_flush_cache => $id;
+  PApp::Event::broadcast demo_flush_cache => $id;
 
 =head1 SEE ALSO
 

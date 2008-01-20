@@ -8,6 +8,7 @@ use PApp::DataRef;
 use PApp::Env;
 use PApp::Prefs;
 use PApp::UserObs;
+use PApp::I18n;
 
 use PApp ();
 
@@ -64,8 +65,9 @@ Usage: $self [opts...]
             --export-po <dst>  export po-like file(s) into directory <dst>
             --import <src>     import domain(s) from file <src>
             --export <dst>     export selected domain to file <dst>
+            --export-dpo       write translation tables and flush tables
                               
-            --reorganize       reorganize/check various databases, like the
+            --reorganize       reorganize/check various databases, such as the
                                translation messages.
 
 EOF
@@ -292,13 +294,22 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
             &PApp::Admin::import_po;
          } 0, $_[1], 1;
       },
+      "export-dpo" => sub {
+         $class and $obj or die "--export-dpo called without a selected domain\n";
+         call {
+            my ($domain) = @_;
+            print "exporting domain $domain to $PApp::i18ndir/$domain\n";
+            PApp::I18n::export_dpo $domain, "$PApp::i18ndir/$domain";
+            PApp::Event::broadcast papp_i18n_flush => undef;
+         } $obj;
+      },
 
       "upgrade-apps" => sub {
          call { &upgrade_apps };
       },
 
       "reorganize|reorg" => sub {
-         call { &reorganize };
+         call { PApp::Admin::reorganize };
       },
 
       "flush-cache" => sub {

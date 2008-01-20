@@ -102,6 +102,7 @@ i18n/dbedit.po
 i18n/demo.po
 i18n/iso639.po
 i18n/iso3166.po
+i18n/agni.po
 
 bin/papp-env
 bin/papp-admin

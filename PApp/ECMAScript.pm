@@ -23,7 +23,7 @@ PApp::ECMAScript - make javascript horrors less horrible
 
 package PApp::ECMAScript;
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 @EXPORT = qw($js escape_string_sq escape_string_dq);
 
 use base Exporter;
@@ -425,7 +425,8 @@ use PApp::HTML qw(tag);
 
 my $papp_layer = "papplayer000";
 
-=over 4
+=over
+
 =item $layer = new PApp::ECMAScript::Layer arg => val, ...
 
 Create a new layer object (does not output anything).

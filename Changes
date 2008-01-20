@@ -1,5 +1,30 @@
 Revision history for Perl extension PApp
 
+1.4  Sun Jan 20 13:33:53 CET 2008
+	- move lzt'f set_Serializer call into PApp::Config.
+        - avoid an sql access in PApp::Event when there are no new events.
+	- update to perl 5.10.
+        - upgrade storable to 5.10 version.
+        - remove some unicode bug workarounds that clash with perl 5.10.
+
+1.3  Tue Oct 23 10:36:53 CEST 2007
+	- allow coderefs in fixup markers.
+        - PApp::HTML::alink now uses tag so supports %attrs prefix hash.
+        - use net_mstore for Compress::LZF, not mstore.
+        - fix papp-admin's --reorganize option.
+        - add --export-dpo option to papp-admin.
+        - PApp::Util now exports dumpval and uniq by default
+          (oesi can orgasm now).
+        - include sysid in commitinfo.
+        - switch from JSON::Syck to JSON::XS.
+        - do not export empty msgids anymore, as this confuses the po
+          file reader into using the wrong target language.
+        - added PApp::guard.
+        - added clear-database option to bin/agni.
+        - fixed ef_form_name to return page-unique values.
+        - fixed ef_custom to simply return a new key.
+        - only install a warn handler during requests.
+
 1.2  Sat Jan  6 20:27:32 CET 2007
 	- editform/checkbox now uses Agni::*64 functions.
         - textarea now removes the leading newline when the content type

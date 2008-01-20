@@ -28,7 +28,7 @@ PApp database requirenments
         update the "prefs" field which is a problem for some databases.
 
         PApp requires the sql_insertid function, so have a look at the
-        additional requirenments of PApp::SQL below.
+        additional requirements of PApp::SQL below.
 
     PApp::DataRef:
        
@@ -43,8 +43,9 @@ PApp database requirenments
         PApp::SQL offers a function named sql_insertid that should
         return the id of the primary key that was created for the last
         select that had a NULL value for the key. Implementations for
-        MySQL and Sybase already exist, you might want to add your own
-        implementation to make PApp::DataRef and the core work.
+        MySQL, Postgres, Sybase, Informix and SQLite already exist,
+        you might want to add your own implementation to make
+        PApp::DataRef and the core work.
 
 If you need an adaption for your database please contact
 papp-porting@nethype.de for availability.

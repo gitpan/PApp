@@ -170,9 +170,9 @@ __"rows affected:" <tt><?$st->rows:></tt><br />
    <:
       (my $table = $S{table}) =~ s/^[^.]+.//;
       
-      sql_fetch \my ($table, $type, $row_format, $rows, $avg_row_len, $data_len,
+      sql_fetch \my ($table, $type, $version, $row_format, $rows, $avg_row_len, $data_len,
                      $max_data_len, $index_len, $data_free, $auto_inc, $ctime, $mtime,
-                     $checktime, $create_opt, $comment),
+                     $checktime, $collation, $checksum, $create_opt, $comment),
                 "show table status from $S{db} like ?", 
                 $table;
    :>

@@ -34,7 +34,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 
 use base Exporter;
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 @EXPORT = qw( 
    lockprefs
 );
@@ -115,8 +115,12 @@ to specify the userid you want to query.
 =cut
 
 sub user_get($$$) {
-   sthaw sql_ufetch $DBH, "select value from prefs where uid = ? and path = ? and name = ?",
-                    $_[1], ${$_[0]{path}}, $_[2];
+   my ($prefs, $uid, $key) = @_;
+   utf8::upgrade ($prefs = ${$prefs->{path}});
+   utf8::upgrade $key;
+
+   sthaw sql_fetch $DBH, "select value from prefs where uid = ? and path = ? and name = ?",
+                   $uid, $prefs, $key
 }
 
 sub user_set($$$;$) {

@@ -100,8 +100,6 @@ use File::Basename qw(dirname);
 use PApp::Storable;
 use Compress::LZF qw(:compress :freeze);
 
-Compress::LZF::set_serializer "PApp::Storable", "PApp::Storable::mstore", "PApp::Storable::mretrieve";
-
 use Crypt::Twofish2;
 
 use PApp::Config qw(DBH $DBH); DBH;
@@ -133,7 +131,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 1.2;
+   $VERSION = 1.4;
 
    use base Exporter;
 
@@ -316,7 +314,7 @@ sub CHARSET (){ "utf-8" } # the charset used internally by PApp
 sub __($) {
    $translator
       ? $translator->get_table($langs)->gettext($_[0])
-      : $_[0];
+      : $_[0]
 }
 
 sub N_($) { $_[0] }
@@ -666,6 +664,39 @@ sub dprint(@) {
    $doutput .= join "", @_;
 }
 
+=item my $guard = PApp::guard { ... }
+
+This creates and returns a guard object. Nothing happens until the object
+gets destroyed, in which case the codeblock given as argument will be
+executed. This is useful to free locks or other resources in case of a
+runtime error or when the coroutine gets canceled, as in both cases the
+guard block will be executed. The guard object supports only one method,
+C<< ->cancel >>, which will keep the codeblock from being executed.
+
+Example: set some flag and clear it again when the coroutine gets canceled
+or the function returns:
+
+   sub do_something {
+      my $guard = Coro::guard { $busy = 0 };
+      $busy = 1;
+
+      # do something that requires $busy to be true
+   }
+
+=cut
+
+sub guard(&) {
+   bless \(my $cb = $_[0]), "PApp::guard"
+}
+
+sub PApp::guard::cancel {
+   ${$_[0]} = sub { };
+}
+
+sub PApp::guard::DESTROY {
+   ${$_[0]}->();
+}
+
 =item content_type $type [, $charset]
 
 Sets the output content type to C<$type>. The content-type should be a
@@ -969,6 +1000,9 @@ Create a new fixup marker and return a scalar reference to it's
 replacement text (initially empty if not specified). At page output time
 any fixup markers in the document are replaced by this scalar.
 
+The initial content can also be a code reference which will be evaluated
+at marker output time.
+
 =item $ref = insert_fixup [$initial_content]
 
 Similar to C<fixup_marker>, but inserts the marker into the current output stream.
@@ -976,7 +1010,7 @@ Similar to C<fixup_marker>, but inserts the marker into the current output strea
 =cut
 
 sub fixup_marker {
-   push @fixup, "$_[0]";
+   push @fixup, $_[0];
    (
       (sprintf "\x{fc00}%06d", $#fixup),
       \$fixup[-1],
@@ -1175,9 +1209,10 @@ sub _unicode_to_entity {
 }
 
 sub flush_cvt {
-   # fixup conversion, could be optimized in XS
-   @fixup
-      and $$routput =~ s/\x{fc00}(......)/$fixup[$1]/sg;
+   if (@fixup) {
+      my @fixup = map { (ref) ? &$_ : $_ } @fixup;
+      $$routput =~ s/\x{fc00}(......)/$fixup[$1]/sg;
+   }
 
    # charset conversion
    if ($output_charset eq "*") {
@@ -1716,20 +1751,20 @@ sub update_state {
 }
 
 sub flush_pkg_cache  {
-   DBH->do("delete from pkg");
+   DBH->do ("delete from pkg");
 }
 
 ################################################################################################
 
-$SIG{__WARN__} = sub {
+sub warnhandler {
    my $msg = $_[0];
-   PApp->warn("Warning[$$]: $msg");
-};
+   PApp->warn ("Warning[$$]: $msg");
+}
 
 sub PApp::Base::warn {
    if ($request) {
       (my $msg = $_[1]) =~ s/\n$//;
-      $request->warn($msg);
+      $request->warn ($msg);
       $warn_log .= "$msg\n";
    } else {
       print STDERR $_[1];
@@ -1935,7 +1970,8 @@ sub _handler {
    local %temporary;
 
    eval {
-      local $SIG{__DIE__} = \&PApp::Exception::diehandler;
+      local $SIG{__DIE__}  = \&PApp::Exception::diehandler;
+      local $SIG{__WARN__} = \&warnhandler;
 
       $DBH = DBH;
 

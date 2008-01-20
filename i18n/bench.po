@@ -14,5 +14,5 @@ msgstr ""
 # /root/src/PApp/apps/bench.papp:20    <?slink __"This is a real test", x => $S{x}+1?>
 #$lang=eng
 msgid "This is a real test"
-msgstr "Dies ist ein Test"
+msgstr ""
 

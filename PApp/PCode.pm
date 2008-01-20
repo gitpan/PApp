@@ -35,6 +35,7 @@ package PApp::PCode;
 
 use Carp;
 use Convert::Scalar ':utf8';
+use Encode ();
 
 use PApp::Exception;
 
@@ -43,7 +44,7 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"
@@ -146,17 +147,16 @@ as the original perl or xml source (important for error reporting).
 # just quote all xml-active characters into almost-quoted-printable
 sub _quote_perl($) {
    join "\012",
-      map unpack("H*", $_),
-         split /\015?\012/, $_[0], -1;
+      map +(unpack "H*", $_),
+         split /\015?\012/, (Encode::encode_utf8 $_[0]), -1
 }
 
 # be liberal in what you accept, stylesheet processing might
 # gar|ble our nice line-endings
 sub _unquote_perl($) {
-   use bytes;
    utf8_on
       join "\n",
-         map pack("H*", $_),
+         map +(pack "H*", $_),
             split /[ \011\012\015]/, $_[0], -1;
 }
 
@@ -251,7 +251,8 @@ sub pxml2pcode($) {
 
    }
    $data !~ /\G(.{1,20})/gcs or croak "trailing characters in pxml string ($1)";
-   substr $res, 1;
+   #PApp::Util::sv_dump $res if $res =~ /3/;#d#
+   substr $res, 1
 }
 
 sub perl2pcode($) {

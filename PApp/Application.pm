@@ -39,7 +39,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 
 =item $papp = new PApp::Application args...
 
@@ -586,6 +586,8 @@ sub uncaught_exception {
 }
 
 1;
+
+=back
 
 =head1 SEE ALSO
 

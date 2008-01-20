@@ -928,7 +928,7 @@ sub update_class($) {
 
 sub update_commitinfo($$) {
    sql_exec "replace into d_string (id, type, data) values (?, ?, ?)",
-            $_[1], $OID_COMMITINFO, "$PApp::NOW $PApp::stateid $_[0]";
+            $_[1], $OID_COMMITINFO, "$PApp::NOW $PApp::stateid $_[0] {$PApp::Config{SYSID}}";
 }
 
 # make sure the object described by $paths|$gid|$id is copied into the
@@ -1255,13 +1255,14 @@ sub import_objs {
          $_->{isa_array} = \@isa;
 
          # check types next
-         while (my ($type, $value) = each %{$_->{attr}}) {
+         while (my ($type, $data) = each %{$_->{attr}}) {
             exists $type_cache{$type} or $type_cache{$type} = do {
                my $id = sql_fetch "select id from obj where gid = ? and paths & (1 << ?) <> 0", $type, $pathid
                   or croak "import_objs: can't resolve type $type (used in object $_->{gid})";
                sql_ufetch "select data from d_string where id = ? and type = ?", $id, $OID_ATTR_SQLCOL;
             };
-            defined $type_cache{$type} or !defined $value;
+            defined $type_cache{$type}
+               or die "import_objs: no sqlcol found for type $type";
          }
       }
 

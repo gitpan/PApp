@@ -65,7 +65,7 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 1.2;
+   $VERSION = 1.4;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
@@ -837,19 +837,19 @@ sub new {
    my $self;
 
    $self->{path} = $path;
-   open $self->{fh}, ">", $path or croak "unable to open '$path' for writing: $!";
+   open $self->{fh}, ">:utf8", $path or croak "unable to open '$path' for writing: $!";
 
    bless $self, $class;
 }
 
-=item $po->add($msgid, $msgstr, @comments);
+=item $po->add ($msgid, $msgstr, @comments);
 
 Write another entry to the po file. See PO_Reader's C<next> method.
 
 =cut
 
-sub splitstr {
-   local $_ = "\"" . PApp::I18n::quote(shift) . "\"\n";
+sub splitstr($) {
+   local $_ = "\"" . (PApp::I18n::quote shift) . "\"\n";
    if (s/\\n(..)/\\n"\n"$1/g) {
       $_ = "\"\"\n" . $_;
    }
@@ -859,13 +859,11 @@ sub splitstr {
 sub add {
    my $self = shift;
    my ($id, $str, @c) = @_;
-   Convert::Scalar::utf8_upgrade $id;  #d# DEVEL7952
-   Convert::Scalar::utf8_upgrade $str; #d# DEVEL7952
 
    $self->{fh}->print(
       (map "#$_\n", @c),
-      "msgid " , (Convert::Scalar::utf8_off splitstr $id),
-      "msgstr ", (Convert::Scalar::utf8_off splitstr $str),
+      "msgid " , splitstr $id,
+      "msgstr ", splitstr $str,
       "\n"
    );
 }

@@ -75,12 +75,12 @@ WriteMakefile(
                     Storable		=> 2.05,
                     DBI			=> 1.30,
                     Digest::SHA1	=> 1.01,
-                    JSON::Syck		=> 0.0,
+                    JSON::XS		=> 2.01,
 
                     DBD::mysql		=> 2.04,
 
                     # the following are more or less optional, but highly useful
-                    XML::Sablotron	=> 0.98, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
+                    XML::Sablotron	=> 1.0100001, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act
                     #mod_perl		=> 1.21, # not necessarily required anymore
                     #CGI::SpeedyCGI	=> 2.21,  # speedycgi uses a broken numbering scheme
                     #XML::LibXSLT	=> 0.0,  # gnome-xml, libxslt

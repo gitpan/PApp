@@ -17,7 +17,7 @@ PApp::HTML - utility functions for html generation
 
 =head1 DESCRIPTION
 
-This module provides a host of HTML-related convinience functions, most of
+This module provides a host of HTML-related convenience functions, most of
 which output HTML elements.
 
 =cut
@@ -34,7 +34,7 @@ use base Exporter;
 use utf8;
 no bytes;
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 @EXPORT = qw(
 
       errbox
@@ -110,19 +110,6 @@ sub unixtime2http {
            $hour, $min, $sec;
 }
 
-=item $ahref = alink contents, url [DEPRECATED]
-
-Create "a link" (a href) with the given contents, pointing at the given
-url. It uses single quotes to delimit the url, so watch out and escape
-yourself!
-
-=cut
-
-# "link content, url"
-sub alink {
-   "<a href='$_[1]'>$_[0]</a>";
-}
-
 =item errbox $error, $explanation [DEPRECATED]
 
 Render a two-part error-box, very distinctive, very ugly, very visible!
@@ -138,7 +125,7 @@ sub errbox {
 
 =back
 
-=head2 Convinience Functions to Create XHTML Elements
+=head2 Convenience Functions to Create XHTML Elements
 
 The following functions are shortcuts to various often-used html tags
 (mostly form elements). All of them allow an initial 
@@ -183,6 +170,19 @@ sub tag {
 }
 
 *xmltag = \&tag; # DEPRECATED / NYI
+
+=item $ahref = alink [\%attrs,] contents, url [DEPRECATED]
+
+Create "a link" (a href) with the given contents, pointing at the given
+url. It uses single quotes to delimit the url, so watch out and escape
+yourself!
+
+=cut
+
+# "link content, url"
+sub alink {
+   tag a => { ref $_[0] eq "HASH" ? %{+shift} : (), href => $_[1] }, $_[0]
+}
 
 =item submit [\%attrs,] $name [, $value]
 

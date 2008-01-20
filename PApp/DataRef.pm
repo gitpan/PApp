@@ -36,7 +36,7 @@ package PApp::DataRef;
 
 use Convert::Scalar ();
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 
 =item $hd = new PApp::DataRef 'DB_row', table => $table, where => [key, value], ...
 

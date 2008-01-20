@@ -35,7 +35,7 @@ be switched to literal text mode using :>, and switched back to perl using
 
 package PApp::Preprocessor;
 
-$VERSION = 1.2;
+$VERSION = 1.4;
 
 use PApp::PCode ();
 use PApp::Util ();
@@ -47,6 +47,8 @@ sub import {
 }
 
 1;
+
+=back
 
 =head1 SEE ALSO
 

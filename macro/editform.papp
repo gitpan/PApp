@@ -34,10 +34,12 @@ overriden.
 
 =cut
 
+use utf8;
 use Carp ();
 use Convert::Scalar ();
 
-my $EF_KEY;
+my $EF_KEY;  # key within forms
+my $EF_FORM; # key among forms
 my $ef_args;
 my $ef_key;
 my $ef_recurse;
@@ -279,6 +281,8 @@ sub _ef_begin {
 
       return "";
    } else {
+      $EF_FORM = "a" if $ef_stateid != $PApp::stateid;
+
       $ef_recurse = 1;
       $ef_stateid = $PApp::stateid;
       $ef_type    = $type;
@@ -507,7 +511,7 @@ cannot guarentee this).
 =item ef_selectbox fieldref, values...
 
 Creates an selectbox for the given values. If $$ref evaluates to
-an array-ref a multiple-select selectbox is created, otherwise a
+an array-ref, a multiple-select selectbox is created, otherwise a
 simple single-select box is used. C<values>... can be as many C<value,
 description> pairs as you like.
 
@@ -726,11 +730,11 @@ like. If this function isn't called, no name attribute will be created.
 ]]></perl>
 
 <macro name="ef_form_name*" args=""><perl><![CDATA[
-   $ef_args->{attr}{name} ||= $EF_KEY++;
+   $ef_args->{attr}{name} ||= $EF_FORM++;
 ]]></perl></macro>
 
 <macro name="ef_custom*" args=""><perl><![CDATA[
-   $ef_args->{attr}{name} ||= $EF_KEY++;
+   $EF_KEY++;
 ]]></perl></macro>
 
 <perl><![CDATA[
