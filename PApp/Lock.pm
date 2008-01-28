@@ -37,7 +37,7 @@ use PApp::SQL;
 
 use base Exporter;
 
-$VERSION = 1.4;
+$VERSION = 1.41;
 @EXPORT = qw(locked);
 
 =item locked BLOCK name, [timeout, [holdtime]]

@@ -156,7 +156,10 @@ PApp::Config - hold common configuration settings
 
 use PApp::SQL;
 
-$VERSION = 1.4;
+use Compress::LZF qw(:compress :freeze);
+BEGIN { Compress::LZF::set_serializer "PApp::Storable", "PApp::Storable::mstore", "PApp::Storable::mretrieve" }
+
+$VERSION = 1.41;
 
 require Exporter;
 

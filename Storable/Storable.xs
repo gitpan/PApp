@@ -389,11 +389,11 @@ typedef struct stcxt {
 
 /* PApp */
 /* slightly dirty, but we can't call sv_derived_from... */
-#define IS_AGNI_OBJECT(sv) (SvRMAGICAL (sv) && !strncmp (HvNAME (SvSTASH (sv)), "agni::", 6))
+#define IS_AGNI_OBJECT(sv) (!strncmp (HvNAME (SvSTASH (sv)), "agni::", 6))
 #define SX_AGNI_OBJECT	C(78)  /* agni object */
 
 static int store_agni_object(pTHX_ stcxt_t *cxt, SV *sv);
-static SV *retrieve_agni_object(pTHX_ stcxt_t *cxt, char *cname);
+static SV *retrieve_agni_object(pTHX_ stcxt_t *cxt, const char *cname);
 /* !PApp */
 
 #define NEW_STORABLE_CXT_OBJ(cxt)					\
@@ -1232,12 +1232,16 @@ static const sv_retrieve_t sv_retrieve[] = {
 	(sv_retrieve_t)retrieve_weakoverloaded,	/* SX_WEAKOVERLOAD */
 	(sv_retrieve_t)retrieve_other,		/* SX_ERROR */
         /* PApp */
-        /*30*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
-        /*40*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
-        /*50*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
-        /*60*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
-        /*70*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
-        /*78*/retrieve_agni_object,
+        /*30*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+              retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+        /*40*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+              retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+        /*50*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+              retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+        /*60*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+              retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+        /*70*/retrieve_other, retrieve_other, retrieve_other, retrieve_other, retrieve_other,
+              retrieve_other, retrieve_other, retrieve_other, retrieve_agni_object,
         /* !PApp */
 };
 
@@ -6415,7 +6419,7 @@ static int store_agni_object(pTHX_ stcxt_t *cxt, SV *sv)
         return 0;
 }
 
-static SV *retrieve_agni_object(pTHX_ stcxt_t *cxt, char *cname)
+static SV *retrieve_agni_object(pTHX_ stcxt_t *cxt, const char *cname)
 {
         dSP;
         SV *sv;

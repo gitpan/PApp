@@ -350,7 +350,13 @@ sub path_obj_by_gid($$) {
 
 # like path_obj_by_gid, but is called by PApp::Storable
 *storable_path_obj_by_gid = \&path_obj_by_gid;
-#sub storable_path_obj_by_gid { warn "SPOBID @_\n"; &path_obj_by_gid; }#d#
+#sub storable_path_obj_by_gid {
+#   warn "SPOBID @_\n";
+#   my $gid = $_[1];
+#   my $ob = &path_obj_by_gid;
+#   use PApp::Util; warn PApp::Util::sv_dump $ob if $gid eq "64424509652";#d#
+#   $ob
+#}#d#
 
 # stolen & modified from Symbol::delete_package: doesn't remove the stash itself
 sub empty_package ($) {

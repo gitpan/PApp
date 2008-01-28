@@ -39,7 +39,7 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 1.4;
+$VERSION = 1.41;
 
 =item $papp = new PApp::Application args...
 

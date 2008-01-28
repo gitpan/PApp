@@ -1,7 +1,12 @@
 Revision history for Perl extension PApp
 
+1.41 Mon Jan 28 21:06:10 CET 2008
+	- fix long-standing (harmless) bug where agni objects would become
+          blessed twice or more.
+	- really move lzf::set_serializer call into PApp::Config :(.
+
 1.4  Sun Jan 20 13:33:53 CET 2008
-	- move lzt'f set_Serializer call into PApp::Config.
+	- move lzf::set_serializer call into PApp::Config.
         - avoid an sql access in PApp::Event when there are no new events.
 	- update to perl 5.10.
         - upgrade storable to 5.10 version.

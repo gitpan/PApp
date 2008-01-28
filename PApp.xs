@@ -1543,7 +1543,7 @@ agnibless(SV *rv, char *classname)
         CODE:
         HV *hv = (HV *)SvRV (rv);
 
-        sv_unmagic (rv, PERL_MAGIC_tied);
+        sv_unmagic (hv, PERL_MAGIC_tied);
 
         RETVAL = newSVsv (sv_bless (rv, gv_stashpv(classname, TRUE)));
 

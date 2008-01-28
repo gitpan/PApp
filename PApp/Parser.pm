@@ -40,7 +40,7 @@ use PApp::I18n qw(normalize_langid);
 no bytes;
 use utf8;
 
-$VERSION = 1.4;
+$VERSION = 1.41;
 
 =item ($ppkg, $name, $code) = parse_file $papp, $path
 

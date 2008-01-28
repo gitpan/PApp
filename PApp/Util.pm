@@ -34,7 +34,7 @@ use JSON::XS;
 use base 'Exporter';
 
 BEGIN {
-   $VERSION = 1.4;
+   $VERSION = 1.41;
    @EXPORT = qw(dumpval uniq);
    @EXPORT_OK = qw(
          format_source  sv_peek sv_dump

@@ -131,7 +131,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 1.4;
+   $VERSION = 1.41;
 
    use base Exporter;
 
