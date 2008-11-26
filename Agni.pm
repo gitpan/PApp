@@ -35,7 +35,7 @@ packaged in a nicer way.
 
 =cut
 
-use strict 'vars';
+use strict qw(vars subs);
 
 use utf8;
 
@@ -54,7 +54,7 @@ use PApp::I18n ();
 
 use Convert::Scalar ":utf8";
 
-use base Exporter;
+use base Exporter::;
 
 our $app; # current application object
 our $env; # current content::environment
@@ -205,11 +205,11 @@ our %sqlcol_is_numeric = (
 );
 
 our %sqlcol_dbi_type = (
-  d_int      => SQL_INTEGER,
-  d_double   => SQL_NUMERIC,
-  d_string   => SQL_BINARY,
-  d_blib     => SQL_BINARY,
-  d_fulltext => SQL_BINARY,
+  d_int      => DBI::SQL_INTEGER,
+  d_double   => DBI::SQL_NUMERIC,
+  d_string   => DBI::SQL_BINARY,
+  d_blib     => DBI::SQL_BINARY,
+  d_fulltext => DBI::SQL_BINARY,
 );
 
 sub prepare_papp_dbh {
@@ -448,6 +448,8 @@ sub get_package {
       $package->{_package_name} = "ns::$package->{_path}::$package->{_gid}";
 
       my $init_code = q~
+         use strict qw(vars subs);
+
          use Carp;
          use Convert::Scalar ':utf8';
          use List::Util qw(min max);
@@ -543,8 +545,9 @@ sub compile {
       }
    }ogex;
 
+   use strict qw(vars subs);
    local $SIG{__DIE__};
-   eval "package $PACKAGE->{_package_name}; use strict; $code";
+   eval "package $PACKAGE->{_package_name}; $code";
 }
 
 sub compile_method_perl {
@@ -707,7 +710,6 @@ sub update_isa_class($$) {
 
       # "try" to nuke perl's ISA caches. simply
       # assigning to ISA does not necessarily work.
-      no strict refs;
       eval "sub Agni::nukeme { }";
       my $stash = *{main::Agni::}{HASH};
       my $sub = delete $stash->{nukeme};
@@ -999,6 +1001,10 @@ sub agni::object::fullname { "\x{4e0a}" }
 
 sub agni::object::isa_obj {
    $_[0]{_isa}
+}
+
+sub agni::object::STORABLE_freeze {
+   Carp::croak "cannot serialise agni objects via Storable - use PApp::Storable instead, at";
 }
 
 sub update_isa {

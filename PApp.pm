@@ -131,7 +131,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 1.41;
+   $VERSION = 1.42;
 
    use base Exporter;
 
@@ -1052,15 +1052,15 @@ created via C<sform>/C<cform>/C<multipart_form>.
 
 sub sform(@) {
    local $surlstyle = _SURL_STYLE_PLAIN;
-   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'GET', action => &surl };
+   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'get', action => &surl };
 }
 
 sub cform(@) {
-   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'POST', action => &surl };
+   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'post', action => &surl };
 }
 
 sub multipart_form(@) {
-   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'POST', action => &surl, enctype => "multipart/form-data" };
+   tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'post', action => &surl, enctype => "multipart/form-data" };
 }
 
 sub endform {

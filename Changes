@@ -1,5 +1,20 @@
 Revision history for Perl extension PApp
 
+1.42 Wed Nov 26 08:16:49 CET 2008
+	- PApp sometimes didn't refresh the stack pointer when necessary,
+          leading to crashes and data corruption on stack resizes (most
+          notably when running on secondary perl stacks).
+	- add storable serialisation protection to agni objects.
+        - add PApp::I18n::iso{639,3166} functions.
+        - replace "use strict" in agni by "use strict 'vars'" by default.
+        - speed up by not executing the use strict pragma on every
+          method compile.
+        - lowercase form method names to improve xhtml compatibility
+          (reported by Muttley).
+        - use net_mstore instead of store as default serialiser.
+        - fix a bug where surl would access unallocated memory
+          (which likely was harmless).
+
 1.41 Mon Jan 28 21:06:10 CET 2008
 	- fix long-standing (harmless) bug where agni objects would become
           blessed twice or more.

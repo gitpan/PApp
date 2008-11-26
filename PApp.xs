@@ -152,7 +152,6 @@ agni_fetch (SV *self, SV *key)
 {
   static int recurse;
 
-  dSP;
   HE *he;
   SV *ret = 0;
   HV *hv = (HV *)SvRV (self);
@@ -173,6 +172,7 @@ agni_fetch (SV *self, SV *key)
   else
     {
       SV *tobj = agni_key2obj (self, &key, 0);
+      dSP;
 
       if (tobj)
         {
@@ -230,19 +230,18 @@ agni_fetch (SV *self, SV *key)
               ret = POPs;
             }
         }
+
+      PUTBACK;
     }
 
   --recurse;
 
-  PUTBACK;
   return ret;
 }
 
 static void
 agni_store (SV *self, SV *key, SV *value)
 {
-  dSP;
-
   HV *hv = (HV*) SvRV (self);
 
   /* _-keys go into $self, non-_-keys are store'ed immediately */
@@ -258,8 +257,8 @@ agni_store (SV *self, SV *key, SV *value)
       SV *data;
       HV *hvc;
       int c;
-
       SV *tobj = agni_key2obj (self, &key, 1);
+      dSP;
 
       SvRMAGICAL_off (hv);
       hvc = (HV *)SvRV (HeVAL (hv_fetch_ent (hv, CACHEs, 0, CACHEh)));
@@ -288,6 +287,8 @@ agni_store (SV *self, SV *key, SV *value)
 
       if (saveerr)
         sv_setsv (ERRSV, saveerr);
+
+      PUTBACK;
     }
 }
 
@@ -304,23 +305,22 @@ agni_fetch_op (pTHX)
       || mg->mg_virtual != &vtbl_agni_object
       )
     return Perl_pp_helem (aTHX);
+  else
+    {
+      SV *sv = POPs;
+      HV *hv = (HV *)POPs;
+      I32 mark = SP - PL_stack_base;
 
-  {
-    SV *sv = POPs;
-    HV *hv = (HV *)POPs;
+      ENTER;
+      PUTBACK;
+      sv = agni_fetch (SvTIED_obj ((SV *)hv, mg), sv); /* newmortal, but.. */
+      LEAVE;
 
-    ENTER;
-    PUTBACK;
-    PUSHSTACKi (PERLSI_MAGIC);
-    sv = agni_fetch (SvTIED_obj ((SV *)hv, mg), sv); /* newmortal, but.. */
-    POPSTACK;
-    SPAGAIN;
-    LEAVE;
+      SP = PL_stack_base + mark;
+      XPUSHs (sv ? sv_2mortal (newSVsv (sv)) : &PL_sv_undef);
 
-    XPUSHs (sv ? sv_2mortal (newSVsv (sv)) : &PL_sv_undef);
-  }
-
-  RETURN;
+      RETURN;
+    }
 }
 
 static OP *
@@ -561,7 +561,7 @@ modpath_freeze (SV *modules)
 
   do {
     SvCUR_set (r, SvCUR (r) - 1); /* chop final '-' */
-  } while (SvEND (r)[-1] == '-');
+  } while (SvCUR (r) && SvEND (r)[-1] == '-');
 
   return r;
 }
@@ -1543,7 +1543,7 @@ agnibless(SV *rv, char *classname)
         CODE:
         HV *hv = (HV *)SvRV (rv);
 
-        sv_unmagic (hv, PERL_MAGIC_tied);
+        sv_unmagic ((SV *)hv, PERL_MAGIC_tied);
 
         RETVAL = newSVsv (sv_bless (rv, gv_stashpv(classname, TRUE)));
 
@@ -1656,7 +1656,7 @@ FETCH(SV *self, SV *key)
 void
 STORE(SV *self, SV *key, SV *value)
         PPCODE:
-        agni_try_patch (Perl_pp_helem, agni_store_op);
+        /*agni_try_patch (Perl_pp_helem, agni_store_op);*/
         PUTBACK;
         agni_store (self, key, value);
         SPAGAIN;

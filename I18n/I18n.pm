@@ -65,7 +65,7 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 1.41;
+   $VERSION = 1.42;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
@@ -78,15 +78,17 @@ BEGIN {
    XSLoader::load PApp::I18n, $VERSION;
 }
 
-my ($iso3166, $iso639, $locale)= do {
+my ($iso3166, $iso639, $locale) = do {
    local $/;
    split /^__SPLIT__/m, utf8_on <DATA>;
 };
 
 {
+   sub iso639          { [map [split /\s+/, $_, 3], split /\n/, $iso639 ] }
    sub iso639_a2_a3    { $iso639 =~ /^(...)\t\Q$_[0]\E\t/m ? $1 : $_[0] }
    sub iso639_a3_name  { $iso639 =~ /^\Q$_[0]\E\t[^\t]*\t(.*)$/m and $1 }
 
+   sub iso3166         { [map [split /\s+/, $_, 3], split /\n/, $iso3166] }
    sub iso3166_a2_a3   { $iso3166 =~ /^(...)\t\Q$_[0]\E\t/m ? $1 : $_[0] }
    sub iso3166_a3_name { $iso3166 =~ /^\Q$_[0]\E\t[^\t]*\t(.*)$/m and $1 }
 

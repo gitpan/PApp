@@ -38,7 +38,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 
 use base Exporter;
 
-$VERSION = 1.41;
+$VERSION = 1.42;
 @EXPORT = qw( 
    locksession
 );

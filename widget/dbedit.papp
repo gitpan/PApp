@@ -384,6 +384,8 @@ __"rows affected:" <tt><?$st->rows:></tt><br />
                double	=> sub { shift },
                decimal	=> sub { shift },
                varchar	=> sub { substr shift, 0, 20 },
+               varbinary=> sub { substr shift, 0, 20 },
+               binary   => sub { substr shift, 0, 20 },
                char	=> sub { substr shift, 0, 20 },
                tinytext	=> sub { substr shift, 0, 20 },
                text	=> sub { substr shift, 0, 20 },

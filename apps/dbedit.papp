@@ -6,8 +6,6 @@
 <import src="macro/tinychat"/>
 <import src="macro/admin"/>
 
-<import pm="PApp::UserObs">access_p authen_p</import>
-
 <package name="db" src="widget/dbedit"/>
 
 <!--<perl>$stylesheet = $ppkg->load_stylesheet("style/identity")</perl><style apply="output" expr="$stylesheet">-->
@@ -23,13 +21,6 @@
 <table width="100%"><tr><td><h1>__"MySQL Database Editor"</h1></td><td align="right">
 <:language_selector $papp_translator:>
 </td></tr></table>
-<:tinychat_top:>
-
-#if !authen_p
-__"You need to authentificate yourself first"<p />
-<:loginbox:>
-#else
-
 <:tinychat_top:>
 
 <:$S{dsn} ||= "DBI:mysql:":>
@@ -63,7 +54,6 @@ __"You need to authentificate yourself first"<p />
       $ppkg->{pkg}{db}->embed;
    }
 :>
-#endif
 
 <:tinychat_bot:>
 </body>

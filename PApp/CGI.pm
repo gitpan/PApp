@@ -49,7 +49,7 @@ use Exporter;
 BEGIN {
    @ISA = (PApp::Base::);
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 1.41;
+   $VERSION = 1.42;
 }
 
 =head2 Functions
