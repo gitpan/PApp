@@ -31,7 +31,7 @@ use Convert::Scalar ':utf8';
 
 use base 'Exporter';
 
-$VERSION = 1.42;
+$VERSION = 1.43;
 @EXPORT = qw();
 
 our $verbose = 1;

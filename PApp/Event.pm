@@ -43,7 +43,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 use PApp::Exception ();
 use Compress::LZF ':freeze';
 
-$VERSION = 1.42;
+$VERSION = 1.43;
 
 our $event_count;
 

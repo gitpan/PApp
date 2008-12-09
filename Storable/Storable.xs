@@ -2,6 +2,7 @@
  *  Store and retrieve mechanism.
  *
  *  Copyright (c) 1995-2000, Raphael Manfredi
+ *  Copyright (c) 2002,2003,2007,2008, Marc Alexander Lehmann
  *  
  *  You may redistribute only under the same terms as Perl 5, as specified
  *  in the README file that comes with the distribution.
@@ -392,6 +393,7 @@ typedef struct stcxt {
 #define IS_AGNI_OBJECT(sv) (!strncmp (HvNAME (SvSTASH (sv)), "agni::", 6))
 #define SX_AGNI_OBJECT	C(78)  /* agni object */
 
+static GV *gv_force_path;
 static int store_agni_object(pTHX_ stcxt_t *cxt, SV *sv);
 static SV *retrieve_agni_object(pTHX_ stcxt_t *cxt, const char *cname);
 /* !PApp */
@@ -6388,16 +6390,24 @@ static int store_agni_object(pTHX_ stcxt_t *cxt, SV *sv)
 
         SvRMAGICAL_off (SvRV (sv));
 
-        he = hv_fetch((HV*)SvRV (sv), "_path", 5, 0);
+        if (SvOK (GvSV (gv_force_path)))
+          niv = -1;
+        else
+          {
+            he = hv_fetch((HV*)SvRV (sv), "_path", 5, 0);
 
-        if (!he)
-          croak ("PApp::Storable: agni object to be stored lacks _path");
+            if (!he)
+              croak ("PApp::Storable: agni object to be stored lacks _path");
 
-        if (!SvOK (*he))
-          croak ("PApp::Storable: agni object to be stored has undefined _path");
+            if (!SvOK (*he))
+              croak ("PApp::Storable: agni object to be stored has undefined _path");
 
-        niv = (I32) htonl((I32) (SvIV (*he))); WRITE_I32 (niv);
+            niv = (I32)SvIV (*he);
+          }
         
+        niv = (I32)htonl((I32) niv);
+        WRITE_I32 (niv);
+
         he = hv_fetch((HV*)SvRV (sv), "_gid", 4, 0);
 
         if (!he)
@@ -6441,16 +6451,23 @@ static SV *retrieve_agni_object(pTHX_ stcxt_t *cxt, const char *cname)
         }
 
         PUSHMARK(SP);
+        EXTEND (SP, 2);
 
         READ_I32(path);
-        path = ntohl (path);
-        XPUSHs (sv_2mortal (newSViv (path)));
+
+        if (SvOK (GvSV (gv_force_path)))
+          PUSHs (GvSV (gv_force_path));
+        else
+          {
+            path = ntohl (path);
+            PUSHs (sv_2mortal (newSViv (path)));
+          }
         
         READ_I32(h); READ_I32(l);
         gid =
           (((unsigned long long)(U32)ntohl (h)) << 32) |
             (unsigned long long)(U32)ntohl (l);
-        XPUSHs (sv_2mortal (newSVpvn (c, sprintf (c, "%llu", gid))));
+        PUSHs (sv_2mortal (newSVpvn (c, sprintf (c, "%llu", gid))));
 
         PUTBACK;
         count = call_pv ("Agni::storable_path_obj_by_gid", G_SCALAR | G_EVAL);
@@ -6530,6 +6547,8 @@ BOOT:
 #ifdef USE_56_INTERWORK_KLUDGE
     gv_fetchpv("PApp::Storable::interwork_56_64bit",   GV_ADDMULTI, SVt_PV);
 #endif
+
+    gv_force_path = gv_fetchpv ("PApp::Storable::force_path", GV_ADDMULTI, SVt_PV);
 }
 
 void
@@ -6615,3 +6634,4 @@ is_retrieving()
   RETVAL = is_retrieving(aTHX);
  OUTPUT:
   RETVAL
+

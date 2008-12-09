@@ -1,5 +1,8 @@
 Revision history for Perl extension PApp
 
+1.43 Tue Dec  9 18:21:06 CET 2008
+	- implement $PApp::Storable::force_path and make use of it in retrieve.
+
 1.42 Wed Nov 26 08:16:49 CET 2008
 	- PApp sometimes didn't refresh the stack pointer when necessary,
           leading to crashes and data corruption on stack resizes (most

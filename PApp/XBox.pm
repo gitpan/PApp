@@ -28,7 +28,7 @@ in normal Perl modules. More often, you
 
 package PApp::XBox;
 
-$VERSION = 1.42;
+$VERSION = 1.43;
 
 use PApp::PCode ();
 use PApp::Util ();
