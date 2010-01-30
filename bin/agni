@@ -487,8 +487,8 @@ sub export_path {
 sub import_path {
    my ($path, $file) = @_;
 
-   Agni::newpath $path;#d# should not be done automatically
-      print STDERR "WARNING: paths should not be created automatically\n";#d#
+   Agni::newpath $path;
+#      print STDERR "WARNING: paths should not be created automatically\n";#d#
 
    my $pathid = $pathid{$path};
    die "no such path '$path'" unless defined $pathid;
@@ -579,9 +579,6 @@ GetOptions(
             sleep $interval;
          } while $interval;
       };
-   },
-   "init-db" => sub {
-      push @exec, sub { Agni::init_db };
    },
    "save-image=s" => sub {
       my $path = $_[1]; push @exec, sub { save_image $path };

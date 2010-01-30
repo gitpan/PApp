@@ -39,7 +39,9 @@ use Convert::Scalar ();
 use utf8;
 no bytes;
 
-$VERSION = 1.43;
+use common::sense;
+
+our $VERSION = 1.44;
 
 =item $papp = new PApp::Application args...
 
@@ -133,12 +135,11 @@ were in the main module of the application.
 sub surl {
    my $self = shift;
 
-   package PApp;
-   local $modules = {};
-   local $curmod = \$modules;
-   local $curpath = "";
-   local $curprfx = "/$self->{name}";
-   local $module  = "";
+   local $PApp::modules = {};
+   local $PApp::curmod = \$PApp::modules;
+   local $PApp::curpath = "";
+   local $PApp::curprfx = "/$self->{name}";
+   local $PApp::module  = "";
    push @_, "/papp_appid" => $self->{appid};
    &PApp::surl;
 }
@@ -238,7 +239,7 @@ sub files($;$) {
       $self->for_all_packages(sub {
          my ($ppkg) = @_;
 
-         for $imp (map PApp::Application::find_import($_), keys %{$ppkg->{import}}) {
+         for my $imp (map PApp::Application::find_import($_), keys %{$ppkg->{import}}) {
             $imp->load_config;
             %res = (%res, $imp->files(1));
          }
@@ -286,7 +287,7 @@ use PApp::SQL;
 use PApp::Exception;
 use PApp::Config qw(DBH $DBH);
 
-use base PApp::Application;
+use base "PApp::Application";
 
 sub new {
    my $class = shift;
@@ -338,7 +339,7 @@ sub preprocess {
          local $PApp::SQL::DBH = DBH;
 
          require PApp::Parser;
-         ($ppkg, $code) = PApp::Parser::parse_file($self, $self->{path});
+         my ($ppkg, $code) = PApp::Parser::parse_file($self, $self->{path});
 
          PApp::Storable::store_fd [
             PApp::Storable::nfreeze({
@@ -476,23 +477,21 @@ sub for_all_packages($&;$$) {
 }
 
 sub run {
-   package PApp;
-
-   local $papp    = shift;
-   local $curpath = "";
-   local $curprfx = "/$papp->{name}";
+   local $PApp::papp    = shift;
+   local $PApp::curpath = "";
+   local $PApp::curprfx = "/$PApp::papp->{name}";
 
    local $PApp::SQL::Database;
    local $PApp::SQL::DBH;
 
-   if ($papp->{database}) {
-      $PApp::SQL::Database = $papp->{database};
+   if ($PApp::papp->{database}) {
+      $PApp::SQL::Database = $PApp::papp->{database};
       $PApp::SQL::DBH =
          $PApp::SQL::Database->checked_dbh
-            or fancydie "error connecting to database ".$PApp::SQL::Database->dsn, $DBI::errstr;
+            or fancydie "error connecting to database " . $PApp::SQL::Database->dsn, $DBI::errstr;
    }
 
-   $papp->{root}->run(\$modules);
+   $PApp::papp->{root}->run (\$PApp::modules);
 }
 
 package PApp::Application::Agni;
@@ -514,7 +513,7 @@ e.g., to mount the admin application in root/agni/, use this:
 
 use Carp 'croak';
 
-use base PApp::Application;
+use base "PApp::Application";
 
 sub for_all_packages($&;$$) {
    my $self = shift;
@@ -543,16 +542,14 @@ sub new {
 }
 
 sub run {
-   package PApp;
-
-   local $papp    = shift;
-   local $curpath = "";
-   local $curprfx = "/$papp->{name}";
+   local $PApp::papp    = shift;
+   local $PApp::curpath = "";
+   local $PApp::curprfx = "/$PApp::papp->{name}";
 
    local $PApp::SQL::Database = $PApp::Config::Database;
    local $PApp::SQL::DBH      = $PApp::Config::DBH;
 
-   $papp->{obj}->show;
+   $PApp::papp->{obj}->show;
 }
 
 sub upgrade {
@@ -573,16 +570,14 @@ method of the mounted application.
 =cut
 
 sub uncaught_exception {
-   package PApp;
-
-   local $papp    = shift;
-   local $curpath = "";
-   local $curprfx = "/$papp->{name}";
+   local $PApp::papp    = shift;
+   local $PApp::curpath = "";
+   local $PApp::curprfx = "/$PApp::papp->{name}";
 
    local $PApp::SQL::Database = $PApp::Config::Database;
    local $PApp::SQL::DBH      = $PApp::Config::DBH;
 
-   $papp->{obj}->uncaught_exception ($_[0], $_[1]);
+   $PApp::papp->{obj}->uncaught_exception ($_[0], $_[1]);
 }
 
 1;

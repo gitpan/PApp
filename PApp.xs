@@ -29,6 +29,10 @@ static SV *PATHs;
 #define GIDl   (sizeof (GIDp) - 1)
 static U32 GIDh;
 static SV *GIDs;
+#define INSTANCEp   "_gid"
+#define INSTANCEl   (sizeof (INSTANCEp) - 1)
+static U32 INSTANCEh;
+static SV *INSTANCEs;
 
 static MGVTBL vtbl_agni_object = {0, 0, 0, 0, 0};
 
@@ -255,14 +259,9 @@ agni_store (SV *self, SV *key, SV *value)
     {
       SV *saveerr = SvOK (ERRSV) ? sv_mortalcopy (ERRSV) : 0; /* this is necessary because we can't use KEEPERR, or can we? */
       SV *data;
-      HV *hvc;
       int c;
       SV *tobj = agni_key2obj (self, &key, 1);
       dSP;
-
-      SvRMAGICAL_off (hv);
-      hvc = (HV *)SvRV (HeVAL (hv_fetch_ent (hv, CACHEs, 0, CACHEh)));
-      SvRMAGICAL_on (hv);
 
       PUSHMARK (SP); EXTEND (SP, 3); PUSHs (tobj); PUSHs (value); PUSHs (self); PUTBACK;
       c = call_method ("freeze", G_SCALAR | G_EVAL);
@@ -423,40 +422,41 @@ pack64 (uchar *buf, const char *str, int mode)
 {
   unsigned long long val;
 
-  val = strtoull(str, 0, 0);
+  val = strtoull (str, 0, 0);
 
-  switch (mode) {
-    case 1:
+  switch (mode)
+    {
+      case 1:
 #if BYTEORDER != 0x4321 && BYTEORDER != 0x87654321
-    case 0:
+      case 0:
 #endif
-       buf[0] = val      ;
-       buf[1] = val >>  8;
-       buf[2] = val >> 16;
-       buf[3] = val >> 24;
-       buf[4] = val >> 32;
-       buf[5] = val >> 40;
-       buf[6] = val >> 48;
-       buf[7] = val >> 56;
-       break;
-    case 2:
+        buf[0] = val      ;
+        buf[1] = val >>  8;
+        buf[2] = val >> 16;
+        buf[3] = val >> 24;
+        buf[4] = val >> 32;
+        buf[5] = val >> 40;
+        buf[6] = val >> 48;
+        buf[7] = val >> 56;
+        break;
+      case 2:
 #if BYTEORDER == 0x4321 || BYTEORDER == 0x87654321
-    case 0:
+      case 0:
 #endif
-       buf[0] = val >> 56;
-       buf[1] = val >> 48;
-       buf[2] = val >> 40;
-       buf[3] = val >> 32;
-       buf[4] = val >> 24;
-       buf[5] = val >> 16;
-       buf[6] = val >>  8;
-       buf[7] = val      ;
-       break;
-  }
+        buf[0] = val >> 56;
+        buf[1] = val >> 48;
+        buf[2] = val >> 40;
+        buf[3] = val >> 32;
+        buf[4] = val >> 24;
+        buf[5] = val >> 16;
+        buf[6] = val >>  8;
+        buf[7] = val      ;
+        break;
+    }
 }
-        
+
 static I32
-papp_filter_read(pTHX_ int idx, SV *buf_sv, int maxlen)
+papp_filter_read (pTHX_ int idx, SV *buf_sv, int maxlen)
 {
   dSP;
   SV *datasv = FILTER_DATA (idx);
@@ -1532,11 +1532,12 @@ pack64(v)
         RETVAL
 
 BOOT:
-	compute_hash (CACHEp, CACHEl, &CACHEs, &CACHEh);
-	compute_hash (TYPEp,  TYPEl,  &TYPEs,  &TYPEh);
-	compute_hash (ATTRp,  ATTRl,  &ATTRs,  &ATTRh);
-	compute_hash (PATHp,  PATHl,  &PATHs,  &PATHh);
-	compute_hash (GIDp,   GIDl,   &GIDs,   &GIDh);
+	compute_hash (CACHEp   , CACHEl   , &CACHEs   , &CACHEh);
+	compute_hash (TYPEp    , TYPEl    , &TYPEs    , &TYPEh);
+	compute_hash (ATTRp    , ATTRl    , &ATTRs    , &ATTRh);
+	compute_hash (PATHp    , PATHl    , &PATHs    , &PATHh);
+	compute_hash (GIDp     , GIDl     , &GIDs     , &GIDh);
+	compute_hash (INSTANCEp, INSTANCEl, &INSTANCEs, &INSTANCEh);
 
 SV *
 agnibless(SV *rv, char *classname)
@@ -1603,7 +1604,7 @@ _data_special_key (SV *self, SV *obj)
 	CODE:
         if (sv_isobject (self) && sv_isobject (obj))
           {
-            static uchar k[8+8];
+            uchar k[8+8];
 
             HV *shv = (HV *)SvRV (self);
 
@@ -1611,7 +1612,7 @@ _data_special_key (SV *self, SV *obj)
             pack64 (k, SvPV_nolen (HeVAL (hv_fetch_ent (shv, GIDs, 0, GIDh))), 2);
             SvRMAGICAL_on (shv);
 
-            if (SvTRUE (*hv_fetch (shv, "instance_specific", 17, 1)))
+            if (SvTRUE (HeVAL (hv_fetch_ent (shv, INSTANCEs, 0, INSTANCEh))))
               {
                 HV *ohv = (HV *)SvRV (obj);
                 

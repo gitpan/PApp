@@ -44,8 +44,10 @@ use base 'Exporter';
 no bytes;
 use utf8;
 
-$VERSION = 1.43;
-@EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
+use common::sense;
+
+our $VERSION = 1.44;
+our @EXPORT_OK = qw(pxml2pcode xml2pcode perl2pcode pcode2pxml pcode2perl);
 
 =item pxml2pcode "phtml or pxml code"
 
@@ -68,7 +70,7 @@ Within plain and interpolated string sections you can also use the
 __I<>"string" construct to mark (and map) internationalized text. The
 construct must be used verbatim: two underlines, one double-quote, text,
 and a trailing double-quote. For more complex uses, just escape to perl
-(e.g. <?__I<>"xxx"?>).
+(e.g. <?__I<>"xxx":>).
 
 PREPROCESSOR COMMANDS ("#if...")
 
@@ -217,6 +219,7 @@ BEGIN {
 sub pxml2pcode($) {
    my $data = ":>" . shift;
    my $res = "";#d#
+   my $mode;
 
    utf8_upgrade $data; # force utf-8-encoding
 

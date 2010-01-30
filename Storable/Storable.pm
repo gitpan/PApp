@@ -19,12 +19,10 @@ package PApp::Storable; @ISA = qw(Exporter DynaLoader);
         file_magic read_magic
 );
 
-use AutoLoader;
 use FileHandle;
 use vars qw($canonical $forgive_me $VERSION);
 
 $VERSION = '2.18';
-*AUTOLOAD = \&AutoLoader::AUTOLOAD;		# Grrr...
 
 #
 # Use of Log::Agent is optional
@@ -65,8 +63,7 @@ sub retrieve_fd { &fd_retrieve }		# Backward compatibility
 $Storable::downgrade_restricted = 1;
 $Storable::accept_future_minor = 1;
 bootstrap PApp::Storable;
-1;
-__END__
+
 #
 # Use of Log::Agent is optional. If it hasn't imported these subs then
 # Autoloader will kindly supply our fallback implementation.

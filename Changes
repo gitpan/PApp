@@ -1,5 +1,22 @@
 Revision history for Perl extension PApp
 
+1.44 Sat Jan 30 04:06:14 CET 2010
+	- ef_submit and ef_form surlargs are now interpreted before ef_cb_end
+          callbacks.
+	- this release breaks PApp::CGI due to changed cookie handling.
+	- disable autoloading for PApp::Storable.
+        - new functions PApp::add_cookie, PApp::cookie.
+        - new functions PApp::Util::{nonce,asciibits}.
+        - use Guard module to implement guards.
+        - use common::sense, convert PApp to strict mode.
+        - fix a bug in multipart form handling of unknown impact.
+        - fix a bug in PApp/HTML selectbox of unknown impact.
+        - speed up agni store operations by removing dead code
+          fetching _cache.
+        - speed up data::papp_special agni types considerably.
+        - work around corrupted Cookie:-headers sent by firefox.
+        - work around perl 5.10 setting readonly on lots of things.
+
 1.43 Tue Dec  9 18:21:06 CET 2008
 	- implement $PApp::Storable::force_path and make use of it in retrieve.
 

@@ -130,10 +130,10 @@ sub _ef_parse_end($) {
       }
    }
 
-   &$_ for @{$ef->{cb_end}};
-
    PApp::set_alternative $_
       for @surlargs;
+
+   &$_ for @{$ef->{cb_end}};
 }
 
 sub _ef_parse_field($$$) {
@@ -364,7 +364,9 @@ destination module is given, the module destination from the C<ef_begin>
 macro is used instead of overwriting the destination with the module (as
 C<surl> usually does).
 
-The surl-args are interpreted after callbacks specified via L<ef_cb_end>.
+The surl-args are interpreted just before callbacks specified via
+L<ef_cb_end> (but code references are still executed afterwards unless
+C<SURL_EXEC_IMMED> is used).
 
 =item ef_reset [\%attrs,] [$value]
 

@@ -64,6 +64,8 @@ WriteMakefile(
 		    'Agni.pm'		=> '$(INST_LIBDIR)/Agni.pm',
                    },
     'PREREQ_PM'	=> {
+                    common::sense       => 0,
+
 		    PApp::SQL		=> 0.143,
                     Compress::LZF	=> 1.0,
                     String::Similarity	=> 0.02,
@@ -76,8 +78,10 @@ WriteMakefile(
                     DBI			=> 1.30,
                     Digest::SHA1	=> 1.01,
                     JSON::XS		=> 2.01,
+                    MIME::Base64        => 0,
 
                     DBD::mysql		=> 2.04,
+                    Guard               => 1.0,
 
                     # the following are more or less optional, but highly useful
                     XML::Sablotron	=> 1.0100001, # http://www.gingerall.com/charlie-bin/get/webGA/act/sablotron.act

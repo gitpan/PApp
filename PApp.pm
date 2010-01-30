@@ -90,7 +90,7 @@ use 5.006;
 use utf8;
 no bytes;
 
-no warnings;
+use common::sense;
 
 #   imports
 use Carp;
@@ -131,11 +131,11 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   $VERSION = 1.43;
+   our $VERSION = 1.44;
 
-   use base Exporter;
+   use base Exporter::;
 
-   @EXPORT = qw(
+   our @EXPORT = qw(
          debugbox
 
          surl slink sform cform suburl sublink retlink_p returl retlink
@@ -159,13 +159,14 @@ BEGIN {
          N_ language_selector preferences_url preferences_link
          $prefs $curprefs getpref setpref save_prefs
    );
-   @EXPORT_OK = qw(config_eval abort_with_file);
+   our @EXPORT_OK = qw(config_eval abort_with_file);
 
    # might also get loaded in PApp::Util
    require XSLoader;
    XSLoader::load PApp, $VERSION unless defined &PApp::bootstrap;
 
-   unshift @ISA, PApp::Base;
+   our @ISA;
+   unshift @ISA, "PApp::Base";
 }
 
 sub getuid(); # prototype needed
@@ -173,6 +174,13 @@ sub getuid(); # prototype needed
 #   globals
 #   due to what I call bugs in mod_perl, my variables do not survive
 #   configuration time unless global
+
+use vars qw(
+   $translator $configured $cipher_d $libdir $i18ndir $sessionid $prevstateid $alternative
+   $cookie_reset $cookie_expires $checkdeps $delayed $content_type $output_charset $surlstyle
+   $in_cleanup $onerr $translator $configured $key $statedb $statedb_user $statedb_pass
+   $pmod $uid
+);
 
     $translator;
 
@@ -241,9 +249,9 @@ our %preferences; # keys that are preferences are marked here
     $output_charset;
 our $output_p = 0;# flush called already?
 
-    $surlstyle  = scalar SURL_STYLE_URL;
+    $surlstyle  = 1; # scalar SURL_STYLE_URL;
 
-    $in_cleanup = 0;  # are we in a clean-up phase?
+    $in_cleanup = 0; # are we in a clean-up phase?
 
     $onerr      = 'sha';
 our $warn_log; # all warnings will be logged here
@@ -256,6 +264,9 @@ our $logfile = undef;
 
 our $prefs    = new PApp::Prefs \"";      # the global preferences
 our $curprefs = new PApp::Prefs *curprfx; # the current application preferences
+
+our ($st_reload_p, $st_replacepref, $st_deletepref, $st_newuserid, $st_insertstate,
+     $_config, $st_newstateids, $st_fetchstate, $st_eventcount, $event_count);
 
 %preferences = (  # system default preferences
    '' => [qw(
@@ -666,36 +677,13 @@ sub dprint(@) {
 
 =item my $guard = PApp::guard { ... }
 
-This creates and returns a guard object. Nothing happens until the object
-gets destroyed, in which case the codeblock given as argument will be
-executed. This is useful to free locks or other resources in case of a
-runtime error or when the coroutine gets canceled, as in both cases the
-guard block will be executed. The guard object supports only one method,
-C<< ->cancel >>, which will keep the codeblock from being executed.
-
-Example: set some flag and clear it again when the coroutine gets canceled
-or the function returns:
-
-   sub do_something {
-      my $guard = Coro::guard { $busy = 0 };
-      $busy = 1;
-
-      # do something that requires $busy to be true
-   }
+This function still exists, but is deprecated. Please use the
+C<Guard::guard> function instead.
 
 =cut
 
-sub guard(&) {
-   bless \(my $cb = $_[0]), "PApp::guard"
-}
-
-sub PApp::guard::cancel {
-   ${$_[0]} = sub { };
-}
-
-sub PApp::guard::DESTROY {
-   ${$_[0]}->();
-}
+use Guard ();
+BEGIN { *guard = \&Guard::guard }
 
 =item content_type $type [, $charset]
 
@@ -747,7 +735,7 @@ system's locale strings (this function does the conversion).
 sub setlocale(;$) {
    my $locale = @_ ? $_[0] : $state{papp_locale};
    require POSIX;
-   POSIX::setlocale(LC_ALL, $locale);
+   POSIX::setlocale (LC_ALL => $locale);
 }
 
 =item reference_url $fullurl
@@ -1051,7 +1039,7 @@ created via C<sform>/C<cform>/C<multipart_form>.
 =cut
 
 sub sform(@) {
-   local $surlstyle = _SURL_STYLE_PLAIN;
+   local $surlstyle = _SURL_STYLE_URL;
    tag "form", { ref $_[0] eq "HASH" ? %{+shift} : (), method => 'get', action => &surl };
 }
 
@@ -1148,7 +1136,7 @@ sub parse_multipart_form(&) {
    $request->header_in("Content-Type", "");
 
    while ($fh->skip_boundary) {
-      my ($ct, %ct);
+      my ($ct, %ct, %cd);
       my $hdr = "";
       my $line;
       do {
@@ -1427,14 +1415,48 @@ sub abort_with_file($;$) {
    }
 }
 
-sub set_cookie {
-   $request->header_out (
-      'Set-Cookie',
-      "PAPP_1984="
-      . (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, 0, 0, $state{papp_cookie}))
-      . "; PATH=/; EXPIRES="
-      . unixtime2http($NOW + $cookie_expires, "cookie")
-   );
+=item PApp::cookie $name
+
+Returns an arrayref containing all cookies sent by the client of the given
+name, or C<undef>, if no cookies of this name have been sent.
+
+=cut
+
+sub cookie($) {
+   $temporary{cookie}{$_[0]}
+}
+
+=item PApp::add_cookie $key => $value, %param
+
+Add a given cookie too be sent to the client.
+
+The optional parameter "expires" should be specified as a unix timestamp,
+if given. The optional parameter "secure" should be specified as C<undef>.
+
+=cut
+
+sub add_cookie($$;%) {
+   my ($name, $value, %param) = @_;
+
+   $value = "$name=$value";
+
+   $param{expires} = unixtime2http ($param{expires}, "cookie")
+      if exists $param{expires};
+
+   while (my ($k, $v) = each %param) {
+      $value .= ";$k";
+      $value .= "=$v" if defined $v;
+   }
+
+   # most clients (including firefox) are broken and need separate set-cookie headers
+   # this currently breaks PApp::CGI
+   $request->headers_out->add ('Set-Cookie' => $value);
+}
+
+sub _set_cookie {
+   add_cookie papp_1984 => (PApp::X64::enc $cipher_e->encrypt(pack "VVVV", $userid, 0, 0, $state{papp_cookie})),
+      path    => "/",
+      expires => $NOW + $cookie_expires;
 }
 
 sub _debugbox {
@@ -1827,7 +1849,7 @@ sub load_app($$) {
       $class = $1;
       $path = $2;
    } else {
-      $class = PApp::Application::PApp;
+      $class = "PApp::Application::PApp";
    }
 
    $app_cache{$appid} =
@@ -1962,7 +1984,7 @@ sub _handler {
    $doutput = "";
    $output = "";
    @fixup = ();
-   tie *STDOUT, PApp::Catch_STDOUT;
+   tie *STDOUT, "PApp::Catch_STDOUT";
    $content_type = "text/html";
    $output_charset = "*";
    $warn_log = "";
@@ -1997,7 +2019,30 @@ sub _handler {
 
       $stateid = newstateid;
 
-      PApp::Event::handle_events($state->[0]) if $event_count != $state->[0];
+      PApp::Event::handle_events ($state->[0])
+         if $event_count != $state->[0];
+
+      if (defined (my $cookie = $request->header_in ('Cookie'))) {
+         # parse NAME=VALUE
+         my @kv;
+
+         for ($cookie) {
+            while (/\G\s* ([^=;,[:space:]]+) (?: \s*=\s* (?: "( (?:[^\\"]+ | \\.)*)" | ([^;,[:space:]]*) ) )?/gcxs) {
+               my $name = $1;
+               my $value = $3;
+
+               unless (defined $value) {
+                  # also catches $2=$3=undef
+                  $value = $2;
+                  $value =~ s/\\(.)/$1/gs;
+               }
+
+               push @{$temporary{cookie}{lc $name}}, $value;
+
+               last unless /\G\s*;/gc;
+            }
+         }
+      }
 
       if (defined $state->[1]) {
          $stateid = newstateid;
@@ -2028,7 +2073,7 @@ sub _handler {
 
          $modules = $pathinfo =~ m%/(.*?)/?$% ? modpath_thaw $1 : {};
 
-         if ($request->header_in('Cookie') =~ /PAPP_1984=([0-9a-zA-Z.-]{22,22})/) {
+         if ($temporary{cookie}{papp_1984}[0] =~ /^([0-9a-zA-Z.-]{22,22})$/) {
             ($userid, undef, undef, $state{papp_cookie}) = unpack "VVVV", $cipher_d->decrypt(PApp::X64::dec $1);
             load_prefs "";
          } else {
@@ -2076,7 +2121,7 @@ sub _handler {
 
       if ($state{papp_cookie} < $NOW - $cookie_reset) {
          $state{papp_cookie} = $NOW;
-         set_cookie;
+         _set_cookie;
       }
 
       eval { $papp->run; 1; }

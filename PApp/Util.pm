@@ -34,14 +34,14 @@ use JSON::XS;
 use base 'Exporter';
 
 BEGIN {
-   $VERSION = 1.43;
+   $VERSION = 1.44;
    @EXPORT = qw(dumpval uniq);
    @EXPORT_OK = qw(
-         format_source  sv_peek sv_dump
-         digest
+         format_source sv_peek sv_dump
+         digest dumpval
          append_string_hash
          find_file fetch_uri load_file
-         mime_header
+         mime_header nonce alnumbits
    );
 
    # I was lazy, all the util xs functions are in PApp.xs
@@ -371,6 +371,52 @@ sub benchlog {
       $time = shift @bench;
    }
    warn sprintf "%.3f: %s\n",(time-$NOW),$log;
+}
+
+=item nonce $octet_count
+
+Return a nonce suitable for cryptographically.
+
+=cut
+
+sub nonce($) {
+   my $nonce;
+
+   if (open my $fh, "</dev/urandom") {
+      sysread $fh, $nonce, $_[0];
+   } else {
+      $nonce = join "", map +(chr rand 256), 1 .. $_[0]
+   }
+
+   $nonce
+}
+
+=item alnumbits $octets
+
+Convert the given octet string into a human-readable ascii text, using
+only a-zA-Z0-9 characters (base62 encoding).
+
+=cut
+
+sub alnumbits($) {
+   my $data = $_[0];
+
+   if (eval "use Math::GMP 2.05; 1") {
+      $data = Math::GMP::get_str_gmp (
+                  (Math::GMP::new_from_scalar_with_base (+(unpack "H*", $data), 16)),
+                  62
+              );
+   } else {
+      require MIME::Base64;
+
+      $data = MIME::Base64::encode_base64 ($data, "");
+      $data =~ s/=//;
+      $data =~ s/x/x0/g;
+      $data =~ s/\//x1/g;
+      $data =~ s/\+/x2/g;
+   }
+
+   $data
 }
 
 1;

@@ -65,7 +65,7 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 1.43;
+   $VERSION = 1.44;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
@@ -633,12 +633,12 @@ sub scan_field {
 
 sub scan_end {
    local $PApp::SQL::DBH = PApp::Config::DBH;
-   my $st0 = $PApp::SQL::DBH->prepare("select nr from msgid where id = ? and domain = ? and lang = ?");
-   my $st1 = $PApp::SQL::DBH->prepare("update msgid set context = ? where nr = ?");
+   my $st0 = $PApp::SQL::DBH->prepare ("select nr from msgid where id = ? and domain = ? and lang = ?");
+   my $st1 = $PApp::SQL::DBH->prepare ("update msgid set context = ? where nr = ?");
    while (my ($lang, $v) = each %scan_msg) {
       while (my ($msg, $context) = each %$v) {
          $context = join "\n", @$context;
-         utf8_on $msg; utf8_on $lang; utf8_upgrade $context;
+         utf8::encode $msg; utf8::encode $lang; utf8::upgrade $context;
          $st0->execute($msg, $scan_app, $lang);
          my $nr = $st0->fetchrow_arrayref;
          if ($nr) {

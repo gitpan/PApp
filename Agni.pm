@@ -182,7 +182,7 @@ sub top_path {
    for (sort { (length $a) <=> (length $b) } keys %pathid) {
       return $pathid{$_} if and64 $paths, $pathmask[$pathid{$_}];
    }
-   croak "top_path called with illegal paths mask";
+   croak "top_path called with illegal paths mask ($paths)";
 }
 
 our @sqlcol = (
@@ -1479,8 +1479,11 @@ sub mass_delete_objects {
    for my $id (@$ids) {
       my ($gid, $paths) = sql_fetch "select gid, paths from obj where id = ?", $id;
 
+      $paths or
+         die "$gid is not in any path\n";
+
       sql_exec "update obj set paths = paths | ? where gid = ? and paths & ? <> 0",
-               $paths, $gid, $parpathmask[top_path($paths)];
+               $paths, $gid, $parpathmask[top_path ($paths)];
 
       for my $table (@sqlcol) {
          # find all attributes in this table that are not referencable in other paths

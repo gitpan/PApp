@@ -29,13 +29,15 @@ use FileHandle ();
 
 use PApp::Util;
 
-use base Exporter;
+use base "Exporter";
 
 use utf8;
 no bytes;
 
-$VERSION = 1.43;
-@EXPORT = qw(
+use common::sense;
+
+our $VERSION = 1.44;
+our @EXPORT = qw(
 
       errbox
 
@@ -252,7 +254,7 @@ selected values). All remaining arguments are treated as name (displayed)
 sub selectbox {
    my $attrs = ref $_[0] eq "HASH" ? shift : {};
    my $name = shift;
-   my $selected;
+   my %selected;
    if (ref $_[0]) {
       @selected{@{+shift}}++;
    } else {
@@ -330,7 +332,7 @@ sub mailto_url {
 sub unescape($) {
    local $_ = $_[0];
    y/+/ /;
-   s/%([0-9a-fA-F][0-9a-fA-F])/pack "c", hex $1/ge;
+   s/%([0-9a-fA-F][0-9a-fA-F])/chr hex $1/ge;
    $_;
 }
 
