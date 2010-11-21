@@ -41,7 +41,7 @@ no bytes;
 
 use common::sense;
 
-our $VERSION = 1.44;
+our $VERSION = 1.45;
 
 =item $papp = new PApp::Application args...
 

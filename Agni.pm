@@ -410,17 +410,18 @@ sub agni_exec_cb {
 # substitute for PApp::Callback::register, used in perl/pxml2pcode
 sub register_callback {
    my ($path, $gid, $cb, undef, $name) = @_;
-   my $obj = path_obj_by_gid $path, $gid;
+   my $obj = path_obj_by_gid $path, $gid
+      or Carp::confess "Unable to load object belonging to callback ($path/$gid)";
 
    $obj->{_cb}{$name} = $cb;
 
-   $agni_cb->new(args => [$obj, $name]);
+   $agni_cb->new (args => [$obj, $name]);
 }
 
 sub register_callback_info {
    my $self = shift;
    +{
-      register_function => "Agni::register_callback $self->{_path}, $self->{_gid},",
+      register_function => "Agni::register_callback $self->{_path}, '$self->{_gid}',",
       callback_preamble => "my \$self = shift;",
       argument_preamble => "\$self",
    }
@@ -561,7 +562,6 @@ sub compile_method_perl {
    $code =~ s/->SUPER::/->$isa_class\::/g;
    $code =~ s/->SUPER(?!\w)/->$isa_class\::$name/g;
 
-   #d# make the "3" in the next line configurable
    compile "sub $class\::$name { my ($args) = \@_; ();\n"
          . "#line 3 \"{$pathname[$self->{_path}]$self->{_gid}::$name}\"\n"
          . "$code\n"

@@ -64,7 +64,7 @@ WriteMakefile(
 		    'Agni.pm'		=> '$(INST_LIBDIR)/Agni.pm',
                    },
     'PREREQ_PM'	=> {
-                    common::sense       => 0,
+                    common::sense       => 3.3,
 
 		    PApp::SQL		=> 0.143,
                     Compress::LZF	=> 1.0,
@@ -112,7 +112,7 @@ i18n: force
 
 # set \$VERSION in all modules
 setver:
-	\$(PERL) -pi -e 's/^(\\s*\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm PApp/*.pm I18n/*.pm Recode/*.pm PApp/Config.pm.PL
+	\$(PERL) -pi -e 's/^(\\s*(?:our\\s+)?\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm PApp/*.pm I18n/*.pm Recode/*.pm PApp/Config.pm.PL
 
 predist: setver i18n
 	pod2text PApp.pm >README

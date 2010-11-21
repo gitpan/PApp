@@ -258,7 +258,7 @@ sub upload {
       open my $fh, "<", $TEMP
          or die "$TEMP: $!";
       binmode $fh;
-      <$fh>;
+      <$fh>
    };
 
    # stat just before uploading, so we don't miss changes also change

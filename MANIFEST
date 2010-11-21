@@ -143,4 +143,3 @@ Agni.pm			The Agni CMS runtime system
 bin/agni		The Agni daemon/tool
 
 META.yml                                 Module meta-data (added by MakeMaker)
-META.json                                Module meta-data (added by MakeMaker)

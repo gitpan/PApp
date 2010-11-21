@@ -31,7 +31,7 @@ package PApp::Recode;
 use Convert::Scalar ();
 
 BEGIN {
-   $VERSION = 1.44;
+   $VERSION = 1.45;
 
    require XSLoader;
    XSLoader::load 'PApp::Recode', $VERSION;

@@ -25,7 +25,7 @@ the C<PApp::Package> and C<PApp::Module> classes.
 
 =cut
 
-$VERSION = 1.44;
+$VERSION = 1.45;
 
 package PApp::Package;
 
@@ -216,7 +216,7 @@ it's name (including '$').
 
 my $lexname = "a000000";
 
-sub gen_lexical : locked {
+sub gen_lexical {
    my $self = shift;
    my $value = shift;
    push @{$self->{lexical}}, $value;
@@ -225,7 +225,7 @@ sub gen_lexical : locked {
    $lexical;
 }
 
-sub _eval : locked {
+sub _eval {
    package PApp;
 
    local $ppkg = shift;
@@ -250,8 +250,7 @@ sub _eval : locked {
 
 my $upid = "PPKG0000";
 
-# locked just to be on the safe side
-sub compile : locked {
+sub compile {
    my $ppkg = shift;
    my $code = shift;
 

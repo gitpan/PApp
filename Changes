@@ -1,5 +1,10 @@
 Revision history for Perl extension PApp
 
+1.45 Sun Nov 21 08:20:50 CET 2010
+	- port to perl 5.12.
+	- die if objects belonging to callbacks cannot be loaded.
+        - make sure gid is always quoted when creating callbacks.
+
 1.44 Sat Jan 30 04:06:14 CET 2010
 	- ef_submit and ef_form surlargs are now interpreted before ef_cb_end
           callbacks.

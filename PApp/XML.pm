@@ -36,7 +36,7 @@ use PApp::Exception qw(fancydie);
 
 use base 'Exporter';
 
-$VERSION = 1.44;
+$VERSION = 1.45;
 @EXPORT_OK = qw(
       xml_quote xml_attr xml_unquote xml_tag xml_cdata
       xml_check xml_encoding xml2utf8 pod2xml
@@ -1021,7 +1021,7 @@ sub __dom2sub($) {
    }
 }
 
-sub _dom2sub($$$$) : locked {
+sub _dom2sub($$$$) {
    local $_self = shift;
    local $_dom = shift;
    local $_factory = shift;
