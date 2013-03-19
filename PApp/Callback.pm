@@ -16,7 +16,7 @@ PApp::Callback - a workaround for the problem of nonserializable code.
  use PApp::Callback;
 
  my $function = register_callback BLOCK [key => value...];
- my $cb = $function->refer([args...]);
+ my $cb = $function->refer ([args...]);
 
  &$cb;
 
@@ -43,7 +43,7 @@ require 5.006;
 
 use base 'Exporter';
 
-$VERSION = 1.45;
+$VERSION = 2.0;
 @EXPORT = qw(register_callback create_callback);
 
 =item register_callback functiondef, key => value...
@@ -193,14 +193,8 @@ sub call($;@) {
    my $cb = $PApp::Callback::registry{$id};
 
    unless ($cb) {
-      #d#
-      # too bad, no callback -> try to load applications
-      # until callback is found or everything is in memory
-      for (values %PApp::papp) {
-         $_->load_code;
-         last if $cb = $PApp::Callback::registry{$id};
-      }
-      $cb or croak "callback '$id' not registered";
+      # too bad, no callback
+      croak "callback '$id' not registered";
    }
 
    local $PApp::SQL::Database = shift;

@@ -35,7 +35,7 @@ be switched to literal text mode using :>, and switched back to perl using
 
 package PApp::Preprocessor;
 
-$VERSION = 1.45;
+$VERSION = 2.0;
 
 use PApp::PCode ();
 use PApp::Util ();

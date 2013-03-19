@@ -84,7 +84,7 @@ END {
 my $msg_pid = -1;
 sub msgbox {
    kill 9, $msg_pid unless $msg_pid == -1;
-   exec $XMESSAGE, "-buttons", "OK", "-default", "OK", "-center", "-name", @_ unless $msg_pid = fork;
+   exec $XMESSAGE, "-buttons", "OK", "-default", "OK", "-name", @_ unless $msg_pid = fork;
    select undef, undef, undef, 0.25; # avoid extreme loops on uncommited messages (does not happen, just to be sure).
 }
 

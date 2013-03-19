@@ -1,10 +1,25 @@
-<package name="xpcse">
-<domain name="papp" lang="en">
+package PApp::XPCSE;
 
-<import pm="PApp::Exception">()</import>
-<import pm="PApp::MimeType">()</import>
+use HTTP::Date;
 
-<macro name="remote_edit_parse*"><perl><![CDATA[
+use common::sense;
+
+use PApp;
+use PApp::Exception;
+use PApp::MimeType;
+use PApp::Callback;
+use PApp::HTML;
+
+use Exporter "import";
+
+our @EXPORT = qw(
+   remote_edit_parse
+   remote_edit_store
+   client_edit_surl
+   client_edit_slink
+);
+
+sub remote_edit_parse {
    my $buf;
    $request->read($buf, $request->header_in ("Content-Length"));
    if ($request->header_in ("Content-Type") =~ /^text\//) {
@@ -14,10 +29,11 @@
         # remove byte-order-mark, as per unicode 3, section 13.6
         $buf =~ y/\x{feff}//d;
    }
-   $buf;
-]]></perl></macro>
+   $buf
+}
 
-<macro name="remote_edit_store*" args="$fh"><perl><![CDATA[
+sub remote_edit_store {
+   my ($fh) = @_;
    my $buf;
    my $len = $request->header_in ("Content-Length");
    while($len) {
@@ -26,10 +42,10 @@
       print $fh $buf;
       $len -= $rlen;
    }
-]]></perl></macro>
+}
 
-<callback name="remote_edit" args="$data $mode"><phtml><![CDATA[<:
-   use HTTP::Date;
+our $remote_edit = register_callback {
+   my ($data, $mode) = @_;
 
    my %flags = %{$data->{flags}};
 
@@ -37,7 +53,7 @@
       eval {
          if ($mode) {
             $P{pver} >= 1 && $P{pver} < 2
-               or die "unsupported protocol version\n";
+               or die "unsupported xpcse protocol version\n";
 
             for my $c (qw(pver command ostype)) {
                die "Required header \"$c\" missing\n" unless exists $P{$c};
@@ -110,16 +126,18 @@
 
             content_type "application/x-xpcse", "utf-8";
             $request->header_out("Content-Disposition" => "inline; filename=x.xpcse"); # for windows (file extension!)
-            :><?"$outflags\015\012":><:
+            echo "$outflags\015\012";
          }
       };
 
       fancydie "xpcse upload error", $@, as_string => 1
          if $@;
    }
-:>]]></phtml></callback>
+} name => "papp_xpcse_rep";
 
-<macro name="client_edit_surl*" args="$ref $mime %flags"><perl><![CDATA[
+sub client_edit_surl {
+   my ($ref, $mime, %flags) = @_;
+
    $mime = PApp::MimeType::by_extension $flags{extension} if !defined $mime && $flags{extension};
    $mime = (PApp::MimeType::by_filename $ref)->mimetype if !defined $mime && !ref $ref;
 
@@ -129,7 +147,7 @@
       flags => { %flags },
    };
 
-   my ($url, $key) = surl SURL_STYLE_STATIC, $papp_ppkg->refer('remote_edit', $data, 1);
+   my ($url, $key) = surl SURL_STYLE_STATIC, $remote_edit->refer ($data, 1);
 
    if (defined $PApp::papp->{xpcse_prefix}) {
       $url = $PApp::papp->{xpcse_prefix};
@@ -146,15 +164,14 @@
 
    $data->{url} = "$url/$key";
 
-   surl $papp_ppkg->refer('remote_edit', $data, 0);
-]]></perl></macro>
+   surl $remote_edit->refer ($data, 0);
+}
 
-  
-<macro name="client_edit_slink*" args="$content $ref $mime %flags"><perl><![CDATA[
+sub client_edit_slink {
+   my ($content, $ref, $mime, %flags) = @_;
+
    alink $content, client_edit_surl $ref, $mime, %flags;
-]]></perl></macro>
-
-<perl><![CDATA[
+}
 
 =head1 CONFIG OPTIONS
 
@@ -231,8 +248,5 @@ L<PApp>
 
 =cut
 
-]]></perl>
-
-</domain>
-</package>
+1
 

@@ -6539,7 +6539,7 @@ PROTOTYPES: ENABLE
 
 BOOT:
 {
-    HV *stash = gv_stashpvn("Storable", 8, GV_ADD);
+    HV *stash = gv_stashpvn("PApp::Storable", 8, GV_ADD);
     newCONSTSUB(stash, "BIN_MAJOR", newSViv(STORABLE_BIN_MAJOR));
     newCONSTSUB(stash, "BIN_MINOR", newSViv(STORABLE_BIN_MINOR));
     newCONSTSUB(stash, "BIN_WRITE_MINOR", newSViv(STORABLE_BIN_WRITE_MINOR));

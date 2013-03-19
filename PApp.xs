@@ -2,6 +2,9 @@
 #include "perl.h"
 #include "XSUB.h"
 
+/* 5.14 no longer exports these, a pity */
+OP *Perl_pp_helem (pTHX);
+
 #if _POSIX_SOURCE
 #include <unistd.h>
 #endif
@@ -294,6 +297,7 @@ agni_store (SV *self, SV *key, SV *value)
 static OP *
 agni_fetch_op (pTHX)
 {
+
   dSP;
   MAGIC *mg;
 
@@ -491,20 +495,13 @@ papp_filter_read (pTHX_ int idx, SV *buf_sv, int maxlen)
 
 /* cache these gv's for quick access */
 static GV *cipher_e,
-          *pmod,
-          *curpath,
-          *curprfx,
           *location,
-          *module,
-          *modules,
           *userid,
           *stateid,
           *sessionid,
           *state,
           *arguments,
           *surlstyle,
-          *big_a,
-          *big_s,
           *big_p;
           
 static void
@@ -730,20 +727,7 @@ expand_path(char *path, STRLEN pathlen, char *cwd, STRLEN cwdlen)
     }
 
   if (*path != '/')
-    {
-      if (!cwd)
-        {
-          if (!SvPOK (GvSV (curprfx)))
-            croak ("$PApp::curprfx not set");
-
-          cwd = SvPV (GvSV (curprfx), cwdlen);
-        }
-
-      sv_catpvn (res, cwd, cwdlen ? cwdlen : strlen (cwd));
-
-      if (SvEND(res)[-1] != '/')
-        sv_catpvn (res, "/", 1);
-    }
+    croak ("relative state paths no longer supported, downgrade to PApp 1.x");
 
   sv_catpvn (res, path, pathlen);
 
@@ -751,104 +735,6 @@ expand_path(char *path, STRLEN pathlen, char *cwd, STRLEN cwdlen)
 }
 
 #define surl_expand_path(path,pathlen) expand_path ((path), (pathlen), 0, 0)
-
-static SV *
-eval_path_ (char *path, char *end)
-{
-  SV *pathinfo;
-
-  if (path > end)
-    pathinfo = modpath_freeze (GvSV (modules));
-  else
-    {
-      SV *modpath;
-      SV **ent;
-      SV *dest;
-      STRLEN cwdlen;
-      char *cwd = SvPV (GvSV (curpath), cwdlen);
-      char *pend = path;
-
-      while (pend < end && *pend != ',')
-        pend++;
-
-      dest = expand_path (path, pend - path, cwd, cwdlen);
-
-      pend++; /* skip trailing ",", if any */
-
-      cwd = SvPV (dest, cwdlen);
-      modpath = GvSV (modules);
-
-      for(;;) {
-        path = cwd + 1;
-        cwd = strchr (path, '/');
-
-        if (!cwd)
-          break;
-
-        ent = hv_fetch ((HV *)SvRV (modpath), path, cwd ? cwd - path : 0, 1);
-
-        if (!ent)
-          INT_ERR("eval_path_1");
-
-        if (!SvROK (*ent))
-          sv_setsv (*ent, newRV_noinc ((SV *)newHV ()));
-
-        modpath = *ent;
-      };
-
-      sv_chop (dest, path); /* get the last component of dest as sv */
-
-      if (SvCUR (dest) == 1 && *path == '.')
-        pathinfo = eval_path_ (pend, end); /* module "." == noop */
-      else
-        {
-          modpath = SvRV (modpath);
-          ent = hv_fetch ((HV *)modpath, "\x00", 1, 0);
-
-          if (!ent)
-            {
-              if (SvCUR (dest))
-                if (!hv_store ((HV *)modpath, "\x00", 1, SvREFCNT_inc (dest), 0))
-                  INT_ERR ("surl_1");
-
-              pathinfo = eval_path_ (pend, end);
-
-              hv_delete ((HV *)modpath, "\x00", 1, G_DISCARD);
-            }
-          else
-            {
-              /* should unify this with previous case by removing/inserting weverytime */
-              /* and optimizing as we go */
-              SV *old_modpath = *ent;
-
-              /* just a new module */
-              *ent = dest;
-
-              pathinfo = eval_path_ (pend, end);
-
-              *ent = old_modpath;
-            }
-        }
-
-      SvREFCNT_dec (dest);
-    }
-
-  return pathinfo;
-}
-
-static SV *
-eval_path (SV *path)
-{
-  STRLEN len;
-  char *pth = SvPV(path, len);
-  
-  if (!SvROK (GvSV (modules)))
-    croak ("$PApp::modules not set");
-  if (!SvPOK (GvSV (curpath)))
-    croak ("$PApp::curpath not set");
-
-  return eval_path_ (pth, pth + len);
-}
 
 /* checks wether this surl argument is a single arg (1) or key->value (0) */
 /* should be completely pluggable, i.e. by subclassing/calling PApp::SURL->gen */
@@ -862,20 +748,13 @@ MODULE = PApp		PACKAGE = PApp
 BOOT:
 {
   cipher_e     = gv_fetchpv ("PApp::cipher_e"    , TRUE, SVt_PV);
-  pmod         = gv_fetchpv ("PApp::pmod"        , TRUE, SVt_PV);
-  curpath      = gv_fetchpv ("PApp::curpath"     , TRUE, SVt_PV);
-  curprfx      = gv_fetchpv ("PApp::curprfx"     , TRUE, SVt_PV);
   location     = gv_fetchpv ("PApp::location"    , TRUE, SVt_PV);
-  big_a        = gv_fetchpv ("PApp::A"           , TRUE, SVt_PV);
   big_p        = gv_fetchpv ("PApp::P"           , TRUE, SVt_PV);
-  big_s        = gv_fetchpv ("PApp::S"           , TRUE, SVt_PV);
   state        = gv_fetchpv ("PApp::state"       , TRUE, SVt_PV);
   arguments    = gv_fetchpv ("PApp::arguments"   , TRUE, SVt_PV);
   userid       = gv_fetchpv ("PApp::userid"      , TRUE, SVt_IV);
   stateid      = gv_fetchpv ("PApp::stateid"     , TRUE, SVt_IV);
   sessionid    = gv_fetchpv ("PApp::sessionid"   , TRUE, SVt_IV);
-  module       = gv_fetchpv ("PApp::module"      , TRUE, SVt_PV);
-  modules      = gv_fetchpv ("PApp::modules"     , TRUE, SVt_PV);
   surlstyle    = gv_fetchpv ("PApp::surlstyle"   , TRUE, SVt_IV);
 }
 
@@ -888,12 +767,9 @@ surl(...)
 	PPCODE:
 {
         int i;
-        int has_module; /* wether a module has been given or not */
         UV xalternative;
         SV *surl;
         AV *args = newAV ();
-        SV *pathinfo;
-        SV *dstmodule;
         SV *path = 0;
         char *svp; STRLEN svl;
         int style = 1;
@@ -902,41 +778,17 @@ surl(...)
           style = SvIV (GvSV (surlstyle));
 
         {
+          int has_module = items;
           int j;
-
-          has_module = items;
           for (j = 0; j < items; j++)
             if (SURL_NOARG (ST(j)))
               has_module++;
 
           has_module &= 1;
+
+          if (has_module)
+            croak ("surl no longer supports module arguments, downgrade to PApp 1.x");
         }
-
-        if (has_module)
-          {
-            dstmodule = ST(0);
-            i = 1;
-          }
-        else
-          {
-            dstmodule = GvSV (module);
-            i = 0;
-          }
-
-        if (SvROK (dstmodule))
-          {
-            if (SvTYPE (SvRV (dstmodule)) != SVt_PV)
-              croak ("surl: destination module must be either scalar or ref to scalar");
-
-            pathinfo = newSVsv (SvRV (dstmodule));
-          }
-        else if (SvOK (dstmodule))
-          pathinfo = eval_path (dstmodule);
-        else
-          pathinfo = modpath_freeze (GvSV (modules));
-
-        if (!ix || has_module) /* only set module when explicitly given */
-          av_push (args, SvREFCNT_inc (pathinfo));
 
         for (; i < items; i++)
           {
@@ -1019,7 +871,6 @@ surl(...)
           {
             surl = sv_mortalcopy (GvSV (location));
             sv_catpvn (surl, "/", 1);
-            sv_catsv (surl, pathinfo);
 
             if (style == 3 && GIMME_V != G_ARRAY)
               {
@@ -1092,18 +943,7 @@ surl(...)
                   }
               }
           }
-
-        SvREFCNT_dec (pathinfo);
 }
-
-SV *
-eval_path(path)
-	SV *	path
-	PROTOTYPE: $
-        CODE:
-        RETVAL = eval_path (path);
-	OUTPUT:
-        RETVAL
 
 SV *
 expand_path(path, cwd)
@@ -1135,14 +975,8 @@ set_alternative(array)
             int len = av_len (av);
             int flags = 0, i = 0;
 
-            if (~len & 1) /* odd array length? */
-              {
-                SV * modulepath = *av_fetch (av, i++, 1);
-                STRLEN len;
-                char *src = SvPV (modulepath, len);
-
-                sv_setsv (GvSV (modules), newRV_noinc ((SV *)modpath_thaw (&src, src + len)));
-              }
+            if (!(len & 1)) /* odd array length? */
+              croak ("odd alternative arrays are no longer supported, downgrade to PApp 1.x");
 
             while (i < len)
               {
@@ -1214,7 +1048,7 @@ set_alternative(array)
 
 void
 find_path (path)
-  	SV *	path
+	SV *	path
         PROTOTYPE: $
         PPCODE:
         HV *hash;
@@ -1255,7 +1089,6 @@ _destroy_state()
 	CODE:
         HV *hv = PL_defstash;
         PL_defstash = 0;
-        hv_clear (GvHV (big_s));
         hv_clear (GvHV (state));
         PL_defstash = hv;
         hv_clear (GvHV (big_p));
@@ -1428,12 +1261,55 @@ dec(data)
 
 MODULE = PApp		PACKAGE = Agni
 
+#if UVSIZE == 8
+
+UV
+bit64(UV a)
+        PROTOTYPE: $
+        CODE:
+        RETVAL = 1 << a;
+        OUTPUT:
+	RETVAL
+
+UV
+not64(UV a)
+        PROTOTYPE: $
+        CODE:
+        RETVAL = ~a;
+        OUTPUT:
+	RETVAL
+
+UV
+and64 (UV a, UV b)
+        PROTOTYPE: $$
+        CODE:
+        RETVAL = a & b;
+        OUTPUT:
+	RETVAL
+
+UV
+or64 (UV a, UV b)
+        PROTOTYPE: $$
+        CODE:
+        RETVAL = a | b;
+        OUTPUT:
+	RETVAL
+
+UV
+andnot64 (UV a, UV b)
+        PROTOTYPE: $$
+        CODE:
+        RETVAL =  a & ~b;
+        OUTPUT:
+	RETVAL
+
+#else
+
 char *
-not64(a)
-	char *	a
+not64 (char *a)
         PROTOTYPE: $
         ALIAS:
-           bit64    = 1
+           bit64 = 1
         CODE:
         unsigned long long a_, c_;
         char c[64];
@@ -1451,9 +1327,7 @@ not64(a)
 	RETVAL
 
 char *
-and64(a,b)
-	char *	a
-	char *	b
+and64 (char *a, char *b)
         PROTOTYPE: $$
         ALIAS:
            or64     = 1
@@ -1476,6 +1350,7 @@ and64(a,b)
         OUTPUT:
 	RETVAL
 
+#endif
 
 char *
 unpack64(sv)

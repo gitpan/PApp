@@ -40,7 +40,7 @@ use PApp qw($userid *state getuid);
 
 use base Exporter;
 
-$VERSION = 1.45;
+$VERSION = 2.0;
 @EXPORT = qw( 
    authen_p access_p
 

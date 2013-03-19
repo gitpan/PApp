@@ -35,7 +35,7 @@ use PApp::HTML;
 
 use utf8;
 
-$VERSION = 1.45;
+$VERSION = 2.0;
 @EXPORT = qw(fancydie try catch);
 
 no warnings;
@@ -541,10 +541,6 @@ sub errorpage {
       },
 
       app       => {
-         curpath     => $curpath,
-         curprfx     => $curprfx,
-         module      => \%module,
-         modules     => $modules,
          langs       => $langs,
       },
 

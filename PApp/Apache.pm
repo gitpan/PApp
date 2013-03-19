@@ -58,12 +58,11 @@ use File::Basename qw(dirname);
 
 use PApp;
 use PApp::Exception;
-use PApp::Package;
 
 BEGIN {
    @ISA = PApp::Base::;
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 1.45;
+   $VERSION = 2.0;
 }
 
 *PApp::OK = \&Apache::Constants::OK;

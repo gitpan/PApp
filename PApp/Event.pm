@@ -43,7 +43,7 @@ use PApp::Config qw(DBH $DBH); DBH;
 use PApp::Exception ();
 use Compress::LZF ':freeze';
 
-$VERSION = 1.45;
+$VERSION = 2.0;
 
 our $event_count;
 
@@ -76,7 +76,7 @@ sub PApp::Event::handler::DESTROY {
 
 }
 
-sub on ($&) {
+sub on($&) {
    my $handler = [$_[1], $PApp::SQL::Database];
 
    push @{$handler{$_[0]}}, $handler;
@@ -106,8 +106,8 @@ sub broadcast($;@) {
       $id = sql_insertid sql_exec $DBH,
                   "insert into event (id, ctime, event, data) values (NULL,NULL,?,?)",
                   $event, sfreeze_cr $_;
-
    }
+
    sql_exec $DBH, "update event_count set count = ? where count < ?", $id, $id;
 
    sql_exec $DBH, "unlock table";

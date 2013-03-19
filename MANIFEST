@@ -16,13 +16,12 @@ PApp/Admin.pm
 PApp/FormBuffer.pm
 PApp/Exception.pm
 PApp/Application.pm
+PApp/EditForm.
 PApp/ECMAScript.pm
-PApp/Package.pm
 PApp/Util.pm
-PApp/Parser.pm
 PApp/PCode.pm
 PApp/Util.pm
-PApp/Config.pm.PL
+PApp/Config.pm
 PApp/HTML.pm
 PApp/CGI.pm
 PApp/Apache.pm
@@ -44,6 +43,7 @@ PApp/UserObs.pm
 PApp/Preprocessor.pm
 PApp/MimeType.pm
 PApp/XBox.pm
+PApp/XPCSE.pm
 
 I18n/Makefile.PL
 I18n/I18n.pm
@@ -59,34 +59,8 @@ Recode/t/01_pconv.t
 
 etc/mimedb		mime database
 
-macro/admin.papp	user administration package
-macro/util.papp		some utility functions
-macro/editform.papp	very easy edit-forms for sql tables
-macro/ssl.papp		some support macros for ssl environments
-macro/tinychat.papp	very dumb, very cool server-wide chatbox
-macro/xpcse.papp        client-side edit app
 papp.dtd		xml-DTD for papp-files
 papp.vim		vim syntax file
-
-apps/papp.papp		internal papp pages
-apps/admin.papp
-apps/empty.papp
-apps/bench.papp		benchmark
-apps/sbench.papp	benchmarks using redirects, written by Stefan Traby <stefan@sime.com>
-
-demo/demo.papp
-demo/README
-demo/demo1.pxsl
-demo/demo2.pxsl
-demo/demodb.sql
-
-apps/poedit.papp	simple translation editor
-widget/poedit.papp
-
-apps/dbedit.papp	simple mysql database editor
-widget/dbedit.papp
-
-widget/acedit.papp	simple user & access rights editor
 
 style/simple.xsl	simple stylesheet for developing new stylesheets
 style/html.xsl		not-so-simple stylesheet that allows html-in-html
@@ -97,9 +71,6 @@ style/normalize-text.xsl	reduce the amount of whitespace in the result
 t/00_load.t
 
 i18n/papp.po
-i18n/bench.po
-i18n/dbedit.po
-i18n/demo.po
 i18n/iso639.po
 i18n/iso3166.po
 i18n/agni.po
@@ -108,6 +79,7 @@ bin/papp-env
 bin/papp-admin
 bin/papp-httpd
 
+write-config
 papp-install
 i18n-upgradeutf8
 i18n-normalize
@@ -122,16 +94,8 @@ doc/intro.html
 doc/pws2001.sdf		the perl-workshop-2001 introduction/tutorial (german)
 doc/faqhtml.xsl
 
-xcms/xcms.papp		The eXtensible Content Management System
-xcms/xcms.sql
-xcms/README
-
-simple-edit/x-papp-edit	a very very simple system to do client-side editing
-simple-edit/simple-edit.papp
-
 xpcse/xpcse
 xpcse/run-mailcap
-xpcse/xpcse-demo.papp
 xpcse/README.unix
 
 Storable/README		PApp::Storable is not part of PApp
@@ -142,4 +106,5 @@ Storable/Storable.xs
 Agni.pm			The Agni CMS runtime system
 bin/agni		The Agni daemon/tool
 
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)

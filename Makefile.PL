@@ -41,14 +41,12 @@ WriteMakefile(
 		    'PApp/Exception.pm'	=> '$(INST_LIBDIR)/PApp/Exception.pm',
 		    'PApp/FormBuffer.pm'=> '$(INST_LIBDIR)/PApp/FormBuffer.pm',
 		    'PApp/HTML.pm'	=> '$(INST_LIBDIR)/PApp/HTML.pm',
-		    'PApp/Parser.pm'	=> '$(INST_LIBDIR)/PApp/Parser.pm',
 		    'PApp/Log.pm'	=> '$(INST_LIBDIR)/PApp/Log.pm',
 		    'PApp/Lock.pm'	=> '$(INST_LIBDIR)/PApp/Lock.pm',
 		    'PApp/Application.pm'=> '$(INST_LIBDIR)/PApp/Application.pm',
 		    'PApp/ECMAScript.pm'=> '$(INST_LIBDIR)/PApp/ECMAScript.pm',
 		    'PApp/Util.pm'	=> '$(INST_LIBDIR)/PApp/Util.pm',
 		    'PApp/PCode.pm'	=> '$(INST_LIBDIR)/PApp/PCode.pm',
-		    'PApp/Package.pm'	=> '$(INST_LIBDIR)/PApp/Package.pm',
 		    'PApp/XML.pm'	=> '$(INST_LIBDIR)/PApp/XML.pm',
 		    'PApp/XSLT.pm'	=> '$(INST_LIBDIR)/PApp/XSLT.pm',
 		    'PApp/XSLT/Sablotron.pm'	=> '$(INST_LIBDIR)/PApp/XSLT/Sablotron.pm',
@@ -61,6 +59,8 @@ WriteMakefile(
 		    'PApp/Preprocessor.pm'	=> '$(INST_LIBDIR)/PApp/Preprocessor.pm',
 		    'PApp/XBox.pm'	=> '$(INST_LIBDIR)/PApp/XBox.pm',
 		    'PApp/MimeType.pm'	=> '$(INST_LIBDIR)/PApp/MimeType.pm',
+		    'PApp/XPCSE.pm'	=> '$(INST_LIBDIR)/PApp/XPCSE.pm',
+		    'PApp/EditForm.pm'	=> '$(INST_LIBDIR)/PApp/EditForm.pm',
 		    'Agni.pm'		=> '$(INST_LIBDIR)/Agni.pm',
                    },
     'PREREQ_PM'	=> {
@@ -97,13 +97,13 @@ sub MY::postamble {
 
 force:
 
-all :: config.pl
+all :: secure
 
-config.pl :: PApp/Config.pm.PL
-	\$(PERL) PApp/Config.pm.PL
+secure :: write-config
+	\$(PERL) write-config
 
 reconfig: force
-	\$(PERL) PApp/Config.pm.PL
+	\$(PERL) write-config
 
 i18n: force
 	./bin/papp-admin `for domain in papp bench dbedit demo iso639 iso3166 iso3166full; do \\
@@ -112,17 +112,17 @@ i18n: force
 
 # set \$VERSION in all modules
 setver:
-	\$(PERL) -pi -e 's/^(\\s*(?:our\\s+)?\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm PApp/*.pm I18n/*.pm Recode/*.pm PApp/Config.pm.PL
+	\$(PERL) -pi -e 's/^(\\s*(?:our\\s+)?\\\$\$VERSION\\s*=\\s*).*\$\$/\$\${1}\$(VERSION);/' *.pm PApp/*.pm I18n/*.pm Recode/*.pm
 
 predist: setver i18n
 	pod2text PApp.pm >README
 	#mysqldump -d -B papp >gen-db.sql
 	\$(MAKE) tardist
 
-install :: config.pl all
+install :: secure all
 	\$(PERL) ./papp-install --install
 
-install :: config.pl all
+install :: secure all
 	\@echo
 	\@echo '*****'
 	\@echo '***** Please run:'
@@ -132,10 +132,10 @@ install :: config.pl all
 	\@echo '*****'
 	\@echo
 
-init: config.pl all
+init: secure all
 	\$(PERL) ./papp-install --init
 
-update: config.pl all
+update: secure all
 	\$(PERL) ./papp-install --update
 
 ";
@@ -143,7 +143,7 @@ update: config.pl all
    $postamble;
 }
 
-system $Config{make}, "config.pl";
+system $Config{make}, "secure";
 
 print <<EOF;
 

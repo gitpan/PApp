@@ -45,7 +45,7 @@ should be used via perls tie interface.
 
 =cut
 
-$VERSION = 1.45;
+$VERSION = 2.0;
 
 no utf8;
 use bytes;

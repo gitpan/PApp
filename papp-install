@@ -7,6 +7,8 @@ use DBI;
 
 use Compress::LZF qw(:compress :freeze);
 
+my $ETCDIR = "/etc/papp";
+
 @ARGV or die "this program shouldn't be called directly\n";
 
 for (@ARGV) {
@@ -15,8 +17,10 @@ for (@ARGV) {
 }
 
 BEGIN {
-   $PApp::Config::CONFIG_PL = "./config.pl";
-   require 'PApp/Config.pm';
+   $ENV{PAPP_ETCDIR} = ".";
+   local $PApp::Config::NO_AUTOCONNECT = 1;
+   local @INC = (".", @INC);
+   require PApp::Config;
 }
 
 use blib;
@@ -65,10 +69,10 @@ if ($mode_install) {
    crdir $lib;
    crdir $CFG{I18NDIR};
 
-   for my $dir (qw(macro widget apps demo style eg etc)) {
+   for my $dir (qw(style etc)) {
       crdir "$lib/$dir";
 
-      for my $app (bsd_glob "$dir/{*.{papp,xsl,pxsl},mimedb}",
+      for my $app (bsd_glob "$dir/{*.xsl,mimedb}",
                                     GLOB_ERR|GLOB_NOSORT|GLOB_BRACE) {
          $app =~ s/.*?([^\/]+)$/$1/;
          print "Installing $dir/$app $lib/$dir...";
@@ -77,11 +81,13 @@ if ($mode_install) {
       }
    }
 
-   my $umask = umask 077;
-   install("config.pl", "$lib/config.pl");
-   chmod 0600, "$lib/config.pl"; # just to be sure
+   my $umask = umask 022;
+   mkdir $ETCDIR, 0777;
+   umask 077;
+   install ("config", "$ETCDIR/config"); chmod 0644, "$ETCDIR/config";
+   install ("secure", "$ETCDIR/secure"); chmod 0600, "$ETCDIR/secure";
    umask $umask;
-   print "\n$lib/config.pl is chmod 600, better chown or chgrp it to the group
+   print "\n$ETCDIR/secure is mode 600, better chown or chgrp it to the group
    your webserver or trusted user is running under.\n\n";
 }
 
@@ -346,16 +352,6 @@ sql_exec <<SQL;
 SQL
 
 sql_exec <<SQL;
-   create table /*! if not exists */ pkg (
-     id varchar(255) default '' not null,
-     ctime timestamp(14),
-     config mediumblob default '' not null,
-     code longblob default '' not null,
-     primary key (id)
-   )
-SQL
-
-sql_exec <<SQL;
    create table /*! if not exists */ locks (
      id varchar(255) binary default '' not null,
      breaktime int(10) unsigned default '0' not null,
@@ -525,9 +521,6 @@ if ($installed_sysid) {
    $maxid < $oid
       or die "installation check found objects > oidseq, either your sysid is broken or your database is corrupt";
 }
-
-$DBH->do("delete from pkg");
-   # if $PApp::Config::VERSION != $installed_version; # doesn't hurt
 
 print <<EOF;
 

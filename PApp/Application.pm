@@ -31,17 +31,13 @@ use PApp::Config qw(DBH);
 use PApp::Util;
 use PApp::SQL;
 use PApp::Exception;
-use PApp::Package;
 use PApp::I18n ();
 
 use Convert::Scalar ();
 
-use utf8;
-no bytes;
-
 use common::sense;
 
-our $VERSION = 1.45;
+our $VERSION = 2.0;
 
 =item $papp = new PApp::Application args...
 
@@ -135,11 +131,6 @@ were in the main module of the application.
 sub surl {
    my $self = shift;
 
-   local $PApp::modules = {};
-   local $PApp::curmod = \$PApp::modules;
-   local $PApp::curpath = "";
-   local $PApp::curprfx = "/$self->{name}";
-   local $PApp::module  = "";
    push @_, "/papp_appid" => $self->{appid};
    &PApp::surl;
 }
@@ -147,21 +138,6 @@ sub surl {
 sub slink {
    my $content = splice @_, 1,1;
    PApp::alink($content, &surl);
-}
-
-# the next var should be part of PApp::papp_main#FIXME#
-my %import;
-
-sub find_import($) {
-   my $path = shift;
-   my $imp = $import{$path};
-   unless (defined $imp) {
-      $imp = new PApp::Application::PApp:: path => $path;
-      $imp->load_config;
-      $imp->check_deps;
-      $import{$path} = $imp;
-   }
-   $imp;
 }
 
 =item $changed = $papp->check_deps
@@ -174,16 +150,6 @@ changed.
 sub check_deps($) {
    my $self = shift;
    my $reload;
-
-   # special request of janman, maybe take it out because too slow and
-   # unneeded?
-   $self->{compiled} && $self->for_all_packages(sub {
-      my ($ppkg) = @_;
-
-      for my $imp (@import{keys %{$ppkg->{import}}}) {
-         $reload += $imp->check_deps;
-      }
-   });
 
    while (my ($path, $v) = each %{$self->{file}}) {
       $reload++ if (stat $path)[9] != $v->{mtime};
@@ -219,36 +185,6 @@ sub register_file {
    $self->{file}{$name} = \%attr;
 }
 
-=item %files = $papp->files([include-imports])
-
-Return a hash of C<path> => { info... } pairs delivering information about
-all files of the application. If C<include-imports> is true, also includes
-all files form imports.
-
-=cut
-
-sub files($;$) {
-   my $self = shift;
-   my $imports = shift;
-
-   $self->load_config;
-
-   my %res = %{$self->{file}};
-
-   if ($imports) {
-      $self->for_all_packages(sub {
-         my ($ppkg) = @_;
-
-         for my $imp (map PApp::Application::find_import($_), keys %{$ppkg->{import}}) {
-            $imp->load_config;
-            %res = (%res, $imp->files(1));
-         }
-      });
-   }
-
-   %res;
-}
-
 =item $papp->run
 
 "Run" the application, i.e. find the current package & module and execute it.
@@ -266,232 +202,6 @@ The default implementation just rethrows.
 
 sub uncaught_exception {
    PApp::handle_error ($_[1]);
-}
-
-=item $papp->new_package(same arguments as PApp::Package->new)
-
-Creates a new PApp::Package that belongs to this application.
-
-=cut
-
-sub new_package {
-   my $self = shift;
-   my $ppkg = new PApp::Package(@_);
-   Convert::Scalar::weaken ($ppkg->{papp} = $self);
-   $ppkg;
-}
-
-package PApp::Application::PApp;
-
-use PApp::SQL;
-use PApp::Exception;
-use PApp::Config qw(DBH $DBH);
-
-use base "PApp::Application";
-
-sub new {
-   my $class = shift;
-
-   my $self = $class->SUPER::new(@_);
-
-   my $path = PApp::Util::find_file $self->{path}, ["papp"];
-
-   -f $path or fancydie "papp-application '$self->{path}' not found\n";
-
-   $self->{path} = $path;
-
-   $self;
-}
-
-sub mount {
-   my $self = shift;
-   my %args = @_;
-
-   $self->load_config;
-
-   delete $self->{cb_src}; # not needed for mounted applications
-
-   local $self->{root}{name} = $self->{name}; # bad hack, but not a design error
-
-   $self->for_all_packages(sub {
-      my ($ppkg, $path, $name) = @_;
-      $PApp::preferences{"$path/$name"} = [keys %{$ppkg->{preferences}}] if $ppkg->{preferences};
-   });
-
-}
-
-sub preprocess {
-   my $self = shift;
-
-   my($R, $W); pipe $R, $W;
-
-   my $pid = fork; # do not waste precious memory
-
-   if ($pid == 0) {
-      close $R;
-
-      local $SIG{__DIE__};
-
-      #print "gdb /usr/app/sbin/httpd $$\n"; #<STDIN>;
-
-      eval {
-         PApp::SQL::reinitialize;
-         local $PApp::SQL::DBH = DBH;
-
-         require PApp::Parser;
-         my ($ppkg, $code) = PApp::Parser::parse_file($self, $self->{path});
-
-         PApp::Storable::store_fd [
-            PApp::Storable::nfreeze({
-               root => $ppkg,
-               file => $self->{file},
-               translate => $self->{translate},
-            }),
-            PApp::Storable::nfreeze($code),
-         ], $W;
-      };
-
-      if ($@) {
-         local $Storable::forgive_me = 1;
-         PApp::Storable::store_fd [undef, $@], $W;
-      }
-
-      close $W;
-      &PApp::Util::_exit;
-      exit(255); # just in case, for some reason, this gets propagated to the client
-   } elsif ($pid > 0) {
-      close $W;
-
-      my ($config, $code) = eval { my ($config, $code) = @{PApp::Storable::retrieve_fd $R} };
-      close $R;
-
-      waitpid $pid, 0;
-
-      if ($?) {
-         require POSIX;
-         if (($? & 127) == &POSIX::SIGSEGV) {
-            die "\nchild died with SIGSEGV while parsing...\ndid you remember to disable expat while compiling apache?\nyou lost";
-         }
-      }
-
-      die $code unless $config; # config is undef on error
-
-      sql_exec $DBH,
-               "replace into pkg (id, ctime, config, code) values (?, NULL, ?, ?)",
-               $self->{path}, $config, $code;
-   } else {
-      fancydie "unable to fork to preprocess";
-   }
-}
-
-my @config = qw(file root);
-
-sub load_config {
-   my $self = shift;
-
-   return if $self->{root};
-
-   my ($ctime, $config) = sql_fetch $DBH, "select ctime, config from pkg where id = ?", $self->{path};
-
-   unless ($config) {
-      $self->preprocess;
-      ($ctime, $config) = sql_fetch $DBH, "select ctime, config from pkg where id = ?", $self->{path};
-   }
-
-   $config or fancydie "load_config: unable to compile package", $self->{path};
-
-   $config = PApp::Storable::thaw $config;
-
-   $self->{ctime} = $ctime;
-   while (my ($k, $v) = each %$config) {
-      $self->{$k} = $v;
-   }
-
-   $self->check_deps;
-}
-
-sub load_code {
-   my $self = shift;
-
-   return if $self->{compiled};
-
-   $self->load_config;
-
-   $self->{path} or fancydie "can't load_code pathless packages";
-
-   my $code;
-
-   while() {
-      $code = sql_fetch $DBH, "select code from pkg where id = ? and ctime = ?", $self->{path}, $self->{ctime};
-      last if $code;
-      $self->unload;
-      $self->load_config;
-   }
-
-   $code or fancydie "load_config: unable to compile package", $self->{path};
-   $code = PApp::Storable::thaw $code;
-
-   local $PApp::papp          = $self;
-   local $PApp::SQL::Database = $self->{database};
-   local $PApp::SQL::DBH      = $self->{database} && $self->{database}->checked_dbh;
-
-   $self->for_all_packages(sub {
-      my ($ppkg, $path, $name) = @_;
-      my $code = $code->{"$path/$name"}
-         or fancydie "config/code disagree", "no code for package $path/$name found";
-
-      $ppkg->compile($code);
-
-      # add cb's from current package
-      for my $type (qw(init childinit childexit request cleanup newsession newuser)) {
-         push @{$self->{cb_src}{$type}}, map "package $ppkg->{package};\n$_", @{$code->{cb}{$type}};
-      }
-   });
-
-   for my $type (qw(init childinit childexit)) {
-      my $cb = join ";", PApp::Util::uniq @{ delete $self->{cb_src}{$type} };
-      $self->{cb}{$type} = eval "use utf8; no bytes; sub {\n$cb\n}";
-      fancydie "error while compiling application callback", $@,
-               info => [name => $self->{name}],
-               info => [path => $self->{path}],
-               info => [source => $self->{cb_src}{$type}] if $@;
-   }
-
-   $self->{compiled} = 1;
-
-   $self;
-}
-
-=item $ppkg->for_all_packages (callback<papp,path,name>, initial-path)
-
-Run a sub for all packages in a papp.
-
-=cut
-
-sub for_all_packages($&;$$) {
-   my $self = shift;
-   my $cb   = shift;
-   my $path = shift || "";
-
-   $self->{root}->for_all_packages($cb, $path, $self->{root}{name});
-}
-
-sub run {
-   local $PApp::papp    = shift;
-   local $PApp::curpath = "";
-   local $PApp::curprfx = "/$PApp::papp->{name}";
-
-   local $PApp::SQL::Database;
-   local $PApp::SQL::DBH;
-
-   if ($PApp::papp->{database}) {
-      $PApp::SQL::Database = $PApp::papp->{database};
-      $PApp::SQL::DBH =
-         $PApp::SQL::Database->checked_dbh
-            or fancydie "error connecting to database " . $PApp::SQL::Database->dsn, $DBI::errstr;
-   }
-
-   $PApp::papp->{root}->run (\$PApp::modules);
 }
 
 package PApp::Application::Agni;
@@ -543,8 +253,6 @@ sub new {
 
 sub run {
    local $PApp::papp    = shift;
-   local $PApp::curpath = "";
-   local $PApp::curprfx = "/$PApp::papp->{name}";
 
    local $PApp::SQL::Database = $PApp::Config::Database;
    local $PApp::SQL::DBH      = $PApp::Config::DBH;
@@ -570,9 +278,7 @@ method of the mounted application.
 =cut
 
 sub uncaught_exception {
-   local $PApp::papp    = shift;
-   local $PApp::curpath = "";
-   local $PApp::curprfx = "/$PApp::papp->{name}";
+   local $PApp::papp = shift;
 
    local $PApp::SQL::Database = $PApp::Config::Database;
    local $PApp::SQL::DBH      = $PApp::Config::DBH;

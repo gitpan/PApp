@@ -58,8 +58,6 @@ Usage: $self [opts...]
             --keepreguser t    keep registeres users this long
             --keepstate t      keep state entries this long
 
-            --flush-cache      flush package cache (and other things)
-
             --domain <dom>     select/create translation domain <dom>
             --import-po <src>  import po-like files from directory <dst>
             --export-po <dst>  export po-like file(s) into directory <dst>
@@ -310,10 +308,6 @@ Getopt::Long::Configure ("bundling", "no_ignore_case");
 
       "reorganize|reorg" => sub {
          call { PApp::Admin::reorganize };
-      },
-
-      "flush-cache" => sub {
-         clean { sql_exec "delete from pkg" };
       },
 
    ) or exit 1;

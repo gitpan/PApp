@@ -1,5 +1,41 @@
 Revision history for Perl extension PApp
 
+2.0  Tue Mar 19 13:23:25 CET 2013
+	- escape_html now converts windows-unicode (with windows-1252 garbage)
+          into numeric entitity escapes. escape_html is now ~20% faster as well.
+	- most of the changes below are due to the brutal removal of traditional
+          .papp application support in favour of pure agni.
+        - PApp::EditForm::ef_selectbox didn't interpret arrayrefs as data
+          values as per documentation.
+        - default charset for output is now always utf-8.
+        - work around further api breakage in 5.14.
+	- remove %S, %A, reference_url, current_locals, suburl, sublink,
+          retlink_p, retlink, returl, preferences_url, preferences_link.
+        - replace macro/xpcse.papp by PApp/XPCSE.pm.
+        - replace macro/editform.papp by PApp/EditForm.pm.
+        - remove macro/*.papp, apps/*, widget/*.papp, demo/, simpe-edit/,
+          xmcs/, xpcse/xpcse-demo.papp.
+        - remove PApp/Parser.pm, PApp/Package.pm.
+        - remove support for PApp::Application::PApp.
+        - remove $PApp::module, modules, curprfx, curpath, curmod,
+          ppkg and all references to them, i.e. all PApp "module
+          tree" support.
+        - no longer use or create the pkg table.
+        - new bin/agni option: --import-ignore-type.
+        - fix reference to Storable from PApp::Storable.
+
+last_1x_version Sun May 20 02:08:56 CEST 2012
+	- move config from PApp::Config to /etc/papp/config.
+        - move LIBDIR/config.pl to /etc/papp/secure.
+	- remove most of the DEVELxxxx utf8 workarounds in the i18n scanning
+          code, fixing at least one bug introduced by a fix in perl :)
+	- use optimised bit arithmetic on perls with 64 bit-integers.
+        - work around a performance bnottleneck in expat's character
+          parsing, for a major agni --import speedup with large objects.
+        - implement a horrid workaround for PApp::CGI to support PApp's
+          way to set cookie headers (in itself a horrid workaround
+          for broken set-cookie parsing in most browsers).
+
 1.45 Sun Nov 21 08:20:50 CET 2010
 	- port to perl 5.12.
 	- die if objects belonging to callbacks cannot be loaded.

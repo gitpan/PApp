@@ -65,7 +65,7 @@ use PApp::Config;
 BEGIN {
    use base 'Exporter';
 
-   $VERSION = 1.45;
+   $VERSION = 2.0;
    @EXPORT = qw();
    @EXPORT_OK = qw(
          open_translator
@@ -231,7 +231,7 @@ This function can be slow and does NOT cache any results.
 sub locale_charsets($) {
    my $locale = normalize_langid $_[0];
    my @charsets;
-   use bytes; # DEVEL9021 workaround against segfaults on regex match
+   
    if ($locale =~ $locale_regex) {
       my ($lang, $country, $charset) = (lc $1, lc $2, lc $3);
       push @charsets, $charset if $charset ne "";
@@ -240,7 +240,8 @@ sub locale_charsets($) {
    } else {
       push @charsets, split /,/, locale2charsets $_[0];
    }
-   (@charsets, "utf-8");
+
+   (@charsets, "utf-8")
 }
 
 our @table_registry;
@@ -423,7 +424,7 @@ As of yet undocumented
 
 sub quote($) {
    local $_ = shift;
-   utf8_upgrade $_; #d# DEVEL7952
+
    s/\\/\\\\/g;
    s/\"/\\"/g;
    s/\n/\\n/g;
@@ -431,12 +432,12 @@ sub quote($) {
    s/\t/\\t/g;
    s/([\x00-\x1f\x80-\x9f])/sprintf "\\x%02x", ord $1/ge;
    #s/([\x{0100}-\x{ffff}])/sprintf "\\x{%04x}", ord($1)/ge;
-   $_;
+   $_
 }
 
 sub unquote($) {
    local $_ = shift;
-   utf8_upgrade $_; #d# DEVEL7952
+
    s{\\(?:
       "                     (?{ "\"" })
     | n                     (?{ "\n" })
@@ -449,7 +450,7 @@ sub unquote($) {
    )}{
       $^R
    }gex;
-   $_;
+   $_
 }
 
 sub reorganize_i18ndb {
@@ -472,7 +473,6 @@ sub reorganize_i18ndb {
    while (my($nr) = $st->fetchrow_array) {
       sql_exec "delete from msgstr where nr = ?", $nr;
    }
-   return;
 }
 
 =item \%trans = fuzzy_translation $string, [$domain]
@@ -521,7 +521,8 @@ sub fuzzy_translation  {
          $w{$lang} = $w;
       }
    }
-   \%trans;
+
+   \%trans
 }
 
 # our instead of my due to mod_perl bugs
@@ -541,7 +542,6 @@ sub scan_init {
 
 sub scan_add {
    my ($lang, $id, $context) = @_;
-   utf8_off $id; # DEVEL9916, to keep perl from killing characters without use unicode::strict
    push @{$scan_msg{$lang}{$id}}, $context;
 }
 
@@ -552,7 +552,7 @@ sub scan_add {
 sub scan_str($$$) {
    my ($prefix, $string, $lang) = @_;
    my $line = 1;
-   utf8_upgrade $string; # DEVEL7952
+
    # macintoshes not supported, but who cares ;-<
    while() {
       if ($string =~ m/\G
@@ -587,8 +587,8 @@ sub scan_file($$) {
    open FILE, "<", $path or fancydie "unable to open file for scanning", "$path: $!";
    local $/;
    my $file = <FILE>;
-   utf8_on $file; #d# DEVEL7952
-   scan_str($path, $file, $lang);
+   utf8::decode $file;
+   scan_str ($path, $file, $lang);
 }
 
 =item scan_field $dsn, $field, $style, $lang
@@ -638,11 +638,11 @@ sub scan_end {
    while (my ($lang, $v) = each %scan_msg) {
       while (my ($msg, $context) = each %$v) {
          $context = join "\n", @$context;
-         utf8::encode $msg; utf8::encode $lang; utf8::upgrade $context;
-         $st0->execute($msg, $scan_app, $lang);
+         utf8::encode $msg; utf8::encode $lang; utf8::encode $context;
+         $st0->execute ($msg, $scan_app, $lang);
          my $nr = $st0->fetchrow_arrayref;
          if ($nr) {
-            $st1->execute($context, $nr->[0]); $st1->finish;
+            $st1->execute ($context, $nr->[0]); $st1->finish;
          } else {
             $nr = sql_insertid
                      sql_exec "insert into msgid (id, domain, lang, context) values (?, ?, ?, ?)",
@@ -791,14 +791,12 @@ sub next {
    }
    if ($self->peek =~ /^\s*msgid/) {
       while ($self->peek =~ /^\s*(?:msgid\s+)?\"(.*)\"\s*$/) {
-         $self->{line} =~ /^\s*(?:msgid\s+)?\"(.*)\"\s*$/; #d# DEVEL9021, redo regex on var
-         $id .= PApp::I18n::unquote $1;
+         $id .= PApp::I18n::unquote "$1";
          $self->line;
       }
       if ($self->peek =~ /^\s*msgstr/) {
          while ($self->peek =~ /^\s*(?:msgstr\s+)?\"(.*)\"\s*$/) {
-            $self->{line} =~ /^\s*(?:msgstr\s+)?\"(.*)\"\s*$/; #d# DEVEL9021, redo regex on var
-            $str .= PApp::I18n::unquote $1;
+            $str .= PApp::I18n::unquote "$1";
             $self->line;
          }
       } elsif ($self->peek =~ /\S/) {

@@ -47,9 +47,9 @@ use PApp::HTML ();
 use Exporter;
 
 BEGIN {
-   @ISA = (PApp::Base::);
+   our @ISA = (PApp::Base::);
    unshift @PApp::ISA, __PACKAGE__;
-   $VERSION = 1.45;
+   our $VERSION = 2.0;
 }
 
 =head2 Functions
@@ -291,6 +291,16 @@ sub header_out {
    @_ > 2 ? $_[0]{headers_out}{$_[1]} = $_[2] : $_[0]{headers_out}{$_[1]};
 }
 
+sub headers_out {
+   # BIIIG hack
+   shift
+}
+
+# this one only used by headers_out->add
+sub add {
+   push @{ $_[0]{set_cookie} }, $_[2];
+}
+
 sub content_type {
    splice @_, 1, 0, "Content-Type";
    goto &header_out;
@@ -350,15 +360,20 @@ sub as_string {
 sub send_http_header {
    my $self = shift;
 
+   my @hdr;
+
    if ($self->{nph}) {
       # nph scripts are often a bad idea
       my $status = delete $self->{headers_out}{Status} || 200;
-      print "HTTP/1.0 $status Status $status\015\012Connection: close\015\012";
+      push @hdr, "HTTP/1.0 $status Status $status\015\012Connection: close\015\012";
    }
    while (my ($h, $v) = each %{$self->{headers_out}}) {
-      print "$h: $v\015\012";
+      push @hdr, "$h: $v\015\012";
    }
-   print "\015\012";
+   for (@{ $self->{set_cookie} }) {
+      push @hdr, "Set-Cookie: $_\015\012";
+   }
+   print @hdr, "\015\012";
 }
 
 sub print {

@@ -36,7 +36,7 @@ no bytes;
 
 use common::sense;
 
-our $VERSION = 1.45;
+our $VERSION = 2.0;
 our @EXPORT = qw(
 
       errbox
@@ -71,29 +71,66 @@ argument into single quotes, so don't do that yourself).
 
 =cut
 
-use Convert::Scalar ();  # DEVEL7952 bug workaround #d# #FIXME#
+our @HTML_ESCAPE;
+
+$HTML_ESCAPE[$_] = sprintf "&lt;illegal character 0x%02x&gt;", $_
+   for 0x00..0x08, 0x0b, 0x0d..0x1f;
+
+$HTML_ESCAPE[ord "&"] = "&#38;";
+$HTML_ESCAPE[ord "<"] = "&#60;";
+$HTML_ESCAPE[ord ">"] = "&#62;";
+
+# windows 1252 defines these, and of course microsoft uses their own
+# encoding in place of unicode. We try to fix up here, but preserve the data.
+$HTML_ESCAPE[128] = "&#x20ac;";
+$HTML_ESCAPE[130] = "&#x201a;";
+$HTML_ESCAPE[131] = "&#x0192;";
+$HTML_ESCAPE[132] = "&#x201e;";
+$HTML_ESCAPE[133] = "&#x2026;";
+$HTML_ESCAPE[134] = "&#x2020;";
+$HTML_ESCAPE[135] = "&#x2021;";
+$HTML_ESCAPE[136] = "&#x02c6;";
+$HTML_ESCAPE[137] = "&#x2030;";
+$HTML_ESCAPE[138] = "&#x0160;";
+$HTML_ESCAPE[139] = "&#x2039;";
+$HTML_ESCAPE[140] = "&#x0152;";
+$HTML_ESCAPE[142] = "&#x017d;";
+$HTML_ESCAPE[145] = "&#x2018;";
+$HTML_ESCAPE[146] = "&#x2019;";
+$HTML_ESCAPE[147] = "&#x201c;";
+$HTML_ESCAPE[148] = "&#x201d;";
+$HTML_ESCAPE[149] = "&#x2022;";
+$HTML_ESCAPE[150] = "&#x2013;";
+$HTML_ESCAPE[151] = "&#x2014;";
+$HTML_ESCAPE[152] = "&#x02dc;";
+$HTML_ESCAPE[153] = "&#x2122;";
+$HTML_ESCAPE[154] = "&#x0161;";
+$HTML_ESCAPE[155] = "&#x203a;";
+$HTML_ESCAPE[156] = "&#x0153;";
+$HTML_ESCAPE[158] = "&#x017e;";
+$HTML_ESCAPE[159] = "&#x0178;";
+
+# clueless p5p's have removed /o without similar performant alternative
+our $HTML_ESCAPE = qr<([${\(join "", map { sprintf "\\x%02x", $_ } grep defined $HTML_ESCAPE[$_], 0..$#HTML_ESCAPE)}])>;
 
 sub escape_html($) {
-   local $_ = shift;
-   s/([\x00-\x08\x0b\x0d-\x1f\x80-\x9f])/sprintf "<illegal character 0x%02x>", ord $1/ge;
-   s/([<>&])/sprintf "&#%d;", ord $1/ge;
-   $_;
+   my $str = shift;
+   $str =~ s/$HTML_ESCAPE/$HTML_ESCAPE[ord $1]/g;
+   $str
 }
 
 sub escape_uri($) {
-   local $_ = shift;
-   Convert::Scalar::utf8_upgrade($_);
-   use bytes;
-   s/([;\/?:@&=+\$,()<>% '"\x00-\x1f\x7f-\xff])/sprintf "%%%02X", ord($1)/ge;
-   $_;
+   my $str = shift;
+   utf8::encode $str;
+   $str =~ s/([;\/?:@&=+\$,()<>% '"\x00-\x1f\x7f-\xff])/sprintf "%%%02X", ord $1/ge;
+   $str
 }
 
 sub escape_attr($) {
-   local $_ = shift;
-   Convert::Scalar::utf8_upgrade($_);
-   s/(['<>&\x00-\x1f\x80-\x9f])/sprintf "&#%d;", ord($1)/ge;
-   Convert::Scalar::utf8_on($_); # DEVEL7952 bug workaround #d# #FIXME#
-   "'$_'";
+   my $str = shift;
+   utf8::upgrade $str;
+   $str =~ s/(['<>&\x00-\x1f\x80-\x9f])/sprintf "&#%d;", ord $1/ge;
+   "'$str'"
 }
 
 my @MON  = qw/Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;
@@ -309,7 +346,7 @@ will be properly escaped for you. Example:
 
  mailto_url "schmorp@schmorp.de",
             subject => "Mail from me",
-            body => "(generated from ".reference_url(1).")";
+            body => "hello, world!";
 
 =cut
 

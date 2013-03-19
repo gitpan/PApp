@@ -52,6 +52,11 @@ use PApp::Callback ();
 use PApp::Exception;
 use PApp::I18n ();
 
+# load these so their callbacks cna be registered
+# TODO: should be done by papp proper
+use PApp::EditForm ();
+use PApp::XPCSE ();
+
 use Convert::Scalar ":utf8";
 
 use base Exporter::;
@@ -118,8 +123,8 @@ our $OID_META			= 21;
 our $OID_META_DESC		= 22;
 our $OID_META_NAME		= 23;
 our $OID_ATTR_NAME		= 24;
-our $OID_ATTR_CONTAINER     	= 25;
-our $OID_DATA_REF           	= 26;
+our $OID_ATTR_CONTAINER		= 25;
+our $OID_DATA_REF		= 26;
 our $OID_IFACE_CONTAINER	= 27; # object has a gc_enum, + obj_enum methods (NYI)
 our $OID_META_NOTE		= 28; # notes/flags for objects
 our $OID_ATTR_TAG		= 29; # objects used as tags for containers
@@ -129,13 +134,13 @@ our $OID_ROOTSET		= 32; # a container containing all objects that are alive "by 
 our $OID_ISA			= 33; # the data/method parent for lookups
 our $OID_ISA_METHOD		= 5100001742; # the gids start to get ugly here
 our $OID_ISA_DATA		= 5100001741;
-our $OID_CMDLINE_HANDLER    	= 21474836484; # util::cmdline
+our $OID_CMDLINE_HANDLER	= 21474836484; # util::cmdline
 our $OID_META_PACKAGE		= 4295048763;
 our $OID_PACKAGE_DEFAULT	= 4295049779; # lots of special-casing for that one
 our $OID_META_PARCEL		= 5100000280;
-our $OID_NAMESPACES         	= 5100003444; # circular reference of namespace_base to namespace
-our $OID_ISA_NAMESPACE      	= 5100003446;
-our $OID_COMMITINFO         	= 5100004671; # used in split_obj, the committer, and more
+our $OID_NAMESPACES		= 5100003444; # circular reference of namespace_base to namespace
+our $OID_ISA_NAMESPACE		= 5100003446;
+our $OID_COMMITINFO		= 5100004671; # used in split_obj, the committer, and more
 
 our %BOOTSTRAP_LEVEL; # indexed by {gid}
 
@@ -262,7 +267,7 @@ sub newpath($) {
          unless (sql_uexists "obj_path where path = ?", $path) {
             my $pathid = 0;
             $pathid++ while sql_exists "obj_path where id = ?", $pathid;
-            $pathid < 64 or die "no space for new path $path, current limit is 64 paths\n";#d#
+            $pathid < 64 or die "no space for new path $path, current limit is 64 paths\n";
 
             sql_uexec "insert into obj_path (id, path) values (?, ?)", $pathid, $path;
 
@@ -432,7 +437,7 @@ use vars '$PACKAGE'; # the current compilation package (NOT our because that's v
 sub get_package {
    my ($path, $gid) = @_;
 
-   $ns_cache{$path, $gid} ||= do {
+   $ns_cache{$path, $gid} || do {
       my $package;
 
       # during bootstrap, everything is put into the default package. oh yes!!
@@ -449,7 +454,7 @@ sub get_package {
       $package->{_package_name} = "ns::$package->{_path}::$package->{_gid}";
 
       my $init_code = q~
-         use strict qw(vars subs);
+         use strict qw(vars subs);#TODO: common::sense
 
          use Carp;
          use Convert::Scalar ':utf8';
@@ -480,17 +485,11 @@ sub get_package {
          use PApp::XML qw(xml_quote);
          use PApp::UserObs;
          use PApp::PCode qw(pxml2pcode perl2pcode pcode2perl);
+         use PApp::XPCSE;
+         use PApp::EditForm;
 
          sub __      ($){ PApp::I18n::Table::gettext (PApp::I18n::get_table ($papp_translator, $PApp::langs), $_[0]) }
          sub gettext ($){ PApp::I18n::Table::gettext (PApp::I18n::get_table ($papp_translator, $PApp::langs), $_[0]) }
-
-         for my $src (qw(macro/editform macro/xpcse)) {
-            my $imp = PApp::Application::find_import PApp::Util::find_file $src, ["papp"]
-               or die "$src: not found";
-            $imp->load_code;
-            $imp->{root}{package}->import;
-         }
-
          # HACK END
       ~;
 
@@ -499,7 +498,7 @@ sub get_package {
       ${"$package->{_package_name}::papp_translator"}
          = PApp::I18n::open_translator ("$PApp::i18ndir/" . eval { $package->domain }, $package->{lang});
 
-      $package->eval(qq~
+      $package->eval (qq~
             sub PATH() { $path }
             $init_code;
          ~);
@@ -507,10 +506,11 @@ sub get_package {
 
       $package->initialize;
 
-      # don't cache the bootpackage
-      return $package if Agni::BootPackage:: eq ref $package;
-      $package;
-  }
+      $ns_cache{$path, $gid} = $package
+         unless Agni::BootPackage:: eq ref $package; # don't cache the bootpackage
+
+      $package
+   }
 }
 
 BEGIN {
@@ -548,6 +548,7 @@ sub compile {
 
    use strict qw(vars subs);
    local $SIG{__DIE__};
+
    eval "package $PACKAGE->{_package_name}; $code";
 }
 
@@ -1461,7 +1462,6 @@ sub find_dead_objects {
 
          $seed = $next;
       }
-
    };
 
    sql_exec "unlock tables";

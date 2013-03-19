@@ -37,7 +37,7 @@ Advantages:
 and this is only due to the extra database request to fetch and restore
 state, which typically you would do anyway. To the contrary: a non-trivial
 Apache::Registry page is slower than the equivalent PApp application (or
-much, much more complicated). 
+much, much more complicated).
 
 =item * Embedded Perl. You can freely embed perl into your documents. In
 fact, You can do things like these:
@@ -54,7 +54,7 @@ fact, You can do things like these:
 
 That is, mixing html and perl at statement boundaries.
 
-=item * State-preserving: The global hash C<%S> is automaticaly
+=item * State-preserving: The global hash C<%state> is automaticaly
 preserved during the session. Everything you save there will be available
 in any subsequent pages that the user accesses.
 
@@ -74,11 +74,7 @@ small-but-nice-to-have functionality.
 
 =back
 
-To get a quick start, read the F<bench.papp> module, the F<dbedit.papp> module,
-the F<cluster.papp> module and the F<papp.dtd> description of the papp file
-format.
-
-Also, have a look at the F<doc/> subdirectory of the distribution, which will
+Have a look at the F<doc/> subdirectory of the distribution, which will
 have some tutorials in sdf and html format.
 
 =cut
@@ -86,9 +82,6 @@ have some tutorials in sdf and html format.
 package PApp;
 
 use 5.006;
-
-use utf8;
-no bytes;
 
 use common::sense;
 
@@ -110,7 +103,6 @@ use PApp::HTML qw(escape_uri escape_html tag alink unixtime2http);
 use PApp::SQL;
 use PApp::Callback;
 use PApp::Application;
-use PApp::Package;
 use PApp::Util;
 use PApp::Recode ();
 use PApp::Prefs ();
@@ -131,7 +123,7 @@ use PApp::DataRef ();
 use Convert::Scalar qw(:utf8 weaken);
 
 BEGIN {
-   our $VERSION = 1.45;
+   our $VERSION = 2.0;
 
    use base Exporter::;
 
@@ -139,7 +131,7 @@ BEGIN {
          debugbox
 
          surl slink sform cform suburl sublink retlink_p returl retlink
-         current_locals reference_url multipart_form parse_multipart_form
+         multipart_form parse_multipart_form
          endform redirect internal_redirect abort_to content_type
          abort_with setlocale fixup_marker insert_fixup
 
@@ -150,7 +142,7 @@ BEGIN {
          surl_style postpone
          SURL_STYLE_URL SURL_STYLE_GET SURL_STYLE_STATIC
 
-         $request $NOW *ppkg $papp *state %P *A *S
+         $request $NOW $papp *state %P *A *S
          $userid $sessionid
          reload_p switch_userid getuid
 
@@ -203,8 +195,6 @@ our $userid;      # uncrypted user-id
 our %state;
 our %arguments;
 our %temporary;
-our %S; # points into %state
-our %A; # points into %arguments
 our %P;
 
 our %papp;        # toplevel ("mounted") applications
@@ -221,19 +211,9 @@ our $location;    # the current location (a.k.a. application, pathname)
 our $pathinfo;    # the "CGI"-pathinfo
 our $papp;        # the current location (a.k.a. application)
 
-our $modules;     # the module state
-our $module;      # the current module name (single component)
-our $curprfx;     # the current state prefix
-our $curpath;     # the current application/package path
-our $curmod;      # the current module (ref into $modules)#d##FIXME#
-our $ppkg;        # the current package (a.k.a. package)
 our $curconf;     # the current configuration hash
 
 our $request;     # the apache request object
-
-our %module;      # module path => current module
-
-our @pmod;        # the current stack of pmod's NYI
 
 our $langs;       # contains the current requested languages (e.g. "de, en-GB")
 
@@ -262,8 +242,8 @@ our $url_prefix_sslauth = undef;
 
 our $logfile = undef;
 
-our $prefs    = new PApp::Prefs \"";      # the global preferences
-our $curprefs = new PApp::Prefs *curprfx; # the current application preferences
+our $prefs    = new PApp::Prefs \"";       # the global preferences
+our $curprefs = new PApp::Prefs *location; # the current application preferences
 
 our ($st_reload_p, $st_replacepref, $st_deletepref, $st_newuserid, $st_insertstate,
      $_config, $st_newstateids, $st_fetchstate, $st_eventcount, $event_count);
@@ -279,8 +259,6 @@ our ($st_reload_p, $st_replacepref, $st_deletepref, $st_newuserid, $st_insertsta
 PApp::Event::on papp_i18n_flush => sub {
    PApp::I18n::flush_cache;
 };
-
-our $papp_main;
 
 our $restart_flag;
 if ($restart_flag) {
@@ -353,25 +331,13 @@ A system-global hash that can be used for almost any purpose, such as
 saving (global) preferences values. All keys with prefix C<papp> are
 reserved for use by this module. Everything else is yours.
 
-=item %S [read-write, persistent]
-
-Similar to C<%state>, but is local to the current application. Input
-arguments prefixed with a dash end up here.
-
-=item %A [read-write, input only]
-
-A global hash that contains the arguments to the current module. Arguments
-to the module can be given to surl or any other function that calls it, by
-prefixing parameter names with a minus sign (i.e. "-switch").
-
 =item %P [read-write, input only]
 
-Similar to C<%A>, but it instead contains the parameters from
-forms submitted via GET or POST (C<see parse_multipart_form>,
-however). Everything in this hash is insecure by nature and must be
-used carefully.
+Contains the parameters from forms submitted via GET or POST (C<see
+parse_multipart_form>, however). Everything in this hash is insecure by
+nature and must be sanitised before use.
 
-Normally, the values stored in C<%P> are plain strings (in utf-8,
+Normally, the values stored in C<%P> are plain strings (in UTF-8,
 though). However, it is possible to submit the same field multiple times,
 in which case the value stored in C<$P{field}> is a reference to an array
 with all strings, i.e. if you want to evaluate a form field that might be
@@ -413,20 +379,9 @@ following keys are user-readable:
 
  config   the argument to the C<config>option given to C<mount>.
 
-=item $ppkg [read-only] [might get replaced by a function call]
-
-This variable contains the current C<PApp::Package> object (see
-L<PApp::Package>). This variable might be replaced by something else, so
-watch out. This might or might not be the same as $PApp::ppkg, so best use
-$ppkg when using it. Ah, actually it's best to not use it at all.
-
 =item $PApp::location [read-only] [not exported] [might get replaced by a function call]
 
 The location value from C<mount>.
-
-=item $PApp::module [read-only] [not exported] [might get replaced by a function call]
-
-The current module I<within> the application (full path).
 
 =item $NOW [read-only]
 
@@ -547,38 +502,27 @@ sub PApp::Base::configure {
    exists $a{url_prefix_ssl}	and $url_prefix_ssl     = $a{url_prefix_ssl};
    exists $a{url_prefix_sslauth}and $url_prefix_sslauth = $a{url_prefix_sslauth};
 
-   exists $a{checkdeps} 	and $checkdeps	  = $a{checkdeps};
-   exists $a{delayed} 		and $delayed	  = $a{delayed};
+   exists $a{checkdeps}		and $checkdeps	  = $a{checkdeps};
+   exists $a{delayed}		and $delayed	  = $a{delayed};
 
    exists $a{logfile}		and $logfile	  = $a{logfile};
 
    my $lang = { lang => 'en', domain => 'papp' };
    
-  $papp_main = new PApp::Application::PApp
-      path   => "$libdir/apps/papp.papp",
-      name   => "papp_main",
-      appid  => 0;
+   #TODO#d# register internal modules in papp app
+   # this loop autovivifies INC elements. d'oh.
+#   for (
+#         $INC{"PApp.pm"},
+#         $INC{"PApp/FormBuffer.pm"},
+#         $INC{"PApp/I18n.pm"},
+#         $INC{"PApp/Exception.pm"},
+#         $INC{"PApp/XPCSE.pm"},
+#         $INC{"PApp/EditForm.pm"},
+#       ) {
+#      $papp_main->register_file($_, domain => "papp", lang => "en");
+#   };
 
-   $papp_main->new_package(
-      name      => 'papp',
-      domain    => 'papp',
-   );
-
-   $papp_main->load_config;
-
-   for (
-         "$libdir/macro/admin.papp",
-         "$libdir/macro/util.papp",
-         "$libdir/macro/editform.papp",
-         $INC{"PApp.pm"},
-         $INC{"PApp/FormBuffer.pm"},
-         $INC{"PApp/I18n.pm"},
-         $INC{"PApp/Exception.pm"},
-       ) {
-      $papp_main->register_file($_, domain => "papp", lang => "en");
-   };
-
-   $papp{$papp_main->{appid}} = $papp_main;
+#   $papp{$papp_main->{appid}} = $papp_main;
 }
 
 sub PApp::Base::configured {
@@ -738,74 +682,24 @@ sub setlocale(;$) {
    POSIX::setlocale (LC_ALL => $locale);
 }
 
-=item reference_url $fullurl
+=item $url = surl arg => value, ...
 
-Return a url suitable for external referencing of the current
-page. If C<$fullurl> is given, a full url (including a protocol
-specifier) is generated. Otherwise a partial uri is returned (without
-http://host:port/).
-
-This is only a bona-fide attempt: The current module must support starting
-a new session and only "import"-variables and input parameters are
-preserved.
-
-=cut
-
-sub reference_url {
-   my $url;
-   if ($_[0]) {
-      $url = "http://" . $request->hostname;
-      $url .= ":" . $request->get_server_port if $request->get_server_port != 80;
-   }
-   my $get = join "&amp;", (map {
-               escape_uri($_) . (defined $S{$_} ? "=" . escape_uri $S{$_} : "");
-             } grep {
-                exists $S{$_}
-                   and exists $pmod->{state}{import}{$_}
-                   and not exists $pmod->{state}{preferences}{$_}
-             } keys %{$pmod->{state}{import}}),
-             (map {
-                escape_uri($_) . (defined $P{$_} ? "=" . escape_uri $P{$_} : "");
-             } grep {
-                exists $S{$_}
-                   and not exists $pmod->{state}{import}{$_}
-             } keys %P);
-   "$url$location+$module" . ($get ? "?$get" : "");
-}
-
-=item $url = surl ["module"], arg => value, ...
-
-C<surl> is one of the most often used functions to create urls. The first
-argument is a comma-seperated list of target modules that the url should
-refer to. If it is missing the url will refer to the current module state,
-as will a module name of ".". The most common use is just a singular
-module name. Examples:
-
- .            link to the current module
- menu         link to module "menu" in the current package
- fall/wahl    link to the current module but set the subpackage
-              "fall" to module "wahl".
- fall/,menu   link to the menu module and set the subpackage
-              "fall" to the default module (with the empty name).
-
-The remaining arguments are parameters that are passed to the new
-module. Unlike GET or POST-requests, these parameters are directly passed
-into the C<%S>-hash (unless prefixed with a dash), i.e. you can use this
-to alter state values when the url is activated. This data is transfered
-in a secure way and can be quite large (it will not go over the wire).
+C<surl> is one of the most often used functions to create urls. The
+arguments are parameters that are passed to the application. Unlike
+GET or POST-requests, these parameters are directly passed into the
+C<%state>-hash (unless prefixed with a dash), i.e. you can use this to
+alter state values when the url is activated. This data is transfered in a
+secure way and can be quite large (it will not go over the wire).
 
 When a parameter name is prefixed with a minus-sign, the value will end up
 in the (non-persistent) C<%A>-hash instead (for "one-shot" arguments).
 
-Otherwise the argument name is treated similar to a path under unix: If it
-has a leading "/", it is assumed to start at the server root, i.e. with
-the application location. Relative paths are resolved as you would expect
-them. Examples:
+Otherwise the argument name is treated similar to an absolute path under
+unix. Examples:
 
  /papp_locale  $state{papp_locale}
  /tt/var       $state{'/tt'}{var} -OR- $S{var} in application /tt
  /tt/mod1/var  $state{'/tt'}{'/mod1'}{var}
- ../var        the "var" statekey of the module above in the stack
 
 The following (symbolic) modifiers can also be used:
 
@@ -855,8 +749,8 @@ The following (symbolic) modifiers can also be used:
 
 Examples:
 
- SURL_PUSH("stack" => 5)   push 5 onto @{$S{stack}}
- SURL_SHIFT("stack")       shift @{$S{stack}}
+ SURL_PUSH("/stack" => 5)   push 5 onto @{$S{stack}}
+ SURL_SHIFT("/stack")       shift @{$S{stack}}
  SURL_SAVE_PREFS           save the preferences on click
  SURL_EXEC($cref->refer)   execute the PApp::Callback object
 
@@ -922,66 +816,6 @@ sub slink {
    alink shift, &surl;
 }
 
-# Return current local variables as key => value pairs.
-sub current_locals {
-   map { ($_, $S{$_}) }
-       grep exists $ppkg->{local}{$_}
-            && exists $ppkg->{local}{$_}{$module},
-               keys %S;
-}
-
-=item suburl [surl-args]
-
-Creates a URL like C<surl>, but also pushes the current module state
-onto the return stack. It preserves all current locals for the
-"return jump".
-
-=item sublink content [, surl-args]
-
-Just like C<suburl> but creates an C<A HREF> link with given contents.
-
-=item retlink_p
-
-Return true when the return stack has some entries, otherwise false.
-
-=item returl [surl-args]
-
-Return a url that has the effect of returning to the last
-C<suburl>-caller.
-
-=item retlink content [, surl-args]
-
-Just like returl, but creates an C<A HREF> link with the given contents.
-
-=cut
-
-# some kind of subroutine call
-sub suburl {
-   surl @_, SURL_PUSH(\$state{papp_return}, [
-      (\modpath_freeze $modules),
-      current_locals,
-   ]);
-}
-
-# some kind of subroutine call
-sub sublink {
-   my $content = shift;
-   alink $content, suburl @_;
-}
-
-# is there a backreference?
-sub retlink_p() {
-   scalar@{$state{papp_return}};
-}
-
-sub returl(;@) {
-   surl @{$state{papp_return}[-1]}, @_, SURL_POP(\$state{papp_return});
-}
-
-sub retlink {
-   alink shift, &returl;
-}
-
 =item ($marker, $ref) = fixup_marker [$initial_content]
 
 Create a new fixup marker and return a scalar reference to it's
@@ -1002,13 +836,13 @@ sub fixup_marker {
    (
       (sprintf "\x{fc00}%06d", $#fixup),
       \$fixup[-1],
-   );
+   )
 }
 
 sub insert_fixup {
    my ($marker, $ref) = fixup_marker $_[0];
    $PApp::output .= $marker;
-   $ref;
+   $ref
 }
 
 =item sform [\%attrs,] [module,] arg => value, ...
@@ -1206,12 +1040,12 @@ sub flush_cvt {
    if ($output_charset eq "*") {
       #d##FIXME#
       # do "output charset" negotiation, at the moment this is truely pathetic
-      if (utf8_downgrade $$routput, 1) {
-         $output_charset = "iso-8859-1";
-      } else {
+#      if (utf8_downgrade $$routput, 1) {
+#         $output_charset = "iso-8859-1";
+#      } else {
          utf8_upgrade $$routput; # must be utf8 here, but why?
          $output_charset = "utf-8";
-      }
+#      }
    } elsif ($output_charset) {
       # convert to destination charset
       if ($output_charset ne "iso-8859-1" || !utf8_downgrade $$routput, 1) {
@@ -1465,12 +1299,9 @@ sub _debugbox {
    my $pre1 = "<font color='black' size='3'><pre>";
    my $pre0 = "</pre></font>";
 
-   my $_modules = eval { modpath_freeze($modules) } || do { $@ =~ s/ at \(.*$//s; "&lt;$@|".(escape_html PApp::Util::dumpval $modules)."&gt;" };
-   my $_curmod  = eval { modpath_freeze($$curmod) } || do { $@ =~ s/ at \(.*$//s; "&lt;$@|".(escape_html PApp::Util::dumpval $$curmod)."&gt;" };
-
    $r .= "<h2>Status:</h2>$pre1\n",
-   $r .= "UsSAS = ($userid,$prevstateid,$stateid,$alternative,$sessionid); location = $location; curpath+module = $curpath+$module;\n";
-   $r .= "langs = $langs; modules = $_modules; curmod = $_curmod;\n";
+   $r .= "UsSAS = ($userid,$prevstateid,$stateid,$alternative,$sessionid); location = $location;\n";
+   $r .= "langs = $langs;\n";
 
    $r .= "$pre0<h3>Debug Output (dprint &amp; friends):</h3>$pre1\n";
    $r .= escape_html($doutput);
@@ -1574,39 +1405,6 @@ sub language_selector {
    
 }
 
-=item preferences_url
-
-Returns the url which, when selected, will guide the user to the papp
-preferences editor.
-
-=item preferences_link
-
-Creates an html-button (actually just A HREF at the moment) which guides
-the user to the papp preferences editor.
-
-=cut
-
-sub preferences_url {
-   $papp_main->surl("pref_edit");
-}
-
-sub preferences_link {
-   alink __"[Preferences]", &preferences_url;
-}
-
-#############################################################################
-# path stuff, ought to go into xs, at least
-#############################################################################
-
-sub abs_path($) {
-   expand_path(shift, $curpath);
-}
-
-# ($path, $key) = split_path $keypath;
-sub split_path($) {
-   $_[0] =~ /^(.*)\/([^\/]*)$/;
-}
-
 #############################################################################
 
 =item reload_p
@@ -1649,11 +1447,11 @@ See also L<PApp::Prefs>.
 =cut
 
 sub getpref($) {
-   $curprefs->get($_[0]);
+   $curprefs->get ($_[0])
 }
 
 sub setpref($;$) {
-   $curprefs->set($_[0], $_[1]);
+   $curprefs->set ($_[0], $_[1]);
 }
 
 # forcefully (re-)read the user-prefs and returns the "new-user" flag
@@ -1761,19 +1559,15 @@ sub getuid() {
 }
 
 sub update_state {
-   %arguments = %A = ();
+   %arguments = ();
 
    $st_insertstate->execute($stateid,
                             compress PApp::Storable::mstore(\%state),
                             $userid, $prevstateid, $sessionid, $alternative)
       if @{$state{papp_alternative}};
 
-   &_destroy_state; # %P = %S = %state = (), but in a safe way
+   &_destroy_state; # %P = %state = (), but in a safe way
    undef $stateid;
-}
-
-sub flush_pkg_cache  {
-   DBH->do ("delete from pkg");
 }
 
 ################################################################################################
@@ -1849,7 +1643,7 @@ sub load_app($$) {
       $class = $1;
       $path = $2;
    } else {
-      $class = "PApp::Application::PApp";
+      fancydie "PApp::Application::PApp is no longer supported, downgrade to PApp 1.x";
    }
 
    $app_cache{$appid} =
@@ -1980,9 +1774,9 @@ sub _handler {
 
    defined $logfile and open (local *STDERR, ">>", $logfile);
 
+   $output = "";
    $output_p = 0;
    $doutput = "";
-   $output = "";
    @fixup = ();
    tie *STDOUT, "PApp::Catch_STDOUT";
    $content_type = "text/html";
@@ -2071,7 +1865,7 @@ sub _handler {
 
          $state{papp_appid} = $papp->{appid};
 
-         $modules = $pathinfo =~ m%/(.*?)/?$% ? modpath_thaw $1 : {};
+         #$modules = $pathinfo =~ m%/(.*?)/?$% ? modpath_thaw $1 : {}; #d#
 
          if ($temporary{cookie}{papp_1984}[0] =~ /^([0-9a-zA-Z.-]{22,22})$/) {
             ($userid, undef, undef, $state{papp_cookie}) = unpack "VVVV", $cipher_d->decrypt(PApp::X64::dec $1);
@@ -2099,14 +1893,6 @@ sub _handler {
       $langs = "$state{papp_locale},".$request->header_in("Content-Language").",en";
 
       $papp->check_deps if $checkdeps;
-
-      unless ($papp->{compiled}) {
-         $papp->load_code;
-         $papp->event("init");
-         $papp->event("childinit");
-      }
-
-      local $module = undef; # in case a callback calls abort_to etc. #d# remove?
 
       # do not use for, as papp_execonce might actually grow during
       # execution of these callbacks.
